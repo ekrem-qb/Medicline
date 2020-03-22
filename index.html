@@ -6,10 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicline</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.12.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.12.0/firebase-analytics.js"></script>
 </head>
 
 <body>
-    <h1>Welcome</h1>
+    <div id="form-container" class="container">
+        <div class="form-group">
+            <input type="text" placeholder="Login: " class="form-control" id="login">
+            <input type="password" placeholder="Password: " class="form-control" id="password">
+            <button class="btn btn-danger" id="singUpBtn">Sign Up</button>
+            <button class="btn btn-success" id="singInBtn">Sign In</button>
+        </div>
+    </div>
 </body>
+
+<script>
+    require('./render.js')
+</script>
 
 </html>

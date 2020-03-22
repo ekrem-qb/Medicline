@@ -8,7 +8,10 @@ function createWindow() {
     win = new BrowserWindow({
         width: 700,
         height: 500,
-        icon: __dirname + "/img/icon.png"
+        icon: __dirname + "/img/icon.png",
+        webPreferences: {
+            nodeIntegration: true
+        }
     })
 
     win.loadURL(url.format({
