@@ -1,0 +1,24 @@
+{
+  "name": "database_electron",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "electron": "^8.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ekrem007/Database_Electron.git"
+  },
+  "author": "ekrem007",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ekrem007/Database_Electron/issues"
+  },
+  "homepage": "https://github.com/ekrem007/Database_Electron#readme"
+}
