@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicline</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/7.12.0/firebase.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="firebase.js"></script>
 </head>
 
 <body>
-    <div id="form-container" class="container">
+    <div class="form">
         <div class="form-group">
             <input type="text" placeholder="Email: " class="form-control" id="email">
             <input type="password" placeholder="Password: " class="form-control" id="password">
@@ -20,23 +19,6 @@
             <button class="btn btn-success" id="signInBtn">Sign In</button>
         </div>
     </div>
-
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyBEMpWUykF8sZB83zlpZZpq5u5QgTID0W8",
-            authDomain: "medicline-35e34.firebaseapp.com",
-            databaseURL: "https://medicline-35e34.firebaseio.com",
-            projectId: "medicline-35e34",
-            storageBucket: "medicline-35e34.appspot.com",
-            messagingSenderId: "169065015752",
-            appId: "1:169065015752:web:efda915944a808ea24f8fd",
-            measurementId: "G-K1XPKRC2L6"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        firebase.analytics();
-    </script>
 
     <script>
         require('./render.js')
