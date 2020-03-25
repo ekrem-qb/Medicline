@@ -1,7 +1,15 @@
+* {
+    transition: .5s;
+}
+
 .form {
     display: flex;
     width: max-content;
     height: -webkit-fill-available;
     align-items: center;
     margin: auto;
+}
+
+#editForm {
+    display: none;
 }

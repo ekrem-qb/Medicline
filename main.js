@@ -6,8 +6,8 @@ let win
 
 function createWindow() {
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         icon: __dirname + "/img/icon.png",
         webPreferences: {
             nodeIntegration: true
@@ -20,7 +20,7 @@ function createWindow() {
         slashes: true
     }))
 
-    //win.webContents.openDevTools()
+    win.webContents.openDevTools()
 
     win.on('closed', () => {
         win = null
