@@ -1,40 +1,73 @@
-var today = new Date()
+const today = new Date()
 
-var createBtn = document.getElementById('createBtn')
+const buttonCreate = document.getElementById('buttonCreate')
 
-var editForm = document.getElementById('editForm')
+const formEditData = document.getElementById('formEditData')
 
-var nameInput = document.getElementById('nameInput')
-var surnameInput = document.getElementById('surnameInput')
-var dateInput = document.getElementById('dateInput')
+const inputName = document.getElementById('inputName')
+const inputSurname = document.getElementById('inputSurname')
+const inputDate = document.getElementById('inputDate')
 
-var saveBtn = document.getElementById('saveBtn')
-var cancelBtn = document.getElementById('cancelBtn')
+const buttonSave = document.getElementById('buttonSave')
+const buttonCancel = document.getElementById('buttonCancel')
 
-var personId = today.getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString()
-var person = firebase.database().ref().child(personId)
+const personsList = document.getElementById('personsList')
 
-createBtn.addEventListener('click', function () {
-    editForm.style.display = "block"
+const persons = firebase.database().ref().child("persons")
+var newPersonId, newPerson
+
+buttonCreate.addEventListener('click', function () {
+    newPersonId = today.getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (9999 - 1000)) + 1000).toString()
+    newPerson = persons.child(newPersonId)
+
+    formEditData.style.display = "block"
 })
 
-saveBtn.addEventListener('click', function () {
-    person.set({
-        name: nameInput.value,
-        surname: surnameInput.value,
-        birthDate: dateInput.value,
+function clearPerson() {
+    newPersonId = null
+    newPerson = null
+    inputName.value = null
+    inputSurname.value = null
+    inputDate.value = null
+    formEditData.style.display = "none"
+}
+
+buttonSave.addEventListener('click', function () {
+    newPerson.set({
+        name: inputName.value,
+        surname: inputSurname.value,
+        birthDate: inputDate.value,
         createDate: today.toString()
     })
-    editForm.style.display = "none"
+
+    clearPerson()
 })
 
-cancelBtn.addEventListener('click', function () {
-    editForm.style.display = "none"
+buttonCancel.addEventListener('click', function () {
+    clearPerson()
 })
 
-// loadBtn.addEventListener('click', function () {
-//     person.on('value', function (snapshot) {
-//         nameInput.value = snapshot.val().name
-//         surnameInput.value = snapshot.val().surname
-//     })
-// })
+persons.on('value', function (snapshot) {
+    personsList.innerHTML = null
+
+    snapshot.forEach(person => {
+        var tr = document.createElement('tr')
+        personsList.appendChild(tr)
+
+
+        var td_Name = document.createElement('td')
+        tr.appendChild(td_Name)
+        td_Name.textContent = person.child('name').val()
+
+        var td_Surname = document.createElement('td')
+        tr.appendChild(td_Surname)
+        td_Surname.textContent = person.child('surname').val()
+
+        var td_BirthDate = document.createElement('td')
+        tr.appendChild(td_BirthDate)
+        td_BirthDate.textContent = person.child('birthDate').val()
+    })
+})
+
+
+

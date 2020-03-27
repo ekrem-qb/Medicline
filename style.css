@@ -4,12 +4,12 @@
 
 .form {
     display: flex;
+    flex-direction: column;
     width: max-content;
-    height: -webkit-fill-available;
-    align-items: center;
     margin: auto;
+    padding: 16pt;
 }
 
-#editForm {
+#formEditData {
     display: none;
 }
