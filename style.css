@@ -2,14 +2,8 @@
     transition: .5s;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
-    width: max-content;
-    margin: auto;
-    padding: 16pt;
-}
-
-#formEditData {
+#formEditData,
+#formUpdate,
+#buttonDelete {
     display: none;
 }

@@ -1,9 +1,10 @@
 {
   "name": "database_electron",
   "version": "1.0.0",
-  "description": "",
+  "description": "Electron based Firebase Realtime Database App",
   "main": "main.js",
   "dependencies": {
+    "bootstrap": "^4.4.1",
     "electron": "^8.1.1",
     "firebase": "^7.12.0"
   },

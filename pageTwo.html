@@ -1,39 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Two</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="firebase.js"></script>
 </head>
 
 <body>
-    <div class="form">
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-success" id="buttonCreate">Create</button>
-            </div>
+    <div class="container">
+        <div class="form-group col">
+            <button class="btn btn-primary" id="buttonCreate">Create</button>
         </div>
-        <div class="row" id="formEditData">
-            <div class="form-group col-md-6">
-                <label for="inputName">Name</label>
-                <input type="text" class="form-control" id="inputName">
+        <div id="formEditData">
+            <div class="form-row">
+                <div class="form-group col-auto">
+                    <label for="inputName">Name</label>
+                    <input type="text" class="form-control" id="inputName">
+                </div>
+                <div class="form-group col-auto">
+                    <label for="inputSurname">Surname</label>
+                    <input type="text" class="form-control" id="inputSurname">
+                </div>
+                <div class="form-group col-auto">
+                    <label for="inputBirthDate">Date of Birth</label>
+                    <input type="text" class="form-control" id="inputBirthDate">
+                </div>
+                <div class="form-group col-auto">
+                    <label for="inputCreateDate">Date of Creation</label>
+                    <input type="text" class="form-control" id="inputCreateDate" disabled>
+                </div>
+                <div class="form-group col-auto" id="formUpdate">
+                    <label for="inputUpdateDate">Date of Last Update</label>
+                    <input type="text" class="form-control" id="inputUpdateDate" disabled>
+                </div>
             </div>
-            <div class="form-group col-md-6">
-                <label for="inputSurname">Surname</label>
-                <input type="text" class="form-control" id="inputSurname">
-            </div>
-            <div class="form-group col-md-6">
-                <label for="inputDate">Date of Birth</label>
-                <input type="text" class="form-control" id="inputDate">
-            </div>
-
-            <div class="col">
-                <button class="btn btn-success" id="buttonSave">Save</button>
-                <button class="btn btn-danger" id="buttonCancel">Cancel</button>
+            <div class="form-row justify-content-end">
+                <div class="col-auto">
+                    <button class="btn btn-success" id="buttonSave">Save</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" id="buttonCancel">Cancel</button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" id="buttonDelete">Delete</button>
+                </div>
             </div>
         </div>
 
@@ -52,6 +65,7 @@
         </div>
     </div>
 
+    <script src="firebase.js"></script>
     <script src="pageTwo.js"></script>
 </body>
 
