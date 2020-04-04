@@ -1,3 +1,11 @@
 * {
     transition: .5s;
 }
+
+.table td,
+.table th {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

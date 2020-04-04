@@ -12,7 +12,7 @@
 <body onload="pageLoaded()">
     <div class="container">
         <div class="form-group col">
-            <button class="btn btn-primary" id="buttonCreate">Create</button>
+            <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">Create</button>
         </div>
         <div id="formEditData" hidden>
             <div class="form-row">
@@ -39,6 +39,18 @@
                 <div class="form-group col-auto">
                     <label>Phone Number 3</label>
                     <input type="tel" class="form-control" id="inputPhone3">
+                </div>
+                <div class="form-group col-auto">
+                    <label>Country</label>
+                    <select class="form-control" id="inputCountry">
+                        <option value="rus">Russia</option>
+                        <option value="ukr">Ukraine</option>
+                        <option value="kaz">Kazakhstan</option>
+                    </select>
+                </div>
+                <div class="form-group col-auto">
+                    <label>Description</label>
+                    <textarea cols="25" rows="3" class="form-control" id="inputDescription"></textarea>
                 </div>
                 <div class="form-group col-auto" hidden>
                     <label>User Created</label>
@@ -67,27 +79,31 @@
             </div>
             <div class="form-row justify-content-end">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="buttonSave">Save</button>
+                    <button class="btn btn-success" id="buttonSave" onclick="buttonSaveClick()">Save</button>
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-danger" id="buttonCancel">Cancel</button>
+                    <button class="btn btn-danger" id="buttonCancel" onclick="clearPerson()">Cancel</button>
                 </div>
                 <div class="col-auto" hidden>
-                    <button class="btn btn-danger" id="buttonDelete">Delete</button>
+                    <button class="btn btn-danger" id="buttonDelete" onclick="buttonDeleteClick()">Delete</button>
                 </div>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-hover table-bordered">
+            <table class="table table-hover table-bordered ">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Surname</th>
-                        <th>Date of Birth</th>
-                        <th>Phone Number</th>
-                        <th>Phone Number 2</th>
-                        <th>Phone Number 3</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="id">ID</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="name">Name</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="surname">Surname</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="birthDate">Date of Birth</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone">Phone Number</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone2">Phone Number 2</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone3">Phone Number 3</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="country">Country</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="description">Description</th>
+                        <th class="tableHeader" onclick="listAndSort(this.id)" id="createDate">Date of Creation</th>
                     </tr>
                 </thead>
                 <tbody id="personsList">

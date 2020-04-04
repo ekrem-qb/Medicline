@@ -15,7 +15,7 @@ function createWindow() {
     })
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, 'pagePersonsList.html'),
         protocol: 'file',
         slashes: true
     }))
@@ -25,9 +25,6 @@ function createWindow() {
     win.on('closed', () => {
         win = null
     })
-
-    // Your web app's Firebase configuration
-
 }
 
 app.on('ready', createWindow)
