@@ -36,6 +36,7 @@ function pageLoaded() {
     })
 
     listAndSort('createDate')
+    $('#formEditData').fadeOut()
 }
 
 function buttonCreateClick() {
@@ -51,11 +52,7 @@ function buttonCreateClick() {
         console.log(personId + ' ' + exists)
     }
 
-    formEditData.hidden = false
-}
-
-inputBirthDate.onchange = function () {
-    console.log(inputBirthDate.value)
+    $('#formEditData').fadeIn()
 }
 
 function clearPerson() {
@@ -81,7 +78,7 @@ function clearPerson() {
     inputUpdateDate.value = null
     inputUpdateTime.parentElement.hidden = true
     inputUpdateTime.value = null
-    formEditData.hidden = true
+    $('#formEditData').fadeOut()
     buttonDelete.parentElement.hidden = true
 }
 
@@ -181,7 +178,7 @@ function listAndSort(clickedID) {
                 personId = rowPerson.id
                 person = snapshot.child(personId)
 
-                formEditData.hidden = false
+                $('#formEditData').fadeIn()
                 buttonDelete.parentElement.hidden = false
 
                 inputName.value = person.child('name').val()
@@ -236,7 +233,7 @@ function listAndSort(clickedID) {
 
     if (clickedHeader.textContent.includes('∧')) {
         $('tbody').each(function () {
-            var list = $(this).children('tr');
+            var list = $(this).children('tr')
             $(this).html(list.get().reverse())
         })
         clickedHeader.textContent = clickedHeader.textContent.replace('∧', '∨')

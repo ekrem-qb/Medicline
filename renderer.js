@@ -1,32 +1,42 @@
-// var buttonSignUp = document.getElementById('buttonSignUp')
-var buttonSignIn = document.getElementById('buttonSignIn')
+// This file is required by the index.html file and will
+// be executed in the renderer process for that window.
+// All of the Node.js APIs are available in this process.
 
-// buttonSignUp.addEventListener('click', function () {
-//     var email = document.getElementById('inputEmail').value
-//     var password = document.getElementById('inputPassword').value
+'use strict';
 
-//     firebase.auth().createUserWithEmailAndPassword(email, password).then(function () {
-//         alert('User created!!!')
-//     }).catch(function (error) {
-//         if (error != null) {
-//             alert(error.message)
-//             return
-//         }
-//     })
-// })
+async function main() {
+  const { ipcRenderer, remote } = require('electron');
+  const isDevelopment = require('electron-is-dev');
 
-buttonSignIn.addEventListener('click', function () {
-    var email = document.getElementById('inputEmail').value
-    var password = document.getElementById('inputPassword').value
+  //console.log(process.env);
 
-    firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
-        localStorage.setItem("email", email)
-        localStorage.setItem("password", password)
-        document.location.href = "pagePersonsList.html"
-    }).catch(function (error) {
-        if (error != null) {
-            alert(error.message)
-            return
-        }
-    })
-})
+  if (isDevelopment) {
+    // this is to give Chrome Debugger time to attach to the new window 
+    await new Promise(r => setTimeout(r, 1000));
+  }
+
+  // breakpoints should work from here on,
+  // toggle them with F9 or just use 'debugger'
+  //debugger;
+
+  // await the document to finish loading
+  await new Promise(resolve =>
+    document.readyState === 'loading' ?
+      document.addEventListener('DOMContentLoaded', resolve) :
+      resolve());
+
+  // notify Main that Renderer is ready
+  ipcRenderer.send('rendererReady', null);
+
+  // await confirmation that Main is ready
+  await new Promise(resolve => ipcRenderer.once('mainReady', resolve));
+
+  // now both Main and Renderer processes are ready
+  // we can do whatever we want
+
+}
+
+main().catch(function (error) {
+  console.log(error);
+  alert(error);
+});

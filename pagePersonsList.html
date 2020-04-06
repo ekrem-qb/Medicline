@@ -7,14 +7,17 @@
     <title>Page Two</title>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="imports.js"></script>
 </head>
 
 <body onload="pageLoaded()">
     <div class="container">
-        <div class="form-group col">
-            <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">Create</button>
+        <div class="form-row">
+            <div class="form-group col-auto">
+                <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">Create</button>
+            </div>
         </div>
-        <div id="formEditData" hidden>
+        <div id="formEditData">
             <div class="form-row">
                 <div class="form-group col-auto">
                     <label>Name</label>
@@ -110,9 +113,12 @@
                 </tbody>
             </table>
         </div>
+        <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))">Export</button>
     </div>
 
-    <script src="firebase.js"></script>
+    <script>
+        require('./renderer.js')
+    </script>
     <script src="pagePersonsList.js"></script>
 </body>
 
