@@ -14,7 +14,13 @@
     <div class="container">
         <div class="form-row">
             <div class="form-group col-auto">
-                <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">Create</button>
+                <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">➕Create</button>
+            </div>
+            <div class="form-group col-auto">
+                <input type="text" class="form-control" id="inputSearch">
+            </div>
+            <div class="form-group col-auto">
+                <button class="btn btn-primary" id="buttonSearch" onclick="buttonSearchClick()">🕵️‍♂️Search</button>
             </div>
         </div>
         <div id="formEditData">
@@ -82,13 +88,13 @@
             </div>
             <div class="form-row justify-content-end">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="buttonSave" onclick="buttonSaveClick()">Save</button>
+                    <button class="btn btn-success" id="buttonSave" onclick="buttonSaveClick()">✔Save</button>
                 </div>
                 <div class="col-auto">
                     <button class="btn btn-danger" id="buttonCancel" onclick="clearPerson()">Cancel</button>
                 </div>
                 <div class="col-auto" hidden>
-                    <button class="btn btn-danger" id="buttonDelete" onclick="buttonDeleteClick()">Delete</button>
+                    <button class="btn btn-danger" id="buttonDelete" onclick="buttonDeleteClick()">❌Delete</button>
                 </div>
             </div>
         </div>
@@ -97,16 +103,16 @@
             <table class="table table-hover table-bordered ">
                 <thead>
                     <tr>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="id">ID</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="name">Name</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="surname">Surname</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="birthDate">Date of Birth</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone">Phone Number</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone2">Phone Number 2</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="phone3">Phone Number 3</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="country">Country</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="description">Description</th>
-                        <th class="tableHeader" onclick="listAndSort(this.id)" id="createDate">Date of Creation</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="id">ID</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="name">Name</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="surname">Surname</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="birthDate">Date of Birth</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="phone">Phone Number</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="phone2">Phone Number 2</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="phone3">Phone Number 3</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="country">Country</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="description">Description</th>
+                        <th class="tableHeader" onclick="sortPersons(this.id)" id="createDate">Date of Creation</th>
                     </tr>
                 </thead>
                 <tbody id="personsList">

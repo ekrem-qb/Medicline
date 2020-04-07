@@ -66,7 +66,7 @@ async function main() {
 
     //
     // Open the DevTools if desired
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
     //
 
     // awaiting terminationPromise here keeps the mainWindow object alive
