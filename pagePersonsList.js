@@ -20,6 +20,7 @@ const inputUpdateTime = document.getElementById('inputUpdateTime')
 
 const buttonDelete = document.getElementById('buttonDelete')
 
+const tableHeaders = document.getElementsByClassName('tableHeader')
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
 
@@ -83,17 +84,33 @@ function buttonCreateClick() {
     $('#formEditData').fadeIn()
 }
 
-inputSearch.onchange = function () {
+inputSearch.oninput = function () {
     var searchQuery = String(inputSearch.value).trim()
     inputSearch.value = searchQuery
-    listPersons.mark(searchQuery)
-    /* personsList.innerHTML = null
-    persons.orderByChild('name')
-        .startAt(searchQuery)
-        .endAt(searchQuery + '\uf8ff')
-        .once('value', function (snapshot) {
-            listPersons(snapshot, false)
-        }) */
+
+    if (searchQuery != '') {
+        var foundPersons = new Array()
+        persons.once('value', function (snapshot) {
+            snapshot.forEach(p => {
+                if (!foundPersons.includes(p.key)) {
+                    if (String(p.key).includes(searchQuery)) {
+                        foundPersons.push(p.key)
+                    }
+                    else {
+                        p.forEach(element => {
+                            if (String(element.val()).includes(searchQuery)) {
+                                foundPersons.push(p.key)
+                            }
+                        })
+                    }
+                }
+            })
+            listPersons(snapshot, true, foundPersons, searchQuery)
+        })
+    }
+    else {
+        sortPersons('createDate')
+    }
 }
 
 function buttonSaveClick() {
@@ -139,7 +156,7 @@ function sortPersons(clickedID) {
         listPersons(snapshot)
     })
 
-    Array.from(document.getElementsByClassName('tableHeader')).forEach(element => {
+    Array.from(tableHeaders).forEach(element => {
         if (element.id != clickedID) {
             if (element.textContent.includes('∧')) {
                 element.textContent = element.textContent.replace('∧', '')
@@ -171,59 +188,41 @@ function sortPersons(clickedID) {
     }
 }
 
-function listPersons(snap, clean) {
-    if (clean == undefined) {
-        clean = true
-    }
-    if (clean) {
+function listPersons(snap, clean, foundPersons, searchQuery) {
+    if (clean || clean == undefined) {
         personsList.innerHTML = null
     }
 
     snap.forEach(p => {
-        var tr = document.createElement('tr')
-        tr.id = p.key
-        tr.className = 'rowPerson'
-        personsList.appendChild(tr)
+        if (foundPersons == undefined || foundPersons.includes(p.key)) {
+            var tr = document.createElement('tr')
+            tr.id = p.key
+            tr.className = 'rowPerson'
+            personsList.appendChild(tr)
 
-        var td_ID = document.createElement('td')
-        tr.appendChild(td_ID)
-        td_ID.textContent = p.key
+            Array.from(tableHeaders).forEach(element => {
+                var td = document.createElement('td')
+                tr.appendChild(td)
+                switch (element.id) {
+                    case 'id':
+                        td.textContent = p.key
+                        break;
+                    case 'createDate':
+                        td.textContent = new Date(p.child(element.id).val()).toISOString().substr(0, 10)
+                        break;
+                    case 'description':
+                        td.textContent = td.title = p.child(element.id).val()
+                        break;
+                    default:
+                        td.textContent = p.child(element.id).val()
+                        break;
+                }
 
-        var td_Name = document.createElement('td')
-        tr.appendChild(td_Name)
-        td_Name.textContent = p.child('name').val()
-
-        var td_Surname = document.createElement('td')
-        tr.appendChild(td_Surname)
-        td_Surname.textContent = p.child('surname').val()
-
-        var td_BirthDate = document.createElement('td')
-        tr.appendChild(td_BirthDate)
-        td_BirthDate.textContent = p.child('birthDate').val()
-
-        var td_Phone = document.createElement('td')
-        tr.appendChild(td_Phone)
-        td_Phone.textContent = p.child('phone').val()
-
-        var td_Phone2 = document.createElement('td')
-        tr.appendChild(td_Phone2)
-        td_Phone2.textContent = p.child('phone2').val()
-
-        var td_Phone3 = document.createElement('td')
-        tr.appendChild(td_Phone3)
-        td_Phone3.textContent = p.child('phone3').val()
-
-        var td_Country = document.createElement('td')
-        tr.appendChild(td_Country)
-        td_Country.textContent = p.child('country').val()
-
-        var td_Description = document.createElement('td')
-        tr.appendChild(td_Description)
-        td_Description.textContent = p.child('description').val()
-
-        var td_CreateDate = document.createElement('td')
-        tr.appendChild(td_CreateDate)
-        td_CreateDate.textContent = new Date(p.child('createDate').val()).toISOString().substr(0, 10)
+                if (td.textContent.includes(searchQuery)) {
+                    td.classList.add('bg-warning')
+                }
+            })
+        }
     })
 
     Array.from(rowPersons).forEach(rowPerson => {
