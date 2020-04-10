@@ -85,19 +85,19 @@
             </div>
             <div class="form-row justify-content-end">
                 <div class="col-auto">
-                    <button class="btn btn-success" id="buttonSave" onclick="buttonSaveClick()">✔Save</button>
+                    <button class="btn btn-success" onclick="buttonSaveClick()" id="buttonSave">✔Save</button>
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-danger" id="buttonCancel" onclick="clearPerson()">Cancel</button>
+                    <button class="btn btn-danger" onclick="clearPerson()" id="buttonCancel">Cancel</button>
                 </div>
                 <div class="col-auto" hidden>
-                    <button class="btn btn-danger" id="buttonDelete" onclick="buttonDeleteClick()">❌Delete</button>
+                    <button class="btn btn-danger" onclick="buttonDeleteClick()" id="buttonDelete">❌Delete</button>
                 </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered ">
+        <div class="table-responsive" onscroll="tableScroll()">
+            <table class=" table table-hover table-bordered">
                 <thead>
                     <tr>
                         <th class="tableHeader" onclick="sortPersons(this.id)" id="id">ID</th>
@@ -115,7 +115,9 @@
                 </tbody>
             </table>
         </div>
-        <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))">Export</button>
+        <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))"
+            id="buttonExport">Export</button>
+        <button class="btn btn-success" onclick="tableScroll()" id="buttonLoad">Load</button>
     </div>
 
     <script>

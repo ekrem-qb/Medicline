@@ -21,11 +21,13 @@ const inputUpdateTime = document.getElementById('inputUpdateTime')
 const buttonDelete = document.getElementById('buttonDelete')
 
 const tableHeaders = document.getElementsByClassName('tableHeader')
+var clickedHeader
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
 
 const persons = firebase.database().ref('persons')
 var personId, person, exists
+var personsLimit = 10
 
 function pageLoaded() {
     firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
@@ -37,7 +39,7 @@ function pageLoaded() {
         }
     })
 
-    sortPersons('createDate')
+    sortPersons('id')
     $('#formEditData').fadeOut()
 }
 
@@ -98,7 +100,7 @@ inputSearch.oninput = function () {
                     }
                     else {
                         p.forEach(element => {
-                            if (String(element.val()).includes(searchQuery)) {
+                            if (String(element.val()).toLowerCase().includes(searchQuery.toLowerCase())) {
                                 foundPersons.push(p.key)
                             }
                         })
@@ -141,7 +143,6 @@ function buttonSaveClick() {
             createDate: new Date().toISOString()
         })
     }
-
     clearPerson()
 }
 
@@ -151,10 +152,46 @@ function buttonDeleteClick() {
     clearPerson()
 }
 
+function loadPersons(startID) {
+    if (clickedHeader.id == 'id') {
+        persons.orderByKey().startAt(String(startID)).limitToFirst(personsLimit).on('value', function (snapshot) {
+            listPersons(snapshot)
+        })
+    }
+    else {
+        persons.orderByChild(clickedHeader.id).startAt(String(startID)).limitToFirst(personsLimit).on('value', function (snapshot) {
+            listPersons(snapshot)
+        })
+    }
+
+}
+function loadPersonsReverse(endID) {
+    if (clickedHeader.id == 'id') {
+        persons.orderByKey().endAt(String(endID)).limitToLast(personsLimit).on('value', function (snapshot) {
+            listPersons(snapshot)
+            console.log(snapshot.exportVal())
+
+            $('tbody').each(function () {
+                var list = $(this).children('tr')
+                $(this).html(list.get().reverse())
+            })
+        })
+    }
+    else {
+        persons.orderByChild(clickedHeader.id).endAt(String(endID)).limitToLast(personsLimit).on('value', function (snapshot) {
+            listPersons(snapshot)
+            console.log(snapshot.exportVal())
+
+            $('tbody').each(function () {
+                var list = $(this).children('tr')
+                $(this).html(list.get().reverse())
+            })
+        })
+    }
+}
+
 function sortPersons(clickedID) {
-    persons.orderByChild(clickedID).on('value', function (snapshot) {
-        listPersons(snapshot)
-    })
+    clickedHeader = document.getElementById(clickedID)
 
     Array.from(tableHeaders).forEach(element => {
         if (element.id != clickedID) {
@@ -167,24 +204,18 @@ function sortPersons(clickedID) {
         }
     })
 
-    var clickedHeader = document.getElementById(clickedID)
-
-    if (clickedHeader.textContent.includes('∧')) {
-        $('tbody').each(function () {
-            var list = $(this).children('tr')
-            $(this).html(list.get().reverse())
-        })
-        clickedHeader.textContent = clickedHeader.textContent.replace('∧', '∨')
-    }
-    else if (clickedHeader.textContent.includes('∨')) {
+    if (clickedHeader.textContent.includes('∨')) {
+        loadPersons()
         clickedHeader.textContent = clickedHeader.textContent.replace('∨', '∧')
     }
     else {
-        $('tbody').each(function () {
-            var list = $(this).children('tr')
-            $(this).html(list.get().reverse())
-        })
-        clickedHeader.textContent += ' ∨'
+        loadPersonsReverse()
+        if (clickedHeader.textContent.includes('∧')) {
+            clickedHeader.textContent = clickedHeader.textContent.replace('∧', '∨')
+        }
+        else {
+            clickedHeader.textContent += ' ∨'
+        }
     }
 }
 
@@ -217,9 +248,10 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                         td.textContent = p.child(element.id).val()
                         break;
                 }
-
-                if (td.textContent.includes(searchQuery)) {
-                    td.classList.add('bg-warning')
+                if (searchQuery != undefined) {
+                    if (td.textContent.toLowerCase().includes(searchQuery.toLowerCase())) {
+                        td.classList.add('bg-warning')
+                    }
                 }
             })
         }
@@ -270,4 +302,14 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
             console.log(personId + ' ' + exists)
         }
     })
+}
+
+function tableScroll() {
+    //personsLimit++
+    if (clickedHeader.textContent.includes('∧')) {
+        loadPersons(Array.from(rowPersons)[1].id)
+    }
+    if (clickedHeader.textContent.includes('∨')) {
+        loadPersonsReverse(Array.from(rowPersons)[1].id)
+    }
 }
