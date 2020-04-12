@@ -11,113 +11,163 @@
 </head>
 
 <body onload="pageLoaded()">
-    <div class="container">
-        <div class="form-row">
-            <div class="form-group col-auto">
-                <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">➕Create</button>
-            </div>
-            <div class="form-group col-auto">
-                <input type="text" class="form-control" id="inputSearch">
-            </div>
-        </div>
-        <div id="formEditData">
+    <div class="d-flex justify-content-around my-4 px-1">
+        <div class="form">
             <div class="form-row">
                 <div class="form-group col-auto">
-                    <label>Name</label>
-                    <input type="text" class="form-control" id="inputName">
+                    <button class="btn btn-primary" id="buttonCreate" onclick="buttonCreateClick()">➕Create</button>
                 </div>
                 <div class="form-group col-auto">
-                    <label>Surname</label>
-                    <input type="text" class="form-control" id="inputSurname">
-                </div>
-                <div class="form-group col-auto">
-                    <label>Date of Birth</label>
-                    <input type="date" class="form-control" id="inputBirthDate">
-                </div>
-                <div class="form-group col-auto">
-                    <label>Phone Number</label>
-                    <input type="tel" class="form-control" id="inputPhone">
-                </div>
-                <div class="form-group col-auto">
-                    <label>Phone Number 2</label>
-                    <input type="tel" class="form-control" id="inputPhone2">
-                </div>
-                <div class="form-group col-auto">
-                    <label>Phone Number 3</label>
-                    <input type="tel" class="form-control" id="inputPhone3">
-                </div>
-                <div class="form-group col-auto">
-                    <label>Country</label>
-                    <select class="form-control" id="inputCountry">
-                        <option value="rus">Russia</option>
-                        <option value="ukr">Ukraine</option>
-                        <option value="kaz">Kazakhstan</option>
-                    </select>
-                </div>
-                <div class="form-group col-auto">
-                    <label>Description</label>
-                    <textarea cols="25" rows="3" class="form-control" id="inputDescription"></textarea>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>User Created</label>
-                    <input type="text" class="form-control" id="inputCreateUser" disabled>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>Date of Creation</label>
-                    <input type="date" class="form-control" id="inputCreateDate" disabled>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>Time of Creation</label>
-                    <input type="time" class="form-control" id="inputCreateTime" disabled>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>User Last Updated</label>
-                    <input type="text" class="form-control" id="inputUpdateUser" disabled>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>Date of Last Update</label>
-                    <input type="date" class="form-control" id="inputUpdateDate" disabled>
-                </div>
-                <div class="form-group col-auto" hidden>
-                    <label>Time of Last Update</label>
-                    <input type="time" class="form-control" id="inputUpdateTime" disabled>
+                    <input type="text" class="form-control" id="inputSearch">
                 </div>
             </div>
-            <div class="form-row justify-content-end">
-                <div class="col-auto">
-                    <button class="btn btn-success" onclick="buttonSaveClick()" id="buttonSave">✔Save</button>
+            <div id="formEditData">
+                <div class="form-row">
+                    <div class="form-group col-auto">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="inputName">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Surname</label>
+                        <input type="text" class="form-control" id="inputSurname">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Date of Birth</label>
+                        <input type="date" class="form-control" id="inputBirthDate">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Phone Number</label>
+                        <input type="tel" class="form-control" id="inputPhone">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Phone Number 2</label>
+                        <input type="tel" class="form-control" id="inputPhone2">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Phone Number 3</label>
+                        <input type="tel" class="form-control" id="inputPhone3">
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Country</label>
+                        <select class="form-control" id="inputCountry">
+                            <option value="rus">Russia</option>
+                            <option value="ukr">Ukraine</option>
+                            <option value="kaz">Kazakhstan</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-auto">
+                        <label>Description</label>
+                        <textarea cols="25" rows="3" class="form-control" id="inputDescription"></textarea>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>User Created</label>
+                        <input type="text" class="form-control" id="inputCreateUser" disabled>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>Date of Creation</label>
+                        <input type="date" class="form-control" id="inputCreateDate" disabled>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>Time of Creation</label>
+                        <input type="time" class="form-control" id="inputCreateTime" disabled>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>User Last Updated</label>
+                        <input type="text" class="form-control" id="inputUpdateUser" disabled>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>Date of Last Update</label>
+                        <input type="date" class="form-control" id="inputUpdateDate" disabled>
+                    </div>
+                    <div class="form-group col-auto" hidden>
+                        <label>Time of Last Update</label>
+                        <input type="time" class="form-control" id="inputUpdateTime" disabled>
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <button class="btn btn-danger" onclick="clearPerson()" id="buttonCancel">Cancel</button>
-                </div>
-                <div class="col-auto" hidden>
-                    <button class="btn btn-danger" onclick="buttonDeleteClick()" id="buttonDelete">❌Delete</button>
+                <div class="form-row justify-content-end">
+                    <div class="col-auto">
+                        <button class="btn btn-success" onclick="buttonSaveClick()" id="buttonSave">✔Save</button>
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-danger" onclick="clearPerson()" id="buttonCancel">Cancel</button>
+                    </div>
+                    <div class="col-auto" hidden>
+                        <button class="btn btn-danger" onclick="buttonDeleteClick()" id="buttonDelete">❌Delete</button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="table-responsive" onscroll="tableScroll()">
-            <table class=" table table-hover table-bordered">
-                <thead>
-                    <tr>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="id">ID</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="name">Name</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="surname">Surname</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="birthDate">Date of Birth</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="phone">Phone Number</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="country">Country</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="description">Description</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="createUser">User Created</th>
-                        <th class="tableHeader" onclick="sortPersons(this.id)" id="createDate">Date of Creation</th>
-                    </tr>
-                </thead>
-                <tbody id="personsList">
-                </tbody>
-            </table>
+            <div class="table-responsive" onscroll="tableScroll()">
+                <table class=" table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="id">ID</th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="name">Name
+                            </th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="surname">
+                                Surname
+                            </th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="birthDate">
+                                Date of
+                                Birth</th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="phone">Phone
+                                Number</th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="country">
+                                Country
+                            </th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="description">
+                                Description</th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="createUser">
+                                User
+                                Created</th>
+                            <th class="tableHeader" onclick="sortPersons(this.id)" id="createDate">
+                                Date
+                                of Creation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personsList">
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))"
+                id="buttonExport">Export</button>
         </div>
-        <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))"
-            id="buttonExport">Export</button>
-        <button class="btn btn-success" onclick="tableScroll()" id="buttonLoad">Load</button>
+        <div>
+            <div id="formFilter">
+                <h1>Filter</h1>
+                <label>ID</label>
+                <input type="text" class="form-control form-control-sm" id="id">
+                <label>Name</label>
+                <input type="text" class="form-control form-control-sm" id="name">
+                <label>Surname</label>
+                <input type="text" class="form-control form-control-sm" id="surname">
+                <div>
+                    <label>Minimum Date of Birth</label>
+                    <input type="date" class="form-control form-control-sm" id="birthDate">
+                    <label>Maximum Date of Birth</label>
+                    <input type="date" class="form-control form-control-sm" id="birthDate">
+                </div>
+                <label>Phone Number</label>
+                <input type="tel" class="form-control form-control-sm" id="phone">
+                <label>Country</label>
+                <select class="form-control form-control-sm" id="country">
+                    <option value="rus">Russia</option>
+                    <option value="ukr">Ukraine</option>
+                    <option value="kaz">Kazakhstan</option>
+                </select>
+                <label>Description</label>
+                <textarea cols="25" rows="2" class="form-control form-control-sm" id="description"></textarea>
+                <label>User Created</label>
+                <input type="text" class="form-control form-control-sm" id="createUser">
+                <div>
+                    <label>Minimum Date of Creation</label>
+                    <input type="date" class="form-control form-control-sm" id="createDate">
+                    <label>Maximum Date of Creation</label>
+                    <input type="date" class="form-control form-control-sm" id="createDate">
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="buttonApplyClick()" id="buttonApply">✔Apply</button>
+        </div>
     </div>
 
     <script>

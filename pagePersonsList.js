@@ -1,6 +1,6 @@
-const formEditData = document.getElementById('formEditData')
-
 const inputSearch = document.getElementById('inputSearch')
+
+const formEditData = document.getElementById('formEditData')
 
 const inputName = document.getElementById('inputName')
 const inputSurname = document.getElementById('inputSurname')
@@ -25,9 +25,11 @@ var clickedHeader
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
 
-const persons = firebase.database().ref('persons')
-var personId, person, exists
-var personsLimit = 10
+const persons = firebase.firestore().collection('persons')
+var person, personExists
+var personsLimit = 20
+
+const formFilter = document.getElementById('formFilter')
 
 function pageLoaded() {
     firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
@@ -39,7 +41,7 @@ function pageLoaded() {
         }
     })
 
-    sortPersons('id')
+    sortPersons('createDate')
     $('#formEditData').fadeOut()
 }
 
@@ -73,15 +75,25 @@ function clearPerson() {
 function buttonCreateClick() {
     clearPerson()
 
-    exists = true
-    while (exists) {
+    do {
         personId = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-        person = persons.child(personId)
-        person.once('value', function (snapshot) {
-            exists = snapshot.exists()
-        })
-        console.log(personId + ' ' + exists)
-    }
+        person = persons.doc(personId)
+        persons.get()
+            .then(doc => {
+                doc.forEach(element => {
+                    if (element.id == personId)
+                        personExists = true
+                    else
+                        personExists = false
+                        
+                    console.log(personId + ' ' + personExists)
+                })
+
+            })
+            .catch(err => {
+                console.log('Error getting documents', err);
+            })
+    } while (personExists)
 
     $('#formEditData').fadeIn()
 }
@@ -116,7 +128,7 @@ inputSearch.oninput = function () {
 }
 
 function buttonSaveClick() {
-    if (exists) {
+    if (personExists) {
         person.update({
             name: inputName.value,
             surname: inputSurname.value,
@@ -153,48 +165,41 @@ function buttonDeleteClick() {
 }
 
 function loadPersons(startID) {
-    if (clickedHeader.id == 'id') {
-        persons.orderByKey().startAt(String(startID)).limitToFirst(personsLimit).on('value', function (snapshot) {
-            listPersons(snapshot)
-        })
-    }
-    else {
-        persons.orderByChild(clickedHeader.id).startAt(String(startID)).limitToFirst(personsLimit).on('value', function (snapshot) {
-            listPersons(snapshot)
-        })
-    }
+    // if (clickedHeader.id == 'id') {
+    //     persons.orderBy('__id__').limit(personsLimit).onSnapshot(snapshot => {
+    //         listPersons(snapshot)
+    //     })
+    // }
+    // else {
+    persons.orderBy(clickedHeader.id).limit(personsLimit).onSnapshot(snapshot => {
+        listPersons(snapshot)
+    })
+    // }
 
 }
 function loadPersonsReverse(endID) {
-    if (clickedHeader.id == 'id') {
-        persons.orderByKey().endAt(String(endID)).limitToLast(personsLimit).on('value', function (snapshot) {
-            listPersons(snapshot)
-            console.log(snapshot.exportVal())
+    // if (clickedHeader.id == 'id') {
+    //     persons.orderBy('__id__').limit(personsLimit).onSnapshot(snapshot => {
+    //         listPersons(snapshot)
 
-            $('tbody').each(function () {
-                var list = $(this).children('tr')
-                $(this).html(list.get().reverse())
-            })
-        })
-    }
-    else {
-        persons.orderByChild(clickedHeader.id).endAt(String(endID)).limitToLast(personsLimit).on('value', function (snapshot) {
-            listPersons(snapshot)
-            console.log(snapshot.exportVal())
-
-            $('tbody').each(function () {
-                var list = $(this).children('tr')
-                $(this).html(list.get().reverse())
-            })
-        })
-    }
+    //         /* $('tbody').each(function () {
+    //             var list = $(this).children('tr')
+    //             $(this).html(list.get().reverse())
+    //         }) */
+    //     })
+    // }
+    // else {
+    persons.orderBy(clickedHeader.id, 'desc').limit(personsLimit).onSnapshot(snapshot => {
+        listPersons(snapshot)
+    })
+    // }
 }
 
-function sortPersons(clickedID) {
-    clickedHeader = document.getElementById(clickedID)
+function sortPersons(clickHeader) {
+    clickedHeader = document.querySelector('th#' + clickHeader)
 
     Array.from(tableHeaders).forEach(element => {
-        if (element.id != clickedID) {
+        if (element.id != clickedHeader.id) {
             if (element.textContent.includes('∧')) {
                 element.textContent = element.textContent.replace('∧', '')
             }
@@ -225,27 +230,28 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
     }
 
     snap.forEach(p => {
-        if (foundPersons == undefined || foundPersons.includes(p.key)) {
-            var tr = document.createElement('tr')
-            tr.id = p.key
+        if (foundPersons == undefined || foundPersons.includes(p.id)) {
+            let tr = document.createElement('tr')
+            tr.id = p.id
             tr.className = 'rowPerson'
             personsList.appendChild(tr)
 
             Array.from(tableHeaders).forEach(element => {
-                var td = document.createElement('td')
+                let elementID = element.id
+                let td = document.createElement('td')
                 tr.appendChild(td)
-                switch (element.id) {
+                switch (elementID) {
                     case 'id':
-                        td.textContent = p.key
+                        td.textContent = p.id
                         break;
                     case 'createDate':
-                        td.textContent = new Date(p.child(element.id).val()).toISOString().substr(0, 10)
+                        td.textContent = new Date(p.get(elementID)).toISOString().substr(0, 10)
                         break;
                     case 'description':
-                        td.textContent = td.title = p.child(element.id).val()
+                        td.textContent = td.title = p.get(elementID)
                         break;
                     default:
-                        td.textContent = p.child(element.id).val()
+                        td.textContent = p.get(elementID)
                         break;
                 }
                 if (searchQuery != undefined) {
@@ -261,55 +267,60 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
         rowPerson.ondblclick = function () {
             clearPerson()
 
-            personId = rowPerson.id
-            person = snap.child(personId)
+            snap.forEach(element => {
+                if (element.id == rowPerson.id) {
+                    $('#formEditData').fadeIn()
+                    buttonDelete.parentElement.hidden = false
 
-            $('#formEditData').fadeIn()
-            buttonDelete.parentElement.hidden = false
-
-            inputName.value = person.child('name').val()
-            inputSurname.value = person.child('surname').val()
-            inputBirthDate.value = person.child('birthDate').val()
-            inputPhone.value = person.child('phone').val()
-            inputPhone2.value = person.child('phone2').val()
-            inputPhone3.value = person.child('phone3').val()
-            inputCountry.value = person.child('country').val()
-            inputDescription.value = person.child('description').val()
-            inputCreateUser.parentElement.hidden = false
-            inputCreateUser.value = person.child('createUser').val()
-            inputCreateDate.parentElement.hidden = false
-            inputCreateDate.value = new Date(person.child('createDate').val()).toISOString().substr(0, 10)
-            inputCreateTime.parentElement.hidden = false
-            inputCreateTime.value = new Date(person.child('createDate').val()).toLocaleTimeString()
-            if (person.hasChild('updateUser')) {
-                inputUpdateUser.parentElement.hidden = false
-                inputUpdateUser.value = person.child('updateUser').val()
-            }
-            if (person.hasChild('updateDate')) {
-                inputUpdateDate.parentElement.hidden = false
-                inputUpdateDate.value = new Date(person.child('updateDate').val()).toISOString().substr(0, 10)
-            }
-            if (person.hasChild('updateDate')) {
-                inputUpdateTime.parentElement.hidden = false
-                inputUpdateTime.value = new Date(person.child('updateDate').val()).toLocaleTimeString()
-            }
-
-            person = persons.child(personId)
-
-            person.once('value', function (snap) {
-                exists = snap.exists()
+                    inputName.value = element.get('name')
+                    inputSurname.value = element.get('surname')
+                    inputBirthDate.value = element.get('birthDate')
+                    inputPhone.value = element.get('phone')
+                    inputPhone2.value = element.get('phone2')
+                    inputPhone3.value = element.get('phone3')
+                    inputCountry.value = element.get('country')
+                    inputDescription.value = element.get('description')
+                    inputCreateUser.parentElement.hidden = false
+                    inputCreateUser.value = element.get('createUser')
+                    inputCreateDate.parentElement.hidden = false
+                    inputCreateDate.value = new Date(element.get('createDate')).toISOString().substr(0, 10)
+                    inputCreateTime.parentElement.hidden = false
+                    inputCreateTime.value = new Date(element.get('createDate')).toLocaleTimeString()
+                    if (element.get('updateUser') != undefined) {
+                        inputUpdateUser.parentElement.hidden = false
+                        inputUpdateUser.value = element.get('updateUser')
+                    }
+                    if (element.get('updateDate') != undefined) {
+                        inputUpdateDate.parentElement.hidden = false
+                        inputUpdateDate.value = new Date(element.get('updateDate')).toISOString().substr(0, 10)
+                    }
+                    if (element.get('updateDate') != undefined) {
+                        inputUpdateTime.parentElement.hidden = false
+                        inputUpdateTime.value = new Date(element.get('updateDate')).toLocaleTimeString()
+                    }
+                }
             })
-            console.log(personId + ' ' + exists)
+
         }
     })
 }
 
 function tableScroll() {
-    //personsLimit++
-    if (clickedHeader.textContent.includes('∧')) {
-        loadPersons(Array.from(rowPersons)[1].id)
+    if (personsList.getBoundingClientRect().bottom < document.documentElement.clientHeight + 100) {
+        personsLimit++
+        if (clickedHeader.textContent.includes('∧'))
+            loadPersons()
+        if (clickedHeader.textContent.includes('∨'))
+            loadPersonsReverse()
     }
-    if (clickedHeader.textContent.includes('∨')) {
-        loadPersonsReverse(Array.from(rowPersons)[1].id)
-    }
+}
+
+function buttonApplyClick() {
+    Array.from(formFilter.getElementsByClassName('form-control')).forEach(element => {
+        if (element.id == 'country') {
+            persons.equalTo(element.value).once('value', function (snapshot) {
+                listPersons(snapshot)
+            })
+        }
+    })
 }

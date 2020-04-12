@@ -3,7 +3,7 @@ const TableExport = require('tableexport')
 
 const firebase = require('firebase/app')
 require('firebase/auth')
-require('firebase/database')
+require('firebase/firestore')
 
 var firebaseConfig = {
     apiKey: "AIzaSyBEMpWUykF8sZB83zlpZZpq5u5QgTID0W8",
@@ -14,5 +14,5 @@ var firebaseConfig = {
     messagingSenderId: "169065015752",
     appId: "1:169065015752:web:efda915944a808ea24f8fd",
     measurementId: "G-K1XPKRC2L6"
-};
-firebase.initializeApp(firebaseConfig);
+}
+firebase.initializeApp(firebaseConfig)
