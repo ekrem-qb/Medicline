@@ -32,17 +32,17 @@ var personsLimit = 20
 const formFilter = document.getElementById('formFilter')
 
 function pageLoaded() {
-    firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
+    /* firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
 
     }).catch(function (error) {
         if (error != null) {
             alert(error.message)
             return
         }
-    })
+    }) */
 
     sortPersons('createDate')
-    $('#formEditData').fadeOut()
+    clearPerson()
 }
 
 function clearPerson() {
@@ -75,27 +75,18 @@ function clearPerson() {
 function buttonCreateClick() {
     clearPerson()
 
-    do {
-        personId = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-        person = persons.doc(personId)
-        persons.get()
-            .then(doc => {
-                doc.forEach(element => {
-                    if (element.id == personId)
-                        personExists = true
-                    else
-                        personExists = false
-                        
-                    console.log(personId + ' ' + personExists)
-                })
+    let stop = persons.onSnapshot(snapshot => {
+        do {
+            personId = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+            person = persons.doc(personId)
+            personExists = snapshot.docs.some(item => item.id === personId)
 
-            })
-            .catch(err => {
-                console.log('Error getting documents', err);
-            })
-    } while (personExists)
+            console.log(personId + ': ' + personExists)
+        } while (personExists)
 
-    $('#formEditData').fadeIn()
+        stop()
+        $('#formEditData').fadeIn()
+    })
 }
 
 inputSearch.oninput = function () {
@@ -104,19 +95,11 @@ inputSearch.oninput = function () {
 
     if (searchQuery != '') {
         var foundPersons = new Array()
-        persons.once('value', function (snapshot) {
+        persons.onSnapshot(snapshot => {
             snapshot.forEach(p => {
-                if (!foundPersons.includes(p.key)) {
-                    if (String(p.key).includes(searchQuery)) {
-                        foundPersons.push(p.key)
-                    }
-                    else {
-                        p.forEach(element => {
-                            if (String(element.val()).toLowerCase().includes(searchQuery.toLowerCase())) {
-                                foundPersons.push(p.key)
-                            }
-                        })
-                    }
+                if (!foundPersons.includes(p.id)) {
+                    if ((String(p.id) + JSON.stringify(p.data()).toLowerCase()).includes(searchQuery.toLowerCase()))
+                        foundPersons.push(p.id)
                 }
             })
             listPersons(snapshot, true, foundPersons, searchQuery)
@@ -139,7 +122,7 @@ function buttonSaveClick() {
             country: inputCountry.value,
             description: inputDescription.value,
             updateUser: firebase.auth().currentUser.email,
-            updateDate: new Date().toISOString()
+            updateDate: new Date().toJSON()
         })
     } else {
         person.set({
@@ -152,47 +135,42 @@ function buttonSaveClick() {
             country: inputCountry.value,
             description: inputDescription.value,
             createUser: firebase.auth().currentUser.email,
-            createDate: new Date().toISOString()
+            createDate: new Date().toJSON()
         })
     }
     clearPerson()
 }
 
 function buttonDeleteClick() {
-    person.remove()
+    person.delete()
 
     clearPerson()
 }
 
 function loadPersons(startID) {
-    // if (clickedHeader.id == 'id') {
-    //     persons.orderBy('__id__').limit(personsLimit).onSnapshot(snapshot => {
-    //         listPersons(snapshot)
-    //     })
-    // }
-    // else {
-    persons.orderBy(clickedHeader.id).limit(personsLimit).onSnapshot(snapshot => {
-        listPersons(snapshot)
-    })
-    // }
+    if (clickedHeader.id == 'id') {
+        persons.onSnapshot(snapshot => {
+            listPersons(snapshot.docs)
+        })
+    }
+    else {
+        persons.orderBy(clickedHeader.id).limit(personsLimit).onSnapshot(snapshot => {
+            listPersons(snapshot)
+        })
+    }
 
 }
 function loadPersonsReverse(endID) {
-    // if (clickedHeader.id == 'id') {
-    //     persons.orderBy('__id__').limit(personsLimit).onSnapshot(snapshot => {
-    //         listPersons(snapshot)
-
-    //         /* $('tbody').each(function () {
-    //             var list = $(this).children('tr')
-    //             $(this).html(list.get().reverse())
-    //         }) */
-    //     })
-    // }
-    // else {
-    persons.orderBy(clickedHeader.id, 'desc').limit(personsLimit).onSnapshot(snapshot => {
-        listPersons(snapshot)
-    })
-    // }
+    if (clickedHeader.id == 'id') {
+        persons.onSnapshot(snapshot => {
+            listPersons(snapshot.docs.reverse())
+        })
+    }
+    else {
+        persons.orderBy(clickedHeader.id, 'desc').limit(personsLimit).onSnapshot(snapshot => {
+            listPersons(snapshot)
+        })
+    }
 }
 
 function sortPersons(clickHeader) {
@@ -245,7 +223,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                         td.textContent = p.id
                         break;
                     case 'createDate':
-                        td.textContent = new Date(p.get(elementID)).toISOString().substr(0, 10)
+                        td.textContent = new Date(p.get(elementID)).toJSON().substr(0, 10)
                         break;
                     case 'description':
                         td.textContent = td.title = p.get(elementID)
@@ -283,7 +261,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     inputCreateUser.parentElement.hidden = false
                     inputCreateUser.value = element.get('createUser')
                     inputCreateDate.parentElement.hidden = false
-                    inputCreateDate.value = new Date(element.get('createDate')).toISOString().substr(0, 10)
+                    inputCreateDate.value = new Date(element.get('createDate')).toJSON().substr(0, 10)
                     inputCreateTime.parentElement.hidden = false
                     inputCreateTime.value = new Date(element.get('createDate')).toLocaleTimeString()
                     if (element.get('updateUser') != undefined) {
@@ -292,7 +270,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     }
                     if (element.get('updateDate') != undefined) {
                         inputUpdateDate.parentElement.hidden = false
-                        inputUpdateDate.value = new Date(element.get('updateDate')).toISOString().substr(0, 10)
+                        inputUpdateDate.value = new Date(element.get('updateDate')).toJSON().substr(0, 10)
                     }
                     if (element.get('updateDate') != undefined) {
                         inputUpdateTime.parentElement.hidden = false
@@ -300,7 +278,8 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     }
                 }
             })
-
+            person = persons.doc(rowPerson.id)
+            personExists = true
         }
     })
 }
