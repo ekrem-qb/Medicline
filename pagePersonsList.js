@@ -21,11 +21,11 @@ const inputUpdateTime = document.getElementById('inputUpdateTime')
 const buttonDelete = document.getElementById('buttonDelete')
 
 const tableHeaders = document.getElementsByClassName('tableHeader')
-var clickedHeader
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
+var currentOrder, currentOrderDirection
 
-const persons = firebase.firestore().collection('persons')
+var persons = allPersons = firebase.firestore().collection('persons')
 var person, personExists
 var personsLimit = 20
 
@@ -41,7 +41,7 @@ function pageLoaded() {
         }
     }) */
 
-    sortPersons('createDate')
+    headerClick('createDate')
     clearPerson()
 }
 
@@ -75,10 +75,10 @@ function clearPerson() {
 function buttonCreateClick() {
     clearPerson()
 
-    let stop = persons.onSnapshot(snapshot => {
+    let stop = allPersons.onSnapshot(snapshot => {
         do {
             personId = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-            person = persons.doc(personId)
+            person = allPersons.doc(personId)
             personExists = snapshot.docs.some(item => item.id === personId)
 
             console.log(personId + ': ' + personExists)
@@ -95,7 +95,7 @@ inputSearch.oninput = function () {
 
     if (searchQuery != '') {
         var foundPersons = new Array()
-        persons.onSnapshot(snapshot => {
+        allPersons.onSnapshot(snapshot => {
             snapshot.forEach(p => {
                 if (!foundPersons.includes(p.id)) {
                     if ((String(p.id) + JSON.stringify(p.data()).toLowerCase()).includes(searchQuery.toLowerCase()))
@@ -147,37 +147,28 @@ function buttonDeleteClick() {
     clearPerson()
 }
 
-function loadPersons(startID) {
-    if (clickedHeader.id == 'id') {
-        persons.onSnapshot(snapshot => {
-            listPersons(snapshot.docs)
-        })
+function orderPersons(orderBy, orderDirection) {
+    if (orderDirection == undefined) {
+        orderDirection = 'asc'
     }
-    else {
-        persons.orderBy(clickedHeader.id).limit(personsLimit).onSnapshot(snapshot => {
-            listPersons(snapshot)
-        })
+    if (orderBy == 'id') {
+        orderBy = '__name__'
     }
 
-}
-function loadPersonsReverse(endID) {
-    if (clickedHeader.id == 'id') {
-        persons.onSnapshot(snapshot => {
-            listPersons(snapshot.docs.reverse())
-        })
-    }
-    else {
-        persons.orderBy(clickedHeader.id, 'desc').limit(personsLimit).onSnapshot(snapshot => {
-            listPersons(snapshot)
-        })
-    }
+    persons.orderBy(orderBy, orderDirection).limit(personsLimit).onSnapshot(snapshot => {
+        listPersons(snapshot)
+        console.log(snapshot)
+    })
+
+    currentOrder = orderBy
+    currentOrderDirection = orderDirection
 }
 
-function sortPersons(clickHeader) {
-    clickedHeader = document.querySelector('th#' + clickHeader)
+function headerClick(headerID) {
+    let clickedHeader = document.querySelector('th#' + headerID)
 
     Array.from(tableHeaders).forEach(element => {
-        if (element.id != clickedHeader.id) {
+        if (element.id != headerID) {
             if (element.textContent.includes('∧')) {
                 element.textContent = element.textContent.replace('∧', '')
             }
@@ -188,11 +179,11 @@ function sortPersons(clickHeader) {
     })
 
     if (clickedHeader.textContent.includes('∨')) {
-        loadPersons()
+        orderPersons(headerID, 'asc')
         clickedHeader.textContent = clickedHeader.textContent.replace('∨', '∧')
     }
     else {
-        loadPersonsReverse()
+        orderPersons(headerID, 'desc')
         if (clickedHeader.textContent.includes('∧')) {
             clickedHeader.textContent = clickedHeader.textContent.replace('∧', '∨')
         }
@@ -278,28 +269,45 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     }
                 }
             })
-            person = persons.doc(rowPerson.id)
+            person = allPersons.doc(rowPerson.id)
             personExists = true
         }
     })
 }
 
-function tableScroll() {
+/* function tableScroll() {
     if (personsList.getBoundingClientRect().bottom < document.documentElement.clientHeight + 100) {
         personsLimit++
         if (clickedHeader.textContent.includes('∧'))
-            loadPersons()
+            sortPersons()
         if (clickedHeader.textContent.includes('∨'))
             loadPersonsReverse()
     }
-}
+} */
 
-function buttonApplyClick() {
-    Array.from(formFilter.getElementsByClassName('form-control')).forEach(element => {
-        if (element.id == 'country') {
-            persons.equalTo(element.value).once('value', function (snapshot) {
-                listPersons(snapshot)
-            })
+function buttonApplyFilterClick() {
+    persons = allPersons
+
+    Array.from(formFilter.getElementsByClassName('form-control')).forEach(inputFilter => {
+        if (inputFilter.value != '') {
+            switch (inputFilter.id) {
+                case 'id':
+                    persons = persons.where("__name__", "==", "" + inputFilter.value + "")
+                    break
+                default:
+                    persons = persons.where("" + inputFilter.id + "", "==", "" + inputFilter.value + "")
+                    break
+            }
         }
     })
+
+    orderPersons(currentOrder, currentOrderDirection)
+}
+
+function buttonClearFilterClick() {
+    Array.from(formFilter.getElementsByClassName('form-control')).forEach(inputFilter => {
+        inputFilter.value = ''
+    })
+    person = allPersons
+    orderPersons(currentOrder, currentOrderDirection)
 }

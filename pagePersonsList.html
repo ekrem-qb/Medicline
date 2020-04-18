@@ -97,30 +97,30 @@
                 </div>
             </div>
 
-            <div class="table-responsive" onscroll="tableScroll()">
+            <div class="table-responsive">
                 <table class=" table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="id">ID</th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="name">Name
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="id">ID</th>
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="name">Name
                             </th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="surname">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="surname">
                                 Surname
                             </th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="birthDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="birthDate">
                                 Date of
                                 Birth</th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="phone">Phone
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="phone">Phone
                                 Number</th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="country">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="country">
                                 Country
                             </th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="description">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="description">
                                 Description</th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="createUser">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="createUser">
                                 User
                                 Created</th>
-                            <th class="tableHeader" onclick="sortPersons(this.id)" id="createDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="createDate">
                                 Date
                                 of Creation</th>
                         </tr>
@@ -151,6 +151,7 @@
                 <input type="tel" class="form-control form-control-sm" id="phone">
                 <label>Country</label>
                 <select class="form-control form-control-sm" id="country">
+                    <option value="">All</option>
                     <option value="rus">Russia</option>
                     <option value="ukr">Ukraine</option>
                     <option value="kaz">Kazakhstan</option>
@@ -166,7 +167,8 @@
                     <input type="date" class="form-control form-control-sm" id="createDate">
                 </div>
             </div>
-            <button class="btn btn-success" onclick="buttonApplyClick()" id="buttonApply">✔Apply</button>
+            <button class="btn btn-success" onclick="buttonApplyFilterClick()" id="buttonApplyFilter">✔Apply</button>
+            <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter">Clear</button>
         </div>
     </div>
 
