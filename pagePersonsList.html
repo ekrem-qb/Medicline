@@ -21,7 +21,7 @@
                     <input type="text" class="form-control" id="inputSearch">
                 </div>
             </div>
-            <div id="formEditData">
+            <div id="formEditData" hidden>
                 <div class="form-row">
                     <div class="form-group col-auto">
                         <label>Name</label>
@@ -50,6 +50,7 @@
                     <div class="form-group col-auto">
                         <label>Country</label>
                         <select class="form-control" id="inputCountry">
+                            <option value="">Choose...</option>
                             <option value="rus">Russia</option>
                             <option value="ukr">Ukraine</option>
                             <option value="kaz">Kazakhstan</option>
@@ -98,29 +99,39 @@
             </div>
 
             <div class="table-responsive">
+                <button id="buttonAddRow" hidden>➕</button>
                 <table class=" table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="id">ID</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="name">Name
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="__name__">ID</th>
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="name">Name
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="surname">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="surname">
                                 Surname
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="birthDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="birthDate">
                                 Date of
                                 Birth</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="phone">Phone
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="phone">Phone
                                 Number</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="country">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="country">
                                 Country
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="description">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="description">
                                 Description</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="createUser">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="createUser">
                                 User
                                 Created</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" id="createDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
+                                id="createDate">
                                 Date
                                 of Creation</th>
                         </tr>
@@ -136,16 +147,16 @@
             <div id="formFilter">
                 <h1>Filter</h1>
                 <label>ID</label>
-                <input type="text" class="form-control form-control-sm" id="id">
+                <input type="text" class="form-control form-control-sm" id="__name__">
                 <label>Name</label>
                 <input type="text" class="form-control form-control-sm" id="name">
                 <label>Surname</label>
                 <input type="text" class="form-control form-control-sm" id="surname">
                 <div>
                     <label>Minimum Date of Birth</label>
-                    <input type="date" class="form-control form-control-sm" id="birthDate">
+                    <input type="date" class="form-control form-control-sm" id="birthDate.min">
                     <label>Maximum Date of Birth</label>
-                    <input type="date" class="form-control form-control-sm" id="birthDate">
+                    <input type="date" class="form-control form-control-sm" id="birthDate.max">
                 </div>
                 <label>Phone Number</label>
                 <input type="tel" class="form-control form-control-sm" id="phone">
@@ -162,13 +173,22 @@
                 <input type="text" class="form-control form-control-sm" id="createUser">
                 <div>
                     <label>Minimum Date of Creation</label>
-                    <input type="date" class="form-control form-control-sm" id="createDate">
+                    <input type="date" class="form-control form-control-sm" id="createDate.min">
                     <label>Maximum Date of Creation</label>
-                    <input type="date" class="form-control form-control-sm" id="createDate">
+                    <input type="date" class="form-control form-control-sm" id="createDate.max">
+                </div>
+                <label>User Last Updated</label>
+                <input type="text" class="form-control form-control-sm" id="updateUser">
+                <div>
+                    <label>Minimum Date of Last Update</label>
+                    <input type="date" class="form-control form-control-sm" id="updateDate.min">
+                    <label>Maximum Date of Last Update</label>
+                    <input type="date" class="form-control form-control-sm" id="updateDate.max">
                 </div>
             </div>
             <button class="btn btn-success" onclick="buttonApplyFilterClick()" id="buttonApplyFilter">✔Apply</button>
-            <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter">Clear</button>
+            <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter"
+                disabled>Clear</button>
         </div>
     </div>
 

@@ -18,7 +18,9 @@ const inputUpdateUser = document.getElementById('inputUpdateUser')
 const inputUpdateDate = document.getElementById('inputUpdateDate')
 const inputUpdateTime = document.getElementById('inputUpdateTime')
 
+const buttonAddRow = document.getElementById('buttonAddRow')
 const buttonDelete = document.getElementById('buttonDelete')
+const buttonClearFilter = document.getElementById('buttonClearFilter')
 
 const tableHeaders = document.getElementsByClassName('tableHeader')
 const personsList = document.getElementById('personsList')
@@ -68,7 +70,7 @@ function clearPerson() {
     inputUpdateDate.value = null
     inputUpdateTime.parentElement.hidden = true
     inputUpdateTime.value = null
-    $('#formEditData').fadeOut()
+    formEditData.hidden = true
     buttonDelete.parentElement.hidden = true
 }
 
@@ -85,7 +87,7 @@ function buttonCreateClick() {
         } while (personExists)
 
         stop()
-        $('#formEditData').fadeIn()
+        formEditData.hidden = false
     })
 }
 
@@ -102,11 +104,16 @@ inputSearch.oninput = function () {
                         foundPersons.push(p.id)
                 }
             })
-            listPersons(snapshot, true, foundPersons, searchQuery)
+            if (foundPersons.length > 0) {
+                listPersons(snapshot, true, foundPersons, searchQuery)
+            }
+            else {
+                personsList.innerHTML = 'Persons not found...'
+            }
         })
     }
     else {
-        sortPersons('createDate')
+        orderPersons(currentOrder, currentOrderDirection)
     }
 }
 
@@ -135,7 +142,9 @@ function buttonSaveClick() {
             country: inputCountry.value,
             description: inputDescription.value,
             createUser: firebase.auth().currentUser.email,
-            createDate: new Date().toJSON()
+            createDate: new Date().toJSON(),
+            updateUser: '',
+            updateDate: ''
         })
     }
     clearPerson()
@@ -151,14 +160,16 @@ function orderPersons(orderBy, orderDirection) {
     if (orderDirection == undefined) {
         orderDirection = 'asc'
     }
-    if (orderBy == 'id') {
-        orderBy = '__name__'
-    }
 
-    persons.orderBy(orderBy, orderDirection).limit(personsLimit).onSnapshot(snapshot => {
-        listPersons(snapshot)
-        console.log(snapshot)
-    })
+    personsList.innerHTML = 'Persons not found...'
+    persons.orderBy(orderBy, orderDirection).limit(personsLimit).onSnapshot(
+        snapshot => {
+            listPersons(snapshot)
+            console.log(snapshot)
+        },
+        err => {
+            console.log(err)
+        })
 
     currentOrder = orderBy
     currentOrderDirection = orderDirection
@@ -193,44 +204,51 @@ function headerClick(headerID) {
     }
 }
 
+function headerHover(headerID) {
+    buttonAddRow.hidden = false
+    buttonAddRow.style.position = 'absolute'
+}
+
 function listPersons(snap, clean, foundPersons, searchQuery) {
-    if (clean || clean == undefined) {
-        personsList.innerHTML = null
-    }
-
-    snap.forEach(p => {
-        if (foundPersons == undefined || foundPersons.includes(p.id)) {
-            let tr = document.createElement('tr')
-            tr.id = p.id
-            tr.className = 'rowPerson'
-            personsList.appendChild(tr)
-
-            Array.from(tableHeaders).forEach(element => {
-                let elementID = element.id
-                let td = document.createElement('td')
-                tr.appendChild(td)
-                switch (elementID) {
-                    case 'id':
-                        td.textContent = p.id
-                        break;
-                    case 'createDate':
-                        td.textContent = new Date(p.get(elementID)).toJSON().substr(0, 10)
-                        break;
-                    case 'description':
-                        td.textContent = td.title = p.get(elementID)
-                        break;
-                    default:
-                        td.textContent = p.get(elementID)
-                        break;
-                }
-                if (searchQuery != undefined) {
-                    if (td.textContent.toLowerCase().includes(searchQuery.toLowerCase())) {
-                        td.classList.add('bg-warning')
-                    }
-                }
-            })
+    if (snap.docs.length > 0) {
+        if (clean || clean == undefined) {
+            personsList.innerHTML = null
         }
-    })
+
+        snap.forEach(p => {
+            if (foundPersons == undefined || foundPersons.includes(p.id)) {
+                let tr = document.createElement('tr')
+                tr.id = p.id
+                tr.className = 'rowPerson'
+                personsList.appendChild(tr)
+
+                Array.from(tableHeaders).forEach(element => {
+                    let elementID = element.id
+                    let td = document.createElement('td')
+                    tr.appendChild(td)
+                    switch (elementID) {
+                        case '__name__':
+                            td.textContent = p.id
+                            break;
+                        case 'createDate':
+                            td.textContent = new Date(p.get(elementID)).toJSON().substr(0, 10)
+                            break;
+                        case 'description':
+                            td.textContent = td.title = p.get(elementID)
+                            break;
+                        default:
+                            td.textContent = p.get(elementID)
+                            break;
+                    }
+                    if (searchQuery != undefined) {
+                        if (td.textContent.toLowerCase().includes(searchQuery.toLowerCase())) {
+                            td.classList.add('bg-warning')
+                        }
+                    }
+                })
+            }
+        })
+    }
 
     Array.from(rowPersons).forEach(rowPerson => {
         rowPerson.ondblclick = function () {
@@ -238,7 +256,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
 
             snap.forEach(element => {
                 if (element.id == rowPerson.id) {
-                    $('#formEditData').fadeIn()
+                    formEditData.hidden = false
                     buttonDelete.parentElement.hidden = false
 
                     inputName.value = element.get('name')
@@ -262,8 +280,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     if (element.get('updateDate') != undefined) {
                         inputUpdateDate.parentElement.hidden = false
                         inputUpdateDate.value = new Date(element.get('updateDate')).toJSON().substr(0, 10)
-                    }
-                    if (element.get('updateDate') != undefined) {
+
                         inputUpdateTime.parentElement.hidden = false
                         inputUpdateTime.value = new Date(element.get('updateDate')).toLocaleTimeString()
                     }
@@ -286,13 +303,21 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
 } */
 
 function buttonApplyFilterClick() {
+    let blockOrder, emptyFilter = true
     persons = allPersons
 
     Array.from(formFilter.getElementsByClassName('form-control')).forEach(inputFilter => {
+        inputFilter.value = String(inputFilter.value).trim()
         if (inputFilter.value != '') {
-            switch (inputFilter.id) {
-                case 'id':
-                    persons = persons.where("__name__", "==", "" + inputFilter.value + "")
+            emptyFilter = false
+            switch (inputFilter.id.split('.')[1]) {
+                case 'min':
+                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.value + "")
+                    blockOrder = inputFilter.id.split('.')[0]
+                    break
+                case 'max':
+                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", "<=", "" + inputFilter.value + "")
+                    blockOrder = inputFilter.id.split('.')[0]
                     break
                 default:
                     persons = persons.where("" + inputFilter.id + "", "==", "" + inputFilter.value + "")
@@ -300,14 +325,41 @@ function buttonApplyFilterClick() {
             }
         }
     })
+    if (emptyFilter) {
+        alert('Filters are empty!')
+        buttonClearFilter.disabled = true
+    }
+    else {
+        buttonClearFilter.disabled = false
 
-    orderPersons(currentOrder, currentOrderDirection)
+        if (blockOrder != undefined) {
+            headerClick(blockOrder)
+
+            Array.from(tableHeaders).forEach(th => {
+                if (th.id != blockOrder) {
+                    th.setAttribute('onclick', '')
+                }
+            })
+        }
+        else {
+            orderPersons(currentOrder, currentOrderDirection)
+
+            Array.from(tableHeaders).forEach(th => {
+                th.setAttribute('onclick', 'headerClick(this.id)')
+            })
+        }
+    }
 }
 
 function buttonClearFilterClick() {
     Array.from(formFilter.getElementsByClassName('form-control')).forEach(inputFilter => {
         inputFilter.value = ''
     })
-    person = allPersons
+    Array.from(tableHeaders).forEach(th => {
+        th.setAttribute('onclick', 'headerClick(this.id)')
+    })
+    persons = allPersons
     orderPersons(currentOrder, currentOrderDirection)
+
+    buttonClearFilter.disabled = true
 }

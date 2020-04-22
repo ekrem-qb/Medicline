@@ -1,4 +1,3 @@
-const $ = jQuery = require('jquery')
 const TableExport = require('tableexport')
 
 const firebase = require('firebase/app')
