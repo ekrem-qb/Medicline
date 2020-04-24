@@ -1,3 +1,6 @@
+var inputEmail = document.getElementById('inputEmail')
+var inputPassword = document.getElementById('inputPassword')
+
 /* function buttonSignUpClick() {
     var email = document.getElementById('inputEmail').value
     var password = document.getElementById('inputPassword').value
@@ -13,12 +16,9 @@
   }) */
 
 function buttonSignInClick() {
-  var email = document.getElementById('inputEmail').value
-  var password = document.getElementById('inputPassword').value
-
-  firebase.auth().signInWithEmailAndPassword(email, password).then(function () {
-    localStorage.setItem("email", email)
-    localStorage.setItem("password", password)
+  firebase.auth().signInWithEmailAndPassword(inputEmail.value, inputPassword.value).then(function () {
+    localStorage.setItem("email", inputEmail.value)
+    localStorage.setItem("password", inputPassword.value)
     document.location.href = "pagePersonsList.html"
   }).catch(function (error) {
     if (error != null) {
@@ -26,4 +26,8 @@ function buttonSignInClick() {
       return
     }
   })
+}
+
+function pageLoaded() {
+  inputEmail.value = localStorage.getItem('email')
 }

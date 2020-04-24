@@ -25,32 +25,32 @@
                 <div class="form-row">
                     <div class="form-group col-auto">
                         <label>Name</label>
-                        <input type="text" class="form-control" id="inputName">
+                        <input type="text" class="form-control" id="name" required>
                     </div>
                     <div class="form-group col-auto">
                         <label>Surname</label>
-                        <input type="text" class="form-control" id="inputSurname">
+                        <input type="text" class="form-control" id="surname" required>
                     </div>
                     <div class="form-group col-auto">
                         <label>Date of Birth</label>
-                        <input type="date" class="form-control" id="inputBirthDate">
+                        <input type="date" class="form-control" id="birthDate.date" required>
                     </div>
                     <div class="form-group col-auto">
                         <label>Phone Number</label>
-                        <input type="tel" class="form-control" id="inputPhone">
+                        <input type="tel" class="form-control" id="phone">
                     </div>
                     <div class="form-group col-auto">
                         <label>Phone Number 2</label>
-                        <input type="tel" class="form-control" id="inputPhone2">
+                        <input type="tel" class="form-control" id="phone2">
                     </div>
                     <div class="form-group col-auto">
                         <label>Phone Number 3</label>
-                        <input type="tel" class="form-control" id="inputPhone3">
+                        <input type="tel" class="form-control" id="phone3">
                     </div>
                     <div class="form-group col-auto">
                         <label>Country</label>
-                        <select class="form-control" id="inputCountry">
-                            <option value="">Choose...</option>
+                        <select class="form-control" id="country" required>
+                            <option value="" disabled>Choose...</option>
                             <option value="rus">Russia</option>
                             <option value="ukr">Ukraine</option>
                             <option value="kaz">Kazakhstan</option>
@@ -58,31 +58,31 @@
                     </div>
                     <div class="form-group col-auto">
                         <label>Description</label>
-                        <textarea cols="25" rows="3" class="form-control" id="inputDescription"></textarea>
+                        <textarea cols="25" rows="3" class="form-control" id="description"></textarea>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>User Created</label>
-                        <input type="text" class="form-control" id="inputCreateUser" disabled>
+                        <input type="text" class="form-control" id="createUser" disabled>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>Date of Creation</label>
-                        <input type="date" class="form-control" id="inputCreateDate" disabled>
+                        <input type="date" class="form-control" id="createDate.date" disabled>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>Time of Creation</label>
-                        <input type="time" class="form-control" id="inputCreateTime" disabled>
+                        <input type="time" class="form-control" id="createDate.time" disabled>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>User Last Updated</label>
-                        <input type="text" class="form-control" id="inputUpdateUser" disabled>
+                        <input type="text" class="form-control" id="updateUser" disabled>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>Date of Last Update</label>
-                        <input type="date" class="form-control" id="inputUpdateDate" disabled>
+                        <input type="date" class="form-control" id="updateDate.date" disabled>
                     </div>
                     <div class="form-group col-auto" hidden>
                         <label>Time of Last Update</label>
-                        <input type="time" class="form-control" id="inputUpdateTime" disabled>
+                        <input type="time" class="form-control" id="updateDate.time" disabled>
                     </div>
                 </div>
                 <div class="form-row justify-content-end">
@@ -99,39 +99,29 @@
             </div>
 
             <div class="table-responsive">
-                <button id="buttonAddRow" hidden>➕</button>
-                <table class=" table table-hover table-bordered">
+                <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="__name__">ID</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="name">Name
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="__name__">ID</th>
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="name">Name
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="surname">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="surname">
                                 Surname
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="birthDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="birthDate">
                                 Date of
                                 Birth</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="phone">Phone
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="phone">Phone
                                 Number</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="country">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="country">
                                 Country
                             </th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="description">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="description">
                                 Description</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="createUser">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="createUser">
                                 User
                                 Created</th>
-                            <th class="tableHeader" onclick="headerClick(this.id)" onmouseover="headerHover(this.id)"
-                                id="createDate">
+                            <th class="tableHeader" onclick="headerClick(this.id)" id="createDate">
                                 Date
                                 of Creation</th>
                         </tr>
@@ -160,6 +150,10 @@
                 </div>
                 <label>Phone Number</label>
                 <input type="tel" class="form-control form-control-sm" id="phone">
+                <label>Phone Number 2</label>
+                <input type="tel" class="form-control form-control-sm" id="phone2">
+                <label>Phone Number 3</label>
+                <input type="tel" class="form-control form-control-sm" id="phone3">
                 <label>Country</label>
                 <select class="form-control form-control-sm" id="country">
                     <option value="">All</option>
@@ -185,17 +179,18 @@
                     <label>Maximum Date of Last Update</label>
                     <input type="date" class="form-control form-control-sm" id="updateDate.max">
                 </div>
+                </form>
+                <button class="btn btn-success" onclick="buttonApplyFilterClick()"
+                    id="buttonApplyFilter">✔Apply</button>
+                <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter"
+                    disabled>Clear</button>
             </div>
-            <button class="btn btn-success" onclick="buttonApplyFilterClick()" id="buttonApplyFilter">✔Apply</button>
-            <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter"
-                disabled>Clear</button>
         </div>
-    </div>
 
-    <script>
-        require('./renderer.js')
-    </script>
-    <script src="pagePersonsList.js"></script>
+        <script>
+            require('./renderer.js')
+        </script>
+        <script src="pagePersonsList.js"></script>
 </body>
 
 </html>

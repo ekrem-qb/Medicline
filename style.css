@@ -2,6 +2,10 @@
     max-width: 75vw;
 }
 
+.invalid {
+    box-shadow: 0 0 5px 2px red;
+}
+
 .table-responsive,
 #formFilter {
     max-height: 75vh;
