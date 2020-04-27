@@ -10,10 +10,10 @@ const tableHeaders = document.getElementsByClassName('tableHeader')
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
 var currentOrder, currentOrderDirection
+var stopCurrentListener = function () { }
 
 var persons = allPersons = firebase.firestore().collection('persons')
 var person, personExists
-var personsLimit = 20
 
 const formFilter = document.getElementById('formFilter')
 
@@ -27,6 +27,7 @@ function pageLoaded() {
         }
     })
 
+    personsList.innerHTML = "<h5>Loading...</h5>"
     headerClick('createDate')
     clearPerson()
 
@@ -47,7 +48,7 @@ function pageLoaded() {
 }
 
 function buttonCreateClick() {
-    // clearPerson()
+    clearPerson()
 
     let stop = allPersons.onSnapshot(snapshot => {
         do {
@@ -58,11 +59,9 @@ function buttonCreateClick() {
             console.log(personId + ': ' + personExists)
         } while (personExists)
 
+        console.log(snapshot.docs.length)
         stop()
         formEditData.hidden = false
-
-        console.log(snapshot.docs.length);
-
     })
 
 }
@@ -122,7 +121,7 @@ function buttonSaveClick() {
             p.updateDate = ''
             person.set(p)
         }
-        // clearPerson()
+        clearPerson()
     }
 }
 
@@ -150,13 +149,21 @@ function clearPerson() {
     buttonDelete.parentElement.hidden = true
 }
 
-function orderPersons(orderBy, orderDirection) {
+function orderPersons(orderBy, orderDirection, clean, startAfter) {
     if (orderDirection == undefined) {
         orderDirection = 'asc'
     }
+    if (clean == undefined) {
+        clean = false
+    }
 
-    personsList.innerHTML = 'Persons not found...'
-    persons.orderBy(orderBy, orderDirection).limit(personsLimit).onSnapshot(
+    if (clean) {
+        personsList.innerHTML = 'Persons not found...'
+    }
+
+    let query = persons.orderBy(orderBy, orderDirection)
+
+    query.onSnapshot(
         snapshot => {
             listPersons(snapshot)
             console.log(snapshot)
@@ -280,16 +287,6 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
     })
 }
 
-/* function tableScroll() {
-    if (personsList.getBoundingClientRect().bottom < document.documentElement.clientHeight + 100) {
-        personsLimit++
-        if (clickedHeader.textContent.includes('∧'))
-            sortPersons()
-        if (clickedHeader.textContent.includes('∨'))
-            loadPersonsReverse()
-    }
-} */
-
 function buttonApplyFilterClick() {
     let blockOrder, emptyFilter = true
     persons = allPersons
@@ -330,7 +327,7 @@ function buttonApplyFilterClick() {
             })
         }
         else {
-            orderPersons(currentOrder, currentOrderDirection)
+            orderPersons(currentOrder, currentOrderDirection, true)
 
             Array.from(tableHeaders).forEach(th => {
                 th.setAttribute('onclick', 'headerClick(this.id)')
@@ -340,6 +337,9 @@ function buttonApplyFilterClick() {
 }
 
 function buttonClearFilterClick() {
+    Array.from(formFilter.getElementsByClassName('form-control')).forEach(inputFilter => {
+        inputFilter.value = ''
+    })
     Array.from(tableHeaders).forEach(th => {
         th.setAttribute('onclick', 'headerClick(this.id)')
     })
