@@ -1,5 +1,7 @@
 const TableExport = require('tableexport')
+const jQuery = $ = require('jquery')
 
+/* ----- Firebase ----- */
 const firebase = require('firebase/app')
 require('firebase/auth')
 require('firebase/firestore')
@@ -19,13 +21,37 @@ firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence()
     .catch(function (err) {
         if (err.code == 'failed-precondition') {
-            // Multiple tabs open, persistence can only be enabled
-            // in one tab at a a time.
-            // ...
+
         } else if (err.code == 'unimplemented') {
-            // The current browser does not support all of the
-            // features required to enable persistence
-            // ...
+
         }
-    });
-// Subsequent queries will use persistence, if it was enabled successfully
+    })
+
+/* ----- Material Elements ----- */
+const { MDCTextField } = require('@material/textfield')
+const { MDCRipple } = require('@material/ripple')
+const { MDCSelect } = require('@material/select')
+
+Array.from(document.querySelectorAll('.mdc-text-field')).forEach(element => {
+    element.querySelector('input').materialComponent = new MDCTextField(element)
+})
+
+Array.from(document.querySelectorAll('.mdc-button')).forEach(element => {
+    element.materialComponent = new MDCRipple(element)
+})
+
+Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {
+    element.querySelector('input').materialComponent = new MDCSelect(element)
+})
+
+/* ----- Bootstrap Calendar ----- */
+const datepicker = require('bootstrap-datepicker')
+require('bootstrap-datepicker/js/locales/bootstrap-datepicker.ru')
+require('bootstrap-datepicker/js/locales/bootstrap-datepicker.tr')
+
+$('.dateselect').datepicker({
+    format: 'yyyy-mm-dd',
+    language: navigator.language,
+    todayHighlight: true,
+    todayBtn: 'linked'
+})
