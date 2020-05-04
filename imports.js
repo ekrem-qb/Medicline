@@ -33,11 +33,11 @@ const { MDCRipple } = require('@material/ripple')
 const { MDCSelect } = require('@material/select')
 
 Array.from(document.querySelectorAll('.mdc-text-field')).forEach(element => {
-    element.querySelector('input').materialComponent = new MDCTextField(element)
+    element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
 })
 
 Array.from(document.querySelectorAll('.mdc-button')).forEach(element => {
-    element.materialComponent = new MDCRipple(element)
+    element.materialRipple = new MDCRipple(element)
 })
 
 Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {

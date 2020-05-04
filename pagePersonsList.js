@@ -29,19 +29,6 @@ function pageLoaded() {
     personsList.innerHTML = "<h5>Loading...</h5>"
     headerClick('createDate')
     clearPerson()
-
-    Array.from(formEditData.querySelectorAll('input')).forEach(inputEdit => {
-        if (inputEdit.required) {
-            inputEdit.oninput = function () {
-                if (String(inputEdit.materialComponent.value).trim() == '') {
-                    inputEdit.materialComponent.valid = false
-                }
-                else {
-                    inputEdit.materialComponent.valid = true
-                }
-            }
-        }
-    })
 }
 
 function buttonCreateClick() {
@@ -63,8 +50,8 @@ function buttonCreateClick() {
 }
 
 inputSearch.oninput = function () {
-    var searchQuery = String(inputSearch.value).trim()
-    inputSearch.value = searchQuery
+    var searchQuery = String(inputSearch.materialComponent.value).trim()
+    inputSearch.materialComponent.value = searchQuery
 
     if (searchQuery != '') {
         clearSearchIcon.hidden = false
@@ -91,7 +78,7 @@ inputSearch.oninput = function () {
 
 function clearSearchInput() {
     clearSearchIcon.hidden = true
-    inputSearch.value = ''
+    inputSearch.materialComponent.value = ''
     orderPersons(currentOrder, currentOrderDirection)
 }
 
@@ -99,7 +86,7 @@ function buttonSaveClick() {
     let p = new Object()
     let valid = true
 
-    Array.from(formEditData.querySelectorAll('input')).forEach(inputEdit => {
+    Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
         inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
         if (inputEdit.required && inputEdit.materialComponent.value == '') {
             inputEdit.materialComponent.valid = false
@@ -140,13 +127,28 @@ function clearPerson() {
     personId = undefined
     person = undefined
 
-    Array.from(formEditData.querySelectorAll('input')).forEach(inputEdit => {
+    Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
         inputEdit.materialComponent.value = ''
         inputEdit.parentElement.hidden = inputEdit.disabled
 
         if (inputEdit.required) {
-            inputEdit.parentElement.classList.remove('mdc-text-field--valid')
-            inputEdit.parentElement.classList.remove('mdc-text-field--invalid')
+            inputEdit.materialComponent.valid = true
+
+            inputEdit.oninput = function () {
+                if (String(inputEdit.materialComponent.value).trim() == '') {
+                    inputEdit.materialComponent.valid = false
+                }
+                else {
+                    inputEdit.materialComponent.valid = true
+                }
+            }
+
+            inputEdit.onchange = function () {
+                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+                if (inputEdit.materialComponent.value == '') {
+                    inputEdit.materialComponent.valid = false
+                }
+            }
         }
     })
 
@@ -260,7 +262,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     formEditData.hidden = false
                     buttonDelete.parentElement.hidden = false
 
-                    Array.from(formEditData.querySelectorAll('input')).forEach(inputEdit => {
+                    Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
                         if (inputEdit.disabled) {
                             if (element.get(inputEdit.id.split('.')[0]) != '') {
                                 inputEdit.parentElement.hidden = false
@@ -296,7 +298,7 @@ function buttonApplyFilterClick() {
     let blockOrder, emptyFilter = true
     persons = allPersons
 
-    Array.from(formFilter.querySelectorAll('input')).forEach(inputFilter => {
+    Array.from(formFilter.querySelectorAll('input, textarea')).forEach(inputFilter => {
         inputFilter.value = String(inputFilter.value).trim()
         if (inputFilter.value != '') {
             emptyFilter = false
@@ -342,7 +344,7 @@ function buttonApplyFilterClick() {
 }
 
 function buttonClearFilterClick() {
-    Array.from(formFilter.querySelectorAll('input')).forEach(inputFilter => {
+    Array.from(formFilter.querySelectorAll('input, textarea')).forEach(inputFilter => {
         inputFilter.value = ''
     })
     Array.from(tableHeaders).forEach(th => {

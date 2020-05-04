@@ -11,10 +11,6 @@
     max-width: 75vw;
 }
 
-.invalid {
-    box-shadow: 0 0 5px 2px red;
-}
-
 .table-responsive,
 #formFilter {
     max-height: 75vh;
@@ -47,7 +43,18 @@
 }
 
 #buttonCreate {
-    --mdc-theme-primary: var(--green);
+    --mdc-theme-primary: var(--success);
+}
+
+.mdc-select__selected-text,
+.mdc-list-item__text {
+    font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.mdc-text-field__input,
+.mdc-select__selected-text,
+.mdc-list-item__text {
+    font-weight: bold;
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
@@ -55,13 +62,9 @@
     color: var(--mdc-theme-primary);
 }
 
-.custom-enhanced-select-width {
-    width: 240px;
-}
-
-.mdc-select input,
-.mdc-list-item__text {
-    font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label,
+.mdc-select:not(.mdc-select--disabled).mdc-select--invalid .mdc-floating-label {
+    color: var(--mdc-theme-error);
 }
 
 /* Material Elements */
