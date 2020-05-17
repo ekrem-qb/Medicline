@@ -153,7 +153,7 @@ function clearPerson() {
     })
 
     formEditData.hidden = true
-    buttonDelete.parentElement.hidden = true
+    buttonDelete.hidden = true
 }
 
 function orderPersons(orderBy, orderDirection, clean) {
@@ -260,7 +260,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
             snap.forEach(element => {
                 if (element.id == rowPerson.id) {
                     formEditData.hidden = false
-                    buttonDelete.parentElement.hidden = false
+                    buttonDelete.hidden = false
 
                     Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
                         if (inputEdit.disabled) {

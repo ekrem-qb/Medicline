@@ -36,7 +36,7 @@ Array.from(document.querySelectorAll('.mdc-text-field')).forEach(element => {
     element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
 })
 
-Array.from(document.querySelectorAll('.mdc-button')).forEach(element => {
+Array.from(document.querySelectorAll('.mdc-button, .mdc-fab')).forEach(element => {
     element.materialRipple = new MDCRipple(element)
 })
 

@@ -7,14 +7,29 @@
     outline: none !important;
 }
 
-.form {
-    max-width: 75vw;
+.flex {
+    display: flex;
+}
+
+.container-max {
+    max-width: max-content;
+    margin: auto;
 }
 
 .table-responsive,
-#formFilter {
+.form {
     max-height: 75vh;
+    max-width: 75vw;
+    margin: auto;
+}
+
+form {
     overflow-y: auto;
+}
+
+#formEditData {
+    display: flex;
+    background-color: rgba(0, 0, 0, .5);
 }
 
 .table thead th {
@@ -36,14 +51,19 @@
 
 :root {
     --mdc-theme-primary: var(--orange);
+    --mdc-theme-secondary: var(--danger);
 }
 
 .mdc-button--outlined .mdc-button__ripple {
     border-color: var(--mdc-theme-primary);
 }
 
-#buttonCreate {
+#buttonCreate, #buttonSave {
     --mdc-theme-primary: var(--success);
+}
+
+#buttonDelete {
+    --mdc-theme-primary: var(--danger);
 }
 
 .mdc-select__selected-text,
@@ -65,6 +85,10 @@
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-select:not(.mdc-select--disabled).mdc-select--invalid .mdc-floating-label {
     color: var(--mdc-theme-error);
+}
+
+.mdc-card__actions {
+    border-top: 1px solid rgba(0, 0, 0, .38);
 }
 
 /* Material Elements */
