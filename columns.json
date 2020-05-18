@@ -1,0 +1,17 @@
+{
+    "__name__.id": "ID",
+    "name": "Name",
+    "surname": "Surname",
+    "birthDate": "Date of Birth",
+    "phone": "Phone Number",
+    "phone2": "Phone Number 2",
+    "phone3": "Phone Number 3",
+    "country": "Country",
+    "description.long": "Description",
+    "createUser": "User Created",
+    "createDate.date": "Date of Creation",
+    "createDate.time": "Time of Creation",
+    "updateUser": "User Updated",
+    "updateDate.date": "Date of Last Update",
+    "updateDate.time": "Time of Last Update"
+}

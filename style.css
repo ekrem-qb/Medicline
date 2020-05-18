@@ -16,11 +16,32 @@
     margin: auto;
 }
 
+th {
+    position: sticky;
+    top: 0;
+    background-color: var(--gray-dark);
+    color: var(--mdc-theme-on-primary);
+    cursor: pointer;
+}
+
+td,
+th {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .table-responsive,
 .form {
     max-height: 75vh;
     max-width: 75vw;
     margin: auto;
+}
+
+#formFilter {
+    max-height: 25vh;
+    max-width: 18vw;
 }
 
 form {
@@ -32,20 +53,26 @@ form {
     background-color: rgba(0, 0, 0, .5);
 }
 
-.table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background-color: #9E9E9E;
+.modal-footer {
+    align-items: stretch;
 }
 
-.table td,
-.table th {
-    white-space: nowrap;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+/* SortableJS */
+
+.sortable-ghost,
+.sortable-choosen {
+    background-color: var(--gray) !important;
+    cursor: -webkit-grabbing !important;
+    transform: scale(0.95);
+    border-radius: 4px;
 }
+
+.sortable-drag {
+    opacity: 0;
+}
+
+/* SortableJS */
+
 
 /* Material Elements */
 
@@ -58,7 +85,8 @@ form {
     border-color: var(--mdc-theme-primary);
 }
 
-#buttonCreate, #buttonSave {
+#buttonCreate,
+#buttonSave {
     --mdc-theme-primary: var(--success);
 }
 

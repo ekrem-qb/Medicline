@@ -1,4 +1,3 @@
-const TableExport = require('tableexport')
 const jQuery = $ = require('jquery')
 
 /* ----- Firebase ----- */
@@ -55,3 +54,15 @@ $('.dateselect').datepicker({
     todayHighlight: true,
     todayBtn: 'linked'
 })
+
+/* ----- Table Export ----- */
+const TableExport = require('tableexport')
+
+function buttonExportClick() {
+    let table = TableExport(document.getElementsByTagName('table'), {
+        filename: new Date().toJSON(),
+        exportButtons: false
+    })
+    let xlsxData = table.getExportData()['persons'].csv
+    table.export2file(xlsxData.data, xlsxData.mimeType, xlsxData.filename, xlsxData.fileExtension, xlsxData.merges, xlsxData.RTL, xlsxData.sheetname)
+}

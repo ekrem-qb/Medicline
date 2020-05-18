@@ -13,22 +13,15 @@
 </head>
 
 <body class="mdc-typography" onload="pageLoaded()">
-    <div class="container-max flex flex-column my-4 px-1">
-        <div class="flex justify-content-between">
-            <div class="col-auto">
-                <button class="mdc-button mdc-button--outlined" onclick="buttonCreateClick()" id="buttonCreate">
-                    <div class="mdc-button__ripple"></div>
-                    <i class="material-icons mdc-button__icon md-add"></i>
-                    <span class="mdc-button__label">Create</span>
-                </button>
-            </div>
-            <div class="col-auto">
+    <div class="container-max flex my-4 px-1">
+        <div class="col-auto">
+            <div class="modal-footer mdc-card mdc-elevation--z6 justify-content-between">
                 <label
                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                     <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-search"></i>
                     <input type="text" class="mdc-text-field__input" id="inputSearch">
                     <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing md-clear"
-                        id="clearSearchIcon" tabindex="0" role="button" onclick="clearSearchInput()" hidden></i>
+                        id="clearSearchIcon" role="button" onclick="clearSearchInput()" hidden></i>
                     <div class="mdc-notched-outline">
                         <div class="mdc-notched-outline__leading"></div>
                         <div class="mdc-notched-outline__notch">
@@ -37,49 +30,41 @@
                         <div class="mdc-notched-outline__trailing"></div>
                     </div>
                 </label>
+                <button class="mdc-button mdc-button--raised" onclick="buttonCreateClick()" id="buttonCreate">
+                    <div class="mdc-button__ripple"></div>
+                    <i class="material-icons mdc-button__icon md-add"></i>
+                    <span class="mdc-button__label">Create</span>
+                </button>
+            </div>
+            <div class="table-responsive mdc-card mdc-elevation--z6">
+                <table class="table table-hover table-bordered" id="persons">
+                    <thead>
+                        <tr id="tableColumnsList">
+                        </tr>
+                    </thead>
+                    <tbody id="personsList">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer mdc-card mdc-elevation--z6">
+                <button class="mdc-button mdc-button--outlined" onclick="buttonExportClick()" id="buttonExport">
+                    <div class="mdc-button__ripple"></div>
+                    <i class="material-icons mdc-button__icon md-save_alt"></i>
+                    <span class="mdc-button__label">Export</span>
+                </button>
             </div>
         </div>
-
-        <div class="flex">
-            <div class="col-auto">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="__name__">ID</th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="name">Name
-                                </th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="surname">
-                                    Surname
-                                </th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="birthDate">
-                                    Date of
-                                    Birth</th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="phone">Phone
-                                    Number</th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="country">
-                                    Country
-                                </th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="description">
-                                    Description</th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="createUser">
-                                    User
-                                    Created</th>
-                                <th class="tableHeader" onclick="headerClick(this.id)" id="createDate">
-                                    Date
-                                    of Creation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="personsList">
-                        </tbody>
-                    </table>
-                </div>
-                <button class="btn btn-primary" onclick="TableExport(document.getElementsByTagName('table'))"
-                    id="buttonExport">Export</button>
+        <div class="col-auto">
+            <div class="modal-footer mdc-card mdc-elevation--z6">
+                <h3 class="modal-header m-0">Hidden Columns</h3>
+                <table class="table table-hover table-bordered">
+                    <tr class="flex flex-column" id="hiddenTableColumnsList">
+                    </tr>
+                </table>
             </div>
-            <div class="col-auto">
-                <form class="form" id="formFilter">
-                    <h1>Filter</h1>
+            <div class="mdc-card mdc-elevation--z6">
+                <h3 class="modal-header m-0">Filter</h3>
+                <form class="form p-3" id="formFilter">
                     <label>ID</label>
                     <input type="text" class="form-control form-control-sm" id="__name__">
                     <label>Name</label>
@@ -124,17 +109,19 @@
                         <input type="date" class="form-control form-control-sm" id="updateDate.max">
                     </div>
                 </form>
-                <button class="btn btn-success" onclick="buttonApplyFilterClick()"
-                    id="buttonApplyFilter">✔Apply</button>
-                <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter"
-                    disabled>Clear</button>
+                <div class="modal-footer">
+                    <button class="btn btn-success" onclick="buttonApplyFilterClick()"
+                        id="buttonApplyFilter">✔Apply</button>
+                    <button class="btn btn-danger" onclick="buttonClearFilterClick()" id="buttonClearFilter"
+                        disabled>Clear</button>
+                </div>
             </div>
         </div>
     </div>
     <div class="modal" id="formEditData" hidden>
         <div class="form mdc-card mdc-elevation--z6 px-1">
             <div class="modal-header">
-                <h5 class="modal-title">Person Editing</h5>
+                <h3 class="modal-title">Person Editing</h3>
                 <button class="mdc-fab mdc-fab--mini" onclick="clearPerson()">
                     <div class="mdc-fab__ripple"></div>
                     <i class="mdc-fab__icon material-icons md-close"></i>
@@ -318,6 +305,145 @@
                                 <li class="mdc-list-item" data-value="kaz">
                                     <span class="mdc-list-item__text">
                                         🇰🇿 Kazakhstan
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="bel">
+                                    <span class="mdc-list-item__text">
+                                        🇧🇾 Belarus
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="egy">
+                                    <span class="mdc-list-item__text">
+                                        EgyCross
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="balSt">
+                                    <span class="mdc-list-item__text">
+                                        Baltic States
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="pol">
+                                    <span class="mdc-list-item__text">
+                                        🇵🇱 Poland
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="apr">
+                                    <span class="mdc-list-item__text">
+                                        April
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="balAs">
+                                    <span class="mdc-list-item__text">
+                                        Balt Assistance
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="cze">
+                                    <span class="mdc-list-item__text">
+                                        🇨🇿 Czech Republic
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="eag">
+                                    <span class="mdc-list-item__text">
+                                        🦅 Eagle Assistance
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="spa">
+                                    <span class="mdc-list-item__text">
+                                        🇪🇸 Spain
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group col-auto">
+                    <div class="mdc-select mdc-select--outlined">
+                        <div class="mdc-select__anchor mdc-select--with-leading-icon">
+                            <input type="text" class="mdc-select__selected-text" id="insurence.select">
+                            <i class="mdc-select__dropdown-icon"></i>
+                            <span class="mdc-notched-outline">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__notch">
+                                    <span class="mdc-floating-label">Insurence Company</span>
+                                </span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                        </div>
+                        <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                            <ul class="mdc-list">
+                                <li class="mdc-list-item" data-value="all">
+                                    <span class="mdc-list-item__text">
+                                        Allianz CHP
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="apr">
+                                    <span class="mdc-list-item__text">
+                                        April Assistance
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="are">
+                                    <span class="mdc-list-item__text">
+                                        Arena Sports and Travel
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="axa">
+                                    <span class="mdc-list-item__text">
+                                        AXA Assistance CZ
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="axa">
+                                    <span class="mdc-list-item__text">
+                                        AXA Assistance CZ
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="bal">
+                                    <span class="mdc-list-item__text">
+                                        Balt Assistance LTD
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="eag">
+                                    <span class="mdc-list-item__text">
+                                        Eagle Assistance
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="egy">
+                                    <span class="mdc-list-item__text">
+                                        EgyCross Assistance
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="intPart">
+                                    <span class="mdc-list-item__text">
+                                        Inter Partner Assistance Polska S.A.
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="intAs">
+                                    <span class="mdc-list-item__text">
+                                        InterAssist LTD
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="intMed">
+                                    <span class="mdc-list-item__text">
+                                        InterMedica
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="other">
+                                    <span class="mdc-list-item__text">
+                                        Other
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="savUkr">
+                                    <span class="mdc-list-item__text">
+                                        Savitar Group LTD Ukraine
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="savRus">
+                                    <span class="mdc-list-item__text">
+                                        Savitar Group LTD Russia
+                                    </span>
+                                </li>
+                                <li class="mdc-list-item" data-value="sinoAsia">
+                                    <span class="mdc-list-item__text">
+                                        SinoAsia Bar Insurance Company
                                     </span>
                                 </li>
                             </ul>

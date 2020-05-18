@@ -1,3 +1,5 @@
+const Sortable = require("sortablejs")
+
 const inputSearch = document.getElementById('inputSearch')
 const clearSearchIcon = document.getElementById('clearSearchIcon')
 
@@ -6,7 +8,11 @@ const formEditData = document.getElementById('formEditData')
 const buttonDelete = document.getElementById('buttonDelete')
 const buttonClearFilter = document.getElementById('buttonClearFilter')
 
-const tableHeaders = document.getElementsByClassName('tableHeader')
+const columnsJSON = require('./columns.json')
+const tableColumnsList = document.getElementById('tableColumnsList')
+const hiddenTableColumnsList = document.getElementById('hiddenTableColumnsList')
+
+const tableColumns = tableColumnsList.getElementsByTagName('th')
 const personsList = document.getElementById('personsList')
 const rowPersons = document.getElementsByClassName('rowPerson')
 var currentOrder, currentOrderDirection
@@ -17,17 +23,59 @@ var person, personExists
 const formFilter = document.getElementById('formFilter')
 
 function pageLoaded() {
-    firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
+    if (localStorage.getItem("email") != null && localStorage.getItem("password") != null) {
+        firebase.auth().signInWithEmailAndPassword(localStorage.getItem("email"), localStorage.getItem("password")).then(function () {
 
-    }).catch(function (error) {
-        if (error != null) {
-            alert(error.message)
-            return
+        }).catch(function (error) {
+            if (error != null) {
+                alert(error.message)
+                return
+            }
+        })
+    }
+    else {
+        document.location.href = "index.html"
+    }
+
+    personsList.innerHTML = "<h3>Loading...</h3>"
+
+    let enabledColumns = []
+    if (localStorage.getItem('enabledColumns') != null) {
+        enabledColumns = localStorage.getItem('enabledColumns').split(',')
+    }
+    else {
+        enabledColumns.push('__name__.id', 'createDate.date')
+    }
+    enabledColumns.forEach(column => {
+        if (columnsJSON.hasOwnProperty(column)) {
+            let th = document.createElement('th')
+            th.id = column.split('.')[0]
+            if (column.split('.')[1] != undefined) {
+                th.dataset.type = column.split('.')[1]
+            }
+            th.innerHTML = columnsJSON[column]
+            th.setAttribute('onclick', 'headerClick(this.id)')
+            tableColumnsList.appendChild(th)
         }
     })
-
-    personsList.innerHTML = "<h5>Loading...</h5>"
-    headerClick('createDate')
+    for (let column in columnsJSON) {
+        if (!enabledColumns.includes(column)) {
+            let th = document.createElement('th')
+            th.id = column.split('.')[0]
+            if (column.split('.')[1] != undefined) {
+                th.dataset.type = column.split('.')[1]
+            }
+            th.innerHTML = columnsJSON[column]
+            th.setAttribute('onclick', 'headerClick(this.id)')
+            hiddenTableColumnsList.appendChild(th)
+        }
+    }
+    if (enabledColumns.includes('createDate.date')) {
+        headerClick('createDate')
+    }
+    else {
+        headerClick(enabledColumns[enabledColumns.length - 1])
+    }
     clearPerson()
 }
 
@@ -186,7 +234,7 @@ function orderPersons(orderBy, orderDirection, clean) {
 function headerClick(headerID) {
     let clickedHeader = document.querySelector('th#' + headerID)
 
-    Array.from(tableHeaders).forEach(element => {
+    Array.from(tableColumns).forEach(element => {
         if (element.id != headerID) {
             if (element.textContent.includes('∧')) {
                 element.textContent = element.textContent.replace('∧', '')
@@ -225,22 +273,24 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                 tr.className = 'rowPerson'
                 personsList.appendChild(tr)
 
-                Array.from(tableHeaders).forEach(element => {
-                    let elementID = element.id
+                Array.from(tableColumns).forEach(column => {
                     let td = document.createElement('td')
                     tr.appendChild(td)
-                    switch (elementID) {
-                        case '__name__':
+                    switch (column.dataset.type) {
+                        case 'id':
                             td.textContent = p.id
                             break
-                        case 'createDate':
-                            td.textContent = new Date(p.get(elementID)).toJSON().substr(0, 10)
+                        case 'long':
+                            td.textContent = td.title = p.get(column.id)
                             break
-                        case 'description':
-                            td.textContent = td.title = p.get(elementID)
+                        case 'date':
+                            td.textContent = new Date(p.get(column.id)).toJSON().substr(0, 10)
+                            break
+                        case 'time':
+                            td.textContent = new Date(p.get(column.id)).toLocaleTimeString()
                             break
                         default:
-                            td.textContent = p.get(elementID)
+                            td.textContent = p.get(column.id)
                             break
                     }
                     if (searchQuery != undefined) {
@@ -294,6 +344,53 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
     })
 }
 
+function buttonAddColumnClick() {
+    hiddenTableColumnsList.materialComponent.open = true
+}
+
+Sortable.create(tableColumnsList, {
+    group: 'TableColumns',
+    animation: 150,
+    easing: "ease-in-out",
+    chosenClass: 'sortable-choosen',
+    onMove: function () {
+        orderPersons(currentOrder, currentOrderDirection)
+    },
+    onEnd: function (event) {
+        let enabledColumns = []
+        Array.from(tableColumns).forEach(column => {
+            if (column.dataset.type != undefined) {
+                enabledColumns.push(column.id + '.' + column.dataset.type)
+            }
+            else {
+                enabledColumns.push(column.id)
+            }
+        })
+        localStorage.setItem("enabledColumns", enabledColumns)
+    }
+})
+Sortable.create(hiddenTableColumnsList, {
+    group: 'TableColumns',
+    animation: 150,
+    easing: "ease-in-out",
+    sort: false,
+    onMove: function () {
+        orderPersons(currentOrder, currentOrderDirection)
+    },
+    onEnd: function (event) {
+        let enabledColumns = []
+        Array.from(tableColumns).forEach(column => {
+            if (column.dataset.type != undefined) {
+                enabledColumns.push(column.id + '.' + column.dataset.type)
+            }
+            else {
+                enabledColumns.push(column.id)
+            }
+        })
+        localStorage.setItem("enabledColumns", enabledColumns)
+    }
+})
+
 function buttonApplyFilterClick() {
     let blockOrder, emptyFilter = true
     persons = allPersons
@@ -327,7 +424,7 @@ function buttonApplyFilterClick() {
         if (blockOrder != undefined) {
             headerClick(blockOrder)
 
-            Array.from(tableHeaders).forEach(th => {
+            Array.from(tableColumns).forEach(th => {
                 if (th.id != blockOrder) {
                     th.setAttribute('onclick', '')
                 }
@@ -336,7 +433,7 @@ function buttonApplyFilterClick() {
         else {
             orderPersons(currentOrder, currentOrderDirection, true)
 
-            Array.from(tableHeaders).forEach(th => {
+            Array.from(tableColumns).forEach(th => {
                 th.setAttribute('onclick', 'headerClick(this.id)')
             })
         }
@@ -347,7 +444,7 @@ function buttonClearFilterClick() {
     Array.from(formFilter.querySelectorAll('input, textarea')).forEach(inputFilter => {
         inputFilter.value = ''
     })
-    Array.from(tableHeaders).forEach(th => {
+    Array.from(tableColumns).forEach(th => {
         th.setAttribute('onclick', 'headerClick(this.id)')
     })
     persons = allPersons
