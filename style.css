@@ -95,8 +95,9 @@ form {
 }
 
 .mdc-select__selected-text,
-.mdc-list-item__text {
+.mdc-list-item__graphic {
     font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    margin-right: 16px;
 }
 
 .mdc-text-field__input,

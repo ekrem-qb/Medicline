@@ -74,7 +74,7 @@ function pageLoaded() {
         headerClick('createDate')
     }
     else {
-        headerClick(enabledColumns[enabledColumns.length - 1])
+        headerClick(enabledColumns[enabledColumns.length - 1].split('.')[0])
     }
     clearPerson()
 }
@@ -221,7 +221,6 @@ function orderPersons(orderBy, orderDirection, clean) {
     query.onSnapshot(
         snapshot => {
             listPersons(snapshot)
-            console.log(snapshot)
         },
         err => {
             console.log(err)
@@ -284,10 +283,10 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                             td.textContent = td.title = p.get(column.id)
                             break
                         case 'date':
-                            td.textContent = new Date(p.get(column.id)).toJSON().substr(0, 10)
+                            td.textContent = p.get(column.id) == "" ? "" : new Date(p.get(column.id)).toJSON().substr(0, 10)
                             break
                         case 'time':
-                            td.textContent = new Date(p.get(column.id)).toLocaleTimeString()
+                            td.textContent = p.get(column.id) == "" ? "" : new Date(p.get(column.id)).toLocaleTimeString()
                             break
                         default:
                             td.textContent = p.get(column.id)
