@@ -36,7 +36,11 @@ function pageLoaded() {
     else {
         document.location.href = "index.html"
     }
+    clearPerson()
+    loadColumns()
+}
 
+function loadColumns() {
     personsList.innerHTML = "<h3>Loading...</h3>"
 
     let enabledColumns = []
@@ -48,26 +52,12 @@ function pageLoaded() {
     }
     enabledColumns.forEach(column => {
         if (columnsJSON.hasOwnProperty(column)) {
-            let th = document.createElement('th')
-            th.id = column.split('.')[0]
-            if (column.split('.')[1] != undefined) {
-                th.dataset.type = column.split('.')[1]
-            }
-            th.innerHTML = columnsJSON[column]
-            th.setAttribute('onclick', 'headerClick(this.id)')
-            tableColumnsList.appendChild(th)
+            tableColumnsList.appendChild(newColumn(column))
         }
     })
     for (let column in columnsJSON) {
         if (!enabledColumns.includes(column)) {
-            let th = document.createElement('th')
-            th.id = column.split('.')[0]
-            if (column.split('.')[1] != undefined) {
-                th.dataset.type = column.split('.')[1]
-            }
-            th.innerHTML = columnsJSON[column]
-            th.setAttribute('onclick', 'headerClick(this.id)')
-            hiddenTableColumnsList.appendChild(th)
+            hiddenTableColumnsList.appendChild(newColumn(column))
         }
     }
     if (enabledColumns.includes('createDate.date')) {
@@ -76,7 +66,20 @@ function pageLoaded() {
     else {
         headerClick(enabledColumns[enabledColumns.length - 1].split('.')[0])
     }
-    clearPerson()
+}
+
+function newColumn(column) {
+    let th = document.createElement('th')
+    th.id = column.split('.')[0]
+    if (column.split('.')[1] != undefined) {
+        th.dataset.type = column.split('.')[1]
+    }
+    th.innerHTML = columnsJSON[column]
+    th.setAttribute('onclick', 'headerClick(this.id)')
+    let sortIcon = document.createElement('span')
+    sortIcon.className = 'mdc-select__dropdown-icon material-icons md-unfold_more'
+    th.appendChild(sortIcon)
+    return th
 }
 
 function buttonCreateClick() {
@@ -233,28 +236,40 @@ function orderPersons(orderBy, orderDirection, clean) {
 function headerClick(headerID) {
     let clickedHeader = document.querySelector('th#' + headerID)
 
-    Array.from(tableColumns).forEach(element => {
-        if (element.id != headerID) {
-            if (element.textContent.includes('∧')) {
-                element.textContent = element.textContent.replace('∧', '')
-            }
-            if (element.textContent.includes('∨')) {
-                element.textContent = element.textContent.replace('∨', '')
-            }
-        }
-    })
+    if (clickedHeader.parentElement == tableColumnsList) {
 
-    if (clickedHeader.textContent.includes('∨')) {
-        orderPersons(headerID, 'asc')
-        clickedHeader.textContent = clickedHeader.textContent.replace('∨', '∧')
-    }
-    else {
-        orderPersons(headerID, 'desc')
-        if (clickedHeader.textContent.includes('∧')) {
-            clickedHeader.textContent = clickedHeader.textContent.replace('∧', '∨')
+        Array.from(tableColumns).forEach(element => {
+            if (element.id != headerID) {
+                let sortIcon = element.querySelector('span')
+
+                if (sortIcon.classList.contains('md-expand_less')) {
+                    sortIcon.classList.remove('md-expand_less')
+                }
+                if (sortIcon.classList.contains('mdc-select__dropdown-icon_rotate')) {
+                    sortIcon.classList.remove('mdc-select__dropdown-icon_rotate')
+                }
+                if (!sortIcon.classList.contains('md-unfold_more')) {
+                    sortIcon.classList.add('md-unfold_more')
+                }
+            }
+        })
+
+        let clickedHeaderSortIcon = clickedHeader.querySelector('span')
+
+        if (clickedHeaderSortIcon.classList.contains('md-unfold_more')) {
+            clickedHeaderSortIcon.classList.remove('md-unfold_more')
+            clickedHeaderSortIcon.classList.add('md-expand_less')
+        }
+
+        if (clickedHeaderSortIcon.classList.contains('mdc-select__dropdown-icon_rotate')) {
+            orderPersons(headerID, 'asc')
+
+            clickedHeaderSortIcon.classList.remove('mdc-select__dropdown-icon_rotate')
         }
         else {
-            clickedHeader.textContent += ' ∨'
+            orderPersons(headerID, 'desc')
+
+            clickedHeaderSortIcon.classList.add('mdc-select__dropdown-icon_rotate')
         }
     }
 }
@@ -366,6 +381,7 @@ Sortable.create(tableColumnsList, {
             }
         })
         localStorage.setItem("enabledColumns", enabledColumns)
+        orderPersons(currentOrder, currentOrderDirection)
     }
 })
 Sortable.create(hiddenTableColumnsList, {
@@ -387,6 +403,7 @@ Sortable.create(hiddenTableColumnsList, {
             }
         })
         localStorage.setItem("enabledColumns", enabledColumns)
+        orderPersons(currentOrder, currentOrderDirection)
     }
 })
 
@@ -395,20 +412,20 @@ function buttonApplyFilterClick() {
     persons = allPersons
 
     Array.from(formFilter.querySelectorAll('input, textarea')).forEach(inputFilter => {
-        inputFilter.value = String(inputFilter.value).trim()
-        if (inputFilter.value != '') {
+        inputFilter.materialComponent.value = String(inputFilter.materialComponent.value).trim()
+        if (inputFilter.materialComponent.value != '') {
             emptyFilter = false
             switch (inputFilter.id.split('.')[1]) {
                 case 'min':
-                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.value + "")
+                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.materialComponent.value + "")
                     blockOrder = inputFilter.id.split('.')[0]
                     break
                 case 'max':
-                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", "<=", "" + inputFilter.value + "")
+                    persons = persons.where("" + inputFilter.id.split('.')[0] + "", "<=", "" + inputFilter.materialComponent.value + "")
                     blockOrder = inputFilter.id.split('.')[0]
                     break
                 default:
-                    persons = persons.where("" + inputFilter.id + "", "==", "" + inputFilter.value + "")
+                    persons = persons.where("" + inputFilter.id + "", "==", "" + inputFilter.materialComponent.value + "")
                     break
             }
         }
@@ -441,7 +458,7 @@ function buttonApplyFilterClick() {
 
 function buttonClearFilterClick() {
     Array.from(formFilter.querySelectorAll('input, textarea')).forEach(inputFilter => {
-        inputFilter.value = ''
+        inputFilter.materialComponent.value = ''
     })
     Array.from(tableColumns).forEach(th => {
         th.setAttribute('onclick', 'headerClick(this.id)')

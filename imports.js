@@ -43,7 +43,7 @@ Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {
     element.querySelector('input').materialComponent = new MDCSelect(element)
 })
 
-/* ----- Bootstrap Calendar ----- */
+/* ----- Bootstrap Datepicker ----- */
 const datepicker = require('bootstrap-datepicker')
 require('bootstrap-datepicker/js/locales/bootstrap-datepicker.ru')
 require('bootstrap-datepicker/js/locales/bootstrap-datepicker.tr')
