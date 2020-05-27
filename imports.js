@@ -26,6 +26,15 @@ firebase.firestore().enablePersistence()
         }
     })
 
+
+/* ----- Editable Select ----- */
+
+require('jquery-editable-select')
+
+$('#editable-select').editableSelect({
+    effects: "slide"
+})
+
 /* ----- Material Elements ----- */
 const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
@@ -35,7 +44,7 @@ Array.from(document.querySelectorAll('.mdc-text-field')).forEach(element => {
     element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
 })
 
-Array.from(document.querySelectorAll('.mdc-button, .mdc-fab')).forEach(element => {
+Array.from(document.querySelectorAll('.mdc-button, .mdc-fab, .mdc-ripple-surface')).forEach(element => {
     element.materialRipple = new MDCRipple(element)
 })
 

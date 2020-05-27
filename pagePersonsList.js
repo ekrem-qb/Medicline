@@ -179,25 +179,27 @@ function clearPerson() {
     person = undefined
 
     Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
-        inputEdit.materialComponent.value = ''
-        inputEdit.parentElement.hidden = inputEdit.disabled
+        if (inputEdit.materialComponent != null) {
+            inputEdit.materialComponent.value = ''
+            inputEdit.parentElement.hidden = inputEdit.disabled
 
-        if (inputEdit.required) {
-            inputEdit.materialComponent.valid = true
+            if (inputEdit.required) {
+                inputEdit.materialComponent.valid = true
 
-            inputEdit.oninput = function () {
-                if (String(inputEdit.materialComponent.value).trim() == '') {
-                    inputEdit.materialComponent.valid = false
+                inputEdit.oninput = function () {
+                    if (String(inputEdit.materialComponent.value).trim() == '') {
+                        inputEdit.materialComponent.valid = false
+                    }
+                    else {
+                        inputEdit.materialComponent.valid = true
+                    }
                 }
-                else {
-                    inputEdit.materialComponent.valid = true
-                }
-            }
 
-            inputEdit.onchange = function () {
-                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-                if (inputEdit.materialComponent.value == '') {
-                    inputEdit.materialComponent.valid = false
+                inputEdit.onchange = function () {
+                    inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+                    if (inputEdit.materialComponent.value == '') {
+                        inputEdit.materialComponent.valid = false
+                    }
                 }
             }
         }
@@ -337,16 +339,18 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                         }
 
                         if (!inputEdit.parentElement.hidden) {
-                            switch (inputEdit.id.split('.')[1]) {
-                                case 'date':
-                                    inputEdit.materialComponent.value = new Date(element.get(inputEdit.id.split('.')[0])).toJSON().substr(0, 10)
-                                    break
-                                case 'time':
-                                    inputEdit.materialComponent.value = new Date(element.get(inputEdit.id.split('.')[0])).toLocaleTimeString()
-                                    break
-                                default:
-                                    inputEdit.materialComponent.value = element.get(inputEdit.id.split('.')[0])
-                                    break
+                            if (inputEdit.materialComponent != null) {
+                                switch (inputEdit.id.split('.')[1]) {
+                                    case 'date':
+                                        inputEdit.materialComponent.value = new Date(element.get(inputEdit.id.split('.')[0])).toJSON().substr(0, 10)
+                                        break
+                                    case 'time':
+                                        inputEdit.materialComponent.value = new Date(element.get(inputEdit.id.split('.')[0])).toLocaleTimeString()
+                                        break
+                                    default:
+                                        inputEdit.materialComponent.value = element.get(inputEdit.id.split('.')[0])
+                                        break
+                                }
                             }
                         }
                     })
@@ -358,8 +362,17 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
     })
 }
 
-function buttonAddColumnClick() {
-    hiddenTableColumnsList.materialComponent.open = true
+function modalExpand(header) {
+    let modalBody = header.parentElement.querySelector('.modal-body')
+    modalBody.hidden = !modalBody.hidden
+
+    let expandIcon = header.querySelector('.mdc-select__dropdown-icon')
+    if (expandIcon.classList.contains('mdc-select__dropdown-icon_rotate')) {
+        expandIcon.classList.remove('mdc-select__dropdown-icon_rotate')
+    }
+    else {
+        expandIcon.classList.add('mdc-select__dropdown-icon_rotate')
+    }
 }
 
 Sortable.create(tableColumnsList, {

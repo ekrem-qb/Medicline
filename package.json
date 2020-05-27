@@ -30,6 +30,7 @@
     "electron": "^8.3.0",
     "firebase": "^7.14.4",
     "jquery": "^3.5.1",
+    "jquery-editable-select": "^2.2.5",
     "material-components-web": "^6.0.0",
     "popper.js": "^1.16.1",
     "sortablejs": "^1.10.2",

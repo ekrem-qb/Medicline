@@ -3,6 +3,24 @@
     src: url('fonts/JoyPixels.woff') format('woff');
 }
 
+@keyframes editFormOpening {
+    from {
+        transform: scaleX(0.25) scaleY(0);
+        opacity: 0;
+        filter: blur(20px);
+        top: 15px;
+        left: 150px;
+    }
+
+    to {
+        transform: none;
+        opacity: 1;
+        filter: none;
+        top: 0;
+        left: 0;
+    }
+}
+
 * {
     outline: none !important;
 }
@@ -70,13 +88,17 @@
 
 #formFilter {
     max-height: 50vh;
-    max-width: 16vw;
+    max-width: 18vw;
     overflow: auto;
 }
 
 #formEditData {
     display: flex;
     background-color: rgba(0, 0, 0, .5);
+}
+
+#formEditData .form {
+    animation: editFormOpening .5s cubic-bezier(0.68, -0.55, 0.27, 1.55)
 }
 
 .modal-footer {
@@ -101,6 +123,11 @@
 :root {
     --mdc-theme-primary: var(--orange);
     --mdc-theme-secondary: var(--danger);
+}
+
+.mdc-ripple-surface {
+    cursor: pointer;
+    -webkit-user-select: none;
 }
 
 .mdc-button--outlined .mdc-button__ripple {
