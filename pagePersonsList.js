@@ -38,6 +38,17 @@ function pageLoaded() {
     }
     clearPerson()
     loadColumns()
+    loadSelectMenus()
+}
+
+function loadSelectMenus() {
+    Array.from(document.getElementsByClassName('editable-select')).forEach(element => {
+        let stop = firebase.firestore().collection(element.id).onSnapshot(snapshot => {
+            snapshot.docs.forEach(country => {
+                $(element).editableSelect('add', country.id)
+            })
+        })
+    })
 }
 
 function loadColumns() {
@@ -138,13 +149,24 @@ function buttonSaveClick() {
     let valid = true
 
     Array.from(formEditData.querySelectorAll('input, textarea')).forEach(inputEdit => {
-        inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-        if (inputEdit.required && inputEdit.materialComponent.value == '') {
-            inputEdit.materialComponent.valid = false
-            valid = false
-        }
-        if (!inputEdit.disabled) {
-            p[inputEdit.id.split('.')[0]] = inputEdit.materialComponent.value
+        if (inputEdit.materialComponent != undefined) {
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required && inputEdit.materialComponent.value == '') {
+                inputEdit.materialComponent.valid = false
+                valid = false
+            }
+            if (!inputEdit.disabled) {
+                p[inputEdit.id.split('.')[0]] = inputEdit.materialComponent.value
+            }
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required && inputEdit.materialComponent.value == '') {
+                inputEdit.materialComponent.valid = false
+                valid = false
+            }
+            if (!inputEdit.disabled) {
+                p[inputEdit.id.split('.')[0]] = inputEdit.materialComponent.value
+            }
+
         }
     })
 

@@ -20,19 +20,29 @@ firebase.initializeApp(firebaseConfig)
 firebase.firestore().enablePersistence()
     .catch(function (err) {
         if (err.code == 'failed-precondition') {
-
         } else if (err.code == 'unimplemented') {
-
         }
-    })
-
+    });
 
 /* ----- Editable Select ----- */
-
 require('jquery-editable-select')
 
-$('#editable-select').editableSelect({
+$('.filter').editableSelect({
     effects: "slide"
+})
+$('.no-filter').editableSelect({
+    effects: "slide",
+    filter: false
+})
+let editableSelectList = document.getElementsByClassName('editable-select')
+for (const key in editableSelectList) {
+    if (editableSelectList.hasOwnProperty(key)) {
+        const element = editableSelectList[key];
+        element.parentElement.style.zIndex = (editableSelectList.length - key).toString()
+    }
+}
+$('.filter').on('show.editable-select', function (e) {
+    $(this).editableSelect('filter')
 })
 
 /* ----- Material Elements ----- */
