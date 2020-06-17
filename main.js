@@ -15,6 +15,9 @@ async function main() {
             }
         });
 
+        // Maximize the window
+        window.maximize()
+
         await new Promise((resolve, reject) => {
             // resolve when when 'did-finish-load' has been fired
             window.webContents.once('did-finish-load', resolve);

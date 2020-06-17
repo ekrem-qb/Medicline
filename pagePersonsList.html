@@ -2,27 +2,26 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Page Two</title>
-    <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.min.css">
-    <link rel="stylesheet" href="node_modules/@material-icons/font/css/round.css">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css">
-    <link rel="stylesheet" href="node_modules/jquery-editable-select/dist/jquery-editable-select.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.min.css" />
+    <link rel="stylesheet" href="node_modules/@mdi/font/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="node_modules/jquery-editable-select/dist/jquery-editable-select.min.css" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body class="mdc-typography" onload="pageLoaded()">
     <div class="container-max flex my-4 px-1">
         <div class="col-auto">
-            <div class="modal-footer mdc-card mdc-elevation--z6 justify-content-between">
+            <div class="modal-footer mdc-card mdc-elevation--z6">
                 <label
                     class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
-                    <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-search"></i>
-                    <input type="text" class="mdc-text-field__input" id="inputSearch">
-                    <i class="material-icons mdc-text-field__icon mdc-text-field__icon--trailing md-clear"
-                        id="clearSearchIcon" role="button" onclick="clearSearchInput()" hidden></i>
+                    <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-magnify"></i>
+                    <input type="text" class="mdc-text-field__input" id="inputSearch" />
+                    <i class="mdi mdc-text-field__icon mdc-text-field__icon--trailing mdi-close" id="clearSearchIcon"
+                        onclick="clearSearchInput()" hidden></i>
                     <div class="mdc-notched-outline">
                         <div class="mdc-notched-outline__leading"></div>
                         <div class="mdc-notched-outline__notch">
@@ -33,24 +32,22 @@
                 </label>
                 <button class="mdc-button mdc-button--raised" onclick="buttonCreateClick()" id="buttonCreate">
                     <div class="mdc-button__ripple"></div>
-                    <i class="material-icons mdc-button__icon md-add"></i>
+                    <i class="mdi mdc-button__icon mdi-plus"></i>
                     <span class="mdc-button__label">Create</span>
                 </button>
             </div>
             <div class="table-responsive mdc-card mdc-elevation--z6">
                 <table class="table table-hover table-bordered" id="persons">
                     <thead>
-                        <tr id="tableColumnsList">
-                        </tr>
+                        <tr id="tableColumnsList"></tr>
                     </thead>
-                    <tbody id="personsList">
-                    </tbody>
+                    <tbody id="personsList"></tbody>
                 </table>
             </div>
             <div class="modal-footer mdc-card mdc-elevation--z6">
                 <button class="mdc-button mdc-button--outlined" onclick="buttonExportClick()" id="buttonExport">
                     <div class="mdc-button__ripple"></div>
-                    <i class="material-icons mdc-button__icon md-save_alt"></i>
+                    <i class="mdi mdc-button__icon mdi-content-save"></i>
                     <span class="mdc-button__label">Export</span>
                 </button>
             </div>
@@ -59,265 +56,54 @@
             <div class="mdc-card mdc-elevation--z6">
                 <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
                     <h3 class="m-0">Hidden Columns</h3>
-                    <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
+                    <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                 </div>
-                <div class="modal-body" hidden>
+                <div class="modal-body" hidden="hidden">
                     <table class="list-group" id="hiddenTableColumnsList"></table>
                 </div>
             </div>
             <div class="mdc-card mdc-elevation--z6 my-4">
                 <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
                     <h3 class="m-0">Filter</h3>
-                    <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
+                    <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                 </div>
-                <div class="modal-body" hidden>
+                <div class="modal-body" hidden="hidden">
                     <form class="flex flex-column" id="formFilter">
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <input type="text" class="mdc-text-field__input" id="__name__">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">ID</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
 
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <input type="text" class="mdc-text-field__input" id="name">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Name</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
 
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <input type="text" class="mdc-text-field__input" id="surname">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Surname</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
 
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="birthDate.min">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Birth</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
 
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="birthDate.max">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Birth</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                            <input type="tel" class="mdc-text-field__input" id="phone">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Phone Number</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                            <input type="tel" class="mdc-text-field__input" id="phone2">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Phone Number 2</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                            <input type="tel" class="mdc-text-field__input" id="phone3">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Phone Number 3</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <select class="editable-select no-filter mdc-text-field__input" id="status"
-                                readonly></select>
-                            <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Patient status</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <select class="editable-select no-filter mdc-text-field__input" id="country"
-                                readonly></select>
-                            <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Country</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <select class="editable-select no-filter mdc-text-field__input" id="insurence"
-                                readonly></select>
-                            <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Insurence Company</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--no-label">
-                            <textarea class="mdc-text-field__input" rows="4" cols="40" id="description"></textarea>
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Description</span></div>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i
-                                class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-account_circle"></i>
-                            <input type="text" class="mdc-text-field__input" id="createUser">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">User Created</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="createDate.min">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Creation</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="createDate.max">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Creation</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i
-                                class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-account_circle"></i>
-                            <input type="text" class="mdc-text-field__input" id="updateUser">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">User Last Updated</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="updateDate.min">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Last Update</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                            <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                            <input type="date" class="dateselect mdc-text-field__input" id="updateDate.max">
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Last Update</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button class="mdc-button mdc-button--raised" onclick="buttonApplyFilterClick()" id="buttonSave">
                         <div class="mdc-button__ripple"></div>
-                        <i class="material-icons mdc-button__icon md-check"></i>
+                        <i class="mdi mdc-button__icon mdi-check"></i>
                         <span class="mdc-button__label">Apply</span>
                     </button>
                     <button class="mdc-button mdc-button--outlined" onclick="buttonClearFilterClick()"
                         id="buttonClearFilter">
                         <div class="mdc-button__ripple"></div>
-                        <i class="material-icons mdc-button__icon md-close"></i>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
                         <span class="mdc-button__label">Clear</span>
                     </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal" id="formEditData" hidden>
+    <div class="modal" id="formEditData" hidden="hidden">
         <div class="form mdc-card mdc-elevation--z6 px-1">
             <div class="modal-header">
                 <h3 class="modal-title">Person Editing</h3>
                 <button class="mdc-fab mdc-fab--mini" onclick="clearPerson()">
                     <div class="mdc-fab__ripple"></div>
-                    <i class="mdc-fab__icon material-icons md-close"></i>
+                    <i class="mdc-fab__icon mdi mdi-close"></i>
                 </button>
             </div>
             <form class="form-row p-3">
-                <div class="form-group col-auto">
+                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined">
-                        <input type="text" class="mdc-text-field__input" id="name" required>
+                        <input type="text" class="mdc-text-field__input" id="name" required />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -326,10 +112,9 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined">
-                        <input type="text" class="mdc-text-field__input" id="surname" required>
+                        <input type="text" class="mdc-text-field__input" id="surname" required />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -338,11 +123,9 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
-                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                        <input type="date" class="dateselect mdc-text-field__input" id="birthDate.date" required>
+
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input type="date" class="mdc-text-field__input" id="birthDate" required />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -352,10 +135,11 @@
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
+
+                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                        <input type="tel" class="mdc-text-field__input" id="phone">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="phone" />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -364,11 +148,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                        <input type="tel" class="mdc-text-field__input" id="phone2">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="phone2" />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -377,11 +160,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-phone"></i>
-                        <input type="tel" class="mdc-text-field__input" id="phone3">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="phone3" />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -391,10 +173,11 @@
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
-                    <label class="mdc-text-field mdc-text-field--outlined">
+
+                <div class="form-group col-auto flex flex-column">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                         <select class="editable-select filter mdc-text-field__input" id="status" required></select>
-                        <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -404,10 +187,11 @@
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
-                    <label class="mdc-text-field mdc-text-field--outlined">
+
+                <div class="form-group col-auto flex flex-column">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
                         <select class="editable-select filter mdc-text-field__input" id="country" required></select>
-                        <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -417,35 +201,108 @@
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
-                    <label class="mdc-text-field mdc-text-field--outlined">
-                        <select class="editable-select filter mdc-text-field__input" id="insurence"></select>
-                        <i class="mdc-select__dropdown-icon material-icons md-expand_more"></i>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="provider" required></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Insurence Company</span>
+                                <span class="mdc-floating-label">Provider</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="provider_phone" disabled readonly />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Phone Number</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
+
+                <div class="form-group col-auto flex flex-column">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="provider2"></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Provider 2</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="provider2_phone" disabled readonly />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Phone Number</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="provider3"></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Provider 3</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="number" class="mdc-text-field__input" id="provider3_phone" disabled readonly />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Phone Number</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--no-label">
                         <textarea class="mdc-text-field__input" rows="4" cols="40" id="description"></textarea>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Description</span></div>
+                                <span class="mdc-floating-label">Description</span>
+                            </div>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                     </label>
                 </div>
-                <div class="form-group col-auto">
+
+                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i
-                            class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-account_circle"></i>
-                        <input type="text" class="mdc-text-field__input" id="createUser" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account-circle"></i>
+                        <input type="text" class="mdc-text-field__input" id="createUser" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -454,11 +311,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                        <input type="date" class="mdc-text-field__input" id="createDate.date" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-calendar"></i>
+                        <input type="date" class="mdc-text-field__input" id="createDate" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -467,11 +323,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-watch_later"></i>
-                        <input type="time" class="mdc-text-field__input" id="createDate.time" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-clock"></i>
+                        <input type="time" class="mdc-text-field__input" id="createTime" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -481,11 +336,11 @@
                         </div>
                     </label>
                 </div>
-                <div class="form-group col-auto">
+
+                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i
-                            class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-account_circle"></i>
-                        <input type="text" class="mdc-text-field__input" id="updateUser" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account-circle"></i>
+                        <input type="text" class="mdc-text-field__input" id="updateUser" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -494,11 +349,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-event"></i>
-                        <input type="date" class="mdc-text-field__input" id="updateDate.date" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-calendar"></i>
+                        <input type="date" class="mdc-text-field__input" id="updateDate" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -507,11 +361,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
-                <div class="form-group col-auto">
+
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                        <i class="material-icons mdc-text-field__icon mdc-text-field__icon--leading md-watch_later"></i>
-                        <input type="time" class="mdc-text-field__input" id="updateDate.time" disabled>
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-clock"></i>
+                        <input type="time" class="mdc-text-field__input" id="updateTime" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -521,24 +374,178 @@
                         </div>
                     </label>
                 </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-box"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="insurance"></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Insurance Company</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input type="number" class="mdc-text-field__input" id="policyNo" required />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Policy №</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input type="number" class="mdc-text-field__input" id="insuranceRefNo" required />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Insurance Reference №</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-card-account-phone"></i>
+                        <input type="text" class="mdc-text-field__input" id="caller" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Caller</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="date" class="mdc-text-field__input" id="callDate" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Date of Call</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
+                        <input type="time" class="mdc-text-field__input" id="callTime" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Time of Call</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input type="date" class="mdc-text-field__input" id="appointmentDate" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Date of Appointment</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input type="time" class="mdc-text-field__input" id="appointmentTime" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Time of Appointment</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-map-marker"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="address"></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Address</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-office-building"></i>
+                        <select class="editable-select filter mdc-text-field__input" id="address_hotel"
+                            disabled></select>
+                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Hotel</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-counter"></i>
+                        <input type="text" class="mdc-text-field__input" id="address_roomNo" disabled />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Room №</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="form-group col-auto flex flex-column">
+                    <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--no-label">
+                        <textarea class="mdc-text-field__input" rows="4" cols="40" id="complaints"></textarea>
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label">Complaints</span>
+                            </div>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+                </div>
             </form>
             <div class="modal-footer">
                 <button class="mdc-button mdc-button--raised" onclick="buttonSaveClick()" id="buttonSave">
                     <div class="mdc-button__ripple"></div>
-                    <i class="material-icons mdc-button__icon md-save"></i>
+                    <i class="mdi mdc-button__icon mdi-content-save"></i>
                     <span class="mdc-button__label">Save</span>
                 </button>
                 <button class="mdc-button mdc-button--outlined" onclick="buttonDeleteClick()" id="buttonDelete">
                     <div class="mdc-button__ripple"></div>
-                    <i class="material-icons mdc-button__icon md-delete"></i>
+                    <i class="mdi mdc-button__icon mdi-delete"></i>
                     <span class="mdc-button__label">Delete</span>
                 </button>
             </div>
         </div>
     </div>
-
     <script>
-        require('./renderer.js')
+        require("./renderer.js")
     </script>
     <script src="imports.js"></script>
     <script src="pagePersonsList.js"></script>

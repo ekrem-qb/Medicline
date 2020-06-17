@@ -1,378 +1,265 @@
 @font-face {
-    font-family: JoyPixels;
-    src: url('fonts/JoyPixels.woff') format('woff');
+  font-family: JoyPixels;
+  src: url("fonts/JoyPixels.woff") format("woff");
 }
 
 @keyframes editFormOpening {
-    from {
-        transform: scaleX(0.25) scaleY(0);
-        opacity: 0;
-        filter: blur(20px);
-        top: 15px;
-        left: 150px;
-    }
+  from {
+    transform: scaleX(0.25) scaleY(0);
+    opacity: 0;
+    filter: blur(20px);
+    top: 15px;
+    left: 150px;
+  }
 
-    to {
-        transform: none;
-        opacity: 1;
-        filter: none;
-        top: 0;
-        left: 0;
-    }
+  to {
+    transform: none;
+    opacity: 1;
+    filter: none;
+    top: 0;
+    left: 0;
+  }
 }
 
 * {
-    outline: none !important;
+  outline: none !important;
 }
 
 ::selection {
-    background-color: var(--mdc-theme-primary);
-    color: var(--mdc-theme-on-primary);
+  background-color: var(--mdc-theme-primary);
+  color: var(--mdc-theme-on-primary);
 }
 
 ::-webkit-scrollbar {
-    width: initial;
+  width: initial;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, .25);
-    border-radius: 100px;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px;
-    background-clip: padding-box;
+  background-color: rgba(0, 0, 0, 0.25);
+  border-radius: 100px;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover,
 ::-webkit-scrollbar-thumb:active {
-    background-color: rgba(0, 0, 0, .5);
-    border-width: 2px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-width: 2px;
 }
 
 .flex {
-    display: flex;
+  display: flex;
 }
 
 .container-max {
-    max-width: max-content;
-    margin: auto;
+  max-width: max-content;
+  margin: auto;
 }
 
 .list-group th:first-child {
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
+  border-top-left-radius: calc(.3rem - 1px);
+  border-top-right-radius: calc(.3rem - 1px);
 }
 
 .list-group th:last-child {
-    border-bottom-left-radius: inherit;
-    border-bottom-right-radius: inherit;
+  border-bottom-left-radius: calc(.3rem - 1px);
+  border-bottom-right-radius: calc(.3rem - 1px);
 }
 
 .list-group th {
-    padding: .75rem 1.25rem;
-    border: 1px solid rgba(0, 0, 0, .125);
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .list-group th,
 .table th {
-    background-color: var(--gray-dark);
-    color: var(--mdc-theme-on-primary);
-    cursor: pointer;
-    transition: opacity .25s ease-in-out;
+  background-color: var(--gray-dark);
+  color: var(--mdc-theme-on-primary);
+  cursor: pointer;
+  transition: opacity 0.25s ease-in-out;
 }
 
 .table tr {
-    width: max-content;
+  width: max-content;
 }
 
 .table th {
-    position: sticky;
-    top: 0;
+  position: sticky;
+  top: 0;
 }
 
 .table td,
 .table th {
-    white-space: nowrap;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .table-responsive,
 .form {
-    max-height: 75vh;
-    max-width: 75vw;
-    margin: auto;
+  max-height: 75vh;
+  max-width: 75vw;
+  margin: auto;
+}
+
+form {
+  overflow: auto;
 }
 
 #formFilter {
-    max-height: 50vh;
-    max-width: 18vw;
-    overflow: auto;
+  max-height: 50vh;
+  max-width: 18vw;
 }
 
 #formEditData {
-    display: flex;
-    background-color: rgba(0, 0, 0, .5);
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* 
 #formEditData .form {
     animation: editFormOpening .5s cubic-bezier(0.68, -0.55, 0.27, 1.55)
 }
- */
-.modal-footer {
-    align-items: stretch;
+*/
+
+.modal-body {
+  max-height: 75vh;
+  overflow: auto;
 }
 
+.modal-footer {
+  align-items: stretch;
+}
 
-/* SortableJS */
+/*--------------------------- SortableJS --------------------------------- */
+
 .sortable-ghost {
-    opacity: 0;
+  opacity: 0;
 }
 
 .sortable-drag {
-    opacity: 1;
+  opacity: 1;
 }
 
-/* SortableJS */
 
 
-/* Editable Select */
+/*------------------------ Editable Select ------------------------------- */
+
 input.es-input {
-    background: none !important;
+  background: none !important;
+  max-width: 195px;
 }
 
 input.es-input,
 .es-list li {
-    font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    word-spacing: -10px;
-    text-shadow: 0 0;
-    padding-right: 0 !important;
+  font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  word-spacing: -10px;
+  text-shadow: 0 0;
+  padding-right: 0 !important;
 }
 
 input.no-filter,
 .es-list li {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-/* Editable Select */
 
 
-/* Material Elements */
+/*----------------------- Material Elements ------------------------------ */
+
 :root {
-    --mdc-theme-primary: var(--orange);
-    --mdc-theme-secondary: var(--danger);
+  --mdc-theme-primary: var(--orange);
+  --mdc-theme-secondary: var(--danger);
+}
+
+.mdi {
+  font-size: 24px;
+  line-height: 1;
+  background: none !important;
+}
+
+.mdi::before {
+  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+th .mdi {
+  vertical-align: top;
+  margin: 0 0 0 18px;
+}
+
+.list-group th .mdi {
+  display: none;
+}
+
+th .mdi.mdi-unfold-more-horizontal::before {
+  opacity: 0.5;
+  transform: scale(0.75);
 }
 
 .mdc-ripple-surface {
-    cursor: pointer;
-    -webkit-user-select: none;
+  cursor: pointer;
+  -webkit-user-select: none;
 }
 
 .mdc-button--outlined .mdc-button__ripple {
-    border-color: var(--mdc-theme-primary);
+  border-color: var(--mdc-theme-primary);
 }
 
 #buttonCreate,
 #buttonSave {
-    --mdc-theme-primary: var(--success);
+  --mdc-theme-primary: var(--success);
 }
 
 #buttonDelete {
-    --mdc-theme-primary: var(--danger);
+  --mdc-theme-primary: var(--danger);
 }
 
 .mdc-list-item__text {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .mdc-select__selected-text,
 .mdc-list-item__text icon {
-    font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    word-spacing: -10px;
+  font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  word-spacing: -10px;
 }
 
 .mdc-list-item__text icon {
-    font-size: larger;
-    height: 18px;
-    margin-right: 16px;
+  font-size: larger;
+  height: 18px;
+  margin-right: 16px;
 }
 
 .mdc-card__actions {
-    border-top: 1px solid rgba(0, 0, 0, .38);
+  border-top: 1px solid rgba(0, 0, 0, 0.38);
 }
 
 .mdc-text-field__input {
-    text-shadow: 0 0;
+  text-shadow: 0 0;
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {
-    color: inherit;
+  color: inherit;
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
-    color: var(--mdc-theme-primary);
+  color: var(--mdc-theme-primary);
 }
 
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
-    color: var(--mdc-theme-error);
+  color: var(--mdc-theme-error);
 }
 
-.mdc-select__dropdown-icon {
-    background: none !important;
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
+  transform: rotate(180deg);
 }
-
-th .mdc-select__dropdown-icon {
-    vertical-align: top;
-    margin: 0 0 0 18px;
-}
-
-.list-group th .mdc-select__dropdown-icon {
-    display: none;
-}
-
-.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon,
-.mdc-select__dropdown-icon_rotate {
-    transform: rotate(180deg);
-}
-
-.mdc-select__dropdown-icon.material-icons.md-unfold_more {
-    opacity: 0.5;
-    transform: scale(0.75);
-}
-
-/* Material Elements */
-
-
-/* Bootstrap Datepicker */
-.datepicker {
-    border-radius: 0;
-    padding: 0;
-}
-
-.datepicker-days table thead,
-.datepicker-days table tbody,
-.datepicker-days table tfoot {
-    padding: 10px;
-    display: list-item;
-}
-
-.datepicker-days table thead,
-.datepicker-months table thead,
-.datepicker-years table thead,
-.datepicker-decades table thead,
-.datepicker-centuries table thead {
-    background: #3546b3;
-    color: #ffffff;
-    border-radius: 0;
-}
-
-.datepicker-days table thead tr:nth-child(2n+0) td,
-.datepicker-days table thead tr:nth-child(2n+0) th {
-    border-radius: 3px;
-}
-
-.datepicker-days table thead tr:nth-child(3n+0) {
-    text-transform: uppercase;
-    font-weight: 300 !important;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.table-condensed>tbody>tr>td,
-.table-condensed>tbody>tr>th,
-.table-condensed>tfoot>tr>td,
-.table-condensed>tfoot>tr>th,
-.table-condensed>thead>tr>td,
-.table-condensed>thead>tr>th {
-    padding: 11px 13px;
-}
-
-.datepicker-months table thead td,
-.datepicker-months table thead th,
-.datepicker-years table thead td,
-.datepicker-years table thead th,
-.datepicker-decades table thead td,
-.datepicker-decades table thead th,
-.datepicker-centuries table thead td,
-.datepicker-centuries table thead th {
-    border-radius: 0;
-}
-
-.datepicker td,
-.datepicker th {
-    border-radius: 50%;
-    padding: 0 12px;
-}
-
-.datepicker-days table thead,
-.datepicker-months table thead,
-.datepicker-years table thead,
-.datepicker-decades table thead,
-.datepicker-centuries table thead {
-    background: #3546b3;
-    color: #ffffff;
-    border-radius: 0;
-}
-
-.datepicker table tr td.active,
-.datepicker table tr td.active:hover,
-.datepicker table tr td.active.disabled,
-.datepicker table tr td.active.disabled:hover {
-    background-image: none;
-}
-
-.datepicker .prev,
-.datepicker .next {
-    color: rgba(255, 255, 255, 0.5);
-    transition: 0.3s;
-    width: 37px;
-    height: 37px;
-}
-
-.datepicker .prev:hover,
-.datepicker .next:hover {
-    background: transparent;
-    color: rgba(255, 255, 255, 0.99);
-    font-size: 21px;
-}
-
-.datepicker .datepicker-switch {
-    font-size: 24px;
-    font-weight: 400;
-    transition: 0.3s;
-}
-
-.datepicker .datepicker-switch:hover {
-    color: rgba(255, 255, 255, 0.7);
-    background: transparent;
-}
-
-.datepicker table tr td span {
-    border-radius: 2px;
-    margin: 3%;
-    width: 27%;
-}
-
-.datepicker table tr td span.active,
-.datepicker table tr td span.active:hover,
-.datepicker table tr td span.active.disabled,
-.datepicker table tr td span.active.disabled:hover {
-    background-color: #3546b3;
-    background-image: none;
-}
-
-.dropdown-menu {
-    border: 1px solid rgba(0, 0, 0, .1);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
-}
-
-.datepicker-dropdown.datepicker-orient-top:before {
-    border-top: 7px solid rgba(0, 0, 0, .1);
-}
-
-/* Bootstrap Datepicker */

@@ -17,28 +17,16 @@ var firebaseConfig = {
 }
 firebase.initializeApp(firebaseConfig)
 
-firebase.firestore().enablePersistence()
-    .catch(function (err) {
-        if (err.code == 'failed-precondition') {
-        } else if (err.code == 'unimplemented') {
-        }
-    });
-
 /* ----- Editable Select ----- */
 require('jquery-editable-select')
+$.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide'
 
-$('.filter').editableSelect({
-    effects: "slide"
-})
-$('.no-filter').editableSelect({
-    effects: "slide",
-    filter: false
-})
 let editableSelectList = document.getElementsByClassName('editable-select')
 for (const key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
         const element = editableSelectList[key];
         element.parentElement.style.zIndex = (editableSelectList.length - key).toString()
+        $(element).editableSelect()
     }
 }
 $('.filter').on('show.editable-select', function (e) {
@@ -60,18 +48,6 @@ Array.from(document.querySelectorAll('.mdc-button, .mdc-fab, .mdc-ripple-surface
 
 Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {
     element.querySelector('input').materialComponent = new MDCSelect(element)
-})
-
-/* ----- Bootstrap Datepicker ----- */
-const datepicker = require('bootstrap-datepicker')
-require('bootstrap-datepicker/js/locales/bootstrap-datepicker.ru')
-require('bootstrap-datepicker/js/locales/bootstrap-datepicker.tr')
-
-$('.dateselect').datepicker({
-    format: 'yyyy-mm-dd',
-    language: navigator.language,
-    todayHighlight: true,
-    todayBtn: 'linked'
 })
 
 /* ----- Table Export ----- */
