@@ -21,7 +21,7 @@ firebase.initializeApp(firebaseConfig)
 require('jquery-editable-select')
 $.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide'
 
-let editableSelectList = document.getElementsByClassName('editable-select')
+let editableSelectList = document.querySelectorAll('.editable-select')
 for (const key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
         const element = editableSelectList[key];
@@ -38,15 +38,18 @@ const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
 const { MDCSelect } = require('@material/select')
 
-Array.from(document.querySelectorAll('.mdc-text-field')).forEach(element => {
+document.querySelectorAll('.mdc-text-field').forEach(element => {
     element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
 })
 
-Array.from(document.querySelectorAll('.mdc-button, .mdc-fab, .mdc-ripple-surface')).forEach(element => {
+document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button').forEach(element => {
     element.materialRipple = new MDCRipple(element)
+    if (element.classList.contains("mdc-icon-button")) {
+        element.materialRipple.unbounded = true
+    }
 })
 
-Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {
+document.querySelectorAll('.mdc-select').forEach(element => {
     element.querySelector('input').materialComponent = new MDCSelect(element)
 })
 
@@ -54,10 +57,10 @@ Array.from(document.querySelectorAll('.mdc-select')).forEach(element => {
 const TableExport = require('tableexport')
 
 function buttonExportClick() {
-    let table = TableExport(document.getElementsByTagName('table'), {
+    let table = TableExport(document.querySelectorAll('table'), {
         filename: new Date().toJSON(),
         exportButtons: false
     })
-    let xlsxData = table.getExportData()['persons'].csv
+    let xlsxData = table.getExportData()['kases'].csv
     table.export2file(xlsxData.data, xlsxData.mimeType, xlsxData.filename, xlsxData.fileExtension, xlsxData.merges, xlsxData.RTL, xlsxData.sheetname)
 }

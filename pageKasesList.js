@@ -4,6 +4,7 @@ const inputSearch = document.getElementById("inputSearch")
 const clearSearchIcon = document.getElementById("clearSearchIcon")
 
 const formEditData = document.getElementById("formEditData")
+const currentKaseID = document.getElementById("currentKaseID")
 
 const buttonDelete = document.getElementById("buttonDelete")
 const buttonClearFilter = document.getElementById("buttonClearFilter")
@@ -13,13 +14,12 @@ const tableColumnsList = document.getElementById("tableColumnsList")
 const hiddenTableColumnsList = document.getElementById("hiddenTableColumnsList")
 
 const tableColumns = tableColumnsList.getElementsByTagName("th")
-const personsList = document.getElementById("personsList")
-const rowPersons = document.getElementsByClassName("rowPerson")
+const kasesList = document.getElementById("kasesList")
+const rowKases = document.getElementsByClassName("rowKase")
 var currentOrder, currentOrderDirection
 
-var persons = firebase.firestore().collection("persons")
-var allPersons = firebase.firestore().collection("persons")
-var person, personExists
+var kases = firebase.firestore().collection("kases")
+var kase, kaseExists
 
 const formFilter = document.getElementById("formFilter")
 
@@ -41,13 +41,13 @@ function pageLoaded() {
     } else {
         document.location.href = "index.html"
     }
-    clearPerson()
+    clearKase()
     loadColumns()
     loadSelectMenus()
 }
 
 function loadSelectMenus() {
-    Array.from(document.getElementsByClassName("editable-select")).forEach((select) => {
+    document.querySelectorAll(".editable-select").forEach((select) => {
         let selectID = select.id.replace(/[0-9]/g, '')
 
         if (selectID.split('_').length == 1) {
@@ -84,14 +84,21 @@ function loadSelectMenus() {
     })
 }
 
+function addSelectItem(addButton) {
+    let select = addButton.parentNode.parentNode.querySelector(".editable-select")
+    let selectID = select.id.replace(/[0-9]/g, '')
+
+    firebase.firestore().collection(selectID).doc(select.materialComponent.value).set({})
+}
+
 function loadColumns() {
-    personsList.innerHTML = "<h3>Loading...</h3>"
+    kasesList.innerHTML = "<h3>Loading...</h3>"
 
     let enabledColumns = []
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
     } else {
-        enabledColumns.push("__name__.id", "createDate.date")
+        enabledColumns.push("__name__", "createDate")
     }
     enabledColumns.forEach((column) => {
         if (columnsJSON.hasOwnProperty(column)) {
@@ -103,7 +110,7 @@ function loadColumns() {
             hiddenTableColumnsList.appendChild(newColumn(column))
         }
     }
-    if (enabledColumns.includes("createDate.date")) {
+    if (enabledColumns.includes("createDate")) {
         headerClick("createDate")
     } else {
         headerClick(enabledColumns[enabledColumns.length - 1])
@@ -115,6 +122,7 @@ function newColumn(column) {
     th.id = column
     th.innerHTML = columnsJSON[column]
     th.setAttribute("onclick", "headerClick(this.id)")
+    th.classList.add("mdc-ripple-surface")
     let sortIcon = document.createElement("span")
     sortIcon.className = "mdi mdi-unfold-more-horizontal"
     th.appendChild(sortIcon)
@@ -122,21 +130,20 @@ function newColumn(column) {
 }
 
 function buttonCreateClick() {
-    clearPerson()
+    clearKase()
 
-    let stop = allPersons.onSnapshot((snapshot) => {
+    let stop = kases.orderBy(currentOrder, currentOrderDirection).onSnapshot((snapshot) => {
         do {
-            personId =
-                new Date().getFullYear().toString().substr(-2) +
-                (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-            person = allPersons.doc(personId)
-            personExists = snapshot.docs.some((item) => item.id === personId)
+            var kaseID = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+            kaseExists = snapshot.docs.some((item) => item.id === kaseID)
 
-            console.log(personId + ":" + personExists + " in " + snapshot.docs.length)
-        } while (personExists)
+            console.log(kaseID + ":" + kaseExists + " in " + snapshot.docs.length)
+        } while (kaseExists)
 
         stop()
         formEditData.hidden = false
+        kase = kases.doc(kaseID)
+        currentKaseID.innerText = kaseID
     })
 }
 
@@ -146,19 +153,19 @@ inputSearch.oninput = function () {
 
     if (searchQuery != "") {
         clearSearchIcon.hidden = false
-        var foundPersons = new Array()
-        allPersons.onSnapshot((snapshot) => {
+        var foundKases = new Array()
+        kases.onSnapshot((snapshot) => {
             snapshot.forEach((p) => {
-                if (!foundPersons.includes(p.id)) {
+                if (!foundKases.includes(p.id)) {
                     if (
-                        (String(p.id) + JSON.stringify(p.data()).toLowerCase()).includes(
-                            searchQuery.toLowerCase()
+                        (String(p.id) + JSON.stringify(p.data()).toLowerKase()).includes(
+                            searchQuery.toLowerKase()
                         )
                     )
-                        foundPersons.push(p.id)
+                        foundKases.push(p.id)
                 }
             })
-            listPersons(snapshot, true, foundPersons, searchQuery)
+            listKases(snapshot, true, foundKases, searchQuery)
         })
     } else {
         clearSearchInput()
@@ -168,14 +175,14 @@ inputSearch.oninput = function () {
 function clearSearchInput() {
     clearSearchIcon.hidden = true
     inputSearch.materialComponent.value = ""
-    orderPersons(currentOrder, currentOrderDirection)
+    orderKases(currentOrder, currentOrderDirection)
 }
 
 function buttonSaveClick() {
     let p = new Object()
     let valid = true
 
-    Array.from(formEditData.querySelectorAll("input, textarea")).forEach(
+    formEditData.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             if (inputEdit.materialComponent != undefined) {
                 inputEdit.materialComponent.value = String(
@@ -205,34 +212,33 @@ function buttonSaveClick() {
     console.log(p)
 
     if (valid) {
-        if (personExists) {
+        if (kaseExists) {
             p.updateUser = firebase.auth().currentUser.email
             p.updateDate = new Date().toJSON().substr(0, 10)
             p.updateTime = new Date().toLocaleTimeString()
-            person.update(p)
+            kase.update(p)
         } else {
             p.createUser = firebase.auth().currentUser.email
             p.createDate = new Date().toJSON().substr(0, 10)
             p.createTime = new Date().toLocaleTimeString()
             p.updateUser = ""
             p.updateDate = ""
-            person.set(p)
+            kase.set(p)
         }
-        clearPerson()
+        clearKase()
     }
 }
 
 function buttonDeleteClick() {
-    person.delete()
+    kase.delete()
 
-    clearPerson()
+    clearKase()
 }
 
-function clearPerson() {
-    personId = undefined
-    person = undefined
+function clearKase() {
+    kase = undefined
 
-    Array.from(formEditData.querySelectorAll("input, textarea")).forEach(
+    formEditData.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             inputEdit.materialComponent.value = ""
             if (inputEdit.id.split('_').length == 1) {
@@ -274,16 +280,17 @@ function clearPerson() {
     buttonDelete.hidden = true
 }
 
-function orderPersons(orderBy, orderDirection) {
+function orderKases(orderBy, orderDirection) {
     if (orderDirection == undefined) {
         orderDirection = "asc"
     }
 
-    let query = persons.orderBy(orderBy, orderDirection)
+    let query = kases.orderBy(orderBy, orderDirection)
 
     query.onSnapshot(
         (snapshot) => {
-            listPersons(snapshot)
+            console.log(snapshot)
+            listKases(snapshot)
         },
         (err) => {
             console.log(err)
@@ -322,35 +329,31 @@ function headerClick(headerID) {
         }
 
         if (
-            clickedHeaderSortIcon.classList.contains(
-                "mdi-rotate-180"
-            )
+            clickedHeaderSortIcon.classList.contains("mdi-rotate-180")
         ) {
-            orderPersons(headerID, "asc")
+            orderKases(headerID, "asc")
 
-            clickedHeaderSortIcon.classList.remove(
-                "mdi-rotate-180"
-            )
+            clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
         } else {
-            orderPersons(headerID, "desc")
+            orderKases(headerID, "desc")
 
             clickedHeaderSortIcon.classList.add("mdi-rotate-180")
         }
     }
 }
 
-function listPersons(snap, clean, foundPersons, searchQuery) {
+function listKases(snap, clean, foundKases, searchQuery) {
     if (snap.docs.length > 0) {
         if (clean || clean == undefined) {
-            personsList.innerHTML = null
+            kasesList.innerHTML = null
         }
 
         snap.forEach((p) => {
-            if (foundPersons == undefined || foundPersons.includes(p.id)) {
+            if (foundKases == undefined || foundKases.includes(p.id)) {
                 let tr = document.createElement("tr")
                 tr.id = p.id
-                tr.className = "rowPerson"
-                personsList.appendChild(tr)
+                tr.className = "rowKase"
+                kasesList.appendChild(tr)
 
                 Array.from(tableColumns).forEach((column) => {
                     let td = document.createElement("td")
@@ -370,7 +373,7 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                     }
                     if (searchQuery != undefined) {
                         if (
-                            td.textContent.toLowerCase().includes(searchQuery.toLowerCase())
+                            td.textContent.toLowerKase().includes(searchQuery.toLowerKase())
                         ) {
                             td.classList.add("bg-warning")
                         }
@@ -378,42 +381,42 @@ function listPersons(snap, clean, foundPersons, searchQuery) {
                 })
             }
         })
-    } else {
-        personsList.innerHTML = "<h3>Persons not found...</h3>"
-    }
 
-    Array.from(rowPersons).forEach((rowPerson) => {
-        rowPerson.ondblclick = function () {
-            clearPerson()
+        Array.from(rowKases).forEach((rowKase) => {
+            rowKase.ondblclick = function () {
+                clearKase()
 
-            snap.forEach((element) => {
-                if (element.id == rowPerson.id) {
-                    formEditData.hidden = false
-                    buttonDelete.hidden = false
+                snap.forEach((element) => {
+                    if (element.id == rowKase.id) {
+                        formEditData.hidden = false
+                        buttonDelete.hidden = false
 
-                    Array.from(formEditData.querySelectorAll("input, textarea")).forEach(
-                        (inputEdit) => {
-                            if (element.get(inputEdit.id) != undefined) {
-                                if (inputEdit.disabled) {
-                                    if (element.get(inputEdit.id) != "") {
+                        formEditData.querySelectorAll("input, textarea").forEach(
+                            (inputEdit) => {
+                                if (element.get(inputEdit.id) != undefined) {
+                                    if (inputEdit.disabled) {
+                                        if (element.get(inputEdit.id) != "") {
+                                            inputEdit.parentElement.hidden = false
+                                        }
+                                    } else {
                                         inputEdit.parentElement.hidden = false
                                     }
-                                } else {
-                                    inputEdit.parentElement.hidden = false
-                                }
 
-                                if (!inputEdit.parentElement.hidden) {
-                                    inputEdit.materialComponent.value = element.get(inputEdit.id)
+                                    if (!inputEdit.parentElement.hidden) {
+                                        inputEdit.materialComponent.value = element.get(inputEdit.id)
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-            })
-            person = allPersons.doc(rowPerson.id)
-            personExists = true
-        }
-    })
+                        )
+                    }
+                })
+                kase = kases.doc(rowKase.id)
+                kaseExists = true
+            }
+        })
+    } else {
+        kasesList.innerHTML = "<h3>Kases not found...</h3>"
+    }
 }
 
 function modalExpand(header) {
@@ -434,7 +437,7 @@ Sortable.create(tableColumnsList, {
     easing: "ease-in-out",
     chosenClass: "sortable-choosen",
     onMove: function () {
-        orderPersons(currentOrder, currentOrderDirection)
+        orderKases(currentOrder, currentOrderDirection)
     },
     onEnd: function (event) {
         let enabledColumns = []
@@ -442,7 +445,7 @@ Sortable.create(tableColumnsList, {
             enabledColumns.push(column.id)
         })
         localStorage.setItem("enabledColumns", enabledColumns)
-        orderPersons(currentOrder, currentOrderDirection)
+        orderKases(currentOrder, currentOrderDirection)
     },
 })
 Sortable.create(hiddenTableColumnsList, {
@@ -451,7 +454,7 @@ Sortable.create(hiddenTableColumnsList, {
     easing: "ease-in-out",
     sort: false,
     onMove: function () {
-        orderPersons(currentOrder, currentOrderDirection)
+        orderKases(currentOrder, currentOrderDirection)
     },
     onEnd: function (event) {
         let enabledColumns = []
@@ -459,16 +462,15 @@ Sortable.create(hiddenTableColumnsList, {
             enabledColumns.push(column.id)
         })
         localStorage.setItem("enabledColumns", enabledColumns)
-        orderPersons(currentOrder, currentOrderDirection)
+        orderKases(currentOrder, currentOrderDirection)
     },
 })
 
 function buttonApplyFilterClick() {
-    let blockOrder,
-        emptyFilter = true
-    persons = allPersons
+    let blockOrder, emptyFilter = true
+    kases = kases
 
-    Array.from(formFilter.querySelectorAll("input, textarea")).forEach(
+    formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
             inputFilter.materialComponent.value = String(
                 inputFilter.materialComponent.value
@@ -477,11 +479,11 @@ function buttonApplyFilterClick() {
                 emptyFilter = false
                 switch (inputFilter.id.split('.')[1]) {
                     case "min":
-                        persons = persons.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.materialComponent.value + "")
+                        kases = kases.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.materialComponent.value + "")
                         blockOrder = inputFilter.id.split('.')[0]
                         break
                     case "max":
-                        persons = persons.where(
+                        kases = kases.where(
                             "" + inputFilter.id.split('.')[0] + "",
                             "<=",
                             "" + inputFilter.materialComponent.value + ""
@@ -489,7 +491,7 @@ function buttonApplyFilterClick() {
                         blockOrder = inputFilter.id.split('.')[0]
                         break
                     default:
-                        persons = persons.where(
+                        kases = kases.where(
                             "" + inputFilter.id + "",
                             "==",
                             "" + inputFilter.materialComponent.value + ""
@@ -514,7 +516,7 @@ function buttonApplyFilterClick() {
                 }
             })
         } else {
-            orderPersons(currentOrder, currentOrderDirection)
+            orderKases(currentOrder, currentOrderDirection)
 
             Array.from(tableColumns).forEach((th) => {
                 th.setAttribute("onclick", "headerClick(this.id)")
@@ -524,7 +526,7 @@ function buttonApplyFilterClick() {
 }
 
 function buttonClearFilterClick() {
-    Array.from(formFilter.querySelectorAll("input, textarea")).forEach(
+    formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
             inputFilter.materialComponent.value = ""
         }
@@ -532,8 +534,8 @@ function buttonClearFilterClick() {
     Array.from(tableColumns).forEach((th) => {
         th.setAttribute("onclick", "headerClick(this.id)")
     })
-    persons = allPersons
-    orderPersons(currentOrder, currentOrderDirection)
+    kases = kases
+    orderKases(currentOrder, currentOrderDirection)
 
     buttonClearFilter.disabled = true
 }

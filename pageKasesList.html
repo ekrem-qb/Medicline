@@ -2,14 +2,14 @@
 <html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Two</title>
-    <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.min.css" />
-    <link rel="stylesheet" href="node_modules/@mdi/font/css/materialdesignicons.min.css" />
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="node_modules/jquery-editable-select/dist/jquery-editable-select.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="node_modules/@mdi/font/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="node_modules/jquery-editable-select/dist/jquery-editable-select.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="mdc-typography" onload="pageLoaded()">
@@ -37,11 +37,11 @@
                 </button>
             </div>
             <div class="table-responsive mdc-card mdc-elevation--z6">
-                <table class="table table-hover table-bordered" id="persons">
+                <table class="table table-hover table-bordered" id="kases">
                     <thead>
                         <tr id="tableColumnsList"></tr>
                     </thead>
-                    <tbody id="personsList"></tbody>
+                    <tbody id="kasesList"></tbody>
                 </table>
             </div>
             <div class="modal-footer mdc-card mdc-elevation--z6">
@@ -94,10 +94,15 @@
     <div class="modal" id="formEditData" hidden="hidden">
         <div class="form mdc-card mdc-elevation--z6 px-1">
             <div class="modal-header">
-                <h3 class="modal-title">Person Editing</h3>
-                <button class="mdc-fab mdc-fab--mini" onclick="clearPerson()">
-                    <div class="mdc-fab__ripple"></div>
-                    <i class="mdc-fab__icon mdi mdi-close"></i>
+                <h3 class="modal-title">
+                    <button class="mdc-button mdc-button--outlined">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-pound"></i>
+                        <span class="mdc-button__label" id="currentKaseID">0000000</span>
+                    </button> Kase Editing
+                </h3>
+                <button class="mdc-icon-button" onclick="clearKase()">
+                    <span class="mdi mdi-close"></span>
                 </button>
             </div>
             <form class="form-row p-3">
@@ -287,8 +292,10 @@
                 </div>
 
                 <div class="form-group col-auto flex flex-column">
-                    <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--no-label">
-                        <textarea class="mdc-text-field__input" rows="4" cols="40" id="description"></textarea>
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
+                        <span class="mdc-text-field__resizer">
+                            <textarea class="mdc-text-field__input" rows="4" cols="40" id="description"></textarea>
+                        </span>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
@@ -388,6 +395,9 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button class="mdc-icon-button button_add-select-item">
+                            <span class="mdi mdi-plus"></span>
+                        </button>
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined">
@@ -518,8 +528,10 @@
                 </div>
 
                 <div class="form-group col-auto flex flex-column">
-                    <label class="mdc-text-field mdc-text-field--textarea mdc-text-field--no-label">
-                        <textarea class="mdc-text-field__input" rows="4" cols="40" id="complaints"></textarea>
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
+                        <span class="mdc-text-field__resizer">
+                            <textarea class="mdc-text-field__input" rows="4" cols="40" id="complaints"></textarea>
+                        </span>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
@@ -530,7 +542,7 @@
                     </label>
                 </div>
             </form>
-            <div class="modal-footer">
+            <div class="modal-footer flex-row-reverse justify-content-between">
                 <button class="mdc-button mdc-button--raised" onclick="buttonSaveClick()" id="buttonSave">
                     <div class="mdc-button__ripple"></div>
                     <i class="mdi mdc-button__icon mdi-content-save"></i>
@@ -548,7 +560,7 @@
         require("./renderer.js")
     </script>
     <script src="imports.js"></script>
-    <script src="pagePersonsList.js"></script>
+    <script src="pageKasesList.js"></script>
 </body>
 
 </html>

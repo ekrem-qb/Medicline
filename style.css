@@ -56,6 +56,7 @@
 .container-max {
   max-width: max-content;
   margin: auto;
+  height: 100vh;
 }
 
 .list-group th:first-child {
@@ -125,6 +126,11 @@ form {
 }
 */
 
+.modal-title {
+  user-select: none;
+  line-height: normal;
+}
+
 .modal-body {
   max-height: 75vh;
   overflow: auto;
@@ -132,6 +138,10 @@ form {
 
 .modal-footer {
   align-items: stretch;
+}
+
+.button_add-select-item {
+  border-left: solid 1px var(--mdc-theme-text-icon-on-background);
 }
 
 /*--------------------------- SortableJS --------------------------------- */
@@ -187,6 +197,18 @@ input.no-filter,
   transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.mdc-icon-button {
+  height: auto;
+  padding: 0;
+  align-self: center;
+}
+
+.mdc-button__ripple::before,
+.mdc-icon-button::before,
+.mdc-ripple-surface::before {
+  display: none;
+}
+
 th .mdi {
   vertical-align: top;
   margin: 0 0 0 18px;
@@ -210,8 +232,27 @@ th .mdi.mdi-unfold-more-horizontal::before {
   border-color: var(--mdc-theme-primary);
 }
 
+.mdc-button__label {
+  line-height: normal;
+}
+
+.modal-title .mdc-button--outlined {
+  font-size: inherit;
+  user-select: all;
+  padding: 0 5px;
+  vertical-align: baseline;
+}
+
+.modal-title .mdc-button--outlined .mdc-button__icon {
+  font-size: inherit;
+  height: auto;
+  width: auto;
+  margin: 0;
+}
+
 #buttonCreate,
-#buttonSave {
+#buttonSave,
+#buttonSignIn {
   --mdc-theme-primary: var(--success);
 }
 
@@ -250,6 +291,11 @@ th .mdi.mdi-unfold-more-horizontal::before {
   color: inherit;
 }
 
+.mdc-select__dropdown-icon {
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
   color: var(--mdc-theme-primary);
@@ -260,6 +306,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
   color: var(--mdc-theme-error);
 }
 
-.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon::before {
   transform: rotate(180deg);
 }

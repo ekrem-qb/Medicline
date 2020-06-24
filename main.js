@@ -27,7 +27,7 @@ async function main() {
                 reject(new Error('Window closed prematurely.')));
 
             // initiate the loading
-            window.loadFile(`${__dirname}/pagePersonsList.html`);
+            window.loadFile(`${__dirname}/pageKasesList.html`);
         });
 
         return window;
