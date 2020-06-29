@@ -30,7 +30,8 @@
                         <div class="mdc-notched-outline__trailing"></div>
                     </div>
                 </label>
-                <button class="mdc-button mdc-button--raised" onclick="buttonCreateClick()" id="buttonCreate">
+                <button class="mdc-button mdc-button--raised mdc-button-green" onclick="buttonCreateClick()"
+                    id="buttonCreate">
                     <div class="mdc-button__ripple"></div>
                     <i class="mdi mdc-button__icon mdi-plus"></i>
                     <span class="mdc-button__label">Create</span>
@@ -76,7 +77,8 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button class="mdc-button mdc-button--raised" onclick="buttonApplyFilterClick()" id="buttonSave">
+                    <button class="mdc-button mdc-button--raised mdc-button-green" onclick="buttonApplyFilterClick()"
+                        id="buttonSave">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-check"></i>
                         <span class="mdc-button__label">Apply</span>
@@ -99,13 +101,18 @@
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-pound"></i>
                         <span class="mdc-button__label" id="currentKaseID">0000000</span>
-                    </button> Kase Editing
+                    </button>
+                    Kase Editing
+                    <button class="mdc-fab mdc-fab--mini" id="buttonLock">
+                        <div class="mdc-fab__ripple"></div>
+                        <span class="mdc-fab__icon mdi mdi-lock"></span>
+                    </button>
                 </h3>
                 <button class="mdc-icon-button" onclick="clearKase()">
                     <span class="mdi mdi-close"></span>
                 </button>
             </div>
-            <form class="form-row p-3">
+            <form id="kaseEditForm" class="form-row p-3">
                 <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined">
                         <input type="text" class="mdc-text-field__input" id="name" required />
@@ -181,8 +188,8 @@
 
                 <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                        <select class="editable-select filter mdc-text-field__input" id="status" required></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="status" required readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -191,12 +198,10 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                </div>
 
-                <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                        <select class="editable-select filter mdc-text-field__input" id="country" required></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="country" required readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -204,6 +209,10 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
                 </div>
 
@@ -211,8 +220,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="provider" required></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="provider" required readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -220,11 +229,16 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
 
-                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
-                        <input type="number" class="mdc-text-field__input" id="provider_phone" disabled readonly />
+                        <input type="number" class="mdc-text-field__input" id="provider_phone" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -232,6 +246,10 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-content-save"></span>
+                        </button>
                     </label>
                 </div>
 
@@ -239,8 +257,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="provider2"></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="provider2" readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -248,11 +266,16 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
 
-                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
-                        <input type="number" class="mdc-text-field__input" id="provider2_phone" disabled readonly />
+                        <input type="number" class="mdc-text-field__input" id="provider2_phone" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -260,6 +283,10 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-content-save"></span>
+                        </button>
                     </label>
                 </div>
 
@@ -267,8 +294,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="provider3"></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="provider3" readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -276,11 +303,16 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
 
-                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-phone"></i>
-                        <input type="number" class="mdc-text-field__input" id="provider3_phone" disabled readonly />
+                        <input type="number" class="mdc-text-field__input" id="provider3_phone" disabled />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -288,13 +320,17 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-content-save"></span>
+                        </button>
                     </label>
                 </div>
 
                 <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
                         <span class="mdc-text-field__resizer">
-                            <textarea class="mdc-text-field__input" rows="4" cols="40" id="description"></textarea>
+                            <textarea class="mdc-text-field__input" rows="6" cols="40" id="description"></textarea>
                         </span>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
@@ -386,8 +422,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-box"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="insurance"></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="insurance" readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -395,8 +431,9 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
-                        <button class="mdc-icon-button button_add-select-item">
-                            <span class="mdi mdi-plus"></span>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
                         </button>
                     </label>
 
@@ -488,8 +525,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-map-marker"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="address"></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <select class="editable-select mdc-text-field__input" id="address" readonly></select>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -497,14 +534,18 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
 
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-office-building"></i>
-                        <select class="editable-select filter mdc-text-field__input" id="address_hotel"
+                        <select class="editable-select mdc-text-field__input" id="address_hotel" readonly
                             disabled></select>
-                        <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                        <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -512,6 +553,10 @@
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
+                        <button type="button"
+                            class="mdc-icon-button mdc-text-field__icon--trailing button_add-select-item" hidden>
+                            <span class="mdi mdi-plus mdi-rotate-180"></span>
+                        </button>
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
@@ -530,7 +575,7 @@
                 <div class="form-group col-auto flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
                         <span class="mdc-text-field__resizer">
-                            <textarea class="mdc-text-field__input" rows="4" cols="40" id="complaints"></textarea>
+                            <textarea class="mdc-text-field__input" rows="6" cols="40" id="complaints"></textarea>
                         </span>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
@@ -543,12 +588,14 @@
                 </div>
             </form>
             <div class="modal-footer flex-row-reverse justify-content-between">
-                <button class="mdc-button mdc-button--raised" onclick="buttonSaveClick()" id="buttonSave">
+                <button type="submit" class="mdc-button mdc-button--raised mdc-button-green" form="kaseEditForm"
+                    onclick="buttonSaveClick()" id="buttonSave">
                     <div class="mdc-button__ripple"></div>
                     <i class="mdi mdc-button__icon mdi-content-save"></i>
                     <span class="mdc-button__label">Save</span>
                 </button>
-                <button class="mdc-button mdc-button--outlined" onclick="buttonDeleteClick()" id="buttonDelete">
+                <button class="mdc-button mdc-button--outlined mdc-button-red" onclick="buttonDeleteClick()"
+                    id="buttonDelete">
                     <div class="mdc-button__ripple"></div>
                     <i class="mdi mdc-button__icon mdi-delete"></i>
                     <span class="mdc-button__label">Delete</span>

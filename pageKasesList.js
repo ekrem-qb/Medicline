@@ -5,6 +5,8 @@ const clearSearchIcon = document.getElementById("clearSearchIcon")
 
 const formEditData = document.getElementById("formEditData")
 const currentKaseID = document.getElementById("currentKaseID")
+const buttonLock = document.getElementById("buttonLock")
+const addSelectItemButtons = document.getElementsByClassName("button_add-select-item")
 
 const buttonDelete = document.getElementById("buttonDelete")
 const buttonClearFilter = document.getElementById("buttonClearFilter")
@@ -15,7 +17,6 @@ const hiddenTableColumnsList = document.getElementById("hiddenTableColumnsList")
 
 const tableColumns = tableColumnsList.getElementsByTagName("th")
 const kasesList = document.getElementById("kasesList")
-const rowKases = document.getElementsByClassName("rowKase")
 var currentOrder, currentOrderDirection
 
 var kases = firebase.firestore().collection("kases")
@@ -50,7 +51,7 @@ function loadSelectMenus() {
     document.querySelectorAll(".editable-select").forEach((select) => {
         let selectID = select.id.replace(/[0-9]/g, '')
 
-        if (selectID.split('_').length == 1) {
+        if (!selectID.includes('_')) {
             firebase.firestore().collection(selectID).onSnapshot((snapshot) => {
                 $(select).editableSelect("clear")
                 snapshot.docs.forEach((selectItem) => {
@@ -59,7 +60,7 @@ function loadSelectMenus() {
             })
 
             $(select).on("select.editable-select", function () {
-                let firstSubElement = select.parentNode.parentNode.querySelector("[disabled]")
+                let firstSubElement = select.parentElement.parentElement.querySelectorAll("input")[1]
                 if (firstSubElement != null) {
                     firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot((snapshot => {
                         if (firstSubElement.classList.contains('editable-select')) {
@@ -75,20 +76,17 @@ function loadSelectMenus() {
                         }
                     }))
                 }
-                let subElements = select.parentNode.parentNode.querySelectorAll("[disabled]")
+                let subElements = select.parentElement.parentElement.querySelectorAll("input")
                 subElements.forEach(subElement => {
-                    subElement.materialComponent.disabled = false
+                    subElementID = subElement.id.replace(/[0-9]/g, '')
+                    if (subElement != select && subElementID.split('_')[0] == selectID) {
+                        subElement.materialComponent.disabled = false
+                        subElement.materialComponent.value = ''
+                    }
                 })
             })
         }
     })
-}
-
-function addSelectItem(addButton) {
-    let select = addButton.parentNode.parentNode.querySelector(".editable-select")
-    let selectID = select.id.replace(/[0-9]/g, '')
-
-    firebase.firestore().collection(selectID).doc(select.materialComponent.value).set({})
 }
 
 function loadColumns() {
@@ -129,24 +127,6 @@ function newColumn(column) {
     return th
 }
 
-function buttonCreateClick() {
-    clearKase()
-
-    let stop = kases.orderBy(currentOrder, currentOrderDirection).onSnapshot((snapshot) => {
-        do {
-            var kaseID = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-            kaseExists = snapshot.docs.some((item) => item.id === kaseID)
-
-            console.log(kaseID + ":" + kaseExists + " in " + snapshot.docs.length)
-        } while (kaseExists)
-
-        stop()
-        formEditData.hidden = false
-        kase = kases.doc(kaseID)
-        currentKaseID.innerText = kaseID
-    })
-}
-
 inputSearch.oninput = function () {
     var searchQuery = String(inputSearch.materialComponent.value).trim()
     inputSearch.materialComponent.value = searchQuery
@@ -169,6 +149,47 @@ inputSearch.oninput = function () {
         })
     } else {
         clearSearchInput()
+    }
+}
+
+function buttonCreateClick() {
+    clearKase()
+
+    let stop = kases.orderBy(currentOrder, currentOrderDirection).onSnapshot((snapshot) => {
+        do {
+            var kaseID = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+            kaseExists = snapshot.docs.some((item) => item.id === kaseID)
+
+            console.log(kaseID + ":" + kaseExists + " in " + snapshot.docs.length)
+        } while (kaseExists)
+
+        stop()
+        formEditData.hidden = false
+        kase = kases.doc(kaseID)
+        currentKaseID.innerText = kaseID
+    })
+}
+
+buttonLock.onclick = function () {
+    if (buttonLock.unlocked) {
+        buttonLock.classList.remove("mdc-button-green")
+        buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock-open-variant", "mdi-flip-h")
+        buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock")
+        buttonLock.unlocked = false
+
+        for (const addSelectItemButton of addSelectItemButtons) {
+            addSelectItemButton.hidden = true
+        }
+    }
+    else {
+        buttonLock.classList.add("mdc-button-green")
+        buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock")
+        buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock-open-variant", "mdi-flip-h")
+        buttonLock.unlocked = true
+
+        for (const addSelectItemButton of addSelectItemButtons) {
+            addSelectItemButton.hidden = false
+        }
     }
 }
 
@@ -238,42 +259,79 @@ function buttonDeleteClick() {
 function clearKase() {
     kase = undefined
 
-    formEditData.querySelectorAll("input, textarea").forEach(
-        (inputEdit) => {
-            inputEdit.materialComponent.value = ""
-            if (inputEdit.id.split('_').length == 1) {
-                inputEdit.parentElement.hidden = inputEdit.disabled
-            }
+    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
+        let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
+        inputEdit.materialComponent.value = ""
+        if (inputEdit.id.split('_').length == 1) {
+            inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
+        }
 
-            if (inputEdit.required) {
-                inputEdit.materialComponent.valid = true
-
-                inputEdit.oninput = function () {
-                    if (String(inputEdit.materialComponent.value).trim() == "") {
-                        inputEdit.materialComponent.valid = false
-                    } else {
-                        inputEdit.materialComponent.valid = true
-                    }
-                }
-
-                inputEdit.onchange = function () {
-                    inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-                    if (inputEdit.materialComponent.value == "") {
-                        inputEdit.materialComponent.valid = false
-                    }
-                }
+        if (inputEdit.required) {
+            inputEdit.materialComponent.valid = true
+            inputEdit.onchange = function () {
+                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+                inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ""
             }
             inputEdit.oninput = function () {
-                if (inputEdit.classList.contains("editable-select")) {
-                    inputEdit.parentNode.parentNode.querySelectorAll('*').forEach(subElement => {
-                        if (subElement.id.split('_')[0] == inputEdit.id && subElement != inputEdit) {
+                inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ""
+            }
+        }
+
+        let addSelectItem = inputEdit.parentElement.querySelector(".button_add-select-item")
+        if (addSelectItem != null) {
+            addSelectItem.onclick = function () {
+                let addSelectItemIcon = addSelectItem.querySelector(".mdi")
+
+                if (addSelectItemIcon.classList.contains("mdi-plus")) {
+                    addSelectItemIcon.classList.remove("mdi-plus")
+                    addSelectItemIcon.classList.remove("mdi-rotate-180")
+                    addSelectItemIcon.classList.add("mdi-content-save")
+
+                    inputEdit.readOnly = false
+                    inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
+                    inputEdit.parentElement.querySelector(".es-list").hidden = true
+                    inputEdit.materialComponent.value = ''
+                    inputEdit.materialComponent.valid = true
+
+                    let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
+                    subElements.forEach(subElement => {
+                        subElementID = subElement.id.replace(/[0-9]/g, '')
+                        if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
                             subElement.materialComponent.disabled = true
                             subElement.materialComponent.value = ''
                         }
                     })
                 }
+                else {
+                    if (inputEditID.includes('_')) {
+                        let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
+                        let data = new Object()
+                        data[inputEdit.materialComponent.value] = ''
+                        if (inputEdit.classList.contains("editable-select")) {
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).update(data)
+                        }
+                        else {
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).set(data)
+                        }
+                    }
+                    else {
+                        firebase.firestore().collection(inputEditID).doc(inputEdit.materialComponent.value).set({})
+                    }
+
+                    if (inputEdit.classList.contains("editable-select")) {
+                        addSelectItemIcon.classList.remove("mdi-content-save")
+                        addSelectItemIcon.classList.add("mdi-plus")
+                        addSelectItemIcon.classList.add("mdi-rotate-180")
+
+                        inputEdit.readOnly = true
+                        inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
+                        inputEdit.parentElement.querySelector(".es-list").hidden = false
+                    }
+                }
+
             }
         }
+    }
     )
 
     formEditData.hidden = true
@@ -348,27 +406,50 @@ function listKases(snap, clean, foundKases, searchQuery) {
             kasesList.innerHTML = null
         }
 
-        snap.forEach((p) => {
-            if (foundKases == undefined || foundKases.includes(p.id)) {
+        snap.forEach((k) => {
+            if (foundKases == undefined || foundKases.includes(k.id)) {
                 let tr = document.createElement("tr")
-                tr.id = p.id
-                tr.className = "rowKase"
+                tr.id = k.id
+                tr.ondblclick = function () {
+                    clearKase()
+                    formEditData.hidden = false
+                    buttonDelete.hidden = false
+
+                    currentKaseID.innerText = k.id
+                    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
+                        if (k.get(inputEdit.id) != undefined) {
+                            if (inputEdit.disabled) {
+                                if (k.get(inputEdit.id) != "") {
+                                    inputEdit.parentElement.parentElement.hidden = false
+                                }
+                            } else {
+                                inputEdit.parentElement.parentElement.hidden = false
+                            }
+
+                            if (!inputEdit.parentElement.parentElement.hidden) {
+                                inputEdit.materialComponent.value = k.get(inputEdit.id)
+                            }
+                        }
+                    })
+                    kase = kases.doc(tr.id)
+                    kaseExists = true
+                }
                 kasesList.appendChild(tr)
 
                 Array.from(tableColumns).forEach((column) => {
                     let td = document.createElement("td")
                     tr.appendChild(td)
                     td.id = column.id
-                    switch (column) {
+                    switch (column.id) {
                         case "__name__":
-                            td.textContent = p.id
+                            td.textContent = k.id
                             break
                         case "description":
                         case "complaints":
-                            td.textContent = td.title = p.get(column.id)
+                            td.textContent = td.title = k.get(column.id)
                             break
                         default:
-                            td.textContent = p.get(column.id)
+                            td.textContent = k.get(column.id)
                             break
                     }
                     if (searchQuery != undefined) {
@@ -379,39 +460,6 @@ function listKases(snap, clean, foundKases, searchQuery) {
                         }
                     }
                 })
-            }
-        })
-
-        Array.from(rowKases).forEach((rowKase) => {
-            rowKase.ondblclick = function () {
-                clearKase()
-
-                snap.forEach((element) => {
-                    if (element.id == rowKase.id) {
-                        formEditData.hidden = false
-                        buttonDelete.hidden = false
-
-                        formEditData.querySelectorAll("input, textarea").forEach(
-                            (inputEdit) => {
-                                if (element.get(inputEdit.id) != undefined) {
-                                    if (inputEdit.disabled) {
-                                        if (element.get(inputEdit.id) != "") {
-                                            inputEdit.parentElement.hidden = false
-                                        }
-                                    } else {
-                                        inputEdit.parentElement.hidden = false
-                                    }
-
-                                    if (!inputEdit.parentElement.hidden) {
-                                        inputEdit.materialComponent.value = element.get(inputEdit.id)
-                                    }
-                                }
-                            }
-                        )
-                    }
-                })
-                kase = kases.doc(rowKase.id)
-                kaseExists = true
             }
         })
     } else {

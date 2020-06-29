@@ -19,19 +19,18 @@ firebase.initializeApp(firebaseConfig)
 
 /* ----- Editable Select ----- */
 require('jquery-editable-select')
-$.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide'
 
 let editableSelectList = document.querySelectorAll('.editable-select')
 for (const key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
         const element = editableSelectList[key];
         element.parentElement.style.zIndex = (editableSelectList.length - key).toString()
-        $(element).editableSelect()
+        $(element).editableSelect({
+            filter: false,
+            effects: "slide"
+        })
     }
 }
-$('.filter').on('show.editable-select', function (e) {
-    $(this).editableSelect('filter')
-})
 
 /* ----- Material Elements ----- */
 const { MDCTextField } = require('@material/textfield')
@@ -42,7 +41,7 @@ document.querySelectorAll('.mdc-text-field').forEach(element => {
     element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
 })
 
-document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button').forEach(element => {
+document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button, .mdc-fab').forEach(element => {
     element.materialRipple = new MDCRipple(element)
     if (element.classList.contains("mdc-icon-button")) {
         element.materialRipple.unbounded = true

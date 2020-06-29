@@ -31,22 +31,27 @@
 }
 
 ::-webkit-scrollbar {
-  width: initial;
+  width: .75vw;
+  height: .75vw;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: rgba(128, 128, 128, .25);
   border-radius: 100px;
   border-color: transparent;
   border-style: solid;
-  border-width: 5px;
+  border-width: 4px;
   background-clip: padding-box;
 }
 
-::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, .5);
+}
+
 ::-webkit-scrollbar-thumb:active {
-  background-color: rgba(0, 0, 0, 0.5);
-  border-width: 2px;
+  background-color: rgb(128, 128, 128);
+  border-width: 0;
 }
 
 .flex {
@@ -56,7 +61,6 @@
 .container-max {
   max-width: max-content;
   margin: auto;
-  height: 100vh;
 }
 
 .list-group th:first-child {
@@ -129,6 +133,16 @@ form {
 .modal-title {
   user-select: none;
   line-height: normal;
+  display: flex;
+  align-items: center;
+}
+
+.modal-title button:first-child {
+  margin-right: 8pt;
+}
+
+.modal-title button:last-child {
+  margin-left: 8pt;
 }
 
 .modal-body {
@@ -154,31 +168,28 @@ form {
   opacity: 1;
 }
 
-
-
 /*------------------------ Editable Select ------------------------------- */
 
-input.es-input {
+.editable-select.es-input {
   background: none !important;
-  max-width: 195px;
-}
-
-input.es-input,
-.es-list li {
-  font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  word-spacing: -10px;
-  text-shadow: 0 0;
+  max-width: 184px;
   padding-right: 0 !important;
 }
 
-input.no-filter,
+.es-list li {
+  text-shadow: 0 0;
+}
+
+.es-input:read-only,
 .es-list li {
   cursor: pointer;
 }
 
-
+#country,
+.es-input#country~.es-list li {
+  font-family: var(--mdc-typography-font-family, JoyPixels, Roboto, sans-serif);
+  word-spacing: -10px;
+}
 
 /*----------------------- Material Elements ------------------------------ */
 
@@ -194,18 +205,21 @@ input.no-filter,
 }
 
 .mdi::before {
-  transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mdc-icon-button {
   height: auto;
-  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
   align-self: center;
+  margin: 0;
 }
 
 .mdc-button__ripple::before,
 .mdc-icon-button::before,
-.mdc-ripple-surface::before {
+.mdc-ripple-surface::before,
+.mdc-fab__ripple::before {
   display: none;
 }
 
@@ -240,7 +254,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
   font-size: inherit;
   user-select: all;
   padding: 0 5px;
-  vertical-align: baseline;
 }
 
 .modal-title .mdc-button--outlined .mdc-button__icon {
@@ -250,14 +263,14 @@ th .mdi.mdi-unfold-more-horizontal::before {
   margin: 0;
 }
 
-#buttonCreate,
-#buttonSave,
-#buttonSignIn {
+.mdc-button-green {
   --mdc-theme-primary: var(--success);
+  --mdc-theme-secondary: var(--success);
 }
 
-#buttonDelete {
+.mdc-button-red {
   --mdc-theme-primary: var(--danger);
+  --mdc-theme-secondary: var(--danger);
 }
 
 .mdc-list-item__text {
@@ -265,22 +278,12 @@ th .mdi.mdi-unfold-more-horizontal::before {
   align-items: center;
 }
 
-.mdc-select__selected-text,
-.mdc-list-item__text icon {
-  font-family: JoyPixels, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  word-spacing: -10px;
-}
-
-.mdc-list-item__text icon {
-  font-size: larger;
-  height: 18px;
-  margin-right: 16px;
-}
-
 .mdc-card__actions {
   border-top: 1px solid rgba(0, 0, 0, 0.38);
+}
+
+form .mdc-text-field {
+  width: fit-content;
 }
 
 .mdc-text-field__input {
@@ -296,13 +299,17 @@ th .mdi.mdi-unfold-more-horizontal::before {
   margin-right: 16px;
 }
 
+.mdc-text-field--disabled .mdc-text-field__icon--trailing {
+  border-color: rgba(0, 0, 0, .06);
+}
+
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
   color: var(--mdc-theme-primary);
 }
 
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label,
-.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon {
+.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdi {
   color: var(--mdc-theme-error);
 }
 
