@@ -6,8 +6,8 @@ const clearSearchIcon = document.getElementById("clearSearchIcon")
 const formEditData = document.getElementById("formEditData")
 const currentKaseID = document.getElementById("currentKaseID")
 const buttonLock = document.getElementById("buttonLock")
-const addSelectItemButtons = document.getElementsByClassName("button_add-select-item")
 
+const buttonSave = document.getElementById("buttonSave")
 const buttonDelete = document.getElementById("buttonDelete")
 const buttonClearFilter = document.getElementById("buttonClearFilter")
 
@@ -60,30 +60,39 @@ function loadSelectMenus() {
             })
 
             $(select).on("select.editable-select", function () {
-                let firstSubElement = select.parentElement.parentElement.querySelectorAll("input")[1]
-                if (firstSubElement != null) {
-                    firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot((snapshot => {
-                        if (firstSubElement.classList.contains('editable-select')) {
-                            $(firstSubElement).editableSelect("clear")
-                            for (const key in snapshot.data()) {
-                                $(firstSubElement).editableSelect("add", key)
-                            }
-                        }
-                        else {
-                            for (const key in snapshot.data()) {
-                                firstSubElement.materialComponent.value = key
-                            }
-                        }
-                    }))
-                }
                 let subElements = select.parentElement.parentElement.querySelectorAll("input")
                 subElements.forEach(subElement => {
-                    subElementID = subElement.id.replace(/[0-9]/g, '')
+                    let subElementID = subElement.id.replace(/[0-9]/g, '')
                     if (subElement != select && subElementID.split('_')[0] == selectID) {
                         subElement.materialComponent.disabled = false
                         subElement.materialComponent.value = ''
                     }
                 })
+                let firstSubElement = select.parentElement.parentElement.querySelectorAll("input")[1]
+                if (firstSubElement != null) {
+                    let sideButton = firstSubElement.querySelector(".button--add_select_item, .button--save_item")
+                    let firstSubElementID = firstSubElement.id.replace(/[0-9]/g, '')
+                    if (firstSubElement != select && firstSubElementID.split('_')[0] == selectID) {
+                        firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot((snapshot => {
+                            if (firstSubElement.classList.contains('editable-select')) {
+                                $(firstSubElement).editableSelect("clear")
+                                for (const key in snapshot.data()) {
+                                    $(firstSubElement).editableSelect("add", key)
+                                }
+                            } else {
+                                for (const key in snapshot.data()) {
+                                    firstSubElement.materialComponent.value = key
+                                }
+                                firstSubElement.oldValue = firstSubElement.materialComponent.value
+                                console.log(firstSubElement.id + " -- OLD VALUE: " + firstSubElement.oldValue)
+                                if (sideButton != null) {
+                                    sideButton.disabled = true
+                                }
+                                firstSubElement.materialComponent.disabled = !buttonLock.unlocked
+                            }
+                        }))
+                    }
+                }
             })
         }
     })
@@ -152,6 +161,12 @@ inputSearch.oninput = function () {
     }
 }
 
+function clearSearchInput() {
+    clearSearchIcon.hidden = true
+    inputSearch.materialComponent.value = ""
+    orderKases(currentOrder, currentOrderDirection)
+}
+
 function buttonCreateClick() {
     clearKase()
 
@@ -172,63 +187,136 @@ function buttonCreateClick() {
 
 buttonLock.onclick = function () {
     if (buttonLock.unlocked) {
-        buttonLock.classList.remove("mdc-button-green")
+        buttonLock.classList.remove("mdc-button--green")
         buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock-open-variant", "mdi-flip-h")
         buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock")
         buttonLock.unlocked = false
 
-        for (const addSelectItemButton of addSelectItemButtons) {
-            addSelectItemButton.hidden = true
-        }
-    }
-    else {
-        buttonLock.classList.add("mdc-button-green")
+        buttonSave.disabled = false
+
+        formEditData.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+            sideButton.hidden = true
+            let sideButtonIcon = sideButton.querySelector(".mdi")
+
+            let inputEdit = sideButton.parentElement.querySelector("input")
+            if (sideButton.classList.contains("button--save_item")) {
+                if (inputEdit.classList.contains("editable-select")) {
+                    sideButton.classList.add("button--add_select_item")
+                    sideButtonIcon.classList.add("mdi-plus")
+                    sideButtonIcon.classList.add("mdi-rotate-180")
+                    sideButtonIcon.classList.remove("mdi-content-save")
+                    sideButton.classList.remove("button--save_item")
+                } else {
+                    inputEdit.materialComponent.disabled = true
+                }
+                if (inputEdit.oldValue != undefined) {
+                    inputEdit.materialComponent.value = inputEdit.oldValue
+                }
+            }
+            if (inputEdit.classList.contains("editable-select")) {
+                inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
+                inputEdit.parentElement.querySelector(".es-list").hidden = false
+            }
+            inputEdit.readOnly = true
+        })
+    } else {
+        buttonLock.classList.add("mdc-button--green")
         buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock")
         buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock-open-variant", "mdi-flip-h")
         buttonLock.unlocked = true
 
-        for (const addSelectItemButton of addSelectItemButtons) {
-            addSelectItemButton.hidden = false
-        }
+        buttonSave.disabled = true
+
+        formEditData.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+            sideButton.hidden = false
+
+            let inputEdit = sideButton.parentElement.querySelector("input")
+            let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
+
+            if (sideButton.classList.contains("button--save_item")) {
+                inputEdit.readOnly = false
+            }
+
+            let sideButtonIcon = sideButton.querySelector(".mdi")
+            sideButton.onclick = function () {
+                if (sideButton.classList.contains("button--add_select_item")) {
+                    sideButton.classList.remove("button--add_select_item")
+                    sideButtonIcon.classList.remove("mdi-plus")
+                    sideButtonIcon.classList.remove("mdi-rotate-180")
+                    sideButtonIcon.classList.add("mdi-content-save")
+                    sideButton.classList.add("button--save_item")
+
+                    inputEdit.readOnly = false
+                    inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
+                    inputEdit.parentElement.querySelector(".es-list").hidden = true
+                    inputEdit.oldValue = inputEdit.materialComponent.value
+                    console.log(inputEdit.id + " -- OLD VALUE: " + inputEdit.oldValue)
+                    inputEdit.materialComponent.value = ''
+                    inputEdit.materialComponent.valid = true
+
+                    let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
+                    subElements.forEach(subElement => {
+                        subElementID = subElement.id.replace(/[0-9]/g, '')
+                        if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
+                            subElement.materialComponent.disabled = true
+                            subElement.materialComponent.value = ''
+                        }
+                    })
+                } else {
+                    if (inputEditID.includes('_')) {
+                        let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
+                        let data = new Object()
+                        data[inputEdit.materialComponent.value] = ''
+                        if (inputEdit.classList.contains("editable-select")) {
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).update(data)
+                        } else {
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).set(data)
+                        }
+                    } else {
+                        firebase.firestore().collection(inputEditID).doc(inputEdit.materialComponent.value).set({})
+                    }
+
+                    if (inputEdit.classList.contains("editable-select")) {
+                        sideButton.classList.add("button--add_select_item")
+                        sideButtonIcon.classList.add("mdi-plus")
+                        sideButtonIcon.classList.add("mdi-rotate-180")
+                        sideButtonIcon.classList.remove("mdi-content-save")
+                        sideButton.classList.remove("button--save_item")
+
+                        inputEdit.readOnly = true
+                        inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
+                        inputEdit.parentElement.querySelector(".es-list").hidden = false
+                    }
+                }
+            }
+        })
     }
 }
 
-function clearSearchInput() {
-    clearSearchIcon.hidden = true
-    inputSearch.materialComponent.value = ""
-    orderKases(currentOrder, currentOrderDirection)
-}
-
-function buttonSaveClick() {
+buttonSave.onclick = function () {
     let p = new Object()
     let valid = true
 
-    formEditData.querySelectorAll("input, textarea").forEach(
-        (inputEdit) => {
-            if (inputEdit.materialComponent != undefined) {
-                inputEdit.materialComponent.value = String(
-                    inputEdit.materialComponent.value
-                ).trim()
-                if (inputEdit.required && inputEdit.materialComponent.value == "") {
-                    inputEdit.materialComponent.valid = false
-                    valid = false
-                }
-                if (!inputEdit.disabled) {
-                    p[inputEdit.id] = inputEdit.materialComponent.value
-                }
-                inputEdit.materialComponent.value = String(
-                    inputEdit.materialComponent.value
-                ).trim()
-                if (inputEdit.required && inputEdit.materialComponent.value == "") {
-                    inputEdit.materialComponent.valid = false
-                    valid = false
-                }
-                if (!inputEdit.disabled) {
-                    p[inputEdit.id] = inputEdit.materialComponent.value
-                }
+    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
+        if (inputEdit.materialComponent != undefined) {
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required && inputEdit.materialComponent.value == "") {
+                inputEdit.materialComponent.valid = false
+                valid = false
+            }
+            if (!inputEdit.disabled) {
+                p[inputEdit.id] = inputEdit.materialComponent.value
+            }
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required && inputEdit.materialComponent.value == "") {
+                inputEdit.materialComponent.valid = false
+                valid = false
+            }
+            if (!inputEdit.disabled) {
+                p[inputEdit.id] = inputEdit.materialComponent.value
             }
         }
-    )
+    })
 
     console.log(p)
 
@@ -266,76 +354,36 @@ function clearKase() {
             inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
         }
 
-        if (inputEdit.required) {
-            inputEdit.materialComponent.valid = true
-            inputEdit.onchange = function () {
-                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+        inputEdit.materialComponent.valid = true
+        inputEdit.onchange = function () {
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required) {
                 inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ""
             }
-            inputEdit.oninput = function () {
+        }
+        inputEdit.oninput = function () {
+            if (inputEdit.required) {
                 inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ""
             }
         }
 
-        let addSelectItem = inputEdit.parentElement.querySelector(".button_add-select-item")
-        if (addSelectItem != null) {
-            addSelectItem.onclick = function () {
-                let addSelectItemIcon = addSelectItem.querySelector(".mdi")
-
-                if (addSelectItemIcon.classList.contains("mdi-plus")) {
-                    addSelectItemIcon.classList.remove("mdi-plus")
-                    addSelectItemIcon.classList.remove("mdi-rotate-180")
-                    addSelectItemIcon.classList.add("mdi-content-save")
-
-                    inputEdit.readOnly = false
-                    inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
-                    inputEdit.parentElement.querySelector(".es-list").hidden = true
-                    inputEdit.materialComponent.value = ''
-                    inputEdit.materialComponent.valid = true
-
-                    let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
-                    subElements.forEach(subElement => {
-                        subElementID = subElement.id.replace(/[0-9]/g, '')
-                        if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
-                            subElement.materialComponent.disabled = true
-                            subElement.materialComponent.value = ''
-                        }
-                    })
+        let sideButton = inputEdit.parentElement.querySelector(".button--add_select_item, .button--save_item")
+        if (sideButton != null) {
+            if (sideButton.classList.contains("button--save_item")) {
+                sideButton.disabled = true
+                inputEdit.oninput = function () {
+                    sideButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
                 }
-                else {
-                    if (inputEditID.includes('_')) {
-                        let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
-                        let data = new Object()
-                        data[inputEdit.materialComponent.value] = ''
-                        if (inputEdit.classList.contains("editable-select")) {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).update(data)
-                        }
-                        else {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).set(data)
-                        }
-                    }
-                    else {
-                        firebase.firestore().collection(inputEditID).doc(inputEdit.materialComponent.value).set({})
-                    }
-
-                    if (inputEdit.classList.contains("editable-select")) {
-                        addSelectItemIcon.classList.remove("mdi-content-save")
-                        addSelectItemIcon.classList.add("mdi-plus")
-                        addSelectItemIcon.classList.add("mdi-rotate-180")
-
-                        inputEdit.readOnly = true
-                        inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
-                        inputEdit.parentElement.querySelector(".es-list").hidden = false
-                    }
-                }
-
             }
         }
-    }
-    )
+
+        if (inputEdit.id.includes('_')) {
+            inputEdit.materialComponent.disabled = true
+        }
+    })
 
     formEditData.hidden = true
-    buttonDelete.hidden = true
+    buttonDelete.disabled = true
 }
 
 function orderKases(orderBy, orderDirection) {
@@ -413,7 +461,7 @@ function listKases(snap, clean, foundKases, searchQuery) {
                 tr.ondblclick = function () {
                     clearKase()
                     formEditData.hidden = false
-                    buttonDelete.hidden = false
+                    buttonDelete.disabled = false
 
                     currentKaseID.innerText = k.id
                     formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
@@ -428,6 +476,10 @@ function listKases(snap, clean, foundKases, searchQuery) {
 
                             if (!inputEdit.parentElement.parentElement.hidden) {
                                 inputEdit.materialComponent.value = k.get(inputEdit.id)
+                            }
+
+                            if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
+                                inputEdit.materialComponent.disabled = false
                             }
                         }
                     })

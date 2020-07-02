@@ -1,6 +1,8 @@
 const jQuery = $ = require('jquery')
 
-/* ----- Firebase ----- */
+
+/* ---------------------------------- Firebase ---------------------------------- */
+
 const firebase = require('firebase/app')
 require('firebase/auth')
 require('firebase/firestore')
@@ -17,7 +19,9 @@ var firebaseConfig = {
 }
 firebase.initializeApp(firebaseConfig)
 
-/* ----- Editable Select ----- */
+
+/* ------------------------------- Editable Select ------------------------------- */
+
 require('jquery-editable-select')
 
 let editableSelectList = document.querySelectorAll('.editable-select')
@@ -32,7 +36,9 @@ for (const key in editableSelectList) {
     }
 }
 
-/* ----- Material Elements ----- */
+
+/* ------------------------------- Material Elements ------------------------------- */
+
 const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
 const { MDCSelect } = require('@material/select')
@@ -52,7 +58,9 @@ document.querySelectorAll('.mdc-select').forEach(element => {
     element.querySelector('input').materialComponent = new MDCSelect(element)
 })
 
-/* ----- Table Export ----- */
+
+/* ---------------------------------- Table Export ---------------------------------- */
+
 const TableExport = require('tableexport')
 
 function buttonExportClick() {

@@ -63,6 +63,10 @@
   margin: auto;
 }
 
+label {
+  margin-bottom: 1rem;
+}
+
 .list-group th:first-child {
   border-top-left-radius: calc(.3rem - 1px);
   border-top-right-radius: calc(.3rem - 1px);
@@ -138,11 +142,11 @@ form {
 }
 
 .modal-title button:first-child {
-  margin-right: 8pt;
+  margin-right: 1rem;
 }
 
 .modal-title button:last-child {
-  margin-left: 8pt;
+  margin-left: 1rem;
 }
 
 .modal-body {
@@ -150,15 +154,21 @@ form {
   overflow: auto;
 }
 
+.modal-header,
 .modal-footer {
   align-items: stretch;
 }
 
-.button_add-select-item {
+.modal-footer>* {
+  margin: 0;
+}
+
+.button--add_select_item {
   border-left: solid 1px var(--mdc-theme-text-icon-on-background);
 }
 
-/*--------------------------- SortableJS --------------------------------- */
+
+/* --------------------------------- SortableJS --------------------------------- */
 
 .sortable-ghost {
   opacity: 0;
@@ -168,7 +178,8 @@ form {
   opacity: 1;
 }
 
-/*------------------------ Editable Select ------------------------------- */
+
+/* ------------------------------- Editable Select ------------------------------- */
 
 .editable-select.es-input {
   background: none !important;
@@ -180,7 +191,7 @@ form {
   text-shadow: 0 0;
 }
 
-.es-input:read-only,
+.es-input:read-only:enabled,
 .es-list li {
   cursor: pointer;
 }
@@ -191,15 +202,17 @@ form {
   word-spacing: -10px;
 }
 
-/*----------------------- Material Elements ------------------------------ */
+
+/* ------------------------------- Material Elements ------------------------------- */
 
 :root {
   --mdc-theme-primary: var(--orange);
   --mdc-theme-secondary: var(--danger);
+  filter: invert(1) hue-rotate(180deg);
 }
 
 .mdi {
-  font-size: 24px;
+  font-size: 1.5rem;
   line-height: 1;
   background: none !important;
 }
@@ -242,7 +255,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
   -webkit-user-select: none;
 }
 
-.mdc-button--outlined .mdc-button__ripple {
+.mdc-button--outlined:enabled .mdc-button__ripple {
   border-color: var(--mdc-theme-primary);
 }
 
@@ -263,12 +276,12 @@ th .mdi.mdi-unfold-more-horizontal::before {
   margin: 0;
 }
 
-.mdc-button-green {
+.mdc-button--green {
   --mdc-theme-primary: var(--success);
   --mdc-theme-secondary: var(--success);
 }
 
-.mdc-button-red {
+.mdc-button--red {
   --mdc-theme-primary: var(--danger);
   --mdc-theme-secondary: var(--danger);
 }
@@ -299,8 +312,9 @@ form .mdc-text-field {
   margin-right: 16px;
 }
 
-.mdc-text-field--disabled .mdc-text-field__icon--trailing {
-  border-color: rgba(0, 0, 0, .06);
+.mdc-text-field--disabled .mdc-text-field__icon--trailing,
+:disabled .mdi {
+  color: rgba(0, 0, 0, .3);
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,
