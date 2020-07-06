@@ -1,26 +1,28 @@
 const Sortable = require("sortablejs")
 
-const inputSearch = document.getElementById("inputSearch")
-const clearSearchIcon = document.getElementById("clearSearchIcon")
+const inputSearch = document.querySelector("#inputSearch")
+const buttonClearSearch = document.querySelector("#buttonClearSearch")
 
-const formEditData = document.getElementById("formEditData")
-const currentKaseID = document.getElementById("currentKaseID")
-const buttonLock = document.getElementById("buttonLock")
+const kaseEditWindow = document.querySelector("#kaseEditWindow")
+const currentKaseID = document.querySelector("#currentKaseID")
+const buttonLock = document.querySelector("#buttonLock")
 
-const buttonSave = document.getElementById("buttonSave")
-const buttonDelete = document.getElementById("buttonDelete")
-const buttonClearFilter = document.getElementById("buttonClearFilter")
+const kaseEditForm = document.querySelector("#kaseEditForm")
+
+const buttonSave = document.querySelector("#buttonSave")
+const buttonDelete = document.querySelector("#buttonDelete")
+const buttonClearFilter = document.querySelector("#buttonClearFilter")
 
 const columnsJSON = require("./columns.json")
-const tableColumnsList = document.getElementById("tableColumnsList")
-const hiddenTableColumnsList = document.getElementById("hiddenTableColumnsList")
+const tableColumnsList = document.querySelector("#tableColumnsList")
+const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 
-const tableColumns = tableColumnsList.getElementsByTagName("th")
-const kasesList = document.getElementById("kasesList")
+const kasesList = document.querySelector("#kasesList")
 var currentOrder, currentOrderDirection
 
-var kases = firebase.firestore().collection("kases")
-var kase, kaseExists
+var currentKases = firebase.firestore().collection("kases")
+var allKases = firebase.firestore().collection("kases")
+var currentKase, kaseExists
 
 const formFilter = document.getElementById("formFilter")
 
@@ -45,6 +47,8 @@ function pageLoaded() {
     clearKase()
     loadColumns()
     loadSelectMenus()
+    formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
+    buttonApplyFilterClick()
 }
 
 function loadSelectMenus() {
@@ -62,17 +66,15 @@ function loadSelectMenus() {
             $(select).on("select.editable-select", function () {
                 let subElements = select.parentElement.parentElement.querySelectorAll("input")
                 subElements.forEach(subElement => {
-                    let subElementID = subElement.id.replace(/[0-9]/g, '')
-                    if (subElement != select && subElementID.split('_')[0] == selectID) {
+                    if (subElement != select && subElement.id.split('_')[0] == select.id) {
                         subElement.materialComponent.disabled = false
                         subElement.materialComponent.value = ''
                     }
                 })
-                let firstSubElement = select.parentElement.parentElement.querySelectorAll("input")[1]
+                let firstSubElement = subElements[1]
                 if (firstSubElement != null) {
-                    let sideButton = firstSubElement.querySelector(".button--add_select_item, .button--save_item")
-                    let firstSubElementID = firstSubElement.id.replace(/[0-9]/g, '')
-                    if (firstSubElement != select && firstSubElementID.split('_')[0] == selectID) {
+                    let sideSaveButton = firstSubElement.querySelector(".button--save_item")
+                    if (firstSubElement != select && firstSubElement.id.split('_')[0] == select.id) {
                         firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot((snapshot => {
                             if (firstSubElement.classList.contains('editable-select')) {
                                 $(firstSubElement).editableSelect("clear")
@@ -84,9 +86,8 @@ function loadSelectMenus() {
                                     firstSubElement.materialComponent.value = key
                                 }
                                 firstSubElement.oldValue = firstSubElement.materialComponent.value
-                                console.log(firstSubElement.id + " -- OLD VALUE: " + firstSubElement.oldValue)
-                                if (sideButton != null) {
-                                    sideButton.disabled = true
+                                if (sideSaveButton != null) {
+                                    sideSaveButton.disabled = true
                                 }
                                 firstSubElement.materialComponent.disabled = !buttonLock.unlocked
                             }
@@ -117,11 +118,6 @@ function loadColumns() {
             hiddenTableColumnsList.appendChild(newColumn(column))
         }
     }
-    if (enabledColumns.includes("createDate")) {
-        headerClick("createDate")
-    } else {
-        headerClick(enabledColumns[enabledColumns.length - 1])
-    }
 }
 
 function newColumn(column) {
@@ -129,7 +125,7 @@ function newColumn(column) {
     th.id = column
     th.innerHTML = columnsJSON[column]
     th.setAttribute("onclick", "headerClick(this.id)")
-    th.classList.add("mdc-ripple-surface")
+    th.classList.add("mdc-elevation--z6")
     let sortIcon = document.createElement("span")
     sortIcon.className = "mdi mdi-unfold-more-horizontal"
     th.appendChild(sortIcon)
@@ -138,39 +134,39 @@ function newColumn(column) {
 
 inputSearch.oninput = function () {
     var searchQuery = String(inputSearch.materialComponent.value).trim()
-    inputSearch.materialComponent.value = searchQuery
 
-    if (searchQuery != "") {
-        clearSearchIcon.hidden = false
+    if (searchQuery != '') {
+        buttonClearSearch.disabled = false
         var foundKases = new Array()
-        kases.onSnapshot((snapshot) => {
-            snapshot.forEach((p) => {
-                if (!foundKases.includes(p.id)) {
-                    if (
-                        (String(p.id) + JSON.stringify(p.data()).toLowerKase()).includes(
-                            searchQuery.toLowerKase()
-                        )
-                    )
-                        foundKases.push(p.id)
+        kasesList.innerHTML = "<h3>Loading...</h3>"
+        currentKases.onSnapshot((snapshot) => {
+            snapshot.forEach((kase) => {
+                if (!foundKases.includes(kase.id)) {
+                    if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery.toLowerCase())) {
+                        foundKases.push(kase.id)
+                    }
                 }
             })
-            listKases(snapshot, true, foundKases, searchQuery)
+            if (foundKases.length > 0) {
+                listKases(snapshot, foundKases, searchQuery)
+            }
+            else {
+                kasesList.innerHTML = "<h3>Kases not found...</h3>"
+            }
         })
     } else {
-        clearSearchInput()
+        clearSearch()
     }
 }
 
-function clearSearchInput() {
-    clearSearchIcon.hidden = true
-    inputSearch.materialComponent.value = ""
+function clearSearch() {
+    buttonClearSearch.disabled = true
+    inputSearch.materialComponent.value = ''
     orderKases(currentOrder, currentOrderDirection)
 }
 
 function buttonCreateClick() {
-    clearKase()
-
-    let stop = kases.orderBy(currentOrder, currentOrderDirection).onSnapshot((snapshot) => {
+    let stop = allKases.orderBy(currentOrder, currentOrderDirection).onSnapshot((snapshot) => {
         do {
             var kaseID = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
             kaseExists = snapshot.docs.some((item) => item.id === kaseID)
@@ -179,13 +175,17 @@ function buttonCreateClick() {
         } while (kaseExists)
 
         stop()
-        formEditData.hidden = false
-        kase = kases.doc(kaseID)
+        kaseEditWindow.hidden = false
+        currentKase = allKases.doc(kaseID)
         currentKaseID.innerText = kaseID
+        kaseEditForm.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+        kaseEditForm.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
+        kaseEditForm.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+        kaseEditForm.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
     })
 }
 
-buttonLock.onclick = function () {
+function buttonLockClick() {
     if (buttonLock.unlocked) {
         buttonLock.classList.remove("mdc-button--green")
         buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock-open-variant", "mdi-flip-h")
@@ -194,7 +194,7 @@ buttonLock.onclick = function () {
 
         buttonSave.disabled = false
 
-        formEditData.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+        kaseEditForm.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
             sideButton.hidden = true
             let sideButtonIcon = sideButton.querySelector(".mdi")
 
@@ -227,7 +227,7 @@ buttonLock.onclick = function () {
 
         buttonSave.disabled = true
 
-        formEditData.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+        kaseEditForm.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
             sideButton.hidden = false
 
             let inputEdit = sideButton.parentElement.querySelector("input")
@@ -235,6 +235,9 @@ buttonLock.onclick = function () {
 
             if (sideButton.classList.contains("button--save_item")) {
                 inputEdit.readOnly = false
+                if (inputEdit.oldValue != undefined) {
+                    inputEdit.materialComponent.disabled = false
+                }
             }
 
             let sideButtonIcon = sideButton.querySelector(".mdi")
@@ -250,7 +253,6 @@ buttonLock.onclick = function () {
                     inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
                     inputEdit.parentElement.querySelector(".es-list").hidden = true
                     inputEdit.oldValue = inputEdit.materialComponent.value
-                    console.log(inputEdit.id + " -- OLD VALUE: " + inputEdit.oldValue)
                     inputEdit.materialComponent.value = ''
                     inputEdit.materialComponent.valid = true
 
@@ -294,95 +296,94 @@ buttonLock.onclick = function () {
 }
 
 buttonSave.onclick = function () {
-    let p = new Object()
+    let kase = new Object()
     let valid = true
 
-    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
+    kaseEditForm.querySelectorAll("input, textarea").forEach((inputEdit) => {
         if (inputEdit.materialComponent != undefined) {
             inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-            if (inputEdit.required && inputEdit.materialComponent.value == "") {
+            if (inputEdit.required && inputEdit.materialComponent.value == '') {
                 inputEdit.materialComponent.valid = false
                 valid = false
             }
-            if (!inputEdit.disabled) {
-                p[inputEdit.id] = inputEdit.materialComponent.value
+            if (!inputEdit.materialComponent.disabled) {
+                kase[inputEdit.id] = inputEdit.materialComponent.value
             }
             inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-            if (inputEdit.required && inputEdit.materialComponent.value == "") {
+            if (inputEdit.required && inputEdit.materialComponent.value == '') {
                 inputEdit.materialComponent.valid = false
                 valid = false
             }
-            if (!inputEdit.disabled) {
-                p[inputEdit.id] = inputEdit.materialComponent.value
+            if (!inputEdit.materialComponent.disabled) {
+                kase[inputEdit.id] = inputEdit.materialComponent.value
             }
         }
     })
 
-    console.log(p)
+    console.log(kase)
 
     if (valid) {
         if (kaseExists) {
-            p.updateUser = firebase.auth().currentUser.email
-            p.updateDate = new Date().toJSON().substr(0, 10)
-            p.updateTime = new Date().toLocaleTimeString()
-            kase.update(p)
+            kase.updateUser = firebase.auth().currentUser.email
+            kase.updateDate = new Date().toJSON().substr(0, 10)
+            kase.updateTime = new Date().toLocaleTimeString()
+            currentKase.update(kase)
         } else {
-            p.createUser = firebase.auth().currentUser.email
-            p.createDate = new Date().toJSON().substr(0, 10)
-            p.createTime = new Date().toLocaleTimeString()
-            p.updateUser = ""
-            p.updateDate = ""
-            kase.set(p)
+            kase.createUser = firebase.auth().currentUser.email
+            kase.createDate = new Date().toJSON().substr(0, 10)
+            kase.createTime = new Date().toLocaleTimeString()
+            kase.updateUser = ''
+            kase.updateDate = ''
+            currentKase.set(kase)
         }
         clearKase()
     }
 }
 
-function buttonDeleteClick() {
-    kase.delete()
+buttonDelete.onclick = function () {
+    currentKase.delete()
 
     clearKase()
 }
 
 function clearKase() {
-    kase = undefined
+    currentKase = undefined
+    buttonLock.unlocked = true
+    buttonLockClick()
 
-    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
-        let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
-        inputEdit.materialComponent.value = ""
-        if (inputEdit.id.split('_').length == 1) {
-            inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
+    document.querySelectorAll("input:not(#inputSearch), textarea").forEach((inputEdit) => {
+        let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
+        if (sideSaveButton != null) {
+            sideSaveButton.disabled = true
         }
 
+        inputEdit.materialComponent.value = ''
         inputEdit.materialComponent.valid = true
-        inputEdit.onchange = function () {
-            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-            if (inputEdit.required) {
-                inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ""
-            }
-        }
-        inputEdit.oninput = function () {
-            if (inputEdit.required) {
-                inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ""
-            }
-        }
-
-        let sideButton = inputEdit.parentElement.querySelector(".button--add_select_item, .button--save_item")
-        if (sideButton != null) {
-            if (sideButton.classList.contains("button--save_item")) {
-                sideButton.disabled = true
-                inputEdit.oninput = function () {
-                    sideButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
-                }
-            }
-        }
 
         if (inputEdit.id.includes('_')) {
             inputEdit.materialComponent.disabled = true
         }
+        else {
+            inputEdit.parentElement.parentElement.hidden = inputEdit.materialComponent.disabled
+        }
+
+        inputEdit.onchange = function () {
+            inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+            if (inputEdit.required && !buttonLock.unlocked) {
+                inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ''
+            }
+        }
+        inputEdit.oninput = function () {
+            if (sideSaveButton != null) {
+                sideSaveButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
+            }
+            if (inputEdit.required && !buttonLock.unlocked) {
+                inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ''
+            }
+        }
     })
 
-    formEditData.hidden = true
+    kaseEditWindow.hidden = true
     buttonDelete.disabled = true
 }
 
@@ -391,8 +392,9 @@ function orderKases(orderBy, orderDirection) {
         orderDirection = "asc"
     }
 
-    let query = kases.orderBy(orderBy, orderDirection)
+    let query = currentKases.orderBy(orderBy, orderDirection)
 
+    kasesList.innerHTML = "<h3>Loading...</h3>"
     query.onSnapshot(
         (snapshot) => {
             console.log(snapshot)
@@ -400,6 +402,7 @@ function orderKases(orderBy, orderDirection) {
         },
         (err) => {
             console.log(err)
+            kasesList.innerHTML = "<h3>Kases not found...</h3>"
         }
     )
 
@@ -408,66 +411,59 @@ function orderKases(orderBy, orderDirection) {
 }
 
 function headerClick(headerID) {
-    let clickedHeader = document.querySelector("th#" + headerID)
+    let clickedHeader = tableColumnsList.querySelector("th#" + headerID)
 
-    if (clickedHeader.parentElement == tableColumnsList) {
-        Array.from(tableColumns).forEach((element) => {
-            if (element.id != headerID) {
-                let sortIcon = element.querySelector("span")
+    for (let column of tableColumnsList.children) {
+        if (column.id != headerID) {
+            let sortIcon = column.querySelector("span")
 
-                if (sortIcon.classList.contains("mdi-chevron-up")) {
-                    sortIcon.classList.remove("mdi-chevron-up")
-                }
-                if (sortIcon.classList.contains("mdi-rotate-180")) {
-                    sortIcon.classList.remove("mdi-rotate-180")
-                }
-                if (!sortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-                    sortIcon.classList.add("mdi-unfold-more-horizontal")
-                }
+            if (sortIcon.classList.contains("mdi-chevron-up")) {
+                sortIcon.classList.remove("mdi-chevron-up")
             }
-        })
-
-        let clickedHeaderSortIcon = clickedHeader.querySelector("span")
-
-        if (clickedHeaderSortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-            clickedHeaderSortIcon.classList.remove("mdi-unfold-more-horizontal")
-            clickedHeaderSortIcon.classList.add("mdi-chevron-up")
+            if (sortIcon.classList.contains("mdi-rotate-180")) {
+                sortIcon.classList.remove("mdi-rotate-180")
+            }
+            if (!sortIcon.classList.contains("mdi-unfold-more-horizontal")) {
+                sortIcon.classList.add("mdi-unfold-more-horizontal")
+            }
         }
+    }
 
-        if (
-            clickedHeaderSortIcon.classList.contains("mdi-rotate-180")
-        ) {
-            orderKases(headerID, "asc")
+    let clickedHeaderSortIcon = clickedHeader.querySelector("span")
 
-            clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
-        } else {
-            orderKases(headerID, "desc")
+    if (clickedHeaderSortIcon.classList.contains("mdi-unfold-more-horizontal")) {
+        clickedHeaderSortIcon.classList.remove("mdi-unfold-more-horizontal")
+        clickedHeaderSortIcon.classList.add("mdi-chevron-up")
+    }
 
-            clickedHeaderSortIcon.classList.add("mdi-rotate-180")
-        }
+    if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
+        orderKases(headerID, "asc")
+
+        clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
+    } else {
+        orderKases(headerID, "desc")
+
+        clickedHeaderSortIcon.classList.add("mdi-rotate-180")
     }
 }
 
-function listKases(snap, clean, foundKases, searchQuery) {
+function listKases(snap, foundKases, searchQuery) {
     if (snap.docs.length > 0) {
-        if (clean || clean == undefined) {
-            kasesList.innerHTML = null
-        }
-
-        snap.forEach((k) => {
-            if (foundKases == undefined || foundKases.includes(k.id)) {
+        kasesList.innerHTML = ''
+        snap.forEach((kase) => {
+            if (foundKases == undefined || foundKases.includes(kase.id)) {
                 let tr = document.createElement("tr")
-                tr.id = k.id
+                tr.id = kase.id
                 tr.ondblclick = function () {
                     clearKase()
-                    formEditData.hidden = false
+                    kaseEditWindow.hidden = false
                     buttonDelete.disabled = false
 
-                    currentKaseID.innerText = k.id
-                    formEditData.querySelectorAll("input, textarea").forEach((inputEdit) => {
-                        if (k.get(inputEdit.id) != undefined) {
-                            if (inputEdit.disabled) {
-                                if (k.get(inputEdit.id) != "") {
+                    currentKaseID.innerText = kase.id
+                    kaseEditForm.querySelectorAll("input, textarea").forEach((inputEdit) => {
+                        if (kase.get(inputEdit.id) != undefined) {
+                            if (inputEdit.materialComponent.disabled) {
+                                if (kase.get(inputEdit.id) != '') {
                                     inputEdit.parentElement.parentElement.hidden = false
                                 }
                             } else {
@@ -475,7 +471,7 @@ function listKases(snap, clean, foundKases, searchQuery) {
                             }
 
                             if (!inputEdit.parentElement.parentElement.hidden) {
-                                inputEdit.materialComponent.value = k.get(inputEdit.id)
+                                inputEdit.materialComponent.value = kase.get(inputEdit.id)
                             }
 
                             if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
@@ -483,35 +479,33 @@ function listKases(snap, clean, foundKases, searchQuery) {
                             }
                         }
                     })
-                    kase = kases.doc(tr.id)
+                    currentKase = allKases.doc(tr.id)
                     kaseExists = true
                 }
                 kasesList.appendChild(tr)
 
-                Array.from(tableColumns).forEach((column) => {
+                for (let column of tableColumnsList.children) {
                     let td = document.createElement("td")
                     tr.appendChild(td)
                     td.id = column.id
                     switch (column.id) {
                         case "__name__":
-                            td.textContent = k.id
+                            td.textContent = kase.id
                             break
                         case "description":
                         case "complaints":
-                            td.textContent = td.title = k.get(column.id)
+                            td.textContent = td.title = kase.get(column.id)
                             break
                         default:
-                            td.textContent = k.get(column.id)
+                            td.textContent = kase.get(column.id)
                             break
                     }
                     if (searchQuery != undefined) {
-                        if (
-                            td.textContent.toLowerKase().includes(searchQuery.toLowerKase())
-                        ) {
+                        if (td.textContent.toLowerCase().includes(searchQuery.toLowerCase())) {
                             td.classList.add("bg-warning")
                         }
                     }
-                })
+                }
             }
         })
     } else {
@@ -520,121 +514,126 @@ function listKases(snap, clean, foundKases, searchQuery) {
 }
 
 function modalExpand(header) {
-    let modalBody = header.parentElement.querySelector(".modal-body")
-    modalBody.hidden = !modalBody.hidden
+    let currentModalBody = header.parentElement.querySelector(".modal-body")
+    let currentExpandIcon = currentModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
 
-    let expandIcon = header.querySelector(".mdc-select__dropdown-icon")
-    if (expandIcon.classList.contains("mdi-rotate-180")) {
-        expandIcon.classList.remove("mdi-rotate-180")
-    } else {
-        expandIcon.classList.add("mdi-rotate-180")
+    let otherModalBody
+    header.parentElement.parentElement.querySelectorAll(".modal-body").forEach(modalBody => {
+        if (modalBody != currentModalBody) {
+            otherModalBody = modalBody
+        }
+    })
+    let otherxpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
+
+    if (currentModalBody.classList.contains("collapsed")) {
+        currentModalBody.classList.remove("collapsed")
+        currentExpandIcon.classList.add("mdi-rotate-180")
+
+        otherModalBody.classList.add("collapsed")
+        otherxpandIcon.classList.remove("mdi-rotate-180")
+    }
+    else {
+        currentModalBody.classList.add("collapsed")
+        currentExpandIcon.classList.remove("mdi-rotate-180")
     }
 }
 
 Sortable.create(tableColumnsList, {
     group: "TableColumns",
     animation: 150,
-    easing: "ease-in-out",
-    chosenClass: "sortable-choosen",
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
     onMove: function () {
         orderKases(currentOrder, currentOrderDirection)
     },
-    onEnd: function (event) {
+    onEnd: function () {
         let enabledColumns = []
-        Array.from(tableColumns).forEach((column) => {
+        for (let column of tableColumnsList.children) {
             enabledColumns.push(column.id)
-        })
+        }
         localStorage.setItem("enabledColumns", enabledColumns)
-        orderKases(currentOrder, currentOrderDirection)
-    },
+    }
 })
 Sortable.create(hiddenTableColumnsList, {
     group: "TableColumns",
     animation: 150,
-    easing: "ease-in-out",
-    sort: false,
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
     onMove: function () {
         orderKases(currentOrder, currentOrderDirection)
     },
-    onEnd: function (event) {
+    onEnd: function () {
         let enabledColumns = []
-        Array.from(tableColumns).forEach((column) => {
+        for (let column of tableColumnsList.children) {
             enabledColumns.push(column.id)
-        })
+        }
         localStorage.setItem("enabledColumns", enabledColumns)
-        orderKases(currentOrder, currentOrderDirection)
-    },
+    }
 })
 
 function buttonApplyFilterClick() {
     let blockOrder, emptyFilter = true
-    kases = kases
+    currentKases = allKases
 
-    formFilter.querySelectorAll("input, textarea").forEach(
-        (inputFilter) => {
-            inputFilter.materialComponent.value = String(
-                inputFilter.materialComponent.value
-            ).trim()
-            if (inputFilter.materialComponent.value != "") {
-                emptyFilter = false
-                switch (inputFilter.id.split('.')[1]) {
-                    case "min":
-                        kases = kases.where("" + inputFilter.id.split('.')[0] + "", ">=", "" + inputFilter.materialComponent.value + "")
-                        blockOrder = inputFilter.id.split('.')[0]
-                        break
-                    case "max":
-                        kases = kases.where(
-                            "" + inputFilter.id.split('.')[0] + "",
-                            "<=",
-                            "" + inputFilter.materialComponent.value + ""
-                        )
-                        blockOrder = inputFilter.id.split('.')[0]
-                        break
-                    default:
-                        kases = kases.where(
-                            "" + inputFilter.id + "",
-                            "==",
-                            "" + inputFilter.materialComponent.value + ""
-                        )
-                        break
+    formFilter.querySelectorAll("input, textarea").forEach((inputFilter) => {
+        if (inputFilter.materialComponent.value != '') {
+            emptyFilter = false
+            switch (inputFilter.id.split('-')[1]) {
+                case "min":
+                    currentKases = currentKases.where(inputFilter.id.split('-')[0], ">=", inputFilter.materialComponent.value)
+                    blockOrder = inputFilter.id.split('-')[0]
+                    break
+                case "max":
+                    currentKases = currentKases.where(inputFilter.id.split('-')[0], "<=", inputFilter.materialComponent.value)
+                    blockOrder = inputFilter.id.split('-')[0]
+                    break
+                default:
+                    currentKases = currentKases.where(inputFilter.id, "==", inputFilter.materialComponent.value)
+                    break
+            }
+        }
+    })
+    if (!emptyFilter) {
+        if (blockOrder != undefined) {
+            if (tableColumnsList.querySelector("th#" + blockOrder) == undefined) {
+                orderKases(blockOrder, currentOrderDirection)
+            }
+            else {
+                headerClick(blockOrder)
+                headerClick(blockOrder)
+            }
+
+            for (let column of tableColumnsList.children) {
+                if (column.id != blockOrder) {
+                    column.removeAttribute("onclick")
+                    column.classList.add("invalid")
                 }
             }
         }
-    )
-    if (emptyFilter) {
-        alert("Filters are empty!")
-        buttonClearFilter.disabled = true
-    } else {
-        buttonClearFilter.disabled = false
-
-        if (blockOrder != undefined) {
-            headerClick(blockOrder)
-
-            Array.from(tableColumns).forEach((th) => {
-                if (th.id != blockOrder) {
-                    th.setAttribute("onclick", "")
-                }
-            })
-        } else {
+        else {
             orderKases(currentOrder, currentOrderDirection)
 
-            Array.from(tableColumns).forEach((th) => {
-                th.setAttribute("onclick", "headerClick(this.id)")
-            })
+            for (let column of tableColumnsList.children) {
+                column.setAttribute("onclick", "headerClick(this.id)")
+                column.classList.remove("invalid")
+            }
         }
     }
+    else {
+        alert("Filters are empty!")
+    }
+    buttonClearFilter.disabled = emptyFilter
 }
 
 function buttonClearFilterClick() {
     formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
-            inputFilter.materialComponent.value = ""
+            inputFilter.materialComponent.value = ''
         }
     )
-    Array.from(tableColumns).forEach((th) => {
-        th.setAttribute("onclick", "headerClick(this.id)")
-    })
-    kases = kases
+    for (let column of tableColumnsList.children) {
+        column.setAttribute("onclick", "headerClick(this.id)")
+        column.classList.remove("invalid")
+    }
+    currentKases = allKases
     orderKases(currentOrder, currentOrderDirection)
 
     buttonClearFilter.disabled = true
