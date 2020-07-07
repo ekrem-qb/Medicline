@@ -67,10 +67,6 @@ form::-webkit-scrollbar,
   margin: auto;
 }
 
-label {
-  justify-content: space-between;
-}
-
 .table {
   margin: 0;
   width: max-content;
@@ -106,6 +102,7 @@ th:active {
   position: sticky;
   top: 0;
   backdrop-filter: blur(5px);
+  user-select: none;
 }
 
 .table td,
@@ -157,9 +154,10 @@ th:active {
   transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modal-body.collapsed {
+.modal-body.collapsed:not(#formFilter),
+#formFilter.hide {
   max-height: 0vh;
-  padding: 0rem !important;
+  padding: 0 !important;
   opacity: 0;
 }
 
@@ -235,7 +233,7 @@ form {
 :root {
   --mdc-theme-primary: var(--orange);
   --mdc-theme-secondary: var(--danger);
-  filter: invert(1) hue-rotate(180deg);
+  /* filter: invert(1) hue-rotate(180deg); */
 }
 
 .mdi {
@@ -320,6 +318,22 @@ th .mdi.mdi-unfold-more-horizontal::before {
   border-top: 1px solid rgba(0, 0, 0, 0.38);
 }
 
+.mdc-text-field {
+  justify-content: space-between;
+  transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mdc-text-field.collapsed {
+  height: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mdc-text-field--textarea.collapsed * {
+  display: none;
+}
+
 .mdc-text-field__input {
   text-shadow: 0 0;
 }
@@ -336,6 +350,10 @@ th .mdi.mdi-unfold-more-horizontal::before {
 .mdc-text-field--disabled .mdc-text-field__icon--trailing,
 :disabled .mdi {
   color: rgba(0, 0, 0, .3);
+}
+
+.mdc-text-field .mdc-floating-label {
+  user-select: none;
 }
 
 .mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label,

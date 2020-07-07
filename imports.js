@@ -68,6 +68,6 @@ function buttonExportClick() {
         filename: new Date().toJSON(),
         exportButtons: false
     })
-    let xlsxData = table.getExportData()['kases'].csv
+    let xlsxData = table.getExportData()['kases'].xlsx
     table.export2file(xlsxData.data, xlsxData.mimeType, xlsxData.filename, xlsxData.fileExtension, xlsxData.merges, xlsxData.RTL, xlsxData.sheetname)
 }

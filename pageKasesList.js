@@ -49,6 +49,7 @@ function pageLoaded() {
     loadSelectMenus()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
     applyFilter()
+    hideEmptyFilters()
 }
 
 function loadSelectMenus() {
@@ -164,7 +165,7 @@ inputSearch.oninput = function () {
                     listKases(snapshot, foundKases, searchQuery)
                 }
                 else {
-                    kasesList.innerHTML = "<h3>Kases not found...</h3>"
+                    kasesList.innerHTML = "<h3>Cases not found...</h3>"
                 }
             })
     } else {
@@ -447,7 +448,7 @@ function loadKases() {
         },
         (err) => {
             console.log(err)
-            kasesList.innerHTML = "<h3>Kases not found...</h3>"
+            kasesList.innerHTML = "<h3>Cases not found...</h3>"
         }
     )
 }
@@ -517,7 +518,7 @@ function listKases(snap, foundKases, searchQuery) {
             })
         orderKase(currentOrder, currentOrderDirection)
     } else {
-        kasesList.innerHTML = "<h3>Kases not found...</h3>"
+        kasesList.innerHTML = "<h3>Cases not found...</h3>"
     }
 }
 
@@ -579,19 +580,21 @@ function modalExpand(header) {
             otherModalBody = modalBody
         }
     })
-    let otherxpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
+    let otherExpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
 
     if (currentModalBody.classList.contains("collapsed")) {
         currentModalBody.classList.remove("collapsed")
         currentExpandIcon.classList.add("mdi-rotate-180")
 
         otherModalBody.classList.add("collapsed")
-        otherxpandIcon.classList.remove("mdi-rotate-180")
+        otherExpandIcon.classList.remove("mdi-rotate-180")
     }
     else {
         currentModalBody.classList.add("collapsed")
         currentExpandIcon.classList.remove("mdi-rotate-180")
     }
+
+    hideEmptyFilters()
 }
 
 Sortable.create(tableColumnsList, {
@@ -626,6 +629,27 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
+
+function hideEmptyFilters() {
+    let hide = true
+    formFilter.querySelectorAll("input, textarea").forEach(
+        (inputFilter) => {
+            if (String(inputFilter.materialComponent.value).trim() == '') {
+                inputFilter.materialComponent.root.classList.toggle("collapsed", formFilter.classList.contains("collapsed"))
+            }
+            else {
+                hide = false
+            }
+        }
+    )
+    if (formFilter.classList.contains("collapsed")) {
+        formFilter.classList.toggle("hide", hide)
+    }
+    else {
+        formFilter.classList.remove("hide")
+    }
+
+}
 
 function applyFilter() {
     let emptyFilter = true
@@ -677,6 +701,7 @@ buttonClearFilter.onclick = function () {
     currentQuery = allKases
     kasesList.innerHTML = "<h3>Loading...</h3>"
     loadKases()
+    hideEmptyFilters()
 
     buttonClearFilter.disabled = true
 }
