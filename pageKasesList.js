@@ -23,7 +23,7 @@ var currentOrder, currentOrderDirection
 var currentQuery = firebase.firestore().collection("kases")
 var allKases = firebase.firestore().collection("kases")
 var currentKasesSnapshot
-var currentKase, kaseExists
+var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
 
 function pageLoaded() {
@@ -46,10 +46,10 @@ function pageLoaded() {
     }
     clearKase()
     loadColumns()
-    loadSelectMenus()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
     applyFilter()
     hideEmptyFilters()
+    loadSelectMenus()
 }
 
 function loadSelectMenus() {
@@ -150,24 +150,21 @@ inputSearch.oninput = function () {
         buttonClearSearch.disabled = false
         var foundKases = new Array()
         kasesList.innerHTML = "<h3>Loading...</h3>"
-        stopCurrentQuery()
-        stopCurrentQuery = currentQuery.onSnapshot(
-            (snapshot) => {
-                snapshot.forEach(
-                    (kase) => {
-                        if (!foundKases.includes(kase.id)) {
-                            if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery.toLowerCase())) {
-                                foundKases.push(kase.id)
-                            }
-                        }
-                    })
-                if (foundKases.length > 0) {
-                    listKases(snapshot, foundKases, searchQuery)
+        currentKasesSnapshot.forEach(
+            (kase) => {
+                if (!foundKases.includes(kase.id)) {
+                    if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery.toLowerCase())) {
+                        foundKases.push(kase.id)
+                    }
                 }
-                else {
-                    kasesList.innerHTML = "<h3>Cases not found...</h3>"
-                }
-            })
+            }
+        )
+        if (foundKases.length > 0) {
+            listKases(currentKasesSnapshot, foundKases, searchQuery)
+        }
+        else {
+            kasesList.innerHTML = "<h3>Cases not found...</h3>"
+        }
     } else {
         clearSearch()
     }
@@ -179,20 +176,49 @@ function clearSearch() {
     listKases(currentKasesSnapshot)
 }
 
+function checkKaseID() {
+    if (!buttonLock.unlocked)
+        buttonSave.disabled = currentKase == undefined
+
+    currentKaseID.parentElement.disabled = currentKase == undefined
+    let idIcon = currentKaseID.parentElement.querySelector(".mdi")
+    idIcon.classList.toggle("mdi-pound", currentKase != undefined)
+    idIcon.classList.toggle("mdi-loading", currentKase == undefined)
+    idIcon.classList.toggle("mdi-spin", currentKase == undefined)
+
+    if (currentKase == undefined)
+        currentKaseID.parentElement.parentElement.title = "Generating available ID..."
+    else
+        currentKaseID.parentElement.parentElement.title = ''
+}
+
+var timer = 0
+
+function randomKaseID() {
+    currentKaseID.innerHTML = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+    checkKaseID()
+    timer++
+}
+
 function buttonCreateClick() {
+    kaseEditWindow.hidden = false
+
+    timer = 0
+    var repeatRandomKaseID = setInterval(randomKaseID, 50)
+
     let stop = allKases.onSnapshot(
         (snapshot) => {
             do {
-                var kaseID = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-                kaseExists = snapshot.docs.some((item) => item.id === kaseID)
+                randomKaseID()
+                kaseExists = snapshot.docs.some((item) => item.id === currentKaseID.innerHTML)
 
-                console.log(kaseID + ":" + kaseExists + " in " + snapshot.docs.length)
+                console.log(currentKaseID.innerHTML + ":" + kaseExists + " in " + snapshot.docs.length + " Time: " + timer)
             } while (kaseExists)
 
             stop()
-            kaseEditWindow.hidden = false
-            currentKase = allKases.doc(kaseID)
-            currentKaseID.innerText = kaseID
+            currentKase = allKases.doc(currentKaseID.innerHTML)
+            checkKaseID()
+            clearInterval(repeatRandomKaseID)
             kaseEditForm.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
             kaseEditForm.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
             kaseEditForm.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
@@ -201,13 +227,16 @@ function buttonCreateClick() {
 }
 
 function buttonLockClick() {
+    buttonLock.classList.toggle("mdc-button--green", !buttonLock.unlocked)
+    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock", buttonLock.unlocked)
+    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock-open-variant", !buttonLock.unlocked)
+    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-flip-h", !buttonLock.unlocked)
+
     if (buttonLock.unlocked) {
-        buttonLock.classList.remove("mdc-button--green")
-        buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock-open-variant", "mdi-flip-h")
-        buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock")
         buttonLock.unlocked = false
 
-        buttonSave.disabled = false
+        if (currentKase != undefined)
+            buttonSave.disabled = false
 
         kaseEditForm.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
             sideButton.hidden = true
@@ -235,9 +264,6 @@ function buttonLockClick() {
             inputEdit.readOnly = true
         })
     } else {
-        buttonLock.classList.add("mdc-button--green")
-        buttonLock.querySelector(".mdc-fab__icon").classList.remove("mdi-lock")
-        buttonLock.querySelector(".mdc-fab__icon").classList.add("mdi-lock-open-variant", "mdi-flip-h")
         buttonLock.unlocked = true
 
         buttonSave.disabled = true
@@ -249,9 +275,9 @@ function buttonLockClick() {
             let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
 
             if (sideButton.classList.contains("button--save_item")) {
-                inputEdit.readOnly = false
                 if (inputEdit.oldValue != undefined) {
                     inputEdit.materialComponent.disabled = false
+                    inputEdit.readOnly = false
                 }
             }
 
@@ -402,6 +428,7 @@ function clearKase() {
 
     kaseEditWindow.hidden = true
     buttonDelete.disabled = true
+    buttonSave.disabled = true
 }
 
 function headerClick(headerID) {
@@ -465,8 +492,11 @@ function listKases(snap, foundKases, searchQuery) {
                         clearKase()
                         kaseEditWindow.hidden = false
                         buttonDelete.disabled = false
+                        currentKase = currentQuery.doc(tr.id)
+                        currentKaseID.innerHTML = tr.id
+                        checkKaseID()
+                        kaseExists = true
 
-                        currentKaseID.innerText = kase.id
                         kaseEditForm.querySelectorAll("input, textarea").forEach(
                             (inputEdit) => {
                                 if (kase.get(inputEdit.id) != undefined) {
@@ -487,8 +517,6 @@ function listKases(snap, foundKases, searchQuery) {
                                     }
                                 }
                             })
-                        currentKase = currentQuery.doc(tr.id)
-                        kaseExists = true
                     }
                     kasesList.appendChild(tr)
 
@@ -583,17 +611,12 @@ function modalExpand(header) {
     let otherExpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
 
     if (currentModalBody.classList.contains("collapsed")) {
-        currentModalBody.classList.remove("collapsed")
-        currentExpandIcon.classList.add("mdi-rotate-180")
-
         otherModalBody.classList.add("collapsed")
         otherExpandIcon.classList.remove("mdi-rotate-180")
     }
-    else {
-        currentModalBody.classList.add("collapsed")
-        currentExpandIcon.classList.remove("mdi-rotate-180")
-    }
 
+    currentExpandIcon.classList.toggle("mdi-rotate-180", currentModalBody.classList.contains("collapsed"))
+    currentModalBody.classList.toggle("collapsed", !currentModalBody.classList.contains("collapsed"))
     hideEmptyFilters()
 }
 

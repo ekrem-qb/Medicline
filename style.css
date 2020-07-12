@@ -5,7 +5,7 @@
 
 @keyframes editFormOpening {
   from {
-    transform: scaleX(0.25) scaleY(0);
+    transform: scaleX(.25) scaleY(0);
     opacity: 0;
     filter: blur(20px);
     top: 15px;
@@ -58,6 +58,10 @@ form::-webkit-scrollbar,
   border-width: initial;
 }
 
+body {
+  overflow: overlay;
+}
+
 .flex {
   display: flex;
 }
@@ -72,6 +76,12 @@ form::-webkit-scrollbar,
   width: max-content;
 }
 
+
+.table-responsive {
+  max-width: 80vw;
+  max-height: 75vh;
+}
+
 .table tbody tr {
   border-bottom: 1.5px solid #dee2e6;
   text-shadow: 0 0;
@@ -84,7 +94,7 @@ form::-webkit-scrollbar,
 }
 
 th {
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, .75);
   color: var(--mdc-theme-on-primary);
   transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
@@ -115,7 +125,7 @@ th:active {
 }
 
 .list-group th {
-  padding: 0.75rem 1.25rem;
+  padding: .75rem 1.25rem;
   border: solid rgba(0, 0, 0, .38);
   border-width: 0 1px 1px 1px;
   box-shadow: none;
@@ -130,6 +140,11 @@ th:active {
 .list-group th:last-child {
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
+}
+
+#kaseEditWindow {
+  display: flex;
+  background-color: rgba(0, 0, 0, .5);
 }
 
 .modal-title {
@@ -148,10 +163,26 @@ th:active {
   margin-left: 1rem;
 }
 
+.modal-header .mdc-select__dropdown-icon {
+  margin-right: .25rem;
+}
+
 .modal-body {
   max-height: 70vh;
   overflow: auto;
   transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+form {
+  overflow: auto;
+}
+
+#formFilter {
+  max-width: 18rem;
+}
+
+#formFilter>* {
+  zoom: .85;
 }
 
 .modal-body.collapsed:not(#formFilter),
@@ -170,20 +201,10 @@ th:active {
   margin: 0;
 }
 
-.table-responsive,
 .form {
-  max-height: 75vh;
+  max-height: 80vh;
   max-width: 75vw;
   margin: auto;
-}
-
-form {
-  overflow: auto;
-}
-
-#kaseEditWindow {
-  display: flex;
-  background-color: rgba(0, 0, 0, 0.5);
 }
 
 /* 
@@ -191,6 +212,31 @@ form {
     animation: editFormOpening .5s cubic-bezier(0.68, -0.55, 0.27, 1.55)
 }
 */
+
+#kaseEditForm>.flex-column {
+  min-width: 22rem;
+}
+
+#kaseEditForm>.flex-column:first-child {
+  margin-right: 1rem;
+  max-width: 22rem;
+}
+
+#kaseEditForm>.flex-column:last-child {
+  margin-left: 1rem;
+}
+
+.flex-row>label {
+  width: -webkit-fill-available;
+}
+
+.flex-row>label:first-child {
+  margin-right: .25rem;
+}
+
+.flex-row>label:last-child {
+  margin-left: .25rem;
+}
 
 .button--add_select_item {
   border-left: solid 1px var(--mdc-theme-text-icon-on-background);
@@ -208,7 +254,6 @@ form {
 
 .editable-select.es-input {
   background: none !important;
-  max-width: 184px;
   padding-right: 0 !important;
 }
 
@@ -246,13 +291,17 @@ form {
   transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.mdi-spin:before {
+  animation: mdi-spin .5s infinite linear;
+}
+
 .mdc-icon-button {
   height: auto;
   padding-top: 0;
   padding-bottom: 0;
   align-self: center;
   margin-left: 0;
-  margin-right: 0.2rem;
+  margin-right: .2rem;
   width: auto;
 }
 
@@ -269,8 +318,8 @@ th .mdi {
 }
 
 th .mdi.mdi-unfold-more-horizontal::before {
-  opacity: 0.5;
-  transform: scale(0.75);
+  opacity: .5;
+  transform: scale(.75);
 }
 
 .mdc-ripple-surface {
@@ -315,11 +364,10 @@ th .mdi.mdi-unfold-more-horizontal::before {
 }
 
 .mdc-card__actions {
-  border-top: 1px solid rgba(0, 0, 0, 0.38);
+  border-top: 1px solid rgba(0, 0, 0, .38);
 }
 
-.mdc-text-field {
-  justify-content: space-between;
+form .mdc-text-field {
   transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -342,7 +390,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
   color: inherit;
 }
 
-.mdc-select__dropdown-icon {
+.mdc-text-field__icon--trailing {
   margin-left: .5rem;
   margin-right: 1rem;
 }

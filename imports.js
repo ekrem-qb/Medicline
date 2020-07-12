@@ -27,7 +27,7 @@ require('jquery-editable-select')
 let editableSelectList = document.querySelectorAll('.editable-select')
 for (const key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
-        const element = editableSelectList[key];
+        const element = editableSelectList[key]
         element.parentElement.style.zIndex = (editableSelectList.length - key).toString()
         $(element).editableSelect({
             filter: false,
