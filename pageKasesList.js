@@ -20,8 +20,8 @@ const buttonClearFilter = document.querySelector("#buttonClearFilter")
 const kasesList = document.querySelector("#kasesList")
 var currentOrder, currentOrderDirection
 
+const allKases = firebase.firestore().collection("kases")
 var currentQuery = firebase.firestore().collection("kases")
-var allKases = firebase.firestore().collection("kases")
 var currentKasesSnapshot
 var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
@@ -44,7 +44,7 @@ function pageLoaded() {
     } else {
         document.location.href = "index.html"
     }
-    clearKase()
+    clearKase(true)
     loadColumns()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
     applyFilter()
@@ -102,6 +102,15 @@ function loadSelectMenus() {
                 })
             }
         })
+}
+
+function selectThisItem(selectMenu, itemString) {
+    selectMenu.parentElement.querySelectorAll("li").forEach(selectItem => {
+        if (selectItem.innerText == itemString) {
+            $(selectMenu).editableSelect("select", $(selectItem))
+            $(selectMenu).editableSelect("hide")
+        }
+    })
 }
 
 function loadColumns() {
@@ -206,6 +215,7 @@ function buttonCreateClick() {
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
 
+    stopCurrentQuery()
     let stop = allKases.onSnapshot(
         (snapshot) => {
             do {
@@ -250,11 +260,11 @@ function buttonLockClick() {
                     sideButtonIcon.classList.add("mdi-rotate-180")
                     sideButtonIcon.classList.remove("mdi-content-save")
                     sideButton.classList.remove("button--save_item")
+                    if (inputEdit.oldValue != undefined) {
+                        selectThisItem(inputEdit, inputEdit.oldValue)
+                    }
                 } else {
                     inputEdit.materialComponent.disabled = true
-                }
-                if (inputEdit.oldValue != undefined) {
-                    inputEdit.materialComponent.value = inputEdit.oldValue
                 }
             }
             if (inputEdit.classList.contains("editable-select")) {
@@ -343,15 +353,6 @@ buttonSave.onclick = function () {
     kaseEditForm.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             if (inputEdit.materialComponent != undefined) {
-                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-                if (inputEdit.required && inputEdit.materialComponent.value == '') {
-                    inputEdit.materialComponent.valid = false
-                    valid = false
-                }
-                if (!inputEdit.materialComponent.disabled) {
-                    kase[inputEdit.id] = inputEdit.materialComponent.value
-                }
-                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
                 if (inputEdit.required && inputEdit.materialComponent.value == '') {
                     inputEdit.materialComponent.valid = false
                     valid = false
@@ -388,7 +389,7 @@ buttonDelete.onclick = function () {
     clearKase()
 }
 
-function clearKase() {
+function clearKase(dontReload) {
     currentKase = undefined
     buttonLock.unlocked = true
     buttonLockClick()
@@ -429,6 +430,9 @@ function clearKase() {
     kaseEditWindow.hidden = true
     buttonDelete.disabled = true
     buttonSave.disabled = true
+    if (dontReload != true) {
+        loadKases()
+    }
 }
 
 function headerClick(headerID) {
@@ -489,19 +493,21 @@ function listKases(snap, foundKases, searchQuery) {
                     let tr = document.createElement("tr")
                     tr.id = kase.id
                     tr.ondblclick = function () {
-                        clearKase()
+                        clearKase(true)
                         kaseEditWindow.hidden = false
                         buttonDelete.disabled = false
-                        currentKase = currentQuery.doc(tr.id)
+                        currentKase = allKases.doc(tr.id)
                         currentKaseID.innerHTML = tr.id
                         checkKaseID()
                         kaseExists = true
 
                         kaseEditForm.querySelectorAll("input, textarea").forEach(
                             (inputEdit) => {
-                                if (kase.get(inputEdit.id) != undefined) {
+                                let itemValue = kase.get(inputEdit.id)
+
+                                if (itemValue != undefined) {
                                     if (inputEdit.materialComponent.disabled) {
-                                        if (kase.get(inputEdit.id) != '') {
+                                        if (itemValue != '') {
                                             inputEdit.parentElement.parentElement.hidden = false
                                         }
                                     } else {
@@ -509,7 +515,17 @@ function listKases(snap, foundKases, searchQuery) {
                                     }
 
                                     if (!inputEdit.parentElement.parentElement.hidden) {
-                                        inputEdit.materialComponent.value = kase.get(inputEdit.id)
+                                        if (inputEdit.classList.contains("editable-select")) {
+                                            if (inputEdit.id.includes('_')) {
+                                                setTimeout(() => selectThisItem(inputEdit, itemValue), 10)
+                                            }
+                                            else {
+                                                selectThisItem(inputEdit, itemValue)
+                                            }
+                                        }
+                                        else {
+                                            inputEdit.materialComponent.value = itemValue
+                                        }
                                     }
 
                                     if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
