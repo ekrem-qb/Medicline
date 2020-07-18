@@ -1,24 +1,46 @@
+const { remote } = require("electron")
+const { Menu, MenuItem } = remote
+
+const menu = new Menu()
+menu.append(new MenuItem({ icon: "icons/sentDocs.png", label: "SENT DOCUMENTS", click() { changeKaseStatus("sentDocs") } }))
+menu.append(new MenuItem({ icon: "icons/invoiced.png", label: "INVOICED", click() { changeKaseStatus("invoiced") } }))
+menu.append(new MenuItem({ icon: "icons/dropped.png", label: "DROPPED", click() { changeKaseStatus("dropped") } }))
+menu.append(new MenuItem({ icon: "icons/gop.png", label: "GOP RECEIVED/SENT", click() { changeKaseStatus("gop") } }))
+menu.append(new MenuItem({ icon: "icons/payIssued.png", label: "PAYMENT ISSUED", click() { changeKaseStatus("payIssued") } }))
+menu.append(new MenuItem({ icon: "icons/payReceived.png", label: "PAYMENT RECEIVED", click() { changeKaseStatus("payReceived") } }))
+menu.append(new MenuItem({ icon: "icons/multi.png", label: "MULTI PROVIDER", click() { changeKaseStatus("multi") } }))
+menu.append(new MenuItem({ icon: "icons/payNclaim.png", label: "PAY AND CLAIM", click() { changeKaseStatus("payNclaim") } }))
+menu.append(new MenuItem({ icon: "icons/active.png", label: "ACTIVE", click() { changeKaseStatus("active") } }))
+menu.append(new MenuItem({ icon: "icons/receivedDocs.png", label: "RECEIVED DOCUMENTS", click() { changeKaseStatus("receivedDocs") } }))
+menu.append(new MenuItem({ type: "separator" }))
+menu.append(new MenuItem({ icon: "icons/delete.png", label: "Delete", click() { deleteKase() } }))
+menu.on("menu-will-close", event => {
+    currentKase = undefined
+})
+
 const Sortable = require("sortablejs")
 
-const inputSearch = document.querySelector("#inputSearch")
-const buttonClearSearch = document.querySelector("#buttonClearSearch")
-
-const kaseEditWindow = document.querySelector("#kaseEditWindow")
-const kaseEditForm = document.querySelector("#kaseEditForm")
-const currentKaseID = document.querySelector("#currentKaseID")
-const buttonLock = document.querySelector("#buttonLock")
-const buttonSave = document.querySelector("#buttonSave")
-const buttonDelete = document.querySelector("#buttonDelete")
+const inputSearch = document.querySelector("input#search")
+const buttonClearSearch = document.querySelector("button#clearSearch")
 
 const columnsJSON = require("./columns.json")
 const tableColumnsList = document.querySelector("#tableColumnsList")
-const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
-
-const formFilter = document.getElementById("formFilter")
-const buttonClearFilter = document.querySelector("#buttonClearFilter")
-
 const kasesList = document.querySelector("#kasesList")
 var currentOrder, currentOrderDirection
+
+const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
+
+const formFilter = document.querySelector("form#filter")
+const buttonClearFilter = document.querySelector("button#clearFilter")
+
+const statuses = document.querySelector("#statuses").children
+
+const editKaseWindow = document.querySelector("#editKaseWindow")
+const formEditKase = document.querySelector("form#editKase")
+const currentKaseID = document.querySelector("#currentKaseID")
+const buttonLock = document.querySelector("button#lock")
+const buttonSave = document.querySelector("button#save")
+const buttonDelete = document.querySelector("button#delete")
 
 const allKases = firebase.firestore().collection("kases")
 var currentQuery = firebase.firestore().collection("kases")
@@ -210,7 +232,7 @@ function randomKaseID() {
 }
 
 function buttonCreateClick() {
-    kaseEditWindow.hidden = false
+    editKaseWindow.hidden = false
 
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
@@ -229,10 +251,10 @@ function buttonCreateClick() {
             currentKase = allKases.doc(currentKaseID.innerHTML)
             checkKaseID()
             clearInterval(repeatRandomKaseID)
-            kaseEditForm.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
-            kaseEditForm.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
-            kaseEditForm.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
-            kaseEditForm.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
+            formEditKase.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+            formEditKase.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
+            formEditKase.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+            formEditKase.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
         })
 }
 
@@ -248,7 +270,7 @@ function buttonLockClick() {
         if (currentKase != undefined)
             buttonSave.disabled = false
 
-        kaseEditForm.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+        formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
             sideButton.hidden = true
             let sideButtonIcon = sideButton.querySelector(".mdi")
 
@@ -278,7 +300,7 @@ function buttonLockClick() {
 
         buttonSave.disabled = true
 
-        kaseEditForm.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+        formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
             sideButton.hidden = false
 
             let inputEdit = sideButton.parentElement.querySelector("input")
@@ -346,11 +368,24 @@ function buttonLockClick() {
     }
 }
 
-buttonSave.onclick = function () {
-    let kase = new Object()
+document.onkeydown = function (event) {
+    if (!editKaseWindow.hidden) {
+        if (event.key == "Escape") {
+            clearKase()
+        }
+        if (!buttonSave.disabled) {
+            if (event.key == "Enter") {
+                saveKase()
+            }
+        }
+    }
+}
+
+function saveKase() {
+    let kaseData = new Object()
     let valid = true
 
-    kaseEditForm.querySelectorAll("input, textarea").forEach(
+    formEditKase.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             if (inputEdit.materialComponent != undefined) {
                 if (inputEdit.required && inputEdit.materialComponent.value == '') {
@@ -358,43 +393,45 @@ buttonSave.onclick = function () {
                     valid = false
                 }
                 if (!inputEdit.materialComponent.disabled || inputEdit.id.includes('_')) {
-                    kase[inputEdit.id] = inputEdit.materialComponent.value
+                    kaseData[inputEdit.id] = inputEdit.materialComponent.value
                 }
             }
         })
 
-    console.log(kase)
+    console.log(kaseData)
 
     if (valid) {
         if (kaseExists) {
-            kase.updateUser = firebase.auth().currentUser.email
-            kase.updateDate = new Date().toJSON().substr(0, 10)
-            kase.updateTime = new Date().toLocaleTimeString()
-            currentKase.update(kase)
+            kaseData.updateUser = firebase.auth().currentUser.email
+            kaseData.updateDate = new Date().toJSON().substr(0, 10)
+            kaseData.updateTime = new Date().toLocaleTimeString()
+            currentKase.update(kaseData)
         } else {
-            kase.createUser = firebase.auth().currentUser.email
-            kase.createDate = new Date().toJSON().substr(0, 10)
-            kase.createTime = new Date().toLocaleTimeString()
-            kase.updateUser = ''
-            kase.updateDate = ''
-            currentKase.set(kase)
+            kaseData.createUser = firebase.auth().currentUser.email
+            kaseData.createDate = new Date().toJSON().substr(0, 10)
+            kaseData.createTime = new Date().toLocaleTimeString()
+            kaseData.updateUser = ''
+            kaseData.updateDate = ''
+            kaseData.status = "active"
+            currentKase.set(kaseData)
         }
         clearKase()
     }
 }
+buttonSave.onclick = saveKase
 
-buttonDelete.onclick = function () {
+function deleteKase() {
     currentKase.delete()
-
     clearKase()
 }
+buttonDelete.onclick = deleteKase
 
 function clearKase(dontReload) {
     currentKase = undefined
     buttonLock.unlocked = true
     buttonLockClick()
 
-    kaseEditForm.querySelectorAll("input, textarea").forEach(
+    formEditKase.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
             if (sideSaveButton != null) {
@@ -427,7 +464,7 @@ function clearKase(dontReload) {
             }
         })
 
-    kaseEditWindow.hidden = true
+    editKaseWindow.hidden = true
     buttonDelete.disabled = true
     buttonSave.disabled = true
     if (dontReload != true) {
@@ -492,16 +529,17 @@ function listKases(snap, foundKases, searchQuery) {
                 if (foundKases == undefined || foundKases.includes(kase.id)) {
                     let tr = document.createElement("tr")
                     tr.id = kase.id
+                    tr.dataset.status = kase.get("status")
                     tr.ondblclick = function () {
                         clearKase(true)
-                        kaseEditWindow.hidden = false
+                        editKaseWindow.hidden = false
                         buttonDelete.disabled = false
                         currentKase = allKases.doc(tr.id)
                         currentKaseID.innerHTML = tr.id
                         checkKaseID()
                         kaseExists = true
 
-                        kaseEditForm.querySelectorAll("input, textarea").forEach(
+                        formEditKase.querySelectorAll("input, textarea").forEach(
                             (inputEdit) => {
                                 let itemValue = kase.get(inputEdit.id)
 
@@ -534,6 +572,11 @@ function listKases(snap, foundKases, searchQuery) {
                                 }
                             })
                     }
+                    tr.oncontextmenu = function (mouseEvent) {
+                        currentKase = allKases.doc(tr.id)
+                        menu.popup({ window: remote.getCurrentWindow() })
+                    }
+
                     kasesList.appendChild(tr)
 
                     for (let column of tableColumnsList.children) {
@@ -614,6 +657,14 @@ function orderKase(orderBy, orderDirection) {
     currentOrderDirection = orderDirection
 }
 
+function changeKaseStatus(newStatus) {
+    let kaseData = new Object()
+    kaseData.status = newStatus
+    currentKase.update(kaseData)
+
+    currentKase = undefined
+}
+
 function modalExpand(header) {
     let currentModalBody = header.parentElement.querySelector(".modal-body")
     let currentExpandIcon = currentModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
@@ -668,6 +719,19 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
+
+for (const currentStatus of statuses) {
+    currentStatus.onmouseover = function () {
+        for (const kaseRow of kasesList.children) {
+            kaseRow.classList.toggle("other-hide", kaseRow.dataset.status != currentStatus.dataset.status)
+        }
+    }
+    currentStatus.onmouseleave = function () {
+        for (const kaseRow of kasesList.children) {
+            kaseRow.classList.remove("other-hide")
+        }
+    }
+}
 
 function hideEmptyFilters() {
     let hide = true

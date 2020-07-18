@@ -6,7 +6,7 @@
     "phone": "Phone Number",
     "phone2": "Phone Number 2",
     "phone3": "Phone Number 3",
-    "status": "Patient status",
+    "patientStatus": "Patient status",
     "country": "Country",
     "provider": "Provider",
     "provider2": "Provider 2",

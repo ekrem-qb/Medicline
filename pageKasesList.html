@@ -20,8 +20,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-magnify"></i>
-                        <input type="text" class="mdc-text-field__input" id="inputSearch" />
-                        <button class="mdc-icon-button" id="buttonClearSearch" onclick="clearSearch()" disabled>
+                        <input type="text" class="mdc-text-field__input" id="search" />
+                        <button class="mdc-icon-button" id="clearSearch" onclick="clearSearch()" disabled>
                             <span class="mdi mdi-close"></span>
                         </button>
                         <div class="mdc-notched-outline">
@@ -40,7 +40,7 @@
                     </button>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="kases">
+                    <table class="table" id="kases">
                         <thead>
                             <tr id="tableColumnsList"></tr>
                         </thead>
@@ -50,7 +50,7 @@
                 <div class="modal-footer flex-column">
                     <button class="mdc-button mdc-button--outlined" onclick="buttonExportClick()" id="buttonExport">
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-content-save"></i>
+                        <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
                         <span class="mdc-button__label">Export</span>
                     </button>
                 </div>
@@ -77,7 +77,7 @@
                     </h4>
                     <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                 </div>
-                <form class="modal-body flex flex-column collapsed" id="formFilter">
+                <form class="modal-body flex flex-column collapsed" id="filter">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
                         <input type="text" class="mdc-text-field__input" id="name" />
@@ -162,7 +162,7 @@
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                        <select class="editable-select mdc-text-field__input" id="status" readonly></select>
+                        <select class="editable-select mdc-text-field__input" id="patientStatus" readonly></select>
                         <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -288,7 +288,7 @@
                     </div>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
-                        <textarea class="mdc-text-field__input" rows="4" cols="28" id="description"></textarea>
+                        <textarea class="mdc-text-field__input" rows="4" id="description"></textarea>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
@@ -614,7 +614,7 @@
                     </div>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
-                        <textarea class="mdc-text-field__input" rows="4" cols="28" id="complaints"></textarea>
+                        <textarea class="mdc-text-field__input" rows="4" id="complaints"></textarea>
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
@@ -631,7 +631,7 @@
                         <i class="mdi mdc-button__icon mdi-check"></i>
                         <span class="mdc-button__label">Apply</span>
                     </button>
-                    <button class="mdc-button mdc-button--outlined" id="buttonClearFilter" disabled>
+                    <button class="mdc-button mdc-button--outlined" id="clearFilter" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
                         <span class="mdc-button__label">Clear</span>
@@ -640,7 +640,19 @@
             </div>
         </div>
     </div>
-    <div class="modal" id="kaseEditWindow" hidden>
+    <div class="footer" id="statuses">
+        <div class="col-auto" data-status="sentDocs">SENT DOCUMENTS</div>
+        <div class="col-auto" data-status="invoiced">INVOICED</div>
+        <div class="col-auto" data-status="dropped">DROPPED</div>
+        <div class="col-auto" data-status="gop">GOP RECEIVED/SENT</div>
+        <div class="col-auto" data-status="payIssued">PAYMENT ISSUED</div>
+        <div class="col-auto" data-status="payReceived">PAYMENT RECEIVED</div>
+        <div class="col-auto" data-status="multi">MULTI PROVIDER</div>
+        <div class="col-auto" data-status="payNclaim">PAY AND CLAIM</div>
+        <div class="col-auto" data-status="active">ACTIVE</div>
+        <div class="col-auto" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
+    </div>
+    <div class="modal" id="editKaseWindow" hidden>
         <div class="form mdc-card mdc-elevation--z6 px-1">
             <div class="modal-header">
                 <h3 class="modal-title">
@@ -650,7 +662,7 @@
                         <span class="mdc-button__label" id="currentKaseID">0000000</span>
                     </button>
                     Case Editing
-                    <button class="mdc-fab mdc-fab--mini" id="buttonLock" onclick="buttonLockClick()">
+                    <button class="mdc-fab mdc-fab--mini" id="lock" onclick="buttonLockClick()">
                         <div class="mdc-fab__ripple"></div>
                         <span class="mdc-fab__icon mdi mdi-lock"></span>
                     </button>
@@ -659,7 +671,7 @@
                     <span class="mdi mdi-close"></span>
                 </button>
             </div>
-            <form class="modal-body flex flex-row p-3" id="kaseEditForm">
+            <form class="modal-body flex flex-row p-3" id="editKase">
                 <div class="flex flex-column">
                     <div class="form-group flex flex-column">
                         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
@@ -737,7 +749,7 @@
 
                     <div class="form-group flex flex-column">
                         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                            <select class="editable-select mdc-text-field__input" id="status" required
+                            <select class="editable-select mdc-text-field__input" id="patientStatus" required
                                 readonly></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
@@ -1146,12 +1158,12 @@
                 </div>
             </form>
             <div class="modal-footer justify-content-between">
-                <button class="mdc-button mdc-button--outlined mdc-button--red" id="buttonDelete" disabled>
+                <button class="mdc-button mdc-button--outlined mdc-button--red" id="delete" disabled>
                     <div class="mdc-button__ripple"></div>
-                    <i class="mdi mdc-button__icon mdi-delete"></i>
+                    <i class="mdi mdc-button__icon mdi-trash-can"></i>
                     <span class="mdc-button__label">Delete</span>
                 </button>
-                <button class="mdc-button mdc-button--raised mdc-button--green" id="buttonSave" disabled>
+                <button class="mdc-button mdc-button--raised mdc-button--green" id="save" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdi mdc-button__icon mdi-content-save"></i>
                     <span class="mdc-button__label">Save</span>
