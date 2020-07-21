@@ -117,7 +117,6 @@ th:active {
 .table th {
   position: sticky;
   top: 0;
-  backdrop-filter: blur(5px);
   user-select: none;
 }
 
@@ -146,6 +145,12 @@ th:active {
 .list-group th:last-child {
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
+}
+
+td.found {
+  text-shadow: 0 0 20px currentColor;
+  background-color: rgba(255, 255, 255, 0.5);
+  /* font-weight: bold; */
 }
 
 #editKaseWindow {
@@ -266,13 +271,29 @@ form#editKase>.flex-column:last-child {
   cursor: pointer;
 }
 
-.other-hide,
+.dimmed,
 .footer:hover>.col-auto {
   filter: grayscale(1) opacity(.25);
 }
 
 .footer>.col-auto:hover {
   filter: none;
+}
+
+.footer>.col-auto:active {
+  font-size: small;
+  text-shadow: 0 0 20px black;
+  align-self: center;
+}
+
+.footer>.col-auto.selected {
+  box-shadow: inset 0 0 0 0.2rem #000;
+  filter: none;
+}
+
+.hide {
+  height: 0;
+  opacity: 0;
 }
 
 /* --------------------------------- SortableJS --------------------------------- */
@@ -383,6 +404,10 @@ form#editKase>.flex-column:last-child {
 .mdc-ripple-surface::before,
 .mdc-fab__ripple::before {
   display: none;
+}
+
+.mdc-ripple-surface::before, .mdc-ripple-surface::after {
+  background-color: currentColor;
 }
 
 th .mdi {

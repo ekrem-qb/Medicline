@@ -15,7 +15,9 @@ menu.append(new MenuItem({ icon: "icons/receivedDocs.png", label: "RECEIVED DOCU
 menu.append(new MenuItem({ type: "separator" }))
 menu.append(new MenuItem({ icon: "icons/delete.png", label: "Delete", click() { deleteKase() } }))
 menu.on("menu-will-close", event => {
-    currentKase = undefined
+    setTimeout(() => {
+        currentKase = undefined
+    }, 10)
 })
 
 const Sortable = require("sortablejs")
@@ -34,6 +36,7 @@ const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
 
 const statuses = document.querySelector("#statuses").children
+var currentStatus
 
 const editKaseWindow = document.querySelector("#editKaseWindow")
 const formEditKase = document.querySelector("form#editKase")
@@ -175,7 +178,7 @@ function newColumn(column) {
 }
 
 inputSearch.oninput = function () {
-    var searchQuery = String(inputSearch.materialComponent.value).trim()
+    var searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
@@ -184,7 +187,7 @@ inputSearch.oninput = function () {
         currentKasesSnapshot.forEach(
             (kase) => {
                 if (!foundKases.includes(kase.id)) {
-                    if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery.toLowerCase())) {
+                    if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery)) {
                         foundKases.push(kase.id)
                     }
                 }
@@ -572,11 +575,10 @@ function listKases(snap, foundKases, searchQuery) {
                                 }
                             })
                     }
-                    tr.oncontextmenu = function (mouseEvent) {
+                    tr.oncontextmenu = function () {
                         currentKase = allKases.doc(tr.id)
                         menu.popup({ window: remote.getCurrentWindow() })
                     }
-
                     kasesList.appendChild(tr)
 
                     for (let column of tableColumnsList.children) {
@@ -596,16 +598,14 @@ function listKases(snap, foundKases, searchQuery) {
                                 break
                         }
                         if (searchQuery != undefined) {
-                            if (td.textContent.toLowerCase().includes(searchQuery.toLowerCase())) {
-                                td.classList.add("bg-warning")
-                            }
+                            td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                         }
                     }
                 }
             })
         orderKase(currentOrder, currentOrderDirection)
     } else {
-        kasesList.innerHTML = "<h3>Cases not found...</h3>"
+        kasesList.innerHTML = "<h3>Cases not found</h3>"
     }
 }
 
@@ -720,15 +720,45 @@ Sortable.create(hiddenTableColumnsList, {
     }
 })
 
-for (const currentStatus of statuses) {
-    currentStatus.onmouseover = function () {
-        for (const kaseRow of kasesList.children) {
-            kaseRow.classList.toggle("other-hide", kaseRow.dataset.status != currentStatus.dataset.status)
+for (const status of statuses) {
+    status.onmouseover = function () {
+        if (currentStatus == undefined) {
+            for (const kaseRow of kasesList.children) {
+                kaseRow.classList.toggle("dimmed", kaseRow.dataset.status != status.dataset.status)
+            }
         }
     }
-    currentStatus.onmouseleave = function () {
+    status.onmouseleave = function () {
+        if (currentStatus == undefined) {
+            for (const kaseRow of kasesList.children) {
+                kaseRow.classList.remove("dimmed")
+            }
+        }
+    }
+
+    status.onclick = function () {
         for (const kaseRow of kasesList.children) {
-            kaseRow.classList.remove("other-hide")
+            kaseRow.classList.remove("dimmed")
+        }
+        if (status == currentStatus) {
+            for (const kaseRow of kasesList.children) {
+                kaseRow.hidden = false
+            }
+            for (const otherStatus of statuses) {
+                otherStatus.classList.remove("dimmed")
+                otherStatus.classList.remove("selected")
+            }
+            currentStatus = undefined
+        }
+        else {
+            for (const kaseRow of kasesList.children) {
+                kaseRow.hidden = kaseRow.dataset.status != status.dataset.status
+            }
+            for (const otherStatus of statuses) {
+                otherStatus.classList.toggle("dimmed", otherStatus != status)
+                otherStatus.classList.toggle("selected", otherStatus == status)
+            }
+            currentStatus = status
         }
     }
 }
