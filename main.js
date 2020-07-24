@@ -9,8 +9,7 @@ async function main() {
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,
-                enableRemoteModule: true,
-                allowRunningInsecureContent: true
+                enableRemoteModule: true
             }
         })
 
@@ -25,7 +24,7 @@ async function main() {
                 reject(new Error('Window closed prematurely.')))
 
             // initiate the loading
-            window.loadFile(`${__dirname}/pageKasesList.html`)
+            window.loadFile(__dirname + "/src/index.html")
         })
 
         return window

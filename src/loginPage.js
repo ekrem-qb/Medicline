@@ -19,7 +19,7 @@ function buttonSignInClick() {
   firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value).then(function () {
     localStorage.setItem("email", inputEmail.materialComponent.value)
     localStorage.setItem("password", inputPassword.materialComponent.value)
-    document.location.href = "pageKasesList.html"
+    document.location.href = "index.html"
   }).catch(function (error) {
     if (error != null) {
       alert(error.message)

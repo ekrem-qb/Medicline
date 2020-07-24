@@ -1,19 +1,19 @@
-const { remote } = require("electron")
+const { remote, nativeImage } = require("electron")
 const { Menu, MenuItem } = remote
 
 const menu = new Menu()
-menu.append(new MenuItem({ icon: "icons/sentDocs.png", label: "SENT DOCUMENTS", click() { changeKaseStatus("sentDocs") } }))
-menu.append(new MenuItem({ icon: "icons/invoiced.png", label: "INVOICED", click() { changeKaseStatus("invoiced") } }))
-menu.append(new MenuItem({ icon: "icons/dropped.png", label: "DROPPED", click() { changeKaseStatus("dropped") } }))
-menu.append(new MenuItem({ icon: "icons/gop.png", label: "GOP RECEIVED/SENT", click() { changeKaseStatus("gop") } }))
-menu.append(new MenuItem({ icon: "icons/payIssued.png", label: "PAYMENT ISSUED", click() { changeKaseStatus("payIssued") } }))
-menu.append(new MenuItem({ icon: "icons/payReceived.png", label: "PAYMENT RECEIVED", click() { changeKaseStatus("payReceived") } }))
-menu.append(new MenuItem({ icon: "icons/multi.png", label: "MULTI PROVIDER", click() { changeKaseStatus("multi") } }))
-menu.append(new MenuItem({ icon: "icons/payNclaim.png", label: "PAY AND CLAIM", click() { changeKaseStatus("payNclaim") } }))
-menu.append(new MenuItem({ icon: "icons/active.png", label: "ACTIVE", click() { changeKaseStatus("active") } }))
-menu.append(new MenuItem({ icon: "icons/receivedDocs.png", label: "RECEIVED DOCUMENTS", click() { changeKaseStatus("receivedDocs") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/sentDocs.png"), label: "SENT DOCUMENTS", click() { changeKaseStatus("sentDocs") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/invoiced.png"), label: "INVOICED", click() { changeKaseStatus("invoiced") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/dropped.png"), label: "DROPPED", click() { changeKaseStatus("dropped") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/gop.png"), label: "GOP RECEIVED/SENT", click() { changeKaseStatus("gop") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payIssued.png"), label: "PAYMENT ISSUED", click() { changeKaseStatus("payIssued") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payReceived.png"), label: "PAYMENT RECEIVED", click() { changeKaseStatus("payReceived") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/multi.png"), label: "MULTI PROVIDER", click() { changeKaseStatus("multi") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payNclaim.png"), label: "PAY AND CLAIM", click() { changeKaseStatus("payNclaim") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/active.png"), label: "ACTIVE", click() { changeKaseStatus("active") } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/receivedDocs.png"), label: "RECEIVED DOCUMENTS", click() { changeKaseStatus("receivedDocs") } }))
 menu.append(new MenuItem({ type: "separator" }))
-menu.append(new MenuItem({ icon: "icons/delete.png", label: "Delete", click() { deleteKase() } }))
+menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/delete.png"), label: "Delete", click() { deleteKase() } }))
 menu.on("menu-will-close", event => {
     setTimeout(() => {
         currentKase = undefined
@@ -67,7 +67,7 @@ function pageLoaded() {
                 }
             })
     } else {
-        document.location.href = "index.html"
+        document.location.href = "loginPage.html"
     }
     clearKase(true)
     loadColumns()
@@ -170,7 +170,6 @@ function newColumn(column) {
     th.id = column
     th.innerHTML = columnsJSON[column]
     th.setAttribute("onclick", "headerClick(this.id)")
-    th.classList.add("mdc-elevation--z6")
     let sortIcon = document.createElement("span")
     sortIcon.className = "mdi mdi-unfold-more-horizontal"
     th.appendChild(sortIcon)
@@ -742,7 +741,7 @@ for (const status of statuses) {
         }
         if (status == currentStatus) {
             for (const kaseRow of kasesList.children) {
-                kaseRow.hidden = false
+                kaseRow.classList.remove("hide")
             }
             for (const otherStatus of statuses) {
                 otherStatus.classList.remove("dimmed")
@@ -752,7 +751,7 @@ for (const status of statuses) {
         }
         else {
             for (const kaseRow of kasesList.children) {
-                kaseRow.hidden = kaseRow.dataset.status != status.dataset.status
+                kaseRow.classList.toggle("hide", kaseRow.dataset.status != status.dataset.status)
             }
             for (const otherStatus of statuses) {
                 otherStatus.classList.toggle("dimmed", otherStatus != status)
