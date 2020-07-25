@@ -164,6 +164,10 @@ th:active {
   border-bottom-right-radius: inherit;
 }
 
+#toolsPanel>.mdc-card:first-child {
+  margin-bottom: 1rem;
+}
+
 #editKaseWindow {
   display: flex;
   background-color: rgba(0, 0, 0, .5);
@@ -179,6 +183,7 @@ th:active {
 .modal-title>button:first-child,
 .modal-title>.mdi {
   margin-right: 1rem;
+  font-size: inherit;
 }
 
 .modal-title>button:last-child {
@@ -501,7 +506,8 @@ form .mdc-text-field {
 }
 
 .mdc-text-field--disabled .mdc-text-field__icon--trailing,
-:disabled .mdi {
+:disabled .mdi,
+.mdi-eye-off-outline {
   color: rgba(0, 0, 0, .3);
 }
 

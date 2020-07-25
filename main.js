@@ -62,9 +62,10 @@ async function main() {
     // notify the Renderer that Main is ready
     mainWindow.webContents.send("mainReady")
 
-    // from here we can do anything we want
+    if (isDevelopment) {
+        mainWindow.webContents.openDevTools()
+    }
 
-    mainWindow.webContents.openDevTools()
 
     // awaiting terminationPromise here keeps the mainWindow object alive
     await terminationPromise

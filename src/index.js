@@ -1,5 +1,6 @@
 const { remote, nativeImage } = require("electron")
 const { Menu, MenuItem } = remote
+const Sortable = require("sortablejs")
 
 const menu = new Menu()
 menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/sentDocs.png"), label: "SENT DOCUMENTS", click() { changeKaseStatus("sentDocs") } }))
@@ -19,8 +20,6 @@ menu.on("menu-will-close", event => {
         currentKase = undefined
     }, 10)
 })
-
-const Sortable = require("sortablejs")
 
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
@@ -52,23 +51,6 @@ var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
 
 function pageLoaded() {
-    if (localStorage.getItem("email") != null && localStorage.getItem("password") != null) {
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(
-                localStorage.getItem("email"),
-                localStorage.getItem("password")
-            )
-            .then(function () { })
-            .catch(function (error) {
-                if (error != null) {
-                    alert(error.message)
-                    return
-                }
-            })
-    } else {
-        document.location.href = "loginPage.html"
-    }
     clearKase(true)
     loadColumns()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
@@ -145,7 +127,7 @@ function loadColumns() {
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
     } else {
-        enabledColumns.push("__name__", "createDate")
+        enabledColumns.push("__name__", "name", "surname", "createDate")
     }
     enabledColumns.forEach(
         (column) => {
@@ -718,7 +700,6 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
-
 for (const status of statuses) {
     status.onmouseover = function () {
         if (currentStatus == undefined) {

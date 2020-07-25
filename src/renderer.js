@@ -6,24 +6,16 @@
 
 async function main() {
   const { ipcRenderer } = require('electron')
-  const isDevelopment = require('electron-is-dev')
-
-  //console.log(process.env)
-
-  if (isDevelopment) {
-    // this is to give Chrome Debugger time to attach to the new window 
-    await new Promise(r => setTimeout(r, 1000))
-  }
 
   // breakpoints should work from here on,
   // toggle them with F9 or just use 'debugger'
   //debugger
+  if (localStorage.getItem("email") == null && localStorage.getItem("password") == null) {
+    document.location.href = "loginPage.html"
+  }
 
   // await the document to finish loading
-  await new Promise(resolve =>
-    document.readyState === 'loading' ?
-      document.addEventListener('DOMContentLoaded', resolve) :
-      resolve())
+  await new Promise(resolve => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', resolve) : resolve())
 
   // notify Main that Renderer is ready
   ipcRenderer.send('rendererReady', null)
