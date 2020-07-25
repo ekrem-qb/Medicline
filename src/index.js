@@ -24,6 +24,9 @@ menu.on("menu-will-close", event => {
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
+const tableOverlay = document.querySelector("#tableOverlay")
+const tableOverlayIcon = tableOverlay.querySelector(".mdi")
+const tableOverlayText = tableOverlay.querySelector("h3")
 const columnsJSON = require("./columns.json")
 const tableColumnsList = document.querySelector("#tableColumnsList")
 const kasesList = document.querySelector("#kasesList")
@@ -34,7 +37,7 @@ const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
 
-const statuses = document.querySelector("#statuses").children
+const statusBar = document.querySelector("#statusBar").children
 var currentStatus
 
 const editKaseWindow = document.querySelector("#editKaseWindow")
@@ -121,7 +124,7 @@ function selectThisItem(selectMenu, itemString) {
 }
 
 function loadColumns() {
-    kasesList.innerHTML = "<h3>Loading...</h3>"
+    setTableOverlayState("loading")
 
     let enabledColumns = []
     if (localStorage.getItem("enabledColumns") != null) {
@@ -164,7 +167,7 @@ inputSearch.oninput = function () {
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
         var foundKases = new Array()
-        kasesList.innerHTML = "<h3>Loading...</h3>"
+
         currentKasesSnapshot.forEach(
             (kase) => {
                 if (!foundKases.includes(kase.id)) {
@@ -178,7 +181,7 @@ inputSearch.oninput = function () {
             listKases(currentKasesSnapshot, foundKases, searchQuery)
         }
         else {
-            kasesList.innerHTML = "<h3>Cases not found...</h3>"
+            setTableOverlayState("empty")
         }
     } else {
         clearSearch()
@@ -500,7 +503,7 @@ function loadKases() {
         },
         (err) => {
             console.log(err)
-            kasesList.innerHTML = "<h3>Cases not found...</h3>"
+            setTableOverlayState("empty")
         }
     )
 }
@@ -508,6 +511,7 @@ function loadKases() {
 function listKases(snap, foundKases, searchQuery) {
     if (snap.docs.length > 0) {
         kasesList.innerHTML = ''
+        setTableOverlayState("hide")
         snap.forEach(
             (kase) => {
                 if (foundKases == undefined || foundKases.includes(kase.id)) {
@@ -586,7 +590,7 @@ function listKases(snap, foundKases, searchQuery) {
             })
         orderKase(currentOrder, currentOrderDirection)
     } else {
-        kasesList.innerHTML = "<h3>Cases not found</h3>"
+        setTableOverlayState("empty")
     }
 }
 
@@ -636,6 +640,28 @@ function orderKase(orderBy, orderDirection) {
 
     currentOrder = orderBy
     currentOrderDirection = orderDirection
+}
+
+function setTableOverlayState(state) {
+    switch (state) {
+        case "loading":
+            tableOverlay.classList.remove("hide")
+            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline")
+            tableOverlayIcon.classList.add("mdi-loading", "mdi-spin")
+            tableOverlayText.hidden = true
+            break
+        case "empty":
+            tableOverlay.classList.remove("hide")
+            tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
+            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin")
+            tableOverlayText.hidden = false
+            break
+        case "hide":
+            tableOverlay.classList.add("hide")
+            break
+        default:
+            break
+    }
 }
 
 function changeKaseStatus(newStatus) {
@@ -700,7 +726,7 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
-for (const status of statuses) {
+for (const status of statusBar) {
     status.onmouseover = function () {
         if (currentStatus == undefined) {
             for (const kaseRow of kasesList.children) {
@@ -724,7 +750,7 @@ for (const status of statuses) {
             for (const kaseRow of kasesList.children) {
                 kaseRow.classList.remove("hide")
             }
-            for (const otherStatus of statuses) {
+            for (const otherStatus of statusBar) {
                 otherStatus.classList.remove("dimmed")
                 otherStatus.classList.remove("selected")
             }
@@ -734,7 +760,7 @@ for (const status of statuses) {
             for (const kaseRow of kasesList.children) {
                 kaseRow.classList.toggle("hide", kaseRow.dataset.status != status.dataset.status)
             }
-            for (const otherStatus of statuses) {
+            for (const otherStatus of statusBar) {
                 otherStatus.classList.toggle("dimmed", otherStatus != status)
                 otherStatus.classList.toggle("selected", otherStatus == status)
             }
@@ -789,13 +815,13 @@ function applyFilter() {
             }
         })
     if (!emptyFilter) {
-        kasesList.innerHTML = "<h3>Loading...</h3>"
+        setTableOverlayState("loading")
         loadKases()
+        buttonClearFilter.disabled = false
     }
     else {
         alert("Filters are empty!")
     }
-    buttonClearFilter.disabled = emptyFilter
 }
 
 buttonClearFilter.onclick = function () {
@@ -812,7 +838,7 @@ buttonClearFilter.onclick = function () {
         column.classList.remove("invalid")
     }
     currentQuery = allKases
-    kasesList.innerHTML = "<h3>Loading...</h3>"
+    setTableOverlayState("loading")
     loadKases()
     hideEmptyFilters()
 
