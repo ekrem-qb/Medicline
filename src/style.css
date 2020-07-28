@@ -218,6 +218,7 @@ th:active {
   border-radius: inherit;
   backdrop-filter: blur(5px) grayscale(1);
   background-color: #ffffffbf;
+  color: var(--mdc-theme-text-disabled-on-background);
   user-select: none;
   transition: var(--mdc-transition);
   z-index: 1;
@@ -435,47 +436,86 @@ footer>.status.selected {
   background-color: #00800080;
 }
 
+[data-status="sentDocs"] i {
+  color: #00800080;
+}
+
 [data-status="invoiced"] {
   background-color: #000000bf;
   color: var(--mdc-theme-on-primary);
+}
+
+[data-status="invoiced"] i {
+  color: #000000bf;
 }
 
 [data-status="dropped"] {
   background-color: #ff000080;
 }
 
+[data-status="dropped"] i {
+  color: #ff000080;
+}
+
 [data-status="gop"] {
   background-color: #80ffff80;
+}
+
+[data-status="gop"] i {
+  color: #80ffff80;
 }
 
 [data-status="payIssued"] {
   background-color: #00ff0080;
 }
 
+[data-status="payIssued"] i {
+  color: #00ff0080;
+}
+
 [data-status="payReceived"] {
   background-color: #ff008080;
+}
+
+[data-status="payReceived"] i {
+  color: #ff008080;
 }
 
 [data-status="multi"] {
   background-color: #8000ff80;
 }
 
+[data-status="multi"] i {
+  color: #8000ff80;
+}
+
 [data-status="payNclaim"] {
   background-color: #ff800080;
+}
+
+[data-status="payNclaim"] i {
+  color: #ff800080;
 }
 
 [data-status="active"] {
   background-color: #ffff0080;
 }
 
+[data-status="active"] i {
+  color: #ffff0080;
+}
+
 [data-status="receivedDocs"] {
   background-color: #0080ff80;
+}
+
+[data-status="receivedDocs"] i {
+  color: #0080ff80;
 }
 
 .mdi {
   font-size: 1.5rem;
   line-height: 1;
-  background: none !important;
 }
 
 .mdi::before {
@@ -554,9 +594,20 @@ th .mdi.mdi-unfold-more-horizontal::before {
   --mdc-theme-secondary: var(--red);
 }
 
-.mdc-list-item__text {
-  display: flex;
-  align-items: center;
+.mdc-menu-surface {
+  transition: var(--mdc-transition);
+}
+
+.mdc-list>.mdc-list-item {
+  background-color: transparent;
+  color: inherit;
+  font-weight: bold;
+  height: 2rem;
+  padding: 0 .5rem;
+}
+
+.mdc-list-item>.mdi-trash-can {
+  color: var(--red);
 }
 
 .mdc-card__actions {

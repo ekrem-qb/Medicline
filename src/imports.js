@@ -41,21 +41,22 @@ for (const key in editableSelectList) {
 
 const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
-const { MDCSelect } = require('@material/select')
+const { MDCMenu } = require('@material/menu')
 
-document.querySelectorAll('.mdc-text-field').forEach(element => {
-    element.querySelector('input, textarea').materialComponent = new MDCTextField(element)
+document.querySelectorAll('.mdc-text-field').forEach(inputElement => {
+    inputElement.querySelector('input, textarea').materialComponent = new MDCTextField(inputElement)
 })
 
-document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button, .mdc-fab').forEach(element => {
-    element.materialRipple = new MDCRipple(element)
-    if (element.classList.contains("mdc-icon-button")) {
-        element.materialRipple.unbounded = true
+document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button, .mdc-fab, .mdc-list-item__ripple').forEach(rippleElement => {
+    rippleElement.materialRipple = new MDCRipple(rippleElement)
+    if (rippleElement.classList.contains("mdc-icon-button")) {
+        rippleElement.materialRipple.unbounded = true
     }
 })
 
-document.querySelectorAll('.mdc-select').forEach(element => {
-    element.querySelector('input').materialComponent = new MDCSelect(element)
+document.querySelectorAll('.mdc-menu').forEach(menuElement => {
+    menuElement.materialComponent = new MDCMenu(menuElement)
+    menuElement.materialComponent.setFixedPosition(true)
 })
 
 

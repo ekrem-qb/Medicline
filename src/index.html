@@ -84,22 +84,11 @@
                 <form class="modal-body flex flex-column collapsed" id="filter">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
-                        <input type="text" class="mdc-text-field__input" id="name" />
+                        <input type="text" class="mdc-text-field__input" id="surnameName" />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Name</span>
-                            </div>
-                            <div class="mdc-notched-outline__trailing"></div>
-                        </div>
-                    </label>
-
-                    <label class="mdc-text-field mdc-text-field--outlined">
-                        <input type="text" class="mdc-text-field__input" id="surname" />
-                        <div class="mdc-notched-outline">
-                            <div class="mdc-notched-outline__leading"></div>
-                            <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Surname</span>
+                                <span class="mdc-floating-label">Surname and Name</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -680,22 +669,11 @@
                     <div class="form-group flex flex-column">
                         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
-                            <input type="text" class="mdc-text-field__input" id="name" required />
+                            <input type="text" class="mdc-text-field__input" id="surnameName" required />
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Name</span>
-                                </div>
-                                <div class="mdc-notched-outline__trailing"></div>
-                            </div>
-                        </label>
-
-                        <label class="mdc-text-field mdc-text-field--outlined">
-                            <input type="text" class="mdc-text-field__input" id="surname" required />
-                            <div class="mdc-notched-outline">
-                                <div class="mdc-notched-outline__leading"></div>
-                                <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Surname</span>
+                                    <span class="mdc-floating-label">Surname and Name</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -1174,6 +1152,72 @@
                 </button>
             </div>
         </div>
+    </div>
+    <div class="mdc-menu mdc-menu-surface" id="contextMenu">
+        <ul class="mdc-list">
+            <li class="mdc-list-item">
+                <i class="mr-2 mdi mdi-content-copy"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">Copy</span>
+            </li>
+            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-item" data-status="sentDocs" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">SENT DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-item" data-status="invoiced" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">INVOICED</span>
+            </li>
+            <li class="mdc-list-item" data-status="dropped" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">DROPPED</span>
+            </li>
+            <li class="mdc-list-item" data-status="gop" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">GOP RECEIVED/SENT</span>
+            </li>
+            <li class="mdc-list-item" data-status="payIssued" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">PAYMENT ISSUED</span>
+            </li>
+            <li class="mdc-list-item" data-status="payReceived" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">PAYMENT RECEIVED</span>
+            </li>
+            <li class="mdc-list-item" data-status="multi" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">MULTI PROVIDER</span>
+            </li>
+            <li class="mdc-list-item" data-status="payNclaim" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">PAY AND CLAIM</span>
+            </li>
+            <li class="mdc-list-item" data-status="active" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">ACTIVE</span>
+            </li>
+            <li class="mdc-list-item" data-status="receivedDocs" onclick="changeKaseStatus(this.dataset.status)">
+                <i class="mr-2 mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">RECEIVED DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-item" onclick="deleteKase()">
+                <i class="mr-2 mdi mdi-trash-can"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text">Delete</span>
+            </li>
+        </ul>
     </div>
 
     <script src="renderer.js"></script>

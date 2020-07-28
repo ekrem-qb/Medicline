@@ -1,24 +1,9 @@
-const { remote, nativeImage } = require("electron")
-const { Menu, MenuItem } = remote
+const { clipboard } = require("electron")
 const Sortable = require("sortablejs")
 
-const menu = new Menu()
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/sentDocs.png"), label: "SENT DOCUMENTS", click() { changeKaseStatus("sentDocs") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/invoiced.png"), label: "INVOICED", click() { changeKaseStatus("invoiced") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/dropped.png"), label: "DROPPED", click() { changeKaseStatus("dropped") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/gop.png"), label: "GOP RECEIVED/SENT", click() { changeKaseStatus("gop") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payIssued.png"), label: "PAYMENT ISSUED", click() { changeKaseStatus("payIssued") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payReceived.png"), label: "PAYMENT RECEIVED", click() { changeKaseStatus("payReceived") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/multi.png"), label: "MULTI PROVIDER", click() { changeKaseStatus("multi") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/payNclaim.png"), label: "PAY AND CLAIM", click() { changeKaseStatus("payNclaim") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/active.png"), label: "ACTIVE", click() { changeKaseStatus("active") } }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/receivedDocs.png"), label: "RECEIVED DOCUMENTS", click() { changeKaseStatus("receivedDocs") } }))
-menu.append(new MenuItem({ type: "separator" }))
-menu.append(new MenuItem({ icon: nativeImage.createFromPath(__dirname + "/icons/delete.png"), label: "Delete", click() { deleteKase() } }))
-menu.on("menu-will-close", event => {
-    setTimeout(() => {
-        currentKase = undefined
-    }, 10)
+const contextMenu = document.querySelector("#contextMenu")
+contextMenu.materialComponent.listen("close", event => {
+    currentKase = undefined
 })
 
 const inputSearch = document.querySelector("input#search")
@@ -130,7 +115,7 @@ function loadColumns() {
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
     } else {
-        enabledColumns.push("__name__", "name", "surname", "createDate")
+        enabledColumns.push("insuranceRefNo", "insurance", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
     }
     enabledColumns.forEach(
         (column) => {
@@ -360,7 +345,7 @@ document.onkeydown = function (event) {
         if (event.key == "Escape") {
             clearKase()
         }
-        if (!buttonSave.disabled) {
+        if (!buttonSave.disabled && document.getSelection().anchorNode.classList.contains("mdc-text-field--textarea")) {
             if (event.key == "Enter") {
                 saveKase()
             }
@@ -460,36 +445,38 @@ function clearKase(dontReload) {
 }
 
 function headerClick(headerID) {
-    for (let column of tableColumnsList.children) {
-        if (column.id != headerID) {
-            let sortIcon = column.querySelector("span")
+    let clickedHeader = tableColumnsList.querySelector("th#" + headerID)
+    if (clickedHeader != null) {
+        for (let header of tableColumnsList.children) {
+            if (header.id != headerID) {
+                let sortIcon = header.querySelector("span")
 
-            if (sortIcon.classList.contains("mdi-chevron-up")) {
-                sortIcon.classList.remove("mdi-chevron-up")
-            }
-            if (sortIcon.classList.contains("mdi-rotate-180")) {
-                sortIcon.classList.remove("mdi-rotate-180")
-            }
-            if (!sortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-                sortIcon.classList.add("mdi-unfold-more-horizontal")
+                if (sortIcon.classList.contains("mdi-chevron-up")) {
+                    sortIcon.classList.remove("mdi-chevron-up")
+                }
+                if (sortIcon.classList.contains("mdi-rotate-180")) {
+                    sortIcon.classList.remove("mdi-rotate-180")
+                }
+                if (!sortIcon.classList.contains("mdi-unfold-more-horizontal")) {
+                    sortIcon.classList.add("mdi-unfold-more-horizontal")
+                }
             }
         }
-    }
 
-    let clickedHeader = tableColumnsList.querySelector("th#" + headerID)
-    let clickedHeaderSortIcon = clickedHeader.querySelector("span")
+        let clickedHeaderSortIcon = clickedHeader.querySelector("span")
 
-    if (clickedHeaderSortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-        clickedHeaderSortIcon.classList.remove("mdi-unfold-more-horizontal")
-        clickedHeaderSortIcon.classList.add("mdi-chevron-up")
-    }
+        if (clickedHeaderSortIcon.classList.contains("mdi-unfold-more-horizontal")) {
+            clickedHeaderSortIcon.classList.remove("mdi-unfold-more-horizontal")
+            clickedHeaderSortIcon.classList.add("mdi-chevron-up")
+        }
 
-    if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
-        orderKase(headerID, "asc")
-        clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
-    } else {
-        orderKase(headerID, "desc")
-        clickedHeaderSortIcon.classList.add("mdi-rotate-180")
+        if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
+            orderKase(headerID, "asc")
+            clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
+        } else {
+            orderKase(headerID, "desc")
+            clickedHeaderSortIcon.classList.add("mdi-rotate-180")
+        }
     }
 }
 
@@ -560,9 +547,12 @@ function listKases(snap, foundKases, searchQuery) {
                                 }
                             })
                     }
-                    tr.oncontextmenu = function () {
+                    tr.oncontextmenu = function (mouseEvent) {
                         currentKase = allKases.doc(tr.id)
-                        menu.popup({ window: remote.getCurrentWindow() })
+                        contextMenu.style.left = mouseEvent.clientX + "px"
+                        contextMenu.style.top = mouseEvent.clientY + "px"
+                        contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
+                        contextMenu.materialComponent.open = true
                     }
                     kasesList.appendChild(tr)
 
@@ -597,12 +587,9 @@ function listKases(snap, foundKases, searchQuery) {
 function orderKase(orderBy, orderDirection) {
     let switching, i, shouldSwitch, switchcount = 0
     do {
-
         switching = false
         let rows = kasesList.children
-
         for (i = 0; i < rows.length - 1; i++) {
-
             shouldSwitch = false
 
             let x = rows[i].querySelector("td#" + orderBy)
@@ -610,26 +597,22 @@ function orderKase(orderBy, orderDirection) {
 
             if (orderDirection == "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-
                     shouldSwitch = true
                     break
                 }
             } else if (orderDirection == "desc") {
                 if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-
                     shouldSwitch = true
                     break
                 }
             }
         }
         if (shouldSwitch) {
-
             rows[i].parentNode.insertBefore(rows[i + 1], rows[i])
             switching = true
 
             switchcount++
         } else {
-
             if (switchcount == 0 && orderDirection == "asc") {
                 orderDirection = "desc"
                 switching = true
