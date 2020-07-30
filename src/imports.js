@@ -23,16 +23,14 @@ firebase.initializeApp(firebaseConfig)
 /* ------------------------------- Editable Select ------------------------------- */
 
 require('jquery-editable-select')
+$.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide';
 
 let editableSelectList = document.querySelectorAll('.editable-select')
-for (const key in editableSelectList) {
+for (let key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
-        const element = editableSelectList[key]
-        element.parentElement.style.zIndex = (editableSelectList.length - key).toString()
-        $(element).editableSelect({
-            filter: false,
-            effects: "slide"
-        })
+        let select = editableSelectList[key]
+        select.parentElement.style.zIndex = (editableSelectList.length - key).toString()
+        $(select).editableSelect()
     }
 }
 

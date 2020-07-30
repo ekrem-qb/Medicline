@@ -40,11 +40,46 @@ var stopCurrentQuery = function () { }
 
 function pageLoaded() {
     clearKase(true)
+    loadInputs()
     loadColumns()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
     applyFilter()
     hideEmptyFilters()
     loadSelectMenus()
+}
+
+function loadInputs() {
+    formEditKase.querySelectorAll("input, textarea").forEach(
+        (inputEdit) => {
+            let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
+            inputEdit.oninput = function () {
+                if (sideSaveButton != null) {
+                    sideSaveButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
+                }
+                if (inputEdit.required && !buttonLock.unlocked) {
+                    inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ''
+                }
+            }
+            inputEdit.onchange = function () {
+                if (inputEdit.classList.contains('editable-select')) {
+                    let hasMenuItem = false
+                    inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
+                        if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
+                            hasMenuItem = true
+                        }
+                    })
+                    if (!hasMenuItem) {
+                        inputEdit.materialComponent.value = ''
+                        $(inputEdit).editableSelect("filter")
+                    }
+                } else {
+                    inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+                    if (inputEdit.required && !buttonLock.unlocked) {
+                        inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ''
+                    }
+                }
+            }
+        })
 }
 
 function loadSelectMenus() {
@@ -63,6 +98,7 @@ function loadSelectMenus() {
                     })
 
                 $(select).on("select.editable-select", function () {
+                    select.oldValue = select.materialComponent.value
                     let subElements = select.parentElement.parentElement.querySelectorAll("input")
                     subElements.forEach(subElement => {
                         if (subElement != select && subElement.id.split('_')[0] == select.id) {
@@ -94,6 +130,11 @@ function loadSelectMenus() {
                                 }))
                         }
                     }
+                })
+            }
+            else {
+                $(select).on("select.editable-select", function () {
+                    select.oldValue = select.materialComponent.value
                 })
             }
         })
@@ -209,7 +250,9 @@ function buttonCreateClick() {
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
 
-    stopCurrentQuery()
+    if (currentQuery._query.filters.length != 0) {
+        stopCurrentQuery()
+    }
     let stop = allKases.onSnapshot(
         (snapshot) => {
             do {
@@ -254,18 +297,32 @@ function buttonLockClick() {
                     sideButtonIcon.classList.add("mdi-rotate-180")
                     sideButtonIcon.classList.remove("mdi-content-save")
                     sideButton.classList.remove("button--save_item")
+                    inputEdit.materialComponent.value = ''
+                    $(inputEdit).editableSelect("filter")
                     if (inputEdit.oldValue != undefined) {
                         selectThisItem(inputEdit, inputEdit.oldValue)
                     }
                 } else {
                     inputEdit.materialComponent.disabled = true
+                    inputEdit.readOnly = true
                 }
             }
             if (inputEdit.classList.contains("editable-select")) {
                 inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
                 inputEdit.parentElement.querySelector(".es-list").hidden = false
+                inputEdit.onchange = function () {
+                    let hasMenuItem = false
+                    inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
+                        if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
+                            hasMenuItem = true
+                        }
+                    })
+                    if (!hasMenuItem) {
+                        inputEdit.materialComponent.value = ''
+                        $(inputEdit).editableSelect("filter")
+                    }
+                }
             }
-            inputEdit.readOnly = true
         })
     } else {
         buttonLock.unlocked = true
@@ -294,12 +351,11 @@ function buttonLockClick() {
                     sideButtonIcon.classList.add("mdi-content-save")
                     sideButton.classList.add("button--save_item")
 
-                    inputEdit.readOnly = false
                     inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
                     inputEdit.parentElement.querySelector(".es-list").hidden = true
-                    inputEdit.oldValue = inputEdit.materialComponent.value
                     inputEdit.materialComponent.value = ''
                     inputEdit.materialComponent.valid = true
+                    inputEdit.onchange = null
 
                     let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
                     subElements.forEach(subElement => {
@@ -330,9 +386,20 @@ function buttonLockClick() {
                         sideButtonIcon.classList.remove("mdi-content-save")
                         sideButton.classList.remove("button--save_item")
 
-                        inputEdit.readOnly = true
                         inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
                         inputEdit.parentElement.querySelector(".es-list").hidden = false
+                        inputEdit.onchange = function () {
+                            let hasMenuItem = false
+                            inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
+                                if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
+                                    hasMenuItem = true
+                                }
+                            })
+                            if (!hasMenuItem) {
+                                inputEdit.materialComponent.value = ''
+                                $(inputEdit).editableSelect("filter")
+                            }
+                        }
                     }
                 }
             }
@@ -418,21 +485,6 @@ function clearKase(dontReload) {
             }
             else {
                 inputEdit.parentElement.parentElement.hidden = inputEdit.materialComponent.disabled
-            }
-
-            inputEdit.onchange = function () {
-                inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
-                if (inputEdit.required && !buttonLock.unlocked) {
-                    inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ''
-                }
-            }
-            inputEdit.oninput = function () {
-                if (sideSaveButton != null) {
-                    sideSaveButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
-                }
-                if (inputEdit.required && !buttonLock.unlocked) {
-                    inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ''
-                }
             }
         })
 

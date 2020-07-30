@@ -18,7 +18,7 @@
             <div class="mdc-card mdc-elevation--z6">
                 <div class="flex flex-column hide" id="tableOverlay">
                     <i class="mdi mdi-loading mdi-spin"></i>
-                    <h3 hidden>Cases not found</h3>
+                    <h3 class="my-2" hidden>Cases not found</h3>
                 </div>
                 <div class="modal-header flex-column">
                     <label
@@ -155,7 +155,7 @@
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                        <select class="editable-select mdc-text-field__input" id="patientStatus" readonly></select>
+                        <select class="editable-select mdc-text-field__input" id="patientStatus"></select>
                         <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -167,7 +167,7 @@
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                        <select class="editable-select mdc-text-field__input" id="country" readonly></select>
+                        <select class="editable-select mdc-text-field__input" id="country"></select>
                         <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -182,7 +182,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -216,7 +216,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider2" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider2"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -250,7 +250,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider3" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider3"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -414,7 +414,7 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-box"></i>
-                        <select class="editable-select mdc-text-field__input" id="insurance" required readonly></select>
+                        <select class="editable-select mdc-text-field__input" id="insurance" required></select>
                         <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -559,7 +559,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-map-marker"></i>
-                            <select class="editable-select mdc-text-field__input" id="address" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="address"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -577,8 +577,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-office-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="address_hotel" readonly
-                                disabled></select>
+                            <select class="editable-select mdc-text-field__input" id="address_hotel" disabled></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -731,8 +730,7 @@
 
                     <div class="form-group flex flex-column">
                         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                            <select class="editable-select mdc-text-field__input" id="patientStatus" required
-                                readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="patientStatus" required></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -745,8 +743,7 @@
                         </label>
 
                         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                            <select class="editable-select mdc-text-field__input" id="country" required
-                                readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="country" required></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -781,8 +778,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider" required
-                                readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider" required></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -818,7 +814,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider2" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider2"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -854,7 +850,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="provider3" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="provider3"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -890,8 +886,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-box"></i>
-                            <select class="editable-select mdc-text-field__input" id="insurance" required
-                                readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="insurance" required></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -1078,7 +1073,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-map-marker"></i>
-                            <select class="editable-select mdc-text-field__input" id="address" readonly></select>
+                            <select class="editable-select mdc-text-field__input" id="address"></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -1096,8 +1091,7 @@
                         <label
                             class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                             <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-office-building"></i>
-                            <select class="editable-select mdc-text-field__input" id="address_hotel" readonly
-                                disabled></select>
+                            <select class="editable-select mdc-text-field__input" id="address_hotel" disabled></select>
                             <i
                                 class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                             <div class="mdc-notched-outline">
@@ -1155,12 +1149,12 @@
     </div>
     <div class="mdc-menu mdc-menu-surface" id="contextMenu">
         <ul class="mdc-list">
-            <li class="mdc-list-item">
+            <li class="mdc-list-item" hidden>
                 <i class="mr-2 mdi mdi-content-copy"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text">Copy</span>
             </li>
-            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-divider" hidden></li>
             <li class="mdc-list-item" data-status="sentDocs" onclick="changeKaseStatus(this.dataset.status)">
                 <i class="mr-2 mdi mdi-circle"></i>
                 <span class="mdc-list-item__ripple"></span>
