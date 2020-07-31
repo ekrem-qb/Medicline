@@ -141,16 +141,6 @@ tbody tr:first-child,
   box-shadow: none;
 }
 
-tbody tr.hide {
-  opacity: 0;
-  border: 0;
-}
-
-tbody tr.hide td {
-  font-size: 0;
-  padding: 0;
-}
-
 td,
 th {
   border: 0 !important;
@@ -163,7 +153,6 @@ td {
   max-width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
-  user-select: all;
 }
 
 td.found {
@@ -177,6 +166,7 @@ th {
   color: var(--mdc-theme-on-primary);
   transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  user-select: none;
 }
 
 .list-group th {
@@ -190,7 +180,6 @@ th:active {
 .table th {
   position: sticky;
   top: 0;
-  user-select: none;
   box-shadow: inset 2px 0 rgba(0, 0, 0, .25);
 }
 

@@ -250,7 +250,7 @@ function buttonCreateClick() {
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
 
-    if (currentQuery._query.filters.length != 0) {
+    if (currentQuery.bd.filters.length != 0) {
         stopCurrentQuery()
     }
     let stop = allKases.onSnapshot(
@@ -761,41 +761,55 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
-for (const status of statusBar) {
+for (let status of statusBar) {
     status.onmouseover = function () {
         if (currentStatus == undefined) {
-            for (const kaseRow of kasesList.children) {
+            for (let kaseRow of kasesList.children) {
                 kaseRow.classList.toggle("dimmed", kaseRow.dataset.status != status.dataset.status)
             }
         }
     }
     status.onmouseleave = function () {
         if (currentStatus == undefined) {
-            for (const kaseRow of kasesList.children) {
+            for (let kaseRow of kasesList.children) {
                 kaseRow.classList.remove("dimmed")
             }
         }
     }
 
     status.onclick = function () {
-        for (const kaseRow of kasesList.children) {
+        for (let kaseRow of kasesList.children) {
             kaseRow.classList.remove("dimmed")
         }
         if (status == currentStatus) {
-            for (const kaseRow of kasesList.children) {
-                kaseRow.classList.remove("hide")
-            }
-            for (const otherStatus of statusBar) {
+            listKases(currentKasesSnapshot)
+
+            for (let otherStatus of statusBar) {
                 otherStatus.classList.remove("dimmed")
                 otherStatus.classList.remove("selected")
             }
             currentStatus = undefined
         }
         else {
-            for (const kaseRow of kasesList.children) {
-                kaseRow.classList.toggle("hide", kaseRow.dataset.status != status.dataset.status)
+            var foundKases = new Array()
+
+            currentKasesSnapshot.forEach(
+                (kase) => {
+                    if (!foundKases.includes(kase.id)) {
+                        if (kase.get("status") == status.dataset.status) {
+                            foundKases.push(kase.id)
+                        }
+                    }
+                }
+            )
+            if (foundKases.length > 0) {
+                listKases(currentKasesSnapshot, foundKases)
             }
-            for (const otherStatus of statusBar) {
+            else {
+                setTableOverlayState("empty")
+            }
+
+            for (let otherStatus of statusBar) {
                 otherStatus.classList.toggle("dimmed", otherStatus != status)
                 otherStatus.classList.toggle("selected", otherStatus == status)
             }

@@ -3,10 +3,6 @@ const jQuery = $ = require('jquery')
 
 /* ---------------------------------- Firebase ---------------------------------- */
 
-const firebase = require('firebase/app')
-require('firebase/auth')
-require('firebase/firestore')
-
 var firebaseConfig = {
     apiKey: "AIzaSyBEMpWUykF8sZB83zlpZZpq5u5QgTID0W8",
     authDomain: "medicline-35e34.firebaseapp.com",
@@ -18,12 +14,12 @@ var firebaseConfig = {
     measurementId: "G-K1XPKRC2L6"
 }
 firebase.initializeApp(firebaseConfig)
-
+firebase.firestore().enablePersistence()
 
 /* ------------------------------- Editable Select ------------------------------- */
 
 require('jquery-editable-select')
-$.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide';
+$.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide'
 
 let editableSelectList = document.querySelectorAll('.editable-select')
 for (let key in editableSelectList) {

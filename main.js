@@ -9,7 +9,7 @@ async function main() {
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,
-                enableRemoteModule: true
+                enableRemoteModule: false
             }
         })
 
