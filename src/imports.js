@@ -14,7 +14,6 @@ var firebaseConfig = {
     measurementId: "G-K1XPKRC2L6"
 }
 firebase.initializeApp(firebaseConfig)
-firebase.firestore().enablePersistence()
 
 /* ------------------------------- Editable Select ------------------------------- */
 
@@ -36,6 +35,7 @@ for (let key in editableSelectList) {
 const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
 const { MDCMenu } = require('@material/menu')
+const { MDCDialog } = require('@material/dialog')
 
 document.querySelectorAll('.mdc-text-field').forEach(inputElement => {
     inputElement.querySelector('input, textarea').materialComponent = new MDCTextField(inputElement)
@@ -51,6 +51,10 @@ document.querySelectorAll('.mdc-button, .mdc-ripple-surface, .mdc-icon-button, .
 document.querySelectorAll('.mdc-menu').forEach(menuElement => {
     menuElement.materialComponent = new MDCMenu(menuElement)
     menuElement.materialComponent.setFixedPosition(true)
+})
+
+document.querySelectorAll('.mdc-dialog').forEach(dialogElement => {
+    dialogElement.materialComponent = new MDCDialog(dialogElement)
 })
 
 

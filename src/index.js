@@ -1,11 +1,6 @@
 const { clipboard } = require("electron")
 const Sortable = require("sortablejs")
 
-const contextMenu = document.querySelector("#contextMenu")
-contextMenu.materialComponent.listen("close", event => {
-    currentKase = undefined
-})
-
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
@@ -18,6 +13,7 @@ const kasesList = document.querySelector("#kasesList")
 var currentOrder, currentOrderDirection
 
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
+const dialogEmptyFilter = document.querySelector("#dialogEmptyFilter")
 
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
@@ -32,11 +28,24 @@ const buttonLock = document.querySelector("button#lock")
 const buttonSave = document.querySelector("button#save")
 const buttonDelete = document.querySelector("button#delete")
 
+const dialogDeleteKase = document.querySelector("#dialogDeleteKase")
+dialogDeleteKase.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "delete") {
+        currentKase.delete()
+        clearKase()
+    }
+})
+
+firebase.firestore().enablePersistence()
 const allKases = firebase.firestore().collection("kases")
 var currentQuery = firebase.firestore().collection("kases")
 var currentKasesSnapshot
 var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
+const contextMenu = document.querySelector("#contextMenu")
+contextMenu.materialComponent.listen("close", event => {
+    currentKase = undefined
+})
 
 function pageLoaded() {
     clearKase(true)
@@ -156,7 +165,7 @@ function loadColumns() {
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
     } else {
-        enabledColumns.push("insuranceRefNo", "insurance", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
+        enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createDate", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
     }
     enabledColumns.forEach(
         (column) => {
@@ -408,7 +417,7 @@ function buttonLockClick() {
 }
 
 document.onkeydown = function (event) {
-    if (!editKaseWindow.hidden) {
+    if (!editKaseWindow.hidden && !dialogDeleteKase.materialComponent.isOpen) {
         if (event.key == "Escape") {
             clearKase()
         }
@@ -449,8 +458,9 @@ function saveKase() {
             kaseData.createUser = firebase.auth().currentUser.email
             kaseData.createDate = new Date().toJSON().substr(0, 10)
             kaseData.createTime = new Date().toLocaleTimeString()
-            kaseData.updateUser = ''
-            kaseData.updateDate = ''
+            kaseData.updateUser = firebase.auth().currentUser.email
+            kaseData.updateDate = new Date().toJSON().substr(0, 10)
+            kaseData.updateTime = new Date().toLocaleTimeString()
             kaseData.status = "active"
             currentKase.set(kaseData)
         }
@@ -460,8 +470,7 @@ function saveKase() {
 buttonSave.onclick = saveKase
 
 function deleteKase() {
-    currentKase.delete()
-    clearKase()
+    dialogDeleteKase.materialComponent.open()
 }
 buttonDelete.onclick = deleteKase
 
@@ -869,7 +878,7 @@ function applyFilter() {
         buttonClearFilter.disabled = false
     }
     else {
-        alert("Filters are empty!")
+        dialogEmptyFilter.materialComponent.open()
     }
 }
 

@@ -632,18 +632,6 @@
             </div>
         </div>
     </div>
-    <footer id="statusBar" class="flex">
-        <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
-        <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
-        <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>
-        <div class="status mdc-ripple-surface" data-status="gop">GOP RECEIVED/SENT</div>
-        <div class="status mdc-ripple-surface" data-status="payIssued">PAYMENT ISSUED</div>
-        <div class="status mdc-ripple-surface" data-status="payReceived">PAYMENT RECEIVED</div>
-        <div class="status mdc-ripple-surface" data-status="multi">MULTI PROVIDER</div>
-        <div class="status mdc-ripple-surface" data-status="payNclaim">PAY AND CLAIM</div>
-        <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
-        <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
-    </footer>
     <div class="modal" id="editKaseWindow" hidden>
         <div class="form mdc-card mdc-elevation--z6 px-1">
             <div class="modal-header">
@@ -1213,6 +1201,62 @@
             </li>
         </ul>
     </div>
+    <div class="mdc-dialog" id="dialogDeleteKase">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__content">
+                    <i class="mdi mdi-help-circle-outline mr-3"></i>
+                    Are you sure you want to delete this case?
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
+                        data-mdc-dialog-action="cancel">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <span class="mdc-button__label">Cancel</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
+                        data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <span class="mdc-button__label">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="mdc-dialog" id="dialogEmptyFilter">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__content">
+                    <i class="mdi mdi-alert-outline mr-3"></i>
+                    Filters are empty!
+                </div>
+                <div class=" mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
+                        data-mdc-dialog-action="ok">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-check"></i>
+                        <span class="mdc-button__label">OK</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <footer id="statusBar" class="flex">
+        <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
+        <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
+        <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>
+        <div class="status mdc-ripple-surface" data-status="gop">GOP RECEIVED/SENT</div>
+        <div class="status mdc-ripple-surface" data-status="payIssued">PAYMENT ISSUED</div>
+        <div class="status mdc-ripple-surface" data-status="payReceived">PAYMENT RECEIVED</div>
+        <div class="status mdc-ripple-surface" data-status="multi">MULTI PROVIDER</div>
+        <div class="status mdc-ripple-surface" data-status="payNclaim">PAY AND CLAIM</div>
+        <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
+        <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
+    </footer>
 
     <script src="../node_modules/firebase/firebase-app.js"></script>
     <script src="../node_modules/firebase/firebase-auth.js"></script>

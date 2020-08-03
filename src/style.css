@@ -245,9 +245,11 @@ th:active {
 #editKaseWindow {
   display: flex;
   background-color: rgba(0, 0, 0, .5);
+  z-index: 5;
 }
 
-.modal-title {
+.modal-title,
+.mdc-dialog__content {
   user-select: none;
   line-height: normal;
   display: flex;
@@ -560,6 +562,18 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-button__label {
   line-height: normal;
+}
+
+.mdc-dialog__button {
+  flex: 1;
+}
+
+.mdc-dialog .mdc-dialog__content>.mdi {
+  font-size: 0;
+}
+
+.mdc-dialog--open .mdc-dialog__content>.mdi {
+  font-size: 2rem;
 }
 
 .modal-title .mdc-button--outlined {
