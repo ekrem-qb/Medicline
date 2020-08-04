@@ -5,15 +5,18 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "buid": "electron-builder",
+    "publish": "electron-builder --publish always"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ekrem007/Database_Electron.git"
   },
   "keywords": [
-    "Electron"
+    "Electron",
+    "Firebase",
+    "Firestore",
+    "Database"
   ],
   "author": "ekrem007",
   "license": "ISC",
@@ -30,6 +33,7 @@
     "@mdi/font": "^5.4.55",
     "bootstrap": "^4.5.0",
     "electron-is-dev": "^1.2.0",
+    "electron-updater": "^4.3.4",
     "firebase": "^7.17.1",
     "jquery": "^3.5.1",
     "jquery-editable-select": "^2.2.5",
@@ -40,7 +44,12 @@
   "build": {
     "appId": "ekrem.database_electron",
     "win": {
-      "target": "portable"
+      "publish": {
+        "provider": "github",
+        "owner": "ekrem007",
+        "token": "487a958ca1b8d3c69e930fcb2a1ff4e8c83e2efc",
+        "private": true
+      }
     }
   }
 }
