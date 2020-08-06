@@ -248,14 +248,6 @@ th:active {
   z-index: 5;
 }
 
-.modal-title,
-.mdc-dialog__content {
-  user-select: none;
-  line-height: normal;
-  display: flex;
-  align-items: center;
-}
-
 .modal-title>button:first-child,
 .modal-title>.mdi {
   margin-right: 1rem;
@@ -532,7 +524,8 @@ footer>.status.selected {
 .mdc-button__ripple::before,
 .mdc-icon-button::before,
 .mdc-ripple-surface::before,
-.mdc-fab__ripple::before {
+.mdc-fab__ripple::before,
+.mdc-dialog__title::before {
   display: none;
 }
 
@@ -566,6 +559,35 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-dialog__button {
   flex: 1;
+}
+
+.modal-title,
+.mdc-dialog__title,
+.mdc-dialog__content {
+  user-select: none;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+}
+
+.mdc-dialog__title,
+.mdc-dialog__actions {
+  border-color: rgba(0, 0, 0, .12);
+}
+
+.mdc-dialog__title {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+}
+
+.mdc-dialog .mdc-dialog__content {
+  padding-top: 20px;
+}
+
+.mdc-dialog .mdc-dialog__content>label {
+  width: 8rem;
+  margin: 0;
 }
 
 .mdc-dialog .mdc-dialog__content>.mdi {

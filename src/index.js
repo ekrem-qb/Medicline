@@ -1,4 +1,4 @@
-const { clipboard } = require("electron")
+const { ipcRenderer } = require("electron")
 const Sortable = require("sortablejs")
 
 const inputSearch = document.querySelector("input#search")
@@ -902,3 +902,16 @@ buttonClearFilter.onclick = function () {
 
     buttonClearFilter.disabled = true
 }
+
+const dialogUpdate = document.querySelector("#dialogUpdate")
+dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "install") {
+        ipcRenderer.send("install-update")
+    }
+})
+
+ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
+    dialogUpdate.querySelector("input#currentVersion").materialComponent.value = currentVersion
+    dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
+    dialogUpdate.materialComponent.open()
+})

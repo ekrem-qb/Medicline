@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "buid": "electron-builder",
+    "build": "electron-builder --dir",
+    "build-setup": "electron-builder",
     "publish": "electron-builder --publish always"
   },
   "repository": {
@@ -33,6 +34,7 @@
     "@mdi/font": "^5.4.55",
     "bootstrap": "^4.5.0",
     "electron-is-dev": "^1.2.0",
+    "electron-log": "^4.2.2",
     "electron-updater": "^4.3.4",
     "firebase": "^7.17.1",
     "jquery": "^3.5.1",
@@ -42,7 +44,7 @@
     "tableexport": "^5.2.0"
   },
   "build": {
-    "appId": "ekrem.database_electron",
+    "appId": "com.ekrem.database_electron",
     "win": {
       "publish": {
         "provider": "github",

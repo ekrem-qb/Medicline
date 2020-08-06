@@ -3,9 +3,46 @@
 async function main() {
     const { app, BrowserWindow, ipcMain } = require('electron')
     const isDevelopment = require('electron-is-dev')
+    const log = require('electron-log')
+    const { autoUpdater } = require("electron-updater")
+    var window
+
+    autoUpdater.autoInstallOnAppQuit = false
+    autoUpdater.fullChangelog = true
+    autoUpdater.logger = log
+    autoUpdater.logger.transports.file.level = 'info'
+    log.info('App starting...')
+
+    autoUpdater.on('update-available', () => {
+        log.info('Update available.')
+    })
+    autoUpdater.on('update-not-available', () => {
+        log.info('Update not available.')
+    })
+    autoUpdater.on('error', (err) => {
+        log.error('Error in auto-updater. ' + err)
+    })
+    autoUpdater.on('download-progress', (progressObj) => {
+        let log_message = "Download speed: " + progressObj.bytesPerSecond
+        log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
+        log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+        log.info(log_message)
+    })
+    autoUpdater.on('update-downloaded', (updateInfo) => {
+        log.info('Update downloaded')
+        window.webContents.send('update-downloaded', updateInfo, app.getVersion())
+    })
+
+    app.on('ready', function () {
+        autoUpdater.checkForUpdates()
+    })
+
+    ipcMain.on("install-update", () => {
+        autoUpdater.quitAndInstall(false, true)
+    })
 
     async function createMainWindow() {
-        const window = new BrowserWindow({
+        window = new BrowserWindow({
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,
