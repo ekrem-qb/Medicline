@@ -64,7 +64,7 @@ const TableExport = require('tableexport')
 
 function buttonExportClick() {
     let table = TableExport(document.querySelectorAll('table'), {
-        filename: new Date().toJSON(),
+        filename: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString(),
         exportButtons: false
     })
     let xlsxData = table.getExportData()['kases'].xlsx

@@ -37,20 +37,24 @@ async function main() {
         autoUpdater.checkForUpdates()
     })
 
+    setInterval(() => {
+        autoUpdater.checkForUpdates()
+    }, 1000 * 60 * 15)
+
     ipcMain.on("install-update", () => {
         autoUpdater.quitAndInstall(false, true)
     })
 
     async function createMainWindow() {
         window = new BrowserWindow({
+            width: 1280,
+            height: 720,
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,
-                enableRemoteModule: false
+                enableRemoteModule: false,
             }
         })
-
-        window.maximize()
 
         await new Promise((resolve, reject) => {
             // resolve when when 'did-finish-load' has been fired

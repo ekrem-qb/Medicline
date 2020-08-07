@@ -1,6 +1,3 @@
-const { ipcRenderer } = require("electron")
-const Sortable = require("sortablejs")
-
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
@@ -21,7 +18,14 @@ const buttonClearFilter = document.querySelector("button#clearFilter")
 const statusBar = document.querySelector("#statusBar").children
 var currentStatus
 
-const editKaseWindow = document.querySelector("#editKaseWindow")
+const dialogEditKase = document.querySelector("#dialogEditKase")
+dialogEditKase.materialComponent.scrimClickAction = ''
+dialogEditKase.materialComponent.escapeKeyAction = ''
+dialogEditKase.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "cancel") {
+        clearKase()
+    }
+})
 const formEditKase = document.querySelector("form#editKase")
 const currentKaseID = document.querySelector("#currentKaseID")
 const buttonLock = document.querySelector("button#lock")
@@ -43,7 +47,7 @@ var currentKasesSnapshot
 var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
 const contextMenu = document.querySelector("#contextMenu")
-contextMenu.materialComponent.listen("close", event => {
+contextMenu.materialComponent.listen("close", () => {
     currentKase = undefined
 })
 
@@ -150,6 +154,8 @@ function loadSelectMenus() {
 }
 
 function selectThisItem(selectMenu, itemString) {
+    selectMenu.materialComponent.value = ''
+    $(selectMenu).editableSelect("filter")
     selectMenu.parentElement.querySelectorAll("li").forEach(selectItem => {
         if (selectItem.innerText == itemString) {
             $(selectMenu).editableSelect("select", $(selectItem))
@@ -165,7 +171,7 @@ function loadColumns() {
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
     } else {
-        enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createDate", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
+        enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createTime", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
     }
     enabledColumns.forEach(
         (column) => {
@@ -178,8 +184,8 @@ function loadColumns() {
             hiddenTableColumnsList.appendChild(newColumn(column))
         }
     }
-    if (enabledColumns.includes("createDate")) {
-        headerClick("createDate")
+    if (enabledColumns.includes("createTime")) {
+        headerClick("createTime")
     } else {
         headerClick(enabledColumns[enabledColumns.length - 1])
     }
@@ -254,7 +260,7 @@ function randomKaseID() {
 }
 
 function buttonCreateClick() {
-    editKaseWindow.hidden = false
+    dialogEditKase.materialComponent.open()
 
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
@@ -306,8 +312,6 @@ function buttonLockClick() {
                     sideButtonIcon.classList.add("mdi-rotate-180")
                     sideButtonIcon.classList.remove("mdi-content-save")
                     sideButton.classList.remove("button--save_item")
-                    inputEdit.materialComponent.value = ''
-                    $(inputEdit).editableSelect("filter")
                     if (inputEdit.oldValue != undefined) {
                         selectThisItem(inputEdit, inputEdit.oldValue)
                     }
@@ -416,19 +420,6 @@ function buttonLockClick() {
     }
 }
 
-document.onkeydown = function (event) {
-    if (!editKaseWindow.hidden && !dialogDeleteKase.materialComponent.isOpen) {
-        if (event.key == "Escape") {
-            clearKase()
-        }
-        if (!buttonSave.disabled && document.getSelection().anchorNode.classList.contains("mdc-text-field--textarea")) {
-            if (event.key == "Enter") {
-                saveKase()
-            }
-        }
-    }
-}
-
 function saveKase() {
     let kaseData = new Object()
     let valid = true
@@ -497,7 +488,7 @@ function clearKase(dontReload) {
             }
         })
 
-    editKaseWindow.hidden = true
+    dialogEditKase.materialComponent.close()
     buttonDelete.disabled = true
     buttonSave.disabled = true
     if (dontReload != true) {
@@ -568,7 +559,7 @@ function listKases(snap, foundKases, searchQuery) {
                     tr.dataset.status = kase.get("status")
                     tr.ondblclick = function () {
                         clearKase(true)
-                        editKaseWindow.hidden = false
+                        dialogEditKase.materialComponent.open()
                         buttonDelete.disabled = false
                         currentKase = allKases.doc(tr.id)
                         currentKaseID.innerHTML = tr.id
@@ -630,7 +621,12 @@ function listKases(snap, foundKases, searchQuery) {
                                 td.textContent = td.title = kase.get(td.id)
                                 break
                             default:
-                                td.textContent = kase.get(td.id)
+                                if (td.id.includes("Date")) {
+                                    td.textContent = new Date(kase.get(td.id)).toLocaleDateString()
+                                }
+                                else {
+                                    td.textContent = kase.get(td.id)
+                                }
                                 break
                         }
                         if (searchQuery != undefined) {
@@ -690,15 +686,26 @@ function setTableOverlayState(state) {
     switch (state) {
         case "loading":
             tableOverlay.classList.remove("hide")
-            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline")
+            tableOverlay.classList.remove("show-headers")
             tableOverlayIcon.classList.add("mdi-loading", "mdi-spin")
+            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline", "mdi-format-columns")
             tableOverlayText.hidden = true
             break
         case "empty":
             tableOverlay.classList.remove("hide")
+            tableOverlay.classList.remove("show-headers")
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin")
+            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-format-columns")
             tableOverlayText.hidden = false
+            tableOverlayText.innerText = "Cases Not Found"
+            break
+        case "drag":
+            tableOverlay.classList.remove("hide")
+            tableOverlay.classList.add("show-headers")
+            tableOverlayIcon.classList.add("mdi-format-columns")
+            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
+            tableOverlayText.hidden = false
+            tableOverlayText.innerText = "Drag & Drop"
             break
         case "hide":
             tableOverlay.classList.add("hide")
@@ -738,15 +745,17 @@ function modalExpand(header) {
     hideEmptyFilters()
 }
 
+const Sortable = require("sortablejs")
+
 Sortable.create(tableColumnsList, {
     group: "TableColumns",
     animation: 150,
     easing: "cubic-bezier(0.4, 0, 0.2, 1)",
     onChange: function () {
-        kasesList.innerHTML = ''
+        setTableOverlayState("drag")
     },
     onStart: function () {
-        kasesList.innerHTML = ''
+        setTableOverlayState("drag")
     },
     onEnd: function () {
         listKases(currentKasesSnapshot)
@@ -903,7 +912,9 @@ buttonClearFilter.onclick = function () {
     buttonClearFilter.disabled = true
 }
 
+const { ipcRenderer } = require("electron")
 const dialogUpdate = document.querySelector("#dialogUpdate")
+
 dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "install") {
         ipcRenderer.send("install-update")
