@@ -1,0 +1,18 @@
+{
+    "search": "Arama",
+    "min": "En düşük",
+    "max": "En büyük",
+    "surnameName": "Soyad ve Ad",
+    "birthDate": "Doğum Tarihi",
+    "phone": "Telefon Numarası",
+    "patientStatus": "Hastanın Durumu",
+    "country": "Ülke",
+    "provider": "Provider",
+    "description": "Açıklama",
+    "createUser": "Oluşturan Kullanıcı",
+    "createDate": "Oluşturma Tarihi",
+    "createTime": "Oluşturma Zamanı",
+    "updateUser": "Son güncelleyen Kullanıcı",
+    "cases_not_found": "Vakalar Bulunamadı",
+    "drag_and_drop": "Sürükle Ve Bırak"
+}

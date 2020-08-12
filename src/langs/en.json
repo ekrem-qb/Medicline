@@ -1,0 +1,18 @@
+{
+    "search": "Search",
+    "min": "Minimum",
+    "max": "Maximum",
+    "surnameName": "Surname and Name",
+    "birthDate": "Date of Birth",
+    "phone": "Phone Number",
+    "patientStatus": "Patient Status",
+    "country": "Country",
+    "provider": "Provider",
+    "description": "Description",
+    "createUser": "User Created",
+    "createDate": "Date of Creation",
+    "createTime": "Time of Creation",
+    "updateUser": "User Last Updated",
+    "cases_not_found": "Cases Not Found",
+    "drag_and_drop": "Drag & Drop"
+}

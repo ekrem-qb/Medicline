@@ -697,7 +697,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-format-columns")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = "Cases Not Found"
+            tableOverlayText.innerText = translate["cases_not_found"]
             break
         case "drag":
             tableOverlay.classList.remove("hide")
@@ -705,7 +705,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-format-columns")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = "Drag & Drop"
+            tableOverlayText.innerText = translate["drag_and_drop"]
             break
         case "hide":
             tableOverlay.classList.add("hide")

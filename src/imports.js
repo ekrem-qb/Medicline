@@ -1,7 +1,6 @@
 const jQuery = $ = require('jquery')
 
-
-/* ---------------------------------- Firebase ---------------------------------- */
+//#region Firebase
 
 var firebaseConfig = {
     apiKey: "AIzaSyBEMpWUykF8sZB83zlpZZpq5u5QgTID0W8",
@@ -15,7 +14,9 @@ var firebaseConfig = {
 }
 firebase.initializeApp(firebaseConfig)
 
-/* ------------------------------- Editable Select ------------------------------- */
+//#endregion
+
+//#region Editable Select
 
 require('jquery-editable-select')
 $.fn.editableSelect.Constructor.DEFAULTS.effects = 'slide'
@@ -29,8 +30,9 @@ for (let key in editableSelectList) {
     }
 }
 
+//#endregion
 
-/* ------------------------------- Material Elements ------------------------------- */
+//#region Material Elements
 
 const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
@@ -57,10 +59,11 @@ document.querySelectorAll('.mdc-dialog').forEach(dialogElement => {
     dialogElement.materialComponent = new MDCDialog(dialogElement)
 })
 
+//#endregion
 
-/* ---------------------------------- Table Export ---------------------------------- */
+//#region Table Export
 
-const TableExport = require('tableexport')
+const { TableExport } = require('tableexport')
 
 function buttonExportClick() {
     let table = TableExport(document.querySelectorAll('table'), {
@@ -70,3 +73,31 @@ function buttonExportClick() {
     let xlsxData = table.getExportData()['kases'].xlsx
     table.export2file(xlsxData.data, xlsxData.mimeType, xlsxData.filename, xlsxData.fileExtension, xlsxData.merges, xlsxData.RTL, xlsxData.sheetname)
 }
+
+//#endregion
+
+
+var currentLanguage = "en"
+switch (navigator.language) {
+    case "ru":
+    case "tr":
+        currentLanguage = navigator.language
+        break
+    default:
+        break
+}
+
+var translate = require("./langs/" + currentLanguage + ".json")
+
+let textElements = document.querySelectorAll("[translate]")
+textElements.forEach(textElement => {
+    if (translate.hasOwnProperty(textElement.innerText)) {
+        textElement.innerText = translate[textElement.innerText]
+    }
+    else if (textElement.innerText.includes("-")) {
+        textElement.innerText = translate[textElement.innerText.split("-")[1]] + " " + translate[textElement.innerText.split("-")[0]]
+    }
+    else if (!Number.isNaN(parseInt(textElement.innerText.slice(-1)))) {
+        textElement.innerText = translate[textElement.innerText.slice(0, -1)] + " " + textElement.innerText.slice(-1)
+    }
+})
