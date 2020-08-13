@@ -49,6 +49,8 @@ async function main() {
         window = new BrowserWindow({
             width: 1280,
             height: 720,
+            minWidth: 800,
+            minHeight: 600,
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,

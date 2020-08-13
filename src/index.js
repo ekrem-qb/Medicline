@@ -26,11 +26,12 @@ dialogEditKase.materialComponent.listen('MDCDialog:closed', event => {
         clearKase()
     }
 })
-const formEditKase = document.querySelector("form#editKase")
-const currentKaseID = document.querySelector("#currentKaseID")
-const buttonLock = document.querySelector("button#lock")
-const buttonSave = document.querySelector("button#save")
-const buttonDelete = document.querySelector("button#delete")
+const buttonLock = dialogEditKase.querySelector("button#lock")
+const titleDialogEditKase = dialogEditKase.querySelector("#titleDialogEditKase")
+const formEditKase = dialogEditKase.querySelector("form#editKase")
+const buttonSave = dialogEditKase.querySelector("button#save")
+const currentKaseID = dialogEditKase.querySelector("#currentKaseID")
+const buttonDelete = dialogEditKase.querySelector("button#delete")
 
 const dialogDeleteKase = document.querySelector("#dialogDeleteKase")
 dialogDeleteKase.materialComponent.listen('MDCDialog:closed', event => {
@@ -261,6 +262,7 @@ function randomKaseID() {
 
 function buttonCreateClick() {
     dialogEditKase.materialComponent.open()
+    titleDialogEditKase.innerText = translate["NEW_CASE"]
 
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
@@ -560,9 +562,10 @@ function listKases(snap, foundKases, searchQuery) {
                     tr.ondblclick = function () {
                         clearKase(true)
                         dialogEditKase.materialComponent.open()
+                        titleDialogEditKase.innerText = translate["CASE_EDIT"]
                         buttonDelete.disabled = false
                         currentKase = allKases.doc(tr.id)
-                        currentKaseID.innerHTML = tr.id
+                        currentKaseID.innerText = tr.id
                         checkKaseID()
                         kaseExists = true
 
@@ -697,7 +700,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-format-columns")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate["cases_not_found"]
+            tableOverlayText.innerText = translate["CASES_NOT_FOUND"]
             break
         case "drag":
             tableOverlay.classList.remove("hide")
@@ -705,7 +708,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-format-columns")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate["drag_and_drop"]
+            tableOverlayText.innerText = translate["DRAG_AND_DROP"]
             break
         case "hide":
             tableOverlay.classList.add("hide")

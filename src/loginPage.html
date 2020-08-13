@@ -14,11 +14,9 @@
 <body class="mdc-typography" onload="pageLoaded()">
     <div class="modal flex">
         <div class="mdc-card mdc-elevation--z6 m-auto">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="mdi mdc-button__icon mdi-account-circle"></i>
-                    Sign In
-                </h3>
+            <div class="modal-header justify-content-start">
+                <i class="mdc-button__icon mr-3 mdi mdi-account-circle"></i>
+                <h4 class="modal-title" translate>SIGN_IN</h4>
             </div>
             <div class="modal-body flex flex-column">
                 <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
@@ -27,7 +25,7 @@
                     <div class="mdc-notched-outline">
                         <div class="mdc-notched-outline__leading"></div>
                         <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label">Email</span>
+                            <span class="mdc-floating-label" translate>EMAIL</span>
                         </div>
                         <div class="mdc-notched-outline__trailing"></div>
                     </div>
@@ -43,7 +41,7 @@
                     <div class="mdc-notched-outline">
                         <div class="mdc-notched-outline__leading"></div>
                         <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label">Password</span>
+                            <span class="mdc-floating-label" translate>PASSWORD</span>
                         </div>
                         <div class="mdc-notched-outline__trailing"></div>
                     </div>
@@ -52,7 +50,7 @@
             <div class="modal-footer flex-column">
                 <button type="submit" class="mdc-button mdc-button--raised" onclick="signIn()" id="signIn">
                     <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">Sign In</span>
+                    <span class="mdc-button__label" translate>SIGN_IN</span>
                     <i class="mdi mdc-button__icon mdi-arrow-right"></i>
                 </button>
             </div>

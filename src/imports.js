@@ -32,6 +32,36 @@ for (let key in editableSelectList) {
 
 //#endregion
 
+//#region Translation
+
+var currentLanguage = "en"
+switch (navigator.language) {
+    case "ru":
+    case "tr":
+        currentLanguage = navigator.language
+        break
+    default:
+        break
+}
+
+var translate = require("./langs/" + currentLanguage + ".json")
+
+let textElements = document.querySelectorAll("[translate]")
+textElements.forEach(textElement => {
+    let textToTranslate = textElement.innerText
+    if (translate.hasOwnProperty(textElement.innerText)) {
+        textElement.innerText = translate[textElement.innerText]
+    }
+    else if (textElement.innerText.includes("-")) {
+        textElement.innerText = translate[textElement.innerText.split("-")[1]] + " " + translate[textElement.innerText.split("-")[0]]
+    }
+    else if (!Number.isNaN(parseInt(textElement.innerText.slice(-1)))) {
+        textElement.innerText = translate[textElement.innerText.slice(0, -1)] + " " + textElement.innerText.slice(-1)
+    }
+})
+
+//#endregion
+
 //#region Material Elements
 
 const { MDCTextField } = require('@material/textfield')
@@ -75,29 +105,3 @@ function buttonExportClick() {
 }
 
 //#endregion
-
-
-var currentLanguage = "en"
-switch (navigator.language) {
-    case "ru":
-    case "tr":
-        currentLanguage = navigator.language
-        break
-    default:
-        break
-}
-
-var translate = require("./langs/" + currentLanguage + ".json")
-
-let textElements = document.querySelectorAll("[translate]")
-textElements.forEach(textElement => {
-    if (translate.hasOwnProperty(textElement.innerText)) {
-        textElement.innerText = translate[textElement.innerText]
-    }
-    else if (textElement.innerText.includes("-")) {
-        textElement.innerText = translate[textElement.innerText.split("-")[1]] + " " + translate[textElement.innerText.split("-")[0]]
-    }
-    else if (!Number.isNaN(parseInt(textElement.innerText.slice(-1)))) {
-        textElement.innerText = translate[textElement.innerText.slice(0, -1)] + " " + textElement.innerText.slice(-1)
-    }
-})

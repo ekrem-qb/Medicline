@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Two</title>
+    <title>Medicline</title>
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -14,7 +14,7 @@
 
 <body class="mdc-typography" onload="pageLoaded()">
     <div class="container-max flex my-3">
-        <div class="mx-3">
+        <div class="mx-2">
             <div class="mdc-card mdc-elevation--z6">
                 <div class="flex flex-column hide" id="tableOverlay">
                     <i class="mdi mdi-loading mdi-spin"></i>
@@ -31,7 +31,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>search</span>
+                                <span class="mdc-floating-label" translate>SEARCH</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -40,7 +40,7 @@
                         id="buttonCreate">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-plus"></i>
-                        <span class="mdc-button__label">Create</span>
+                        <span class="mdc-button__label" translate>CREATE</span>
                     </button>
                 </div>
                 <div class="table-responsive">
@@ -55,18 +55,18 @@
                     <button class="mdc-button mdc-button--outlined" onclick="buttonExportClick()" id="buttonExport">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
-                        <span class="mdc-button__label">Export</span>
+                        <span class="mdc-button__label" translate>EXPORT</span>
                     </button>
                 </div>
             </div>
         </div>
-        <div class="mx-3" id="toolsPanel">
+        <div class="mx-2" id="toolsPanel">
             <div class="mdc-card mdc-elevation--z6">
                 <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
-                    <h4 class="modal-title">
-                        <i class="mdi mdi-eye-off"></i>
-                        Hidden Columns
-                    </h4>
+                    <div class="flex">
+                        <i class="mr-3 mdi mdi-eye-off"></i>
+                        <h4 class="modal-title" translate>HIDDEN_COLUMNS</h4>
+                    </div>
                     <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                 </div>
                 <div class="modal-body collapsed">
@@ -75,10 +75,10 @@
             </div>
             <div class="mdc-card mdc-elevation--z6">
                 <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
-                    <h4 class="modal-title">
-                        <i class="mdi mdi-filter"></i>
-                        Filter
-                    </h4>
+                    <div class="flex">
+                        <i class="mr-3 mdi mdi-filter"></i>
+                        <h4 class="modal-title" translate>FILTER</h4>
+                    </div>
                     <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
                 </div>
                 <form class="modal-body flex flex-column collapsed" id="filter">
@@ -88,7 +88,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>surnameName</span>
+                                <span class="mdc-floating-label" translate>SURNAME_NAME</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -100,7 +100,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>birthDate-min</span>
+                                    <span class="mdc-floating-label" translate>BIRTH_DATE-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -111,7 +111,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>birthDate-max</span>
+                                    <span class="mdc-floating-label" translate>BIRTH_DATE-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -124,7 +124,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>phone</span>
+                                <span class="mdc-floating-label" translate>PHONE</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -136,7 +136,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>phone2</span>
+                                <span class="mdc-floating-label" translate>PHONE2</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -148,7 +148,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>phone3</span>
+                                <span class="mdc-floating-label" translate>PHONE3</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -160,7 +160,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>patientStatus</span>
+                                <span class="mdc-floating-label" translate>PATIENT_STATUS</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -172,7 +172,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>country</span>
+                                <span class="mdc-floating-label" translate>COUNTRY</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -188,7 +188,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate="">provider</span>
+                                    <span class="mdc-floating-label" translate>PROVIDER</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -204,7 +204,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>phone</span>
+                                    <span class="mdc-floating-label" translate>PHONE</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -222,7 +222,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>provider2</span>
+                                    <span class="mdc-floating-label" translate>PROVIDER2</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -238,7 +238,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>phone</span>
+                                    <span class="mdc-floating-label" translate>PHONE</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -256,7 +256,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>provider3</span>
+                                    <span class="mdc-floating-label" translate>PROVIDER3</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -272,7 +272,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>phone</span>
+                                    <span class="mdc-floating-label" translate>PHONE</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -285,7 +285,7 @@
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>description</span>
+                                <span class="mdc-floating-label" translate>DESCRIPTION</span>
                             </div>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
@@ -297,7 +297,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>createUser</span>
+                                <span class="mdc-floating-label" translate>CREATE_USER</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -309,7 +309,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>createDate-min</span>
+                                    <span class="mdc-floating-label" translate>CREATE_DATE-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -320,7 +320,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>createDate-max</span>
+                                    <span class="mdc-floating-label" translate>CREATE_DATE-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -333,7 +333,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>createTime-min</span>
+                                    <span class="mdc-floating-label" translate>CREATE_TIME-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -344,7 +344,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label" translate>createTime-max</span>
+                                    <span class="mdc-floating-label" translate>CREATE_TIME-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -357,7 +357,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label" translate>updateUser</span>
+                                <span class="mdc-floating-label" translate>UPDATE_USER</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -369,7 +369,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Last Update</span>
+                                    <span class="mdc-floating-label" translate>UPDATE_DATE-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -380,7 +380,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Last Update</span>
+                                    <span class="mdc-floating-label" translate>UPDATE_DATE-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -393,18 +393,18 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Time of Last Update</span>
+                                    <span class="mdc-floating-label" translate>UPDATE_TIME-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
                         </label>
 
                         <label class="mdc-text-field mdc-text-field--outlined">
-                            <input type="time" class="mdc-text-field__input" id="updateTime-min" />
+                            <input type="time" class="mdc-text-field__input" id="updateTime-max" />
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Time of Last Update</span>
+                                    <span class="mdc-floating-label" translate>UPDATE_TIME-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -414,12 +414,12 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-hospital-box"></i>
-                        <select class="editable-select mdc-text-field__input" id="insurance" required></select>
+                        <select class="editable-select mdc-text-field__input" id="insurance"></select>
                         <i class="mdi mdc-text-field__icon--trailing mdc-select__dropdown-icon mdi-chevron-down"></i>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Insurance Company</span>
+                                <span class="mdc-floating-label" translate>INSURANCE</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -430,7 +430,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Policy №</span>
+                                <span class="mdc-floating-label" translate>POLICY_NO</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -441,7 +441,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Insurance Reference №</span>
+                                <span class="mdc-floating-label" translate>INSURANCE_REF__NO</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -453,7 +453,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Caller</span>
+                                <span class="mdc-floating-label" translate>CALLER</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -465,7 +465,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Call</span>
+                                    <span class="mdc-floating-label" translate>CALL_DATE-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -476,7 +476,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Call</span>
+                                    <span class="mdc-floating-label" translate>CALL_DATE-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -489,7 +489,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Time of Call</span>
+                                    <span class="mdc-floating-label" translate>CALL_TIME-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -500,7 +500,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Time of Call</span>
+                                    <span class="mdc-floating-label" translate>CALL_TIME-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -513,7 +513,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Date of Appointment</span>
+                                    <span class="mdc-floating-label" translate>APPOINTMENT_DATE-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -524,7 +524,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Date of Appointment</span>
+                                    <span class="mdc-floating-label" translate>APPOINTMENT_DATE-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -537,7 +537,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Minimum Time of Appointment</span>
+                                    <span class="mdc-floating-label" translate>APPOINTMENT_TIME-MIN</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -548,7 +548,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Maximum Time of Appointment</span>
+                                    <span class="mdc-floating-label" translate>APPOINTMENT_TIME-MAX</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -565,7 +565,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Address</span>
+                                    <span class="mdc-floating-label" translate>ADDRESS</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -583,7 +583,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Hotel</span>
+                                    <span class="mdc-floating-label" translate>HOTEL</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -598,7 +598,7 @@
                             <div class="mdc-notched-outline">
                                 <div class="mdc-notched-outline__leading"></div>
                                 <div class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Room №</span>
+                                    <span class="mdc-floating-label" translate>ROOM_NO</span>
                                 </div>
                                 <div class="mdc-notched-outline__trailing"></div>
                             </div>
@@ -610,23 +610,23 @@
                         <span class="mdc-notched-outline">
                             <span class="mdc-notched-outline__leading"></span>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Complaints</span>
+                                <span class="mdc-floating-label" translate>COMPLAINTS</span>
                             </div>
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                     </label>
                 </form>
-                <div class="modal-footer justify-content-between">
+                <div class="modal-footer justify-content-between flex-wrap">
                     <button class="mdc-button mdc-button--raised mdc-button--green" onclick="applyFilter()"
                         id="buttonApplyFilter">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-check"></i>
-                        <span class="mdc-button__label">Apply</span>
+                        <span class="mdc-button__label" translate>APPLY</span>
                     </button>
                     <button class="mdc-button mdc-button--outlined mdc-button--red" id="clearFilter" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
-                        <span class="mdc-button__label">Clear</span>
+                        <span class="mdc-button__label" translate>CLEAR</span>
                     </button>
                 </div>
             </div>
@@ -694,7 +694,7 @@
             <li class="mdc-list-item" onclick="deleteKase()">
                 <i class="mr-2 mdi mdi-trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">Delete</span>
+                <span class="mdc-list-item__text" translate>DELETE</span>
             </li>
         </ul>
     </div>
@@ -702,18 +702,11 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface h-75">
                 <div class="mdc-dialog__title justify-content-between">
-                    <h3 class="flex align-items-center mb-0">
-                        <button class="mdc-button mdc-button--outlined mr-2" disabled>
-                            <div class="mdc-button__ripple"></div>
-                            <i class="mdi mdc-button__icon mdi-pound"></i>
-                            <span class="mdc-button__label" id="currentKaseID">0000000</span>
-                        </button>
-                        Case Editing
-                        <button class="mdc-fab mdc-fab--mini ml-4" id="lock" onclick="buttonLockClick()">
-                            <div class="mdc-fab__ripple"></div>
-                            <span class="mdc-fab__icon mdi mdi-lock"></span>
-                        </button>
-                    </h3>
+                    <button class="mdc-fab mdc-fab--mini" id="lock" onclick="buttonLockClick()">
+                        <div class="mdc-fab__ripple"></div>
+                        <span class="mdc-fab__icon mdi mdi-lock"></span>
+                    </button>
+                    <h3 class="mb-0" id="titleDialogEditKase"></h3>
                     <button class="mdc-icon-button" data-mdc-dialog-action="cancel">
                         <span class="mdi mdi-close"></span>
                     </button>
@@ -727,7 +720,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>surnameName</span>
+                                        <span class="mdc-floating-label" translate>SURNAME_NAME</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -738,7 +731,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Date of Birth</span>
+                                        <span class="mdc-floating-label" translate>BIRTH_DATE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -752,7 +745,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone</span>
+                                        <span class="mdc-floating-label" translate>PHONE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -764,7 +757,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone2</span>
+                                        <span class="mdc-floating-label" translate>PHONE2</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -776,7 +769,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone3</span>
+                                        <span class="mdc-floating-label" translate>PHONE3</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -792,7 +785,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>patientStatus</span>
+                                        <span class="mdc-floating-label" translate>PATIENT_STATUS</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -805,7 +798,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>country</span>
+                                        <span class="mdc-floating-label" translate>COUNTRY</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -821,7 +814,7 @@
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>description</span>
+                                        <span class="mdc-floating-label" translate>DESCRIPTION</span>
                                     </div>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
@@ -841,7 +834,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate="">provider</span>
+                                        <span class="mdc-floating-label" translate>PROVIDER</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -858,7 +851,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone</span>
+                                        <span class="mdc-floating-label" translate>PHONE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -879,7 +872,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>provider2</span>
+                                        <span class="mdc-floating-label" translate>PROVIDER2</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -896,7 +889,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone</span>
+                                        <span class="mdc-floating-label" translate>PHONE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -917,7 +910,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>provider3</span>
+                                        <span class="mdc-floating-label" translate>PROVIDER3</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -934,7 +927,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>phone</span>
+                                        <span class="mdc-floating-label" translate>PHONE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -954,7 +947,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Insurance Company</span>
+                                        <span class="mdc-floating-label" translate>INSURANCE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -968,7 +961,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Policy №</span>
+                                        <span class="mdc-floating-label" translate>POLICY_NO</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -979,7 +972,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Insurance Reference №</span>
+                                        <span class="mdc-floating-label" translate>INSURANCE_REF__NO</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -996,7 +989,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>createUser</span>
+                                        <span class="mdc-floating-label" translate>CREATE_USER</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1010,7 +1003,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Date of Creation</span>
+                                            <span class="mdc-floating-label" translate>CREATE_DATE</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1023,7 +1016,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Time of Creation</span>
+                                            <span class="mdc-floating-label" translate>CREATE_TIME</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1039,7 +1032,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label" translate>updateUser</span>
+                                        <span class="mdc-floating-label" translate>UPDATE_USER</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1053,7 +1046,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Date of Last Update</span>
+                                            <span class="mdc-floating-label" translate>UPDATE_DATE</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1066,7 +1059,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Time of Last Update</span>
+                                            <span class="mdc-floating-label" translate>UPDATE_TIME</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1082,7 +1075,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Caller</span>
+                                        <span class="mdc-floating-label" translate>CALLER</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1094,7 +1087,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Date of Call</span>
+                                            <span class="mdc-floating-label" translate>CALL_DATE</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1105,7 +1098,7 @@
                                     <div class="mdc-notched-outline">
                                         <div class="mdc-notched-outline__leading"></div>
                                         <div class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Time of Call</span>
+                                            <span class="mdc-floating-label" translate>CALL_TIME</span>
                                         </div>
                                         <div class="mdc-notched-outline__trailing"></div>
                                     </div>
@@ -1119,7 +1112,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Date of Appointment</span>
+                                        <span class="mdc-floating-label" translate>APPOINTMENT_DATE</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1130,7 +1123,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Time of Appointment</span>
+                                        <span class="mdc-floating-label" translate>APPOINTMENT_TIME</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1147,7 +1140,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Address</span>
+                                        <span class="mdc-floating-label" translate>ADDRESS</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1167,7 +1160,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Hotel</span>
+                                        <span class="mdc-floating-label" translate>HOTEL</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1182,7 +1175,7 @@
                                 <div class="mdc-notched-outline">
                                     <div class="mdc-notched-outline__leading"></div>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Room №</span>
+                                        <span class="mdc-floating-label" translate>ROOM_NO</span>
                                     </div>
                                     <div class="mdc-notched-outline__trailing"></div>
                                 </div>
@@ -1195,7 +1188,7 @@
                                 <span class="mdc-notched-outline">
                                     <span class="mdc-notched-outline__leading"></span>
                                     <div class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">Complaints</span>
+                                        <span class="mdc-floating-label" translate>COMPLAINTS</span>
                                     </div>
                                     <span class="mdc-notched-outline__trailing"></span>
                                 </span>
@@ -1207,13 +1200,18 @@
                     <button class="mdc-button mdc-button--outlined mdc-button--red" id="delete" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-trash-can"></i>
-                        <span class="mdc-button__label">Delete</span>
+                        <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
+                    <button class="mdc-button mdc-button--outlined user-select-all" disabled>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-pound"></i>
+                        <span class="mdc-button__label" id="currentKaseID">0000000</span>
                     </button>
                     <button class="mdc-button mdc-button--raised mdc-button--green" id="save"
                         data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-content-save"></i>
-                        <span class="mdc-button__label">Save</span>
+                        <span class="mdc-button__label" translate>SAVE</span>
                     </button>
                 </div>
             </div>
@@ -1232,13 +1230,13 @@
                         data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
-                        <span class="mdc-button__label">Cancel</span>
+                        <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
                         data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-trash-can"></i>
-                        <span class="mdc-button__label">Delete</span>
+                        <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>
             </div>
@@ -1257,7 +1255,7 @@
                         data-mdc-dialog-action="ok">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-check"></i>
-                        <span class="mdc-button__label">OK</span>
+                        <span class="mdc-button__label" translate>OK</span>
                     </button>
                 </div>
             </div>
@@ -1277,7 +1275,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">New version</span>
+                                <span class="mdc-floating-label" translate>NEW_VERSION</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -1288,7 +1286,7 @@
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
-                                <span class="mdc-floating-label">Current version</span>
+                                <span class="mdc-floating-label" translate>CURRENT_VERSION</span>
                             </div>
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
@@ -1299,13 +1297,13 @@
                         data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
-                        <span class="mdc-button__label">Later</span>
+                        <span class="mdc-button__label" translate>LATER</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green"
                         data-mdc-dialog-action="install" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-arrow-down-circle"></i>
-                        <span class="mdc-button__label">Install</span>
+                        <span class="mdc-button__label" translate>INSTALL</span>
                     </button>
                 </div>
             </div>
@@ -1325,10 +1323,10 @@
         <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
     </footer>
 
+    <script src="renderer.js"></script>
     <script src="../node_modules/firebase/firebase-app.js"></script>
     <script src="../node_modules/firebase/firebase-auth.js"></script>
     <script src="../node_modules/firebase/firebase-firestore.js"></script>
-    <script src="renderer.js"></script>
     <script src="imports.js"></script>
     <script src="index.js"></script>
 </body>
