@@ -44,7 +44,7 @@ dialogDeleteKase.materialComponent.listen('MDCDialog:closed', event => {
 firebase.firestore().enablePersistence()
 const allKases = firebase.firestore().collection("kases")
 var currentQuery = firebase.firestore().collection("kases")
-var currentKasesSnapshot
+var currentKasesSnap, currentKaseSnap
 var currentKase, kaseExists = false
 var stopCurrentQuery = function () { }
 const contextMenu = document.querySelector("#contextMenu")
@@ -195,7 +195,7 @@ function loadColumns() {
 function newColumn(column) {
     let th = document.createElement("th")
     th.id = column
-    th.innerHTML = columnsJSON[column]
+    th.innerHTML = translate(columnsJSON[column])
     th.setAttribute("onclick", "headerClick(this.id)")
     let sortIcon = document.createElement("span")
     sortIcon.className = "mdi mdi-unfold-more-horizontal"
@@ -210,7 +210,7 @@ inputSearch.oninput = function () {
         buttonClearSearch.disabled = false
         var foundKases = new Array()
 
-        currentKasesSnapshot.forEach(
+        currentKasesSnap.forEach(
             (kase) => {
                 if (!foundKases.includes(kase.id)) {
                     if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery)) {
@@ -220,7 +220,7 @@ inputSearch.oninput = function () {
             }
         )
         if (foundKases.length > 0) {
-            listKases(currentKasesSnapshot, foundKases, searchQuery)
+            listKases(currentKasesSnap, foundKases, searchQuery)
         }
         else {
             setTableOverlayState("empty")
@@ -233,7 +233,7 @@ inputSearch.oninput = function () {
 function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
-    listKases(currentKasesSnapshot)
+    listKases(currentKasesSnap)
 }
 
 function checkKaseID() {
@@ -262,7 +262,7 @@ function randomKaseID() {
 
 function buttonCreateClick() {
     dialogEditKase.materialComponent.open()
-    titleDialogEditKase.innerText = translate["NEW_CASE"]
+    titleDialogEditKase.innerText = translate("NEW_CASE")
 
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
@@ -422,6 +422,49 @@ function buttonLockClick() {
     }
 }
 
+function editKase() {
+    clearKase(true)
+    dialogEditKase.materialComponent.open()
+    titleDialogEditKase.innerText = translate("CASE_EDIT")
+    buttonDelete.disabled = false
+    currentKase = allKases.doc(currentKaseSnap.id)
+    currentKaseID.innerText = currentKaseSnap.id
+    checkKaseID()
+    kaseExists = true
+
+    formEditKase.querySelectorAll("input, textarea").forEach((inputEdit) => {
+        let itemValue = currentKaseSnap.get(inputEdit.id)
+
+        if (itemValue != undefined) {
+            if (inputEdit.materialComponent.disabled) {
+                if (itemValue != '') {
+                    inputEdit.parentElement.parentElement.hidden = false
+                }
+            } else {
+                inputEdit.parentElement.parentElement.hidden = false
+            }
+
+            if (!inputEdit.parentElement.parentElement.hidden) {
+                if (inputEdit.classList.contains("editable-select")) {
+                    if (inputEdit.id.includes('_')) {
+                        setTimeout(() => selectThisItem(inputEdit, itemValue), 10)
+                    }
+                    else {
+                        selectThisItem(inputEdit, itemValue)
+                    }
+                }
+                else {
+                    inputEdit.materialComponent.value = itemValue
+                }
+            }
+
+            if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
+                inputEdit.materialComponent.disabled = false
+            }
+        }
+    })
+}
+
 function saveKase() {
     let kaseData = new Object()
     let valid = true
@@ -540,7 +583,7 @@ function loadKases() {
         (snapshot) => {
             console.log(snapshot)
             listKases(snapshot)
-            currentKasesSnapshot = snapshot
+            currentKasesSnap = snapshot
         },
         (err) => {
             console.log(err)
@@ -553,91 +596,52 @@ function listKases(snap, foundKases, searchQuery) {
     if (snap.docs.length > 0) {
         kasesList.innerHTML = ''
         setTableOverlayState("hide")
-        snap.forEach(
-            (kase) => {
-                if (foundKases == undefined || foundKases.includes(kase.id)) {
-                    let tr = document.createElement("tr")
-                    tr.id = kase.id
-                    tr.dataset.status = kase.get("status")
-                    tr.ondblclick = function () {
-                        clearKase(true)
-                        dialogEditKase.materialComponent.open()
-                        titleDialogEditKase.innerText = translate["CASE_EDIT"]
-                        buttonDelete.disabled = false
-                        currentKase = allKases.doc(tr.id)
-                        currentKaseID.innerText = tr.id
-                        checkKaseID()
-                        kaseExists = true
+        snap.forEach((kaseSnap) => {
+            if (foundKases == undefined || foundKases.includes(kaseSnap.id)) {
+                let tr = document.createElement("tr")
+                tr.id = kaseSnap.id
+                tr.dataset.status = kaseSnap.get("status")
+                tr.ondblclick = function () {
+                    currentKaseSnap = kaseSnap
+                    editKase()
+                }
+                tr.oncontextmenu = function (mouseEvent) {
+                    currentKaseSnap = kaseSnap
+                    currentKase = allKases.doc(kaseSnap.id)
+                    contextMenu.style.left = mouseEvent.clientX + "px"
+                    contextMenu.style.top = mouseEvent.clientY + "px"
+                    contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
+                    contextMenu.materialComponent.open = true
+                }
+                kasesList.appendChild(tr)
 
-                        formEditKase.querySelectorAll("input, textarea").forEach(
-                            (inputEdit) => {
-                                let itemValue = kase.get(inputEdit.id)
-
-                                if (itemValue != undefined) {
-                                    if (inputEdit.materialComponent.disabled) {
-                                        if (itemValue != '') {
-                                            inputEdit.parentElement.parentElement.hidden = false
-                                        }
-                                    } else {
-                                        inputEdit.parentElement.parentElement.hidden = false
-                                    }
-
-                                    if (!inputEdit.parentElement.parentElement.hidden) {
-                                        if (inputEdit.classList.contains("editable-select")) {
-                                            if (inputEdit.id.includes('_')) {
-                                                setTimeout(() => selectThisItem(inputEdit, itemValue), 10)
-                                            }
-                                            else {
-                                                selectThisItem(inputEdit, itemValue)
-                                            }
-                                        }
-                                        else {
-                                            inputEdit.materialComponent.value = itemValue
-                                        }
-                                    }
-
-                                    if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
-                                        inputEdit.materialComponent.disabled = false
-                                    }
-                                }
-                            })
+                for (let column of tableColumnsList.children) {
+                    let td = document.createElement("td")
+                    tr.appendChild(td)
+                    td.id = column.id
+                    switch (td.id) {
+                        case "__name__":
+                            td.textContent = kaseSnap.id
+                            break
+                        case "description":
+                        case "complaints":
+                            td.textContent = td.title = kaseSnap.get(td.id)
+                            break
+                        default:
+                            if (td.id.includes("Date")) {
+                                td.textContent = new Date(kaseSnap.get(td.id)).toLocaleDateString()
+                            }
+                            else {
+                                td.textContent = kaseSnap.get(td.id)
+                            }
+                            break
                     }
-                    tr.oncontextmenu = function (mouseEvent) {
-                        currentKase = allKases.doc(tr.id)
-                        contextMenu.style.left = mouseEvent.clientX + "px"
-                        contextMenu.style.top = mouseEvent.clientY + "px"
-                        contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
-                        contextMenu.materialComponent.open = true
-                    }
-                    kasesList.appendChild(tr)
-
-                    for (let column of tableColumnsList.children) {
-                        let td = document.createElement("td")
-                        tr.appendChild(td)
-                        td.id = column.id
-                        switch (td.id) {
-                            case "__name__":
-                                td.textContent = kase.id
-                                break
-                            case "description":
-                            case "complaints":
-                                td.textContent = td.title = kase.get(td.id)
-                                break
-                            default:
-                                if (td.id.includes("Date")) {
-                                    td.textContent = new Date(kase.get(td.id)).toLocaleDateString()
-                                }
-                                else {
-                                    td.textContent = kase.get(td.id)
-                                }
-                                break
-                        }
-                        if (searchQuery != undefined) {
-                            td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
-                        }
+                    if (searchQuery != undefined) {
+                        td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                     }
                 }
-            })
+            }
+        })
         orderKase(currentOrder, currentOrderDirection)
     } else {
         setTableOverlayState("empty")
@@ -700,7 +704,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-format-columns")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate["CASES_NOT_FOUND"]
+            tableOverlayText.innerText = translate("CASES_NOT_FOUND")
             break
         case "drag":
             tableOverlay.classList.remove("hide")
@@ -708,7 +712,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-format-columns")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate["DRAG_AND_DROP"]
+            tableOverlayText.innerText = translate("DRAG_AND_DROP")
             break
         case "hide":
             tableOverlay.classList.add("hide")
@@ -761,7 +765,7 @@ Sortable.create(tableColumnsList, {
         setTableOverlayState("drag")
     },
     onEnd: function () {
-        listKases(currentKasesSnapshot)
+        listKases(currentKasesSnap)
         let enabledColumns = []
         for (let column of tableColumnsList.children) {
             enabledColumns.push(column.id)
@@ -774,7 +778,7 @@ Sortable.create(hiddenTableColumnsList, {
     animation: 150,
     easing: "cubic-bezier(0.4, 0, 0.2, 1)",
     onEnd: function () {
-        listKases(currentKasesSnapshot)
+        listKases(currentKasesSnap)
         let enabledColumns = []
         for (let column of tableColumnsList.children) {
             enabledColumns.push(column.id)
@@ -803,7 +807,7 @@ for (let status of statusBar) {
             kaseRow.classList.remove("dimmed")
         }
         if (status == currentStatus) {
-            listKases(currentKasesSnapshot)
+            listKases(currentKasesSnap)
 
             for (let otherStatus of statusBar) {
                 otherStatus.classList.remove("dimmed")
@@ -814,7 +818,7 @@ for (let status of statusBar) {
         else {
             var foundKases = new Array()
 
-            currentKasesSnapshot.forEach(
+            currentKasesSnap.forEach(
                 (kase) => {
                     if (!foundKases.includes(kase.id)) {
                         if (kase.get("status") == status.dataset.status) {
@@ -824,7 +828,7 @@ for (let status of statusBar) {
                 }
             )
             if (foundKases.length > 0) {
-                listKases(currentKasesSnapshot, foundKases)
+                listKases(currentKasesSnap, foundKases)
             }
             else {
                 setTableOverlayState("empty")

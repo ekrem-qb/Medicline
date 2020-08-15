@@ -44,21 +44,24 @@ switch (navigator.language) {
         break
 }
 
-var translate = require("./langs/" + currentLanguage + ".json")
+var translateStrings = require("./langs/" + currentLanguage + ".json")
 
 let textElements = document.querySelectorAll("[translate]")
 textElements.forEach(textElement => {
-    let textToTranslate = textElement.innerText
-    if (translate.hasOwnProperty(textElement.innerText)) {
-        textElement.innerText = translate[textElement.innerText]
-    }
-    else if (textElement.innerText.includes("-")) {
-        textElement.innerText = translate[textElement.innerText.split("-")[1]] + " " + translate[textElement.innerText.split("-")[0]]
-    }
-    else if (!Number.isNaN(parseInt(textElement.innerText.slice(-1)))) {
-        textElement.innerText = translate[textElement.innerText.slice(0, -1)] + " " + textElement.innerText.slice(-1)
-    }
+    textElement.innerText = translate(textElement.innerText)
 })
+
+function translate(textToTranslate) {
+    if (translateStrings.hasOwnProperty(textToTranslate)) {
+        return translateStrings[textToTranslate]
+    }
+    else if (textToTranslate.includes("-")) {
+        return translateStrings[textToTranslate.split("-")[1]] + " " + translateStrings[textToTranslate.split("-")[0]]
+    }
+    else if (!Number.isNaN(parseInt(textToTranslate.slice(-1)))) {
+        return translateStrings[textToTranslate.slice(0, -1)] + " " + textToTranslate.slice(-1)
+    }
+}
 
 //#endregion
 

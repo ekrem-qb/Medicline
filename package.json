@@ -1,6 +1,6 @@
 {
   "name": "database_electron",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Electron based Firebase Firestore App",
   "main": "main.js",
   "scripts": {

@@ -107,10 +107,6 @@ body {
   max-height: 75vh;
 }
 
-#tableColumnsList {
-  filter: drop-shadow(0 5px 10px black);
-}
-
 tbody tr {
   text-shadow: 0 0;
   transition: var(--mdc-transition);
@@ -118,7 +114,6 @@ tbody tr {
 }
 
 tbody tr:first-child,
-.table th:first-child,
 .list-group th:first-child {
   box-shadow: none;
 }
@@ -162,7 +157,7 @@ th:active {
 .table th {
   position: sticky;
   top: 0;
-  box-shadow: inset 2px 0 rgba(0, 0, 0, .25);
+  box-shadow: inset 2px 0 rgba(0, 0, 0, .25), 10px 5px 10px rgba(0, 0, 0, 0.75);
 }
 
 .list-group th {
@@ -564,6 +559,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-dialog__button {
   flex: 1;
+  margin: 0 0.25rem !important;
 }
 
 .mdc-dialog .mdc-dialog__content {

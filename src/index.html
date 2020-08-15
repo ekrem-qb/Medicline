@@ -639,7 +639,12 @@
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text">Copy</span>
             </li>
-            <li class="mdc-list-divider" hidden></li>
+            <li class="mdc-list-item" onclick="editKase()">
+                <i class="mr-2 mdi mdi-pencil"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text" translate>EDIT</span>
+            </li>
+            <li class="mdc-list-divider"></li>
             <li class="mdc-list-item" data-status="sentDocs" onclick="changeKaseStatus(this.dataset.status)">
                 <i class="mr-2 mdi mdi-circle"></i>
                 <span class="mdc-list-item__ripple"></span>
@@ -1223,20 +1228,20 @@
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
                     <i class="mdi mdi-help-circle-outline mr-3"></i>
-                    Are you sure you want to delete this case?
+                    <p class="mb-0" translate>ASK_DELETE</p>
                 </div>
-                <div class="mdc-dialog__actions">
+                <div class="mdc-dialog__actions flex-row-reverse">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
+                        data-mdc-dialog-action="delete">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
                         data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
-                        data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
-                        <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>
             </div>
@@ -1248,7 +1253,7 @@
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
                     <i class="mdi mdi-alert-outline mr-3"></i>
-                    Filters are empty!
+                    <p class="mb-0" translate>EMPTY_FILTERS</p>
                 </div>
                 <div class=" mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
@@ -1267,7 +1272,7 @@
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__title">
                     <i class="mdi mdi-alert-decagram mr-3"></i>
-                    Update available!
+                    <h5 class="mb-0" translate>UPDATE_AVAILABLE</h5>
                 </div>
                 <div class="mdc-dialog__content flex-row-reverse align-items-center">
                     <label class="mdc-text-field mdc-text-field--outlined">
