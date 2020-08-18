@@ -10,9 +10,6 @@ async function main() {
   // breakpoints should work from here on,
   // toggle them with F9 or just use 'debugger'
   //debugger
-  if (localStorage.getItem("email") == null && localStorage.getItem("password") == null) {
-    document.location.href = "loginPage.html"
-  }
 
   // await the document to finish loading
   await new Promise(resolve => document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', resolve) : resolve())

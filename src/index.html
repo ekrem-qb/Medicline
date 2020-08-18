@@ -1267,6 +1267,54 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
+    <div class="mdc-dialog" id="dialogLogin">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__title">
+                    <i class="mr-3 mdi mdi-account-circle"></i>
+                    <h5 class="mb-0" translate>SIGN_IN</h5>
+                </div>
+                <div class="mdc-dialog__content flex-column align-items-stretch">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-at"></i>
+                        <input type="email" class="mdc-text-field__input" id="email" />
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" translate>EMAIL</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+
+                    <label
+                        class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-lock-outline"></i>
+                        <input type="password" class="mdc-text-field__input" id="password" />
+                        <button class="mdc-icon-button" id="passwordVisibility">
+                            <span class="mdi mdi-eye-off-outline"></span>
+                        </button>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" translate>PASSWORD</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green"
+                        onclick="signIn()" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label" translate>SIGN_IN</span>
+                        <i class="mdi mdc-button__icon mdi-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
     <div class="mdc-dialog" id="dialogUpdate">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
@@ -1275,7 +1323,7 @@
                     <h5 class="mb-0" translate>UPDATE_AVAILABLE</h5>
                 </div>
                 <div class="mdc-dialog__content flex-row-reverse align-items-center">
-                    <label class="mdc-text-field mdc-text-field--outlined">
+                    <label class="mdc-text-field mdc-text-field--outlined mb-0">
                         <input type="text" class="mdc-text-field__input" id="newVersion" readonly />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -1286,7 +1334,7 @@
                         </div>
                     </label>
                     <i class="mdi mx-3 mdi-arrow-right"></i>
-                    <label class="mdc-text-field mdc-text-field--outlined mb-0">
+                    <label class="mdc-text-field mdc-text-field--outlined">
                         <input type="text" class="mdc-text-field__input" id="currentVersion" readonly />
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>

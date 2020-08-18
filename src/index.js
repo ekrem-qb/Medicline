@@ -109,7 +109,11 @@ function loadSelectMenus() {
                             (selectItem) => {
                                 $(select).editableSelect("add", selectItem.id)
                             })
-                    })
+                    },
+                    (err) => {
+                        console.error(err)
+                    }
+                )
 
                 $(select).on("select.editable-select", function () {
                     select.oldValue = select.materialComponent.value
@@ -125,7 +129,7 @@ function loadSelectMenus() {
                         let sideSaveButton = firstSubElement.querySelector(".button--save_item")
                         if (firstSubElement != select && firstSubElement.id.split('_')[0] == select.id) {
                             firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot(
-                                (snapshot => {
+                                (snapshot) => {
                                     if (firstSubElement.classList.contains('editable-select')) {
                                         $(firstSubElement).editableSelect("clear")
                                         for (const key in snapshot.data()) {
@@ -141,7 +145,11 @@ function loadSelectMenus() {
                                         }
                                         firstSubElement.materialComponent.disabled = !buttonLock.unlocked
                                     }
-                                }))
+                                },
+                                (err) => {
+                                    console.error(err)
+                                }
+                            )
                         }
                     }
                 })
@@ -287,7 +295,11 @@ function buttonCreateClick() {
             formEditKase.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
             formEditKase.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
             formEditKase.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
-        })
+        },
+        (err) => {
+            console.error(err)
+        }
+    )
 }
 
 function buttonLockClick() {
@@ -586,7 +598,7 @@ function loadKases() {
             currentKasesSnap = snapshot
         },
         (err) => {
-            console.log(err)
+            console.error(err)
             setTableOverlayState("empty")
         }
     )
@@ -921,7 +933,6 @@ buttonClearFilter.onclick = function () {
 
 const { ipcRenderer } = require("electron")
 const dialogUpdate = document.querySelector("#dialogUpdate")
-
 dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "install") {
         ipcRenderer.send("install-update")
@@ -933,3 +944,44 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
     dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
     dialogUpdate.materialComponent.open()
 })
+
+firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+        loadKases()
+    } else {
+        dialogLogin.materialComponent.open()
+    }
+})
+
+const dialogLogin = document.querySelector("#dialogLogin")
+dialogLogin.materialComponent.scrimClickAction = ''
+dialogLogin.materialComponent.escapeKeyAction = ''
+
+const inputEmail = dialogLogin.querySelector("input#email")
+const inputPassword = dialogLogin.querySelector("input#password")
+const buttonPasswordVisibility = dialogLogin.querySelector("button#passwordVisibility")
+const iconPasswordVisibility = dialogLogin.querySelector("button#passwordVisibility>.mdi")
+
+function signIn() {
+    firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value).then(function () {
+        dialogLogin.materialComponent.close()
+    }).catch(function (error) {
+        if (error != null) {
+            alert(error.message)
+            return
+        }
+    })
+}
+
+buttonPasswordVisibility.onclick = function () {
+    if (inputPassword.type == "password") {
+        inputPassword.type = "text"
+        iconPasswordVisibility.classList.add("mdi-eye-outline")
+        iconPasswordVisibility.classList.remove("mdi-eye-off-outline")
+    }
+    else {
+        inputPassword.type = "password"
+        iconPasswordVisibility.classList.remove("mdi-eye-outline")
+        iconPasswordVisibility.classList.add("mdi-eye-off-outline")
+    }
+}

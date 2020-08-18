@@ -235,6 +235,7 @@ th:active {
   max-height: 70vh;
   overflow: auto;
   transition: var(--mdc-transition);
+  will-change: contents;
 }
 
 form {
@@ -347,6 +348,14 @@ footer>.status:active {
 footer>.status.selected {
   box-shadow: inset 0 0 0 0.2rem #000;
   filter: none;
+}
+
+#dialogUpdate label {
+  width: 8rem;
+}
+
+#dialogLogin {
+  backdrop-filter: blur(15px);
 }
 
 /*#region [data-status] */
@@ -564,11 +573,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-dialog .mdc-dialog__content {
   padding-top: 20px;
-}
-
-.mdc-dialog .mdc-dialog__content>label {
-  width: 8rem;
-  margin: 0;
 }
 
 .mdc-dialog .mdc-dialog__content>.mdi {
