@@ -578,7 +578,16 @@ th .mdi.mdi-unfold-more-horizontal::before {
   line-height: normal;
 }
 
-.mdc-dialog {
+.mdc-snackbar__surface {
+  min-width: auto;
+}
+
+.mdc-snackbar {
+  bottom: 4vh;
+  user-select: none;
+}
+
+.mdc-snackbar, .mdc-dialog {
   z-index: 15;
 }
 

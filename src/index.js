@@ -10,7 +10,6 @@ const kasesList = document.querySelector("#kasesList")
 var currentOrder, currentOrderDirection
 
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
-const dialogEmptyFilter = document.querySelector("#dialogEmptyFilter")
 
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
@@ -31,6 +30,11 @@ const titleDialogEditKase = dialogEditKase.querySelector("#titleDialogEditKase")
 const formEditKase = dialogEditKase.querySelector("form#editKase")
 const buttonSave = dialogEditKase.querySelector("button#save")
 const currentKaseID = dialogEditKase.querySelector("#currentKaseID")
+currentKaseID.parentElement.onclick = () => {
+    navigator.clipboard.writeText(currentKaseID.innerText)
+    alert(currentKaseID.innerText + translate("COPIED"))
+}
+
 const buttonDelete = dialogEditKase.querySelector("button#delete")
 
 const dialogDeleteKase = document.querySelector("#dialogDeleteKase")
@@ -46,11 +50,19 @@ const allKases = firebase.firestore().collection("kases")
 var currentQuery = firebase.firestore().collection("kases")
 var currentKasesSnap, currentKaseSnap
 var currentKase, kaseExists = false
-var stopCurrentQuery = function () { }
+var stopCurrentQuery = () => { }
 const contextMenu = document.querySelector("#contextMenu")
 contextMenu.materialComponent.listen("close", () => {
     currentKase = undefined
 })
+
+
+const snackbar = document.querySelector("#snackbar")
+function alert(message) {
+    snackbar.materialComponent.close()
+    snackbar.materialComponent.labelText = message
+    snackbar.materialComponent.open()
+}
 
 clearKase(true)
 loadInputs()
@@ -67,7 +79,7 @@ function loadInputs() {
     formEditKase.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
-            inputEdit.oninput = function () {
+            inputEdit.oninput = () => {
                 if (sideSaveButton != null) {
                     sideSaveButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
                 }
@@ -75,7 +87,7 @@ function loadInputs() {
                     inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ''
                 }
             }
-            inputEdit.onchange = function () {
+            inputEdit.onchange = () => {
                 if (inputEdit.classList.contains('editable-select')) {
                     let hasMenuItem = false
                     inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
@@ -212,7 +224,7 @@ function newColumn(column) {
     return th
 }
 
-inputSearch.oninput = function () {
+inputSearch.oninput = () => {
     var searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -264,7 +276,7 @@ function checkKaseID() {
 var timer = 0
 
 function randomKaseID() {
-    currentKaseID.innerHTML = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+    currentKaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
     checkKaseID()
     timer++
 }
@@ -283,13 +295,13 @@ function buttonCreateClick() {
         (snapshot) => {
             do {
                 randomKaseID()
-                kaseExists = snapshot.docs.some((item) => item.id === currentKaseID.innerHTML)
+                kaseExists = snapshot.docs.some((item) => item.id === currentKaseID.innerText)
 
-                console.log(currentKaseID.innerHTML + ":" + kaseExists + " in " + snapshot.docs.length + " Time: " + timer)
+                console.log(currentKaseID.innerText + ":" + kaseExists + " in " + snapshot.docs.length + " Time: " + timer)
             } while (kaseExists)
 
             stop()
-            currentKase = allKases.doc(currentKaseID.innerHTML)
+            currentKase = allKases.doc(currentKaseID.innerText)
             checkKaseID()
             clearInterval(repeatRandomKaseID)
             formEditKase.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
@@ -338,7 +350,7 @@ function buttonLockClick() {
             if (inputEdit.classList.contains("editable-select")) {
                 inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
                 inputEdit.parentElement.querySelector(".es-list").hidden = false
-                inputEdit.onchange = function () {
+                inputEdit.onchange = () => {
                     let hasMenuItem = false
                     inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
                         if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
@@ -371,7 +383,7 @@ function buttonLockClick() {
             }
 
             let sideButtonIcon = sideButton.querySelector(".mdi")
-            sideButton.onclick = function () {
+            sideButton.onclick = () => {
                 if (sideButton.classList.contains("button--add_select_item")) {
                     sideButton.classList.remove("button--add_select_item")
                     sideButtonIcon.classList.remove("mdi-plus")
@@ -416,7 +428,7 @@ function buttonLockClick() {
 
                         inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
                         inputEdit.parentElement.querySelector(".es-list").hidden = false
-                        inputEdit.onchange = function () {
+                        inputEdit.onchange = () => {
                             let hasMenuItem = false
                             inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
                                 if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
@@ -614,11 +626,11 @@ function listKases(snap, foundKases, searchQuery) {
                 let tr = document.createElement("tr")
                 tr.id = kaseSnap.id
                 tr.dataset.status = kaseSnap.get("status")
-                tr.ondblclick = function () {
+                tr.ondblclick = () => {
                     currentKaseSnap = kaseSnap
                     editKase()
                 }
-                tr.oncontextmenu = function (mouseEvent) {
+                tr.oncontextmenu = (mouseEvent) => {
                     currentKaseSnap = kaseSnap
                     currentKase = allKases.doc(kaseSnap.id)
                     contextMenu.style.left = mouseEvent.clientX + "px"
@@ -773,13 +785,13 @@ Sortable.create(tableColumnsList, {
     group: "TableColumns",
     animation: 150,
     easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-    onChange: function () {
+    onChange: () => {
         setTableOverlayState("drag")
     },
-    onStart: function () {
+    onStart: () => {
         setTableOverlayState("drag")
     },
-    onEnd: function () {
+    onEnd: () => {
         listKases(currentKasesSnap)
         let enabledColumns = []
         for (let column of tableColumnsList.children) {
@@ -792,7 +804,7 @@ Sortable.create(hiddenTableColumnsList, {
     group: "TableColumns",
     animation: 150,
     easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-    onEnd: function () {
+    onEnd: () => {
         listKases(currentKasesSnap)
         let enabledColumns = []
         for (let column of tableColumnsList.children) {
@@ -805,14 +817,14 @@ Sortable.create(hiddenTableColumnsList, {
 //#endregion
 
 for (let status of statusBar) {
-    status.onmouseover = function () {
+    status.onmouseover = () => {
         if (currentStatus == undefined) {
             for (let kaseRow of kasesList.children) {
                 kaseRow.classList.toggle("dimmed", kaseRow.dataset.status != status.dataset.status)
             }
         }
     }
-    status.onmouseleave = function () {
+    status.onmouseleave = () => {
         if (currentStatus == undefined) {
             for (let kaseRow of kasesList.children) {
                 kaseRow.classList.remove("dimmed")
@@ -820,7 +832,7 @@ for (let status of statusBar) {
         }
     }
 
-    status.onclick = function () {
+    status.onclick = () => {
         for (let kaseRow of kasesList.children) {
             kaseRow.classList.remove("dimmed")
         }
@@ -891,7 +903,7 @@ function applyFilter() {
     formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
             if (inputFilter.materialComponent.value != '') {
-                inputFilter.onchange = function () {
+                inputFilter.onchange = () => {
                     inputFilter.materialComponent.value = String(inputFilter.materialComponent.value).trim()
                 }
                 emptyFilter = false
@@ -914,15 +926,15 @@ function applyFilter() {
         buttonClearFilter.disabled = false
     }
     else {
-        dialogEmptyFilter.materialComponent.open()
+        alert(translate("EMPTY_FILTERS"))
     }
 }
 
-buttonClearFilter.onclick = function () {
+buttonClearFilter.onclick = () => {
     formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
             inputFilter.materialComponent.value = ''
-            inputFilter.onchange = function () {
+            inputFilter.onchange = () => {
                 inputFilter.materialComponent.value = String(inputFilter.materialComponent.value).trim()
             }
         }
@@ -961,7 +973,7 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
 
 //#region Login
 
-firebase.auth().onAuthStateChanged(function (user) {
+firebase.auth().onAuthStateChanged((user) => {
     if (user) {
         loadKases()
     } else {
@@ -979,17 +991,18 @@ const buttonPasswordVisibility = dialogLogin.querySelector("button#passwordVisib
 const iconPasswordVisibility = dialogLogin.querySelector("button#passwordVisibility>.mdi")
 
 function signIn() {
-    firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value).then(function () {
-        dialogLogin.materialComponent.close()
-    }).catch(function (error) {
-        if (error != null) {
-            alert(error.message)
-            return
-        }
-    })
+    firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value)
+        .then(() => {
+            dialogLogin.materialComponent.close()
+        }).catch((error) => {
+            if (error != null) {
+                alert(error.message)
+                return
+            }
+        })
 }
 
-buttonPasswordVisibility.onclick = function () {
+buttonPasswordVisibility.onclick = () => {
     if (inputPassword.type == "password") {
         inputPassword.type = "text"
         iconPasswordVisibility.classList.add("mdi-eye-outline")

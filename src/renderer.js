@@ -25,7 +25,7 @@ async function main() {
 
 }
 
-main().catch(function (error) {
+main().catch((error) => {
   console.log(error)
   alert(error)
 })

@@ -33,7 +33,7 @@ async function main() {
         mainWindow.webContents.send('update-downloaded', updateInfo, app.getVersion())
     })
 
-    app.on('ready', function () {
+    app.on('ready', () => {
         autoUpdater.checkForUpdates()
     })
 

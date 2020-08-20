@@ -22,7 +22,8 @@
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
                 <i class="mdi mdi-window-maximize"></i>
             </div>
-            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            <div class="window-action mdc-ripple-surface window-action--red"
+                onclick="ipcRenderer.send('window-action', 'exit')">
                 <i class="mdi mdi-close"></i>
             </div>
         </div>
@@ -1274,25 +1275,6 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
-    <div class="mdc-dialog" id="dialogEmptyFilter">
-        <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
-                    <i class="mdi mdi-alert-outline mr-3"></i>
-                    <p class="mb-0" translate>EMPTY_FILTERS</p>
-                </div>
-                <div class=" mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
-                        data-mdc-dialog-action="ok">
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-check"></i>
-                        <span class="mdc-button__label" translate>OK</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="mdc-dialog__scrim"></div>
-    </div>
     <div class="mdc-dialog" id="dialogLogin">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
@@ -1388,6 +1370,13 @@
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="mdc-snackbar" id="snackbar">
+        <div class="mdc-snackbar__surface">
+            <div class="mdc-snackbar__label">
+            </div>
+            <div class="mdc-snackbar__actions"></div>
+        </div>
     </div>
 
     <script src="renderer.js"></script>

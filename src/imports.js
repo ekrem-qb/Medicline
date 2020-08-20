@@ -71,6 +71,7 @@ const { MDCTextField } = require('@material/textfield')
 const { MDCRipple } = require('@material/ripple')
 const { MDCMenu } = require('@material/menu')
 const { MDCDialog } = require('@material/dialog')
+const { MDCSnackbar } = require('@material/snackbar')
 
 document.querySelectorAll('.mdc-text-field').forEach(inputElement => {
     inputElement.querySelector('input, textarea').materialComponent = new MDCTextField(inputElement)
@@ -90,6 +91,11 @@ document.querySelectorAll('.mdc-menu').forEach(menuElement => {
 
 document.querySelectorAll('.mdc-dialog').forEach(dialogElement => {
     dialogElement.materialComponent = new MDCDialog(dialogElement)
+})
+
+document.querySelectorAll('.mdc-snackbar').forEach(snackbarElement => {
+    snackbarElement.materialComponent = new MDCSnackbar(snackbarElement)
+    snackbarElement.materialComponent.timeoutMs = 4000
 })
 
 //#endregion
