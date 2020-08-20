@@ -52,10 +52,11 @@ contextMenu.materialComponent.listen("close", () => {
     currentKase = undefined
 })
 
+clearKase(true)
+loadInputs()
+loadColumns()
+
 function pageLoaded() {
-    clearKase(true)
-    loadInputs()
-    loadColumns()
     formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
     applyFilter()
     hideEmptyFilters()
@@ -115,7 +116,7 @@ function loadSelectMenus() {
                     }
                 )
 
-                $(select).on("select.editable-select", function () {
+                $(select).on("select.editable-select", () => {
                     select.oldValue = select.materialComponent.value
                     let subElements = select.parentElement.parentElement.querySelectorAll("input")
                     subElements.forEach(subElement => {
@@ -155,7 +156,7 @@ function loadSelectMenus() {
                 })
             }
             else {
-                $(select).on("select.editable-select", function () {
+                $(select).on("select.editable-select", () => {
                     select.oldValue = select.materialComponent.value
                 })
             }
@@ -764,6 +765,8 @@ function modalExpand(header) {
     hideEmptyFilters()
 }
 
+//#region SortableJS
+
 const Sortable = require("sortablejs")
 
 Sortable.create(tableColumnsList, {
@@ -798,6 +801,9 @@ Sortable.create(hiddenTableColumnsList, {
         localStorage.setItem("enabledColumns", enabledColumns)
     }
 })
+
+//#endregion
+
 for (let status of statusBar) {
     status.onmouseover = function () {
         if (currentStatus == undefined) {
@@ -854,6 +860,8 @@ for (let status of statusBar) {
         }
     }
 }
+
+//#region Filter
 
 function hideEmptyFilters() {
     let hide = true
@@ -931,6 +939,10 @@ buttonClearFilter.onclick = function () {
     buttonClearFilter.disabled = true
 }
 
+//#endregion
+
+//#region Update
+
 const { ipcRenderer } = require("electron")
 const dialogUpdate = document.querySelector("#dialogUpdate")
 dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
@@ -944,6 +956,10 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
     dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
     dialogUpdate.materialComponent.open()
 })
+
+//#endregion
+
+//#region Login
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
@@ -985,3 +1001,26 @@ buttonPasswordVisibility.onclick = function () {
         iconPasswordVisibility.classList.add("mdi-eye-off-outline")
     }
 }
+
+//#endregion
+
+//#region Window Maximize
+
+const maximizeIcon = document.querySelector(".window-action>.mdi-window-maximize")
+
+ipcRenderer.on("window-action", (event, action) => {
+    switch (action) {
+        case "maximize":
+            maximizeIcon.classList.remove("mdi-window-maximize")
+            maximizeIcon.classList.add("mdi-window-restore")
+            break
+        case "unmaximize":
+            maximizeIcon.classList.add("mdi-window-maximize")
+            maximizeIcon.classList.remove("mdi-window-restore")
+            break
+        default:
+            break
+    }
+})
+
+//#endregion

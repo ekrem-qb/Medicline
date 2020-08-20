@@ -88,6 +88,40 @@ body {
   overflow: overlay;
 }
 
+#windowTitle {
+  backdrop-filter: blur(15px);
+  background-color: var(--mdc-theme-text-disabled-on-dark);
+  user-select: none;
+}
+
+.drag-area {
+  flex: 1;
+  -webkit-app-region: drag;
+}
+
+.window-action {
+  display: flex;
+  padding: 0.5rem 1.1rem;
+  cursor: pointer;
+}
+
+.window-action .mdi {
+  font-size: 1.25rem;
+}
+
+.window-action:hover {
+  background-color: rgba(0, 0, 0, .15);
+}
+
+.window-action--red:hover {
+  background-color: var(--mdc-theme-error);
+  color: var(--mdc-theme-on-error);
+}
+
+.window-action--red>.mdi::before {
+  transition: none;
+}
+
 .flex {
   display: flex;
 }

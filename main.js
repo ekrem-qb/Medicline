@@ -30,7 +30,7 @@ async function main() {
     })
     autoUpdater.on('update-downloaded', (updateInfo) => {
         log.info('Update downloaded')
-        window.webContents.send('update-downloaded', updateInfo, app.getVersion())
+        mainWindow.webContents.send('update-downloaded', updateInfo, app.getVersion())
     })
 
     app.on('ready', function () {
@@ -45,12 +45,34 @@ async function main() {
         autoUpdater.quitAndInstall(false, true)
     })
 
+    ipcMain.on("window-action", (event, action) => {
+        switch (action) {
+            case "minimize":
+                mainWindow.minimize()
+                break
+            case "maximize":
+                if (mainWindow.isMaximized()) {
+                    mainWindow.unmaximize()
+                }
+                else {
+                    mainWindow.maximize()
+                }
+                break
+            case "exit":
+                app.exit()
+                break
+            default:
+                break
+        }
+    })
+
     async function createMainWindow() {
         window = new BrowserWindow({
             width: 1280,
             height: 720,
             minWidth: 800,
             minHeight: 600,
+            frame: false,
             autoHideMenuBar: true,
             webPreferences: {
                 nodeIntegration: true,
@@ -109,6 +131,13 @@ async function main() {
         mainWindow.webContents.openDevTools()
     }
 
+    mainWindow.on("maximize", () => {
+        mainWindow.webContents.send('window-action', 'maximize')
+    })
+
+    mainWindow.on("unmaximize", () => {
+        mainWindow.webContents.send('window-action', 'unmaximize')
+    })
 
     // awaiting terminationPromise here keeps the mainWindow object alive
     await terminationPromise

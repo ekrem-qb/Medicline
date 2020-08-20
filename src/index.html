@@ -13,6 +13,20 @@
 </head>
 
 <body class="mdc-typography" onload="pageLoaded()">
+    <header class="flex mdc-elevation--z6 sticky-top" id="windowTitle">
+        <div class="drag-area"></div>
+        <div class="flex">
+            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+                <i class="mdi mdi mdi-minus"></i>
+            </div>
+            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
+                <i class="mdi mdi-window-maximize"></i>
+            </div>
+            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+                <i class="mdi mdi-close"></i>
+            </div>
+        </div>
+    </header>
     <div class="container-max flex my-3">
         <div class="mx-2">
             <div class="mdc-card mdc-elevation--z6">
@@ -632,6 +646,18 @@
             </div>
         </div>
     </div>
+    <footer id="statusBar">
+        <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
+        <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
+        <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>
+        <div class="status mdc-ripple-surface" data-status="gop">GOP RECEIVED/SENT</div>
+        <div class="status mdc-ripple-surface" data-status="payIssued">PAYMENT ISSUED</div>
+        <div class="status mdc-ripple-surface" data-status="payReceived">PAYMENT RECEIVED</div>
+        <div class="status mdc-ripple-surface" data-status="multi">MULTI PROVIDER</div>
+        <div class="status mdc-ripple-surface" data-status="payNclaim">PAY AND CLAIM</div>
+        <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
+        <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
+    </footer>
     <div class="mdc-menu mdc-menu-surface" id="contextMenu">
         <ul class="mdc-list">
             <li class="mdc-list-item" hidden>
@@ -1363,18 +1389,6 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
-    <footer id="statusBar">
-        <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
-        <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
-        <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>
-        <div class="status mdc-ripple-surface" data-status="gop">GOP RECEIVED/SENT</div>
-        <div class="status mdc-ripple-surface" data-status="payIssued">PAYMENT ISSUED</div>
-        <div class="status mdc-ripple-surface" data-status="payReceived">PAYMENT RECEIVED</div>
-        <div class="status mdc-ripple-surface" data-status="multi">MULTI PROVIDER</div>
-        <div class="status mdc-ripple-surface" data-status="payNclaim">PAY AND CLAIM</div>
-        <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
-        <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
-    </footer>
 
     <script src="renderer.js"></script>
     <script src="../node_modules/firebase/firebase-app.js"></script>
