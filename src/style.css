@@ -94,6 +94,14 @@ body {
   user-select: none;
 }
 
+.form-group {
+  margin-bottom: 1rem;
+}
+
+label {
+  margin-bottom: .5rem;
+}
+
 .drag-area {
   flex: 1;
   -webkit-app-region: drag;
@@ -159,7 +167,7 @@ th {
 
 td {
   transition: inherit;
-  box-shadow: 2px 0 #212529;
+  box-shadow: 2px 0 #212529 !important;
   white-space: nowrap;
   max-width: 20rem;
   overflow: hidden;
@@ -173,7 +181,7 @@ td.found {
 }
 
 th {
-  background-color: var(--dark);
+  background-color: var(--bs-dark) !important;
   color: var(--mdc-theme-on-primary);
   transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
@@ -234,7 +242,7 @@ th:active {
 }
 
 #tableOverlay.show-headers {
-  height: calc(100% - 11.3rem);
+  height: calc(100% - 10.9rem);
 }
 
 #tableOverlay>* {
@@ -512,8 +520,8 @@ footer>.status.selected {
 /*#region Material Elements */
 
 :root {
-  --mdc-theme-primary: var(--orange);
-  --mdc-theme-secondary: var(--danger);
+  --mdc-theme-primary: var(--bs-orange);
+  --mdc-theme-secondary: var(--bs-red);
   --mdc-transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   /* filter: invert(1) hue-rotate(180deg); */
 }
@@ -567,7 +575,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-ripple-surface {
   cursor: pointer;
-  -webkit-user-select: none;
+  user-select: none;
 }
 
 .mdc-button--outlined:enabled .mdc-button__ripple {
@@ -587,7 +595,8 @@ th .mdi.mdi-unfold-more-horizontal::before {
   user-select: none;
 }
 
-.mdc-snackbar, .mdc-dialog {
+.mdc-snackbar,
+.mdc-dialog {
   z-index: 15;
 }
 
@@ -602,6 +611,11 @@ th .mdi.mdi-unfold-more-horizontal::before {
   align-items: center;
   padding: 1rem !important;
   user-select: none;
+}
+
+.mdc-dialog__title {
+  border-bottom: 1px solid;
+  margin-bottom: 0;
 }
 
 .mdc-dialog__title,
@@ -640,13 +654,13 @@ th .mdi.mdi-unfold-more-horizontal::before {
 }
 
 .mdc-button--green {
-  --mdc-theme-primary: var(--green);
-  --mdc-theme-secondary: var(--green);
+  --mdc-theme-primary: var(--bs-green);
+  --mdc-theme-secondary: var(--bs-green);
 }
 
 .mdc-button--red {
-  --mdc-theme-primary: var(--red);
-  --mdc-theme-secondary: var(--red);
+  --mdc-theme-primary: var(--bs-red);
+  --mdc-theme-secondary: var(--bs-red);
 }
 
 .mdc-menu-surface {
@@ -659,10 +673,16 @@ th .mdi.mdi-unfold-more-horizontal::before {
   font-weight: bold;
   height: 2rem;
   padding: 0 .5rem;
+  align-items: center;
+  user-select: none;
+}
+
+.mdc-list-divider {
+  margin: .5rem 0;
 }
 
 .mdc-list-item>.mdi-trash-can {
-  color: var(--red);
+  color: var(--bs-red);
 }
 
 .mdc-card__actions {
@@ -686,6 +706,10 @@ form .mdc-text-field {
 
 .mdc-text-field__input {
   text-shadow: 0 0;
+}
+
+.mdc-text-field--outlined .mdc-text-field__input {
+  height: inherit;
 }
 
 .mdc-text-field:not(.mdc-text-field--disabled) .mdc-text-field__input {

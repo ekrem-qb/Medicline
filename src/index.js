@@ -69,7 +69,7 @@ loadInputs()
 loadColumns()
 
 function pageLoaded() {
-    formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toJSON().substr(0, 10)
+    formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toLocaleDateString("tr")
     applyFilter()
     hideEmptyFilters()
     loadSelectMenus()
@@ -288,7 +288,7 @@ function buttonCreateClick() {
     timer = 0
     var repeatRandomKaseID = setInterval(randomKaseID, 50)
 
-    if (currentQuery.bd.filters.length != 0) {
+    if (currentQuery._delegate._query.filters.length != 0) {
         stopCurrentQuery()
     }
     let stop = allKases.onSnapshot(
@@ -304,9 +304,9 @@ function buttonCreateClick() {
             currentKase = allKases.doc(currentKaseID.innerText)
             checkKaseID()
             clearInterval(repeatRandomKaseID)
-            formEditKase.querySelector("#callDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+            formEditKase.querySelector("#callDate").materialComponent.value = new Date().toLocaleDateString("tr")
             formEditKase.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
-            formEditKase.querySelector("#appointmentDate").materialComponent.value = new Date().toJSON().substr(0, 10)
+            formEditKase.querySelector("#appointmentDate").materialComponent.value = new Date().toLocaleDateString("tr")
             formEditKase.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
         },
         (err) => {
@@ -502,7 +502,9 @@ function saveKase() {
                     valid = false
                 }
                 if (!inputEdit.materialComponent.disabled || inputEdit.id.includes('_')) {
-                    kaseData[inputEdit.id] = inputEdit.materialComponent.value
+                    if (inputEdit.materialComponent.value != '') {
+                        kaseData[inputEdit.id] = inputEdit.materialComponent.value
+                    }
                 }
             }
         })
@@ -512,16 +514,16 @@ function saveKase() {
     if (valid) {
         if (kaseExists) {
             kaseData.updateUser = firebase.auth().currentUser.email
-            kaseData.updateDate = new Date().toJSON().substr(0, 10)
-            kaseData.updateTime = new Date().toLocaleTimeString()
+            kaseData.updateDate = new Date().toLocaleDateString("tr")
+            kaseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             currentKase.update(kaseData)
         } else {
             kaseData.createUser = firebase.auth().currentUser.email
-            kaseData.createDate = new Date().toJSON().substr(0, 10)
-            kaseData.createTime = new Date().toLocaleTimeString()
+            kaseData.createDate = new Date().toLocaleDateString("tr")
+            kaseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
             kaseData.updateUser = firebase.auth().currentUser.email
-            kaseData.updateDate = new Date().toJSON().substr(0, 10)
-            kaseData.updateTime = new Date().toLocaleTimeString()
+            kaseData.updateDate = new Date().toLocaleDateString("tr")
+            kaseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             kaseData.status = "active"
             currentKase.set(kaseData)
         }
@@ -653,12 +655,7 @@ function listKases(snap, foundKases, searchQuery) {
                             td.textContent = td.title = kaseSnap.get(td.id)
                             break
                         default:
-                            if (td.id.includes("Date")) {
-                                td.textContent = new Date(kaseSnap.get(td.id)).toLocaleDateString()
-                            }
-                            else {
-                                td.textContent = kaseSnap.get(td.id)
-                            }
+                            td.textContent = kaseSnap.get(td.id)
                             break
                     }
                     if (searchQuery != undefined) {

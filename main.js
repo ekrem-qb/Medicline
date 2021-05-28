@@ -75,6 +75,7 @@ async function main() {
             frame: false,
             autoHideMenuBar: true,
             webPreferences: {
+                contextIsolation: false,
                 nodeIntegration: true,
                 enableRemoteModule: false,
             }

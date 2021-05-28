@@ -114,3 +114,29 @@ function buttonExportClick() {
 }
 
 //#endregion
+
+//#region InputMask
+
+require('inputmask')
+
+document.querySelectorAll('input[mask]').forEach(input => {
+    let options = {
+        showMaskOnHover: false,
+        clearIncomplete: true
+    }
+    switch (input.getAttribute("mask")) {
+        case "time":
+            options.alias = "datetime"
+            options.inputFormat = "HH:MM"
+            options.placeholder = "--:--"
+            break;
+        case "date":
+            options.alias = "datetime"
+            options.inputFormat = "dd.mm.yyyy"
+            options.placeholder = "--.--.----"
+            break;
+    }
+    new Inputmask(options).mask(input)
+})
+
+//#endregion

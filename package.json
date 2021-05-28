@@ -1,5 +1,5 @@
 {
-  "name": "database_electron",
+  "name": "medicline",
   "version": "1.0.4",
   "description": "Electron based Firebase Firestore App",
   "main": "main.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ekrem007/Database_Electron.git"
+    "url": "git+https://github.com/ekrem007/Medicline.git"
   },
   "keywords": [
     "Electron",
@@ -22,25 +22,26 @@
   "author": "ekrem007",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ekrem007/Database_Electron/issues"
+    "url": "https://github.com/ekrem007/Medicline/issues"
   },
-  "homepage": "https://github.com/ekrem007/Database_Electron#readme",
+  "homepage": "https://github.com/ekrem007/Medicline#readme",
   "devDependencies": {
-    "@types/node": "^14.0.27",
-    "electron": "^9.1.2",
-    "electron-builder": "^22.8.0"
+    "@types/node": "^15.6.1",
+    "electron": "^13.0.1",
+    "electron-builder": "^22.10.5"
   },
   "dependencies": {
-    "@mdi/font": "^5.4.55",
-    "bootstrap": "^4.5.0",
-    "electron-is-dev": "^1.2.0",
-    "electron-log": "^4.2.2",
-    "electron-updater": "^4.3.4",
-    "firebase": "^7.17.1",
-    "jquery": "^3.5.1",
+    "@mdi/font": "^5.9.55",
+    "bootstrap": "^5.0.1",
+    "electron-is-dev": "^2.0.0",
+    "electron-log": "^4.3.5",
+    "electron-updater": "^4.3.9",
+    "firebase": "^8.6.2",
+    "inputmask": "^5.0.5",
+    "jquery": "^3.6.0",
     "jquery-editable-select": "^2.2.5",
-    "material-components-web": "^7.0.0",
-    "sortablejs": "^1.10.2",
+    "material-components-web": "^11.0.0",
+    "sortablejs": "^1.13.0",
     "tableexport": "^5.2.0"
   },
   "build": {
