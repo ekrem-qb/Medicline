@@ -25,7 +25,6 @@ let editableSelectList = document.querySelectorAll('.editable-select')
 for (let key in editableSelectList) {
     if (editableSelectList.hasOwnProperty(key)) {
         let select = editableSelectList[key]
-        select.parentElement.style.zIndex = (editableSelectList.length - key).toString()
         $(select).editableSelect()
     }
 }
@@ -46,9 +45,14 @@ switch (navigator.language) {
 
 var translateStrings = require("./langs/" + currentLanguage + ".json")
 
-let textElements = document.querySelectorAll("[translate]")
+let textElements = document.querySelectorAll("[translate], [placeholder]")
 textElements.forEach(textElement => {
-    textElement.innerText = translate(textElement.innerText)
+    if (textElement.hasAttribute("placeholder")) {
+        textElement.setAttribute("placeholder", translate(textElement.getAttribute("placeholder")))
+    }
+    else {
+        textElement.innerText = translate(textElement.innerText)
+    }
 })
 
 function translate(textToTranslate) {
@@ -121,8 +125,7 @@ require('inputmask')
 
 document.querySelectorAll('input[mask]').forEach(input => {
     let options = {
-        showMaskOnHover: false,
-        clearIncomplete: true
+        showMaskOnHover: false
     }
     switch (input.getAttribute("mask")) {
         case "time":
@@ -133,10 +136,15 @@ document.querySelectorAll('input[mask]').forEach(input => {
         case "date":
             options.alias = "datetime"
             options.inputFormat = "dd.mm.yyyy"
+            options.outputFormat = "yyyy-mm-dd"
             options.placeholder = "--.--.----"
             break;
+        case "tel":
+            options.alias = "[+]9999999999[99999]"
+            options.placeholder = ""
+            break;
     }
-    new Inputmask(options).mask(input)
+    input.mask = new Inputmask(options).mask(input)
 })
 
 //#endregion

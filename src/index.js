@@ -69,7 +69,7 @@ loadInputs()
 loadColumns()
 
 function pageLoaded() {
-    formFilter.querySelector("#createDate-min").materialComponent.value = new Date().toLocaleDateString("tr")
+    formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
     applyFilter()
     hideEmptyFilters()
     loadSelectMenus()
@@ -81,10 +81,10 @@ function loadInputs() {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
             inputEdit.oninput = () => {
                 if (sideSaveButton != null) {
-                    sideSaveButton.disabled = inputEdit.materialComponent.value == inputEdit.oldValue || inputEdit.materialComponent.value == ''
+                    sideSaveButton.disabled = inputEdit.value == inputEdit.oldValue || inputEdit.value == ''
                 }
                 if (inputEdit.required && !buttonLock.unlocked) {
-                    inputEdit.materialComponent.valid = String(inputEdit.materialComponent.value).trim() != ''
+                    inputEdit.valid = String(inputEdit.value).trim() != ''
                 }
             }
             inputEdit.onchange = () => {
@@ -96,13 +96,13 @@ function loadInputs() {
                         }
                     })
                     if (!hasMenuItem) {
-                        inputEdit.materialComponent.value = ''
+                        inputEdit.value = ''
                         $(inputEdit).editableSelect("filter")
                     }
                 } else {
-                    inputEdit.materialComponent.value = String(inputEdit.materialComponent.value).trim()
+                    inputEdit.value = String(inputEdit.value).trim()
                     if (inputEdit.required && !buttonLock.unlocked) {
-                        inputEdit.materialComponent.valid = inputEdit.materialComponent.value != ''
+                        inputEdit.valid = inputEdit.value != ''
                     }
                 }
             }
@@ -129,19 +129,19 @@ function loadSelectMenus() {
                 )
 
                 $(select).on("select.editable-select", () => {
-                    select.oldValue = select.materialComponent.value
-                    let subElements = select.parentElement.parentElement.querySelectorAll("input")
+                    select.oldValue = select.value
+                    let subElements = select.parentElement.parentElement.parentElement.querySelectorAll("input")
                     subElements.forEach(subElement => {
                         if (subElement != select && subElement.id.split('_')[0] == select.id) {
-                            subElement.materialComponent.disabled = false
-                            subElement.materialComponent.value = ''
+                            subElement.disabled = false
+                            subElement.value = ''
                         }
                     })
                     let firstSubElement = subElements[1]
                     if (firstSubElement != null) {
                         let sideSaveButton = firstSubElement.querySelector(".button--save_item")
                         if (firstSubElement != select && firstSubElement.id.split('_')[0] == select.id) {
-                            firebase.firestore().collection(selectID).doc(select.materialComponent.value).onSnapshot(
+                            firebase.firestore().collection(selectID).doc(select.value).onSnapshot(
                                 (snapshot) => {
                                     if (firstSubElement.classList.contains('editable-select')) {
                                         $(firstSubElement).editableSelect("clear")
@@ -150,13 +150,13 @@ function loadSelectMenus() {
                                         }
                                     } else {
                                         for (const key in snapshot.data()) {
-                                            firstSubElement.materialComponent.value = key
+                                            firstSubElement.value = key
                                         }
-                                        firstSubElement.oldValue = firstSubElement.materialComponent.value
+                                        firstSubElement.oldValue = firstSubElement.value
                                         if (sideSaveButton != null) {
                                             sideSaveButton.disabled = true
                                         }
-                                        firstSubElement.materialComponent.disabled = !buttonLock.unlocked
+                                        firstSubElement.disabled = !buttonLock.unlocked
                                     }
                                 },
                                 (err) => {
@@ -169,14 +169,14 @@ function loadSelectMenus() {
             }
             else {
                 $(select).on("select.editable-select", () => {
-                    select.oldValue = select.materialComponent.value
+                    select.oldValue = select.value
                 })
             }
         })
 }
 
 function selectThisItem(selectMenu, itemString) {
-    selectMenu.materialComponent.value = ''
+    selectMenu.value = ''
     $(selectMenu).editableSelect("filter")
     selectMenu.parentElement.querySelectorAll("li").forEach(selectItem => {
         if (selectItem.innerText == itemString) {
@@ -304,10 +304,10 @@ function buttonCreateClick() {
             currentKase = allKases.doc(currentKaseID.innerText)
             checkKaseID()
             clearInterval(repeatRandomKaseID)
-            formEditKase.querySelector("#callDate").materialComponent.value = new Date().toLocaleDateString("tr")
-            formEditKase.querySelector("#callTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
-            formEditKase.querySelector("#appointmentDate").materialComponent.value = new Date().toLocaleDateString("tr")
-            formEditKase.querySelector("#appointmentTime").materialComponent.value = new Date().toLocaleTimeString().substr(0, 5)
+            formEditKase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
+            formEditKase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
+            formEditKase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
+            formEditKase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
         },
         (err) => {
             console.error(err)
@@ -343,7 +343,7 @@ function buttonLockClick() {
                         selectThisItem(inputEdit, inputEdit.oldValue)
                     }
                 } else {
-                    inputEdit.materialComponent.disabled = true
+                    inputEdit.disabled = true
                     inputEdit.readOnly = true
                 }
             }
@@ -358,7 +358,7 @@ function buttonLockClick() {
                         }
                     })
                     if (!hasMenuItem) {
-                        inputEdit.materialComponent.value = ''
+                        inputEdit.value = ''
                         $(inputEdit).editableSelect("filter")
                     }
                 }
@@ -377,7 +377,7 @@ function buttonLockClick() {
 
             if (sideButton.classList.contains("button--save_item")) {
                 if (inputEdit.oldValue != undefined) {
-                    inputEdit.materialComponent.disabled = false
+                    inputEdit.disabled = false
                     inputEdit.readOnly = false
                 }
             }
@@ -393,30 +393,30 @@ function buttonLockClick() {
 
                     inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
                     inputEdit.parentElement.querySelector(".es-list").hidden = true
-                    inputEdit.materialComponent.value = ''
-                    inputEdit.materialComponent.valid = true
+                    inputEdit.value = ''
+                    inputEdit.valid = true
                     inputEdit.onchange = null
 
                     let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
                     subElements.forEach(subElement => {
                         subElementID = subElement.id.replace(/[0-9]/g, '')
                         if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
-                            subElement.materialComponent.disabled = true
-                            subElement.materialComponent.value = ''
+                            subElement.disabled = true
+                            subElement.value = ''
                         }
                     })
                 } else {
                     if (inputEditID.includes('_')) {
                         let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
                         let data = new Object()
-                        data[inputEdit.materialComponent.value] = ''
+                        data[inputEdit.value] = ''
                         if (inputEdit.classList.contains("editable-select")) {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).update(data)
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.value).update(data)
                         } else {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.materialComponent.value).set(data)
+                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.value).set(data)
                         }
                     } else {
-                        firebase.firestore().collection(inputEditID).doc(inputEdit.materialComponent.value).set({})
+                        firebase.firestore().collection(inputEditID).doc(inputEdit.value).set({})
                     }
 
                     if (inputEdit.classList.contains("editable-select")) {
@@ -436,7 +436,7 @@ function buttonLockClick() {
                                 }
                             })
                             if (!hasMenuItem) {
-                                inputEdit.materialComponent.value = ''
+                                inputEdit.value = ''
                                 $(inputEdit).editableSelect("filter")
                             }
                         }
@@ -461,7 +461,7 @@ function editKase() {
         let itemValue = currentKaseSnap.get(inputEdit.id)
 
         if (itemValue != undefined) {
-            if (inputEdit.materialComponent.disabled) {
+            if (inputEdit.disabled) {
                 if (itemValue != '') {
                     inputEdit.parentElement.parentElement.hidden = false
                 }
@@ -479,12 +479,17 @@ function editKase() {
                     }
                 }
                 else {
-                    inputEdit.materialComponent.value = itemValue
+                    if (inputEdit.getAttribute("mask") == "date") {
+                        inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
+                    }
+                    else {
+                        inputEdit.value = itemValue
+                    }
                 }
             }
 
             if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
-                inputEdit.materialComponent.disabled = false
+                inputEdit.disabled = false
             }
         }
     })
@@ -496,14 +501,19 @@ function saveKase() {
 
     formEditKase.querySelectorAll("input, textarea").forEach(
         (inputEdit) => {
-            if (inputEdit.materialComponent != undefined) {
-                if (inputEdit.required && inputEdit.materialComponent.value == '') {
-                    inputEdit.materialComponent.valid = false
+            if (inputEdit != undefined) {
+                if (inputEdit.required && inputEdit.value == '') {
+                    inputEdit.valid = false
                     valid = false
                 }
-                if (!inputEdit.materialComponent.disabled || inputEdit.id.includes('_')) {
-                    if (inputEdit.materialComponent.value != '') {
-                        kaseData[inputEdit.id] = inputEdit.materialComponent.value
+                if (!inputEdit.disabled || inputEdit.id.includes('_')) {
+                    if (inputEdit.value != '') {
+                        if (inputEdit.mask != undefined) {
+                            kaseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
+                        }
+                        else {
+                            kaseData[inputEdit.id] = inputEdit.value
+                        }
                     }
                 }
             }
@@ -514,16 +524,13 @@ function saveKase() {
     if (valid) {
         if (kaseExists) {
             kaseData.updateUser = firebase.auth().currentUser.email
-            kaseData.updateDate = new Date().toLocaleDateString("tr")
+            kaseData.updateDate = new Date().toJSON().substr(0, 10)
             kaseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             currentKase.update(kaseData)
         } else {
             kaseData.createUser = firebase.auth().currentUser.email
-            kaseData.createDate = new Date().toLocaleDateString("tr")
+            kaseData.createDate = new Date().toJSON().substr(0, 10)
             kaseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
-            kaseData.updateUser = firebase.auth().currentUser.email
-            kaseData.updateDate = new Date().toLocaleDateString("tr")
-            kaseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             kaseData.status = "active"
             currentKase.set(kaseData)
         }
@@ -549,14 +556,14 @@ function clearKase(dontReload) {
                 sideSaveButton.disabled = true
             }
 
-            inputEdit.materialComponent.value = ''
-            inputEdit.materialComponent.valid = true
+            inputEdit.value = ''
+            inputEdit.valid = true
 
             if (inputEdit.id.includes('_')) {
-                inputEdit.materialComponent.disabled = true
+                inputEdit.disabled = true
             }
             else {
-                inputEdit.parentElement.parentElement.hidden = inputEdit.materialComponent.disabled
+                inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
             }
         })
 
@@ -646,18 +653,30 @@ function listKases(snap, foundKases, searchQuery) {
                     let td = document.createElement("td")
                     tr.appendChild(td)
                     td.id = column.id
-                    switch (td.id) {
-                        case "__name__":
-                            td.textContent = kaseSnap.id
-                            break
-                        case "description":
-                        case "complaints":
-                            td.textContent = td.title = kaseSnap.get(td.id)
-                            break
-                        default:
-                            td.textContent = kaseSnap.get(td.id)
-                            break
+
+                    if (td.id == "__name__") {
+                        td.textContent = kaseSnap.id
                     }
+                    else {
+                        let value = kaseSnap.get(td.id)
+                        if (value != undefined) {
+                            switch (td.id) {
+                                case "description":
+                                case "complaints":
+                                    td.textContent = td.title = value
+                                    break
+                                default:
+                                    if (td.id.includes("Date")) {
+                                        td.textContent = new Date(value).toLocaleDateString("tr")
+                                    }
+                                    else {
+                                        td.textContent = value
+                                    }
+                                    break
+                            }
+                        }
+                    }
+
                     if (searchQuery != undefined) {
                         td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                     }
@@ -717,21 +736,21 @@ function setTableOverlayState(state) {
             tableOverlay.classList.remove("hide")
             tableOverlay.classList.remove("show-headers")
             tableOverlayIcon.classList.add("mdi-loading", "mdi-spin")
-            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline", "mdi-format-columns")
+            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline", "mdi-archive-arrow-up-outline")
             tableOverlayText.hidden = true
             break
         case "empty":
             tableOverlay.classList.remove("hide")
             tableOverlay.classList.remove("show-headers")
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-format-columns")
+            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
             tableOverlayText.hidden = false
             tableOverlayText.innerText = translate("CASES_NOT_FOUND")
             break
         case "drag":
             tableOverlay.classList.remove("hide")
             tableOverlay.classList.add("show-headers")
-            tableOverlayIcon.classList.add("mdi-format-columns")
+            tableOverlayIcon.classList.add("mdi-archive-arrow-up-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
             tableOverlayText.hidden = false
             tableOverlayText.innerText = translate("DRAG_AND_DROP")
@@ -778,7 +797,7 @@ function modalExpand(header) {
 
 const Sortable = require("sortablejs")
 
-Sortable.create(tableColumnsList, {
+const properties = {
     group: "TableColumns",
     animation: 150,
     easing: "cubic-bezier(0.4, 0, 0.2, 1)",
@@ -796,20 +815,10 @@ Sortable.create(tableColumnsList, {
         }
         localStorage.setItem("enabledColumns", enabledColumns)
     }
-})
-Sortable.create(hiddenTableColumnsList, {
-    group: "TableColumns",
-    animation: 150,
-    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-    onEnd: () => {
-        listKases(currentKasesSnap)
-        let enabledColumns = []
-        for (let column of tableColumnsList.children) {
-            enabledColumns.push(column.id)
-        }
-        localStorage.setItem("enabledColumns", enabledColumns)
-    }
-})
+}
+
+Sortable.create(tableColumnsList, properties)
+Sortable.create(hiddenTableColumnsList, properties)
 
 //#endregion
 
@@ -874,16 +883,18 @@ for (let status of statusBar) {
 
 function hideEmptyFilters() {
     let hide = true
-    formFilter.querySelectorAll("input, textarea").forEach(
-        (inputFilter) => {
-            if (String(inputFilter.materialComponent.value).trim() == '') {
-                inputFilter.materialComponent.root.classList.toggle("collapsed", formFilter.classList.contains("collapsed"))
+    for (let filter of formFilter.children) {
+        let collapsed = true
+        filter.querySelectorAll("input, textarea").forEach(
+            (inputFilter) => {
+                if (String(inputFilter.value).trim() != '') {
+                    collapsed = false
+                    hide = false
+                }
             }
-            else {
-                hide = false
-            }
-        }
-    )
+        )
+        filter.classList.toggle("collapsed", collapsed && formFilter.classList.contains("collapsed"))
+    }
     if (formFilter.classList.contains("collapsed")) {
         formFilter.classList.toggle("hide", hide)
     }
@@ -899,20 +910,27 @@ function applyFilter() {
 
     formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
-            if (inputFilter.materialComponent.value != '') {
+            if (inputFilter.value != '') {
                 inputFilter.onchange = () => {
-                    inputFilter.materialComponent.value = String(inputFilter.materialComponent.value).trim()
+                    inputFilter.value = String(inputFilter.value).trim()
                 }
                 emptyFilter = false
+
+                let value = inputFilter.value
+
+                if (inputFilter.mask != undefined) {
+                    value = inputFilter.mask.unmaskedvalue();
+                }
+
                 switch (inputFilter.id.split('-')[1]) {
                     case "min":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", inputFilter.materialComponent.value)
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
                         break
                     case "max":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", inputFilter.materialComponent.value)
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
                         break
                     default:
-                        currentQuery = currentQuery.where(inputFilter.id, "==", inputFilter.materialComponent.value)
+                        currentQuery = currentQuery.where(inputFilter.id, "==", value)
                         break
                 }
             }
@@ -930,9 +948,9 @@ function applyFilter() {
 buttonClearFilter.onclick = () => {
     formFilter.querySelectorAll("input, textarea").forEach(
         (inputFilter) => {
-            inputFilter.materialComponent.value = ''
+            inputFilter.value = ''
             inputFilter.onchange = () => {
-                inputFilter.materialComponent.value = String(inputFilter.materialComponent.value).trim()
+                inputFilter.value = String(inputFilter.value).trim()
             }
         }
     )
@@ -1016,19 +1034,20 @@ buttonPasswordVisibility.onclick = () => {
 
 //#region Window Maximize
 
-const maximizeIcon = document.querySelector(".window-action>.mdi-window-maximize")
+const maximizeIcon = document.querySelector(".window-action>svg.maximize")
+const dragArea = document.querySelector(".drag-area")
 
 ipcRenderer.on("window-action", (event, action) => {
     switch (action) {
         case "maximize":
-            maximizeIcon.classList.remove("mdi-window-maximize")
-            maximizeIcon.classList.add("mdi-window-restore")
+            maximizeIcon.classList.remove("maximize")
+            maximizeIcon.classList.add("restore")
+            dragArea.classList.remove("ms-1", "mt-1")
             break
         case "unmaximize":
-            maximizeIcon.classList.add("mdi-window-maximize")
-            maximizeIcon.classList.remove("mdi-window-restore")
-            break
-        default:
+            maximizeIcon.classList.add("maximize")
+            maximizeIcon.classList.remove("restore")
+            dragArea.classList.add("ms-1", "mt-1")
             break
     }
 })

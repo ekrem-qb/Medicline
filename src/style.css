@@ -100,6 +100,19 @@ body {
 
 label {
   margin-bottom: .5rem;
+  user-select: none;
+}
+
+input {
+  cursor: text;
+}
+
+input:required:not(:valid, :focus) {
+  background-color: beige;
+}
+
+textarea {
+  resize: none;
 }
 
 .drag-area {
@@ -109,12 +122,9 @@ label {
 
 .window-action {
   display: flex;
-  padding: 0.5rem 1.1rem;
-  cursor: pointer;
-}
-
-.window-action .mdi {
-  font-size: 1.25rem;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  transition: var(--mdc-transition);
 }
 
 .window-action:hover {
@@ -126,8 +136,16 @@ label {
   color: var(--mdc-theme-on-error);
 }
 
-.window-action--red>.mdi::before {
-  transition: none;
+.window-action svg {
+  fill: currentColor;
+}
+
+svg.maximize path {
+  d: path("M 0 0 L 0 10 L 10 10 L 10 0 Z M 1 1 L 9 1 L 9 9 L 1 9 Z");
+}
+
+svg.restore path {
+  d: path("m 2 0.00001 l 0 2 l -2 0 l 0 8 l 8 0 l 0 -2 l 2 0 l 0 -8 Z m 1 1 l 6 0 l 0 6 l -1 0 l 0 -5 l -5 0 Z m -2 2 l 6 0 l 0 6 l -6 0 Z");
 }
 
 .flex {
@@ -145,8 +163,9 @@ label {
 }
 
 .table-responsive {
-  max-width: 75vw;
-  max-height: 75vh;
+  max-width: 74vw;
+  max-height: 63vh;
+  min-height: 6rem;
 }
 
 tbody tr {
@@ -242,7 +261,7 @@ th:active {
 }
 
 #tableOverlay.show-headers {
-  height: calc(100% - 10.9rem);
+  height: calc(100% - 9.3rem);
 }
 
 #tableOverlay>* {
@@ -265,6 +284,11 @@ th:active {
   margin-bottom: 1rem;
 }
 
+.mdc-list-item>.mdi,
+.modal-header>.mdi {
+  font-size: 1.25rem;
+}
+
 .modal-header .mdc-select__dropdown-icon {
   margin-right: .25rem;
 }
@@ -274,10 +298,14 @@ th:active {
 }
 
 .modal-body {
-  max-height: 70vh;
+  max-height: 60vh;
   overflow: auto;
   transition: var(--mdc-transition);
   will-change: contents;
+}
+
+.modal-body>*:first-child {
+  margin-top: 0;
 }
 
 form {
@@ -285,11 +313,21 @@ form {
 }
 
 form#filter {
-  max-width: 20rem;
+  max-width: 20.5rem;
 }
 
-form#filter>* {
-  zoom: .85;
+#filter .col-md-12 {
+  height: 4rem;
+  transition: var(--mdc-transition);
+}
+
+#filter .collapsed>.col-md-12,
+#filter .col-md-12.collapsed {
+  height: 0;
+  margin: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .modal-body.collapsed:not(#filter),
@@ -311,6 +349,12 @@ form#filter.hide {
 
 .modal-footer>* {
   margin: 0;
+}
+
+@media (max-width: 1344px) {
+  #toolsPanel .modal-footer span {
+    font-size: .7rem;
+  }
 }
 
 .form {
@@ -365,7 +409,7 @@ footer>.status {
   flex: 1;
   padding: 0.5rem;
   text-align: center;
-  font-size: 0.8vw;
+  font-size: 0.7vw;
   font-weight: bold;
   user-select: none;
   transition: var(--mdc-transition);
@@ -495,11 +539,6 @@ footer>.status.selected {
 
 /*#region Editable Select */
 
-.editable-select.es-input {
-  background: none !important;
-  padding-right: 0 !important;
-}
-
 .es-list li {
   text-shadow: 0 0;
 }
@@ -511,7 +550,7 @@ footer>.status.selected {
 
 #country,
 .es-input#country~.es-list li {
-  font-family: var(--mdc-typography-font-family, JoyPixels, Roboto, sans-serif);
+  font-family: JoyPixels, var(--mdc-typography-font-family, Roboto, sans-serif);
   word-spacing: -10px;
 }
 
@@ -523,13 +562,17 @@ footer>.status.selected {
   --mdc-theme-primary: var(--bs-orange);
   --mdc-theme-secondary: var(--bs-red);
   --mdc-transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
-  /* filter: invert(1) hue-rotate(180deg); */
+  /* filter: invert(.9) hue-rotate(180deg); */
 }
 
 .mdi {
   font-size: 1.5rem;
   line-height: 1;
   height: auto !important;
+}
+
+.input-group-text .mdi {
+  font-size: 1rem;
 }
 
 .mdi::before {
@@ -597,7 +640,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-snackbar,
 .mdc-dialog {
-  z-index: 15;
+  z-index: 20;
 }
 
 .mdc-dialog .mdc-dialog__surface {
@@ -625,7 +668,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-dialog__button {
   flex: 1;
-  margin: 0 0.25rem !important;
 }
 
 .mdc-dialog .mdc-dialog__content {
@@ -667,6 +709,11 @@ th .mdi.mdi-unfold-more-horizontal::before {
   transition: var(--mdc-transition);
 }
 
+.mdc-list {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .mdc-list>.mdc-list-item {
   background-color: transparent;
   color: inherit;
@@ -675,10 +722,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
   padding: 0 .5rem;
   align-items: center;
   user-select: none;
-}
-
-.mdc-list-divider {
-  margin: .5rem 0;
 }
 
 .mdc-list-item>.mdi-trash-can {
@@ -691,17 +734,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 form .mdc-text-field {
   transition: .25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.mdc-text-field.collapsed {
-  height: 0;
-  margin: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.mdc-text-field--textarea.collapsed * {
-  display: none;
 }
 
 .mdc-text-field__input {
