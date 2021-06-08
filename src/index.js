@@ -45,9 +45,8 @@ dialogDeleteKase.materialComponent.listen('MDCDialog:closed', event => {
     }
 })
 
-firebase.firestore().enablePersistence()
-const allKases = firebase.firestore().collection("kases")
-var currentQuery = firebase.firestore().collection("kases")
+const allKases = db.collection("kases")
+var currentQuery = db.collection("kases")
 var currentKasesSnap, currentKaseSnap
 var currentKase, kaseExists = false
 var stopCurrentQuery = () => { }
@@ -72,11 +71,10 @@ function pageLoaded() {
     formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
     applyFilter()
     hideEmptyFilters()
-    loadSelectMenus()
 }
 
 function loadInputs() {
-    formEditKase.querySelectorAll("input, textarea").forEach(
+    formEditKase.querySelectorAll('input, textarea').forEach(
         (inputEdit) => {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
             inputEdit.oninput = () => {
@@ -88,102 +86,12 @@ function loadInputs() {
                 }
             }
             inputEdit.onchange = () => {
-                if (inputEdit.classList.contains('editable-select')) {
-                    let hasMenuItem = false
-                    inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
-                        if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
-                            hasMenuItem = true
-                        }
-                    })
-                    if (!hasMenuItem) {
-                        inputEdit.value = ''
-                        $(inputEdit).editableSelect("filter")
-                    }
-                } else {
-                    inputEdit.value = String(inputEdit.value).trim()
-                    if (inputEdit.required && !buttonLock.unlocked) {
-                        inputEdit.valid = inputEdit.value != ''
-                    }
+                inputEdit.value = String(inputEdit.value).trim()
+                if (inputEdit.required && !buttonLock.unlocked) {
+                    inputEdit.valid = inputEdit.value != ''
                 }
             }
         })
-}
-
-function loadSelectMenus() {
-    document.querySelectorAll(".editable-select").forEach(
-        (select) => {
-            let selectID = select.id.replace(/[0-9]/g, '')
-
-            if (!selectID.includes('_')) {
-                firebase.firestore().collection(selectID).onSnapshot(
-                    (snapshot) => {
-                        $(select).editableSelect("clear")
-                        snapshot.docs.forEach(
-                            (selectItem) => {
-                                $(select).editableSelect("add", selectItem.id)
-                            })
-                    },
-                    (err) => {
-                        console.error(err)
-                    }
-                )
-
-                $(select).on("select.editable-select", () => {
-                    select.oldValue = select.value
-                    let subElements = select.parentElement.parentElement.parentElement.querySelectorAll("input")
-                    subElements.forEach(subElement => {
-                        if (subElement != select && subElement.id.split('_')[0] == select.id) {
-                            subElement.disabled = false
-                            subElement.value = ''
-                        }
-                    })
-                    let firstSubElement = subElements[1]
-                    if (firstSubElement != null) {
-                        let sideSaveButton = firstSubElement.querySelector(".button--save_item")
-                        if (firstSubElement != select && firstSubElement.id.split('_')[0] == select.id) {
-                            firebase.firestore().collection(selectID).doc(select.value).onSnapshot(
-                                (snapshot) => {
-                                    if (firstSubElement.classList.contains('editable-select')) {
-                                        $(firstSubElement).editableSelect("clear")
-                                        for (const key in snapshot.data()) {
-                                            $(firstSubElement).editableSelect("add", key)
-                                        }
-                                    } else {
-                                        for (const key in snapshot.data()) {
-                                            firstSubElement.value = key
-                                        }
-                                        firstSubElement.oldValue = firstSubElement.value
-                                        if (sideSaveButton != null) {
-                                            sideSaveButton.disabled = true
-                                        }
-                                        firstSubElement.disabled = !buttonLock.unlocked
-                                    }
-                                },
-                                (err) => {
-                                    console.error(err)
-                                }
-                            )
-                        }
-                    }
-                })
-            }
-            else {
-                $(select).on("select.editable-select", () => {
-                    select.oldValue = select.value
-                })
-            }
-        })
-}
-
-function selectThisItem(selectMenu, itemString) {
-    selectMenu.value = ''
-    $(selectMenu).editableSelect("filter")
-    selectMenu.parentElement.querySelectorAll("li").forEach(selectItem => {
-        if (selectItem.innerText == itemString) {
-            $(selectMenu).editableSelect("select", $(selectItem))
-            $(selectMenu).editableSelect("hide")
-        }
-    })
 }
 
 function loadColumns() {
@@ -258,8 +166,8 @@ function clearSearch() {
 }
 
 function checkKaseID() {
-    if (!buttonLock.unlocked)
-        buttonSave.disabled = currentKase == undefined
+    // if (!buttonLock.unlocked)
+    buttonSave.disabled = currentKase == undefined
 
     currentKaseID.parentElement.disabled = currentKase == undefined
     let idIcon = currentKaseID.parentElement.querySelector(".mdi")
@@ -316,135 +224,135 @@ function buttonCreateClick() {
 }
 
 function buttonLockClick() {
-    buttonLock.classList.toggle("mdc-button--green", !buttonLock.unlocked)
-    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock", buttonLock.unlocked)
-    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock-open-variant", !buttonLock.unlocked)
-    buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-flip-h", !buttonLock.unlocked)
+    //     buttonLock.classList.toggle("mdc-button--green", !buttonLock.unlocked)
+    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock", buttonLock.unlocked)
+    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock-open-variant", !buttonLock.unlocked)
+    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-flip-h", !buttonLock.unlocked)
 
-    if (buttonLock.unlocked) {
-        buttonLock.unlocked = false
+    //     if (buttonLock.unlocked) {
+    //         buttonLock.unlocked = false
 
-        if (currentKase != undefined)
-            buttonSave.disabled = false
+    //         if (currentKase != undefined)
+    //             buttonSave.disabled = false
 
-        formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
-            sideButton.hidden = true
-            let sideButtonIcon = sideButton.querySelector(".mdi")
+    //         formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+    //             sideButton.hidden = true
+    //             let sideButtonIcon = sideButton.querySelector(".mdi")
 
-            let inputEdit = sideButton.parentElement.querySelector("input")
-            if (sideButton.classList.contains("button--save_item")) {
-                if (inputEdit.classList.contains("editable-select")) {
-                    sideButton.classList.add("button--add_select_item")
-                    sideButtonIcon.classList.add("mdi-plus")
-                    sideButtonIcon.classList.add("mdi-rotate-180")
-                    sideButtonIcon.classList.remove("mdi-content-save")
-                    sideButton.classList.remove("button--save_item")
-                    if (inputEdit.oldValue != undefined) {
-                        selectThisItem(inputEdit, inputEdit.oldValue)
-                    }
-                } else {
-                    inputEdit.disabled = true
-                    inputEdit.readOnly = true
-                }
-            }
-            if (inputEdit.classList.contains("editable-select")) {
-                inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
-                inputEdit.parentElement.querySelector(".es-list").hidden = false
-                inputEdit.onchange = () => {
-                    let hasMenuItem = false
-                    inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
-                        if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
-                            hasMenuItem = true
-                        }
-                    })
-                    if (!hasMenuItem) {
-                        inputEdit.value = ''
-                        $(inputEdit).editableSelect("filter")
-                    }
-                }
-            }
-        })
-    } else {
-        buttonLock.unlocked = true
+    //             let inputEdit = sideButton.parentElement.querySelector("input")
+    //             if (sideButton.classList.contains("button--save_item")) {
+    //                 if (inputEdit.classList.contains("editable-select")) {
+    //                     sideButton.classList.add("button--add_select_item")
+    //                     sideButtonIcon.classList.add("mdi-plus")
+    //                     sideButtonIcon.classList.add("mdi-rotate-180")
+    //                     sideButtonIcon.classList.remove("mdi-content-save")
+    //                     sideButton.classList.remove("button--save_item")
+    //                     if (inputEdit.oldValue != undefined) {
+    //                         selectThisItem(inputEdit, inputEdit.oldValue)
+    //                     }
+    //                 } else {
+    //                     inputEdit.disabled = true
+    //                     inputEdit.readOnly = true
+    //                 }
+    //             }
+    //             if (inputEdit.classList.contains("editable-select")) {
+    //                 inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
+    //                 inputEdit.parentElement.querySelector(".es-list").hidden = false
+    //                 inputEdit.onchange = () => {
+    //                     let hasMenuItem = false
+    //                     inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
+    //                         if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
+    //                             hasMenuItem = true
+    //                         }
+    //                     })
+    //                     if (!hasMenuItem) {
+    //                         inputEdit.value = ''
+    //                         $(inputEdit).editableSelect("filter")
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //     } else {
+    //         buttonLock.unlocked = true
 
-        buttonSave.disabled = true
+    //         buttonSave.disabled = true
 
-        formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
-            sideButton.hidden = false
+    //         formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+    //             sideButton.hidden = false
 
-            let inputEdit = sideButton.parentElement.querySelector("input")
-            let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
+    //             let inputEdit = sideButton.parentElement.querySelector("input")
+    //             let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
 
-            if (sideButton.classList.contains("button--save_item")) {
-                if (inputEdit.oldValue != undefined) {
-                    inputEdit.disabled = false
-                    inputEdit.readOnly = false
-                }
-            }
+    //             if (sideButton.classList.contains("button--save_item")) {
+    //                 if (inputEdit.oldValue != undefined) {
+    //                     inputEdit.disabled = false
+    //                     inputEdit.readOnly = false
+    //                 }
+    //             }
 
-            let sideButtonIcon = sideButton.querySelector(".mdi")
-            sideButton.onclick = () => {
-                if (sideButton.classList.contains("button--add_select_item")) {
-                    sideButton.classList.remove("button--add_select_item")
-                    sideButtonIcon.classList.remove("mdi-plus")
-                    sideButtonIcon.classList.remove("mdi-rotate-180")
-                    sideButtonIcon.classList.add("mdi-content-save")
-                    sideButton.classList.add("button--save_item")
+    //             let sideButtonIcon = sideButton.querySelector(".mdi")
+    //             sideButton.onclick = () => {
+    //                 if (sideButton.classList.contains("button--add_select_item")) {
+    //                     sideButton.classList.remove("button--add_select_item")
+    //                     sideButtonIcon.classList.remove("mdi-plus")
+    //                     sideButtonIcon.classList.remove("mdi-rotate-180")
+    //                     sideButtonIcon.classList.add("mdi-content-save")
+    //                     sideButton.classList.add("button--save_item")
 
-                    inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
-                    inputEdit.parentElement.querySelector(".es-list").hidden = true
-                    inputEdit.value = ''
-                    inputEdit.valid = true
-                    inputEdit.onchange = null
+    //                     inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
+    //                     inputEdit.parentElement.querySelector(".es-list").hidden = true
+    //                     inputEdit.value = ''
+    //                     inputEdit.valid = true
+    //                     inputEdit.onchange = null
 
-                    let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
-                    subElements.forEach(subElement => {
-                        subElementID = subElement.id.replace(/[0-9]/g, '')
-                        if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
-                            subElement.disabled = true
-                            subElement.value = ''
-                        }
-                    })
-                } else {
-                    if (inputEditID.includes('_')) {
-                        let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
-                        let data = new Object()
-                        data[inputEdit.value] = ''
-                        if (inputEdit.classList.contains("editable-select")) {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.value).update(data)
-                        } else {
-                            firebase.firestore().collection(inputEditID.split('_')[0]).doc(parentSelect.value).set(data)
-                        }
-                    } else {
-                        firebase.firestore().collection(inputEditID).doc(inputEdit.value).set({})
-                    }
+    //                     let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
+    //                     subElements.forEach(subElement => {
+    //                         subElementID = subElement.id.replace(/[0-9]/g, '')
+    //                         if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
+    //                             subElement.disabled = true
+    //                             subElement.value = ''
+    //                         }
+    //                     })
+    //                 } else {
+    //                     if (inputEditID.includes('_')) {
+    //                         let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
+    //                         let data = new Object()
+    //                         data[inputEdit.value] = ''
+    //                         if (inputEdit.classList.contains("editable-select")) {
+    //                             db.collection(inputEditID.split('_')[0]).doc(parentSelect.value).update(data)
+    //                         } else {
+    //                             db.collection(inputEditID.split('_')[0]).doc(parentSelect.value).set(data)
+    //                         }
+    //                     } else {
+    //                         db.collection(inputEditID).doc(inputEdit.value).set({})
+    //                     }
 
-                    if (inputEdit.classList.contains("editable-select")) {
-                        sideButton.classList.add("button--add_select_item")
-                        sideButtonIcon.classList.add("mdi-plus")
-                        sideButtonIcon.classList.add("mdi-rotate-180")
-                        sideButtonIcon.classList.remove("mdi-content-save")
-                        sideButton.classList.remove("button--save_item")
+    //                     if (inputEdit.classList.contains("editable-select")) {
+    //                         sideButton.classList.add("button--add_select_item")
+    //                         sideButtonIcon.classList.add("mdi-plus")
+    //                         sideButtonIcon.classList.add("mdi-rotate-180")
+    //                         sideButtonIcon.classList.remove("mdi-content-save")
+    //                         sideButton.classList.remove("button--save_item")
 
-                        inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
-                        inputEdit.parentElement.querySelector(".es-list").hidden = false
-                        inputEdit.onchange = () => {
-                            let hasMenuItem = false
-                            inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
-                                if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
-                                    hasMenuItem = true
-                                }
-                            })
-                            if (!hasMenuItem) {
-                                inputEdit.value = ''
-                                $(inputEdit).editableSelect("filter")
-                            }
-                        }
-                    }
-                }
-            }
-        })
-    }
+    //                         inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
+    //                         inputEdit.parentElement.querySelector(".es-list").hidden = false
+    //                         inputEdit.onchange = () => {
+    //                             let hasMenuItem = false
+    //                             inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
+    //                                 if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
+    //                                     hasMenuItem = true
+    //                                 }
+    //                             })
+    //                             if (!hasMenuItem) {
+    //                                 inputEdit.value = ''
+    //                                 $(inputEdit).editableSelect("filter")
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         })
+    //     }
 }
 
 function editKase() {
@@ -457,7 +365,7 @@ function editKase() {
     checkKaseID()
     kaseExists = true
 
-    formEditKase.querySelectorAll("input, textarea").forEach((inputEdit) => {
+    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
         let itemValue = currentKaseSnap.get(inputEdit.id)
 
         if (itemValue != undefined) {
@@ -470,26 +378,27 @@ function editKase() {
             }
 
             if (!inputEdit.parentElement.parentElement.hidden) {
-                if (inputEdit.classList.contains("editable-select")) {
-                    if (inputEdit.id.includes('_')) {
-                        setTimeout(() => selectThisItem(inputEdit, itemValue), 10)
-                    }
-                    else {
-                        selectThisItem(inputEdit, itemValue)
-                    }
+                if (inputEdit.getAttribute("mask") == "date") {
+                    inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
                 }
                 else {
-                    if (inputEdit.getAttribute("mask") == "date") {
-                        inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
-                    }
-                    else {
-                        inputEdit.value = itemValue
-                    }
+                    inputEdit.value = itemValue
                 }
             }
+        }
+    })
 
-            if (inputEdit.id.includes('_') && inputEdit.parentElement.parentElement.querySelectorAll("input").length > 2) {
-                inputEdit.disabled = false
+    formEditKase.querySelectorAll('select').forEach(select => {
+        if (currentKaseSnap.get(select.id) != undefined) {
+            let itemValue = currentKaseSnap.get(select.id).path
+
+            if (itemValue != undefined) {
+                if (select.id.includes('_')) {
+                    setTimeout(() => select.tomSelect.addItem(itemValue), 50)
+                }
+                else {
+                    select.tomSelect.addItem(itemValue)
+                }
             }
         }
     })
@@ -499,25 +408,38 @@ function saveKase() {
     let kaseData = new Object()
     let valid = true
 
-    formEditKase.querySelectorAll("input, textarea").forEach(
-        (inputEdit) => {
-            if (inputEdit != undefined) {
-                if (inputEdit.required && inputEdit.value == '') {
+    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
+        if (inputEdit != undefined) {
+            if (inputEdit.value == '') {
+                if (inputEdit.required) {
                     inputEdit.valid = false
                     valid = false
                 }
-                if (!inputEdit.disabled || inputEdit.id.includes('_')) {
-                    if (inputEdit.value != '') {
-                        if (inputEdit.mask != undefined) {
-                            kaseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
-                        }
-                        else {
-                            kaseData[inputEdit.id] = inputEdit.value
-                        }
-                    }
+            }
+            else if (!inputEdit.disabled && !inputEdit.readOnly) {
+                if (inputEdit.mask != undefined) {
+                    kaseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
+                }
+                else {
+                    kaseData[inputEdit.id] = inputEdit.value
                 }
             }
-        })
+        }
+    })
+
+    formEditKase.querySelectorAll('select').forEach(select => {
+        if (select != undefined) {
+            if (select.tomSelect.getValue() == '') {
+                if (select.required) {
+                    select.valid = false
+                    valid = false
+                }
+            }
+            else {
+                kaseData[select.id] = db.doc(select.tomSelect.getValue())
+            }
+        }
+    })
 
     console.log(kaseData)
 
@@ -549,23 +471,28 @@ function clearKase(dontReload) {
     buttonLock.unlocked = true
     buttonLockClick()
 
-    formEditKase.querySelectorAll("input, textarea").forEach(
-        (inputEdit) => {
-            let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
-            if (sideSaveButton != null) {
-                sideSaveButton.disabled = true
-            }
+    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
+        // let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
+        // if (sideSaveButton != null) {
+        //     sideSaveButton.disabled = true
+        // }
 
-            inputEdit.value = ''
-            inputEdit.valid = true
+        inputEdit.value = ''
+        inputEdit.valid = true
 
-            if (inputEdit.id.includes('_')) {
-                inputEdit.disabled = true
-            }
-            else {
-                inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
-            }
-        })
+        if (inputEdit.id.includes('_')) {
+            inputEdit.disabled = true
+        }
+        else {
+            inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
+        }
+    })
+
+    formEditKase.querySelectorAll('select').forEach(select => {
+        if (!select.id.includes('_')) {
+            select.tomSelect.removeItem(select.tomSelect.getValue())
+        }
+    })
 
     dialogEditKase.materialComponent.close()
     buttonDelete.disabled = true
@@ -660,19 +587,30 @@ function listKases(snap, foundKases, searchQuery) {
                     else {
                         let value = kaseSnap.get(td.id)
                         if (value != undefined) {
-                            switch (td.id) {
-                                case "description":
-                                case "complaints":
-                                    td.textContent = td.title = value
-                                    break
-                                default:
-                                    if (td.id.includes("Date")) {
-                                        td.textContent = new Date(value).toLocaleDateString("tr")
+                            if (typeof value === "object" && value !== null) {
+                                td.textContent = value.onSnapshot(
+                                    (snapshot) => {
+                                        td.textContent = snapshot.get('name')
+                                    },
+                                    (err) => {
+                                        console.error(err)
                                     }
-                                    else {
-                                        td.textContent = value
-                                    }
-                                    break
+                                )
+                            } else {
+                                switch (td.id) {
+                                    case "description":
+                                    case "complaints":
+                                        td.textContent = td.title = value
+                                        break
+                                    default:
+                                        if (td.id.includes("Date")) {
+                                            td.textContent = new Date(value).toLocaleDateString("tr")
+                                        }
+                                        else {
+                                            td.textContent = value
+                                        }
+                                        break
+                                }
                             }
                         }
                     }
@@ -885,14 +823,23 @@ function hideEmptyFilters() {
     let hide = true
     for (let filter of formFilter.children) {
         let collapsed = true
-        filter.querySelectorAll("input, textarea").forEach(
-            (inputFilter) => {
-                if (String(inputFilter.value).trim() != '') {
-                    collapsed = false
-                    hide = false
-                }
+        filter.querySelectorAll('input, textarea').forEach(inputFilter => {
+            inputFilter.onchange = () => {
+                inputFilter.value = String(inputFilter.value).trim()
             }
-        )
+            if (String(inputFilter.value).trim() != '') {
+                collapsed = false
+                hide = false
+                return
+            }
+        })
+        filter.querySelectorAll('select').forEach(select => {
+            if (select.tomSelect.getValue() != '') {
+                collapsed = false
+                hide = false
+                return
+            }
+        })
         filter.classList.toggle("collapsed", collapsed && formFilter.classList.contains("collapsed"))
     }
     if (formFilter.classList.contains("collapsed")) {
@@ -908,37 +855,40 @@ function applyFilter() {
     let emptyFilter = true
     currentQuery = allKases
 
-    formFilter.querySelectorAll("input, textarea").forEach(
-        (inputFilter) => {
-            if (inputFilter.value != '') {
-                inputFilter.onchange = () => {
-                    inputFilter.value = String(inputFilter.value).trim()
-                }
-                emptyFilter = false
+    formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
+        if (inputFilter.value != '') {
+            emptyFilter = false
 
-                let value = inputFilter.value
+            let value = inputFilter.value
 
-                if (inputFilter.mask != undefined) {
-                    value = inputFilter.mask.unmaskedvalue();
-                }
-
-                switch (inputFilter.id.split('-')[1]) {
-                    case "min":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
-                        break
-                    case "max":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
-                        break
-                    default:
-                        currentQuery = currentQuery.where(inputFilter.id, "==", value)
-                        break
-                }
+            if (inputFilter.mask != undefined) {
+                value = inputFilter.mask.unmaskedvalue();
             }
-        })
+
+            switch (inputFilter.id.split('-')[1]) {
+                case "min":
+                    currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
+                    break
+                case "max":
+                    currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
+                    break
+                default:
+                    currentQuery = currentQuery.where(inputFilter.id, "==", value)
+                    break
+            }
+        }
+    })
+    formFilter.querySelectorAll('select').forEach(select => {
+        if (select.tomSelect.getValue() != '') {
+            emptyFilter = false
+
+            currentQuery = currentQuery.where(select.id, "==", db.doc(select.tomSelect.getValue()))
+        }
+    })
     if (!emptyFilter) {
+        buttonClearFilter.disabled = false
         setTableOverlayState("loading")
         loadKases()
-        buttonClearFilter.disabled = false
     }
     else {
         alert(translate("EMPTY_FILTERS"))
@@ -946,24 +896,23 @@ function applyFilter() {
 }
 
 buttonClearFilter.onclick = () => {
-    formFilter.querySelectorAll("input, textarea").forEach(
-        (inputFilter) => {
+    formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
+        if (inputFilter.value != '') {
             inputFilter.value = ''
-            inputFilter.onchange = () => {
-                inputFilter.value = String(inputFilter.value).trim()
+        }
+    })
+    formFilter.querySelectorAll('select').forEach(select => {
+        if (!select.id.includes('_')) {
+            if (select.tomSelect.getValue() != '') {
+                select.tomSelect.removeItem(select.tomSelect.getValue())
             }
         }
-    )
-    for (let column of tableColumnsList.children) {
-        column.setAttribute("onclick", "headerClick(this.id)")
-        column.classList.remove("invalid")
-    }
+    })
+    buttonClearFilter.disabled = true
+    hideEmptyFilters()
     currentQuery = allKases
     setTableOverlayState("loading")
     loadKases()
-    hideEmptyFilters()
-
-    buttonClearFilter.disabled = true
 }
 
 //#endregion

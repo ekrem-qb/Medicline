@@ -103,10 +103,11 @@ label {
   user-select: none;
 }
 
-input {
-  cursor: text;
+.form-control[readonly]:enabled {
+  background-color: initial;
 }
 
+.ts-input.required:not(.focus, .full),
 input:required:not(:valid, :focus) {
   background-color: beige;
 }
@@ -261,7 +262,7 @@ th:active {
 }
 
 #tableOverlay.show-headers {
-  height: calc(100% - 9.3rem);
+  height: calc(100% - 10.9rem);
 }
 
 #tableOverlay>* {
@@ -537,19 +538,32 @@ footer>.status.selected {
 
 /*#endregion*/
 
-/*#region Editable Select */
+/*#region Tom Select */
 
-.es-list li {
+.ts-input.disabled {
+  opacity: 1;
+}
+
+.ts-control:not(.form-select).single .ts-input {
+  padding: 0 .5rem;
+}
+
+.ts-dropdown-content {
+  padding: 0;
+}
+
+.ts-input .item,
+.ts-dropdown .option {
   text-shadow: 0 0;
 }
 
-.es-input:read-only:enabled,
-.es-list li {
-  cursor: pointer;
+.ts-dropdown .option {
+  padding: 0.2rem .5rem;
 }
 
 #country,
-.es-input#country~.es-list li {
+#country+.ts-control>.ts-input .item,
+#country-ts-dropdown .option {
   font-family: JoyPixels, var(--mdc-typography-font-family, Roboto, sans-serif);
   word-spacing: -10px;
 }

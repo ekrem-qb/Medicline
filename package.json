@@ -38,11 +38,10 @@
     "electron-updater": "^4.3.9",
     "firebase": "^8.6.2",
     "inputmask": "^5.0.5",
-    "jquery": "^3.6.0",
-    "jquery-editable-select": "^2.2.5",
     "material-components-web": "^11.0.0",
     "sortablejs": "^1.13.0",
-    "tableexport": "^5.2.0"
+    "tableexport": "^5.2.0",
+    "tom-select": "^1.7.4"
   },
   "build": {
     "appId": "com.ekrem.database_electron",
