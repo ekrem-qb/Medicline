@@ -6,7 +6,7 @@ const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
 const columnsJSON = require("./columns.json")
 const tableColumnsList = document.querySelector("#tableColumnsList")
-const kasesList = document.querySelector("#kasesList")
+const casesList = document.querySelector("#casesList")
 var currentOrder, currentOrderDirection
 
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
@@ -17,42 +17,42 @@ const buttonClearFilter = document.querySelector("button#clearFilter")
 const statusBar = document.querySelector("#statusBar").children
 var currentStatus
 
-const dialogEditKase = document.querySelector("#dialogEditKase")
-dialogEditKase.materialComponent.scrimClickAction = ''
-dialogEditKase.materialComponent.escapeKeyAction = ''
-dialogEditKase.materialComponent.listen('MDCDialog:closed', event => {
+const dialogEditCase = document.querySelector("#dialogEditCase")
+dialogEditCase.materialComponent.scrimClickAction = ''
+dialogEditCase.materialComponent.escapeKeyAction = ''
+dialogEditCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "cancel") {
-        clearKase()
+        clearCase()
     }
 })
-const buttonLock = dialogEditKase.querySelector("button#lock")
-const titleDialogEditKase = dialogEditKase.querySelector("#titleDialogEditKase")
-const formEditKase = dialogEditKase.querySelector("form#editKase")
-const buttonSave = dialogEditKase.querySelector("button#save")
-const currentKaseID = dialogEditKase.querySelector("#currentKaseID")
-currentKaseID.parentElement.onclick = () => {
-    navigator.clipboard.writeText(currentKaseID.innerText)
-    alert(currentKaseID.innerText + translate("COPIED"))
+const buttonLock = dialogEditCase.querySelector("button#lock")
+const titleDialogEditCase = dialogEditCase.querySelector("#titleDialogEditCase")
+const formEditCase = dialogEditCase.querySelector("form#editCase")
+const buttonSave = dialogEditCase.querySelector("button#save")
+const currentCaseID = dialogEditCase.querySelector("#currentCaseID")
+currentCaseID.parentElement.onclick = () => {
+    navigator.clipboard.writeText(currentCaseID.innerText)
+    alert(currentCaseID.innerText + translate("COPIED"))
 }
 
-const buttonDelete = dialogEditKase.querySelector("button#delete")
+const buttonDelete = dialogEditCase.querySelector("button#delete")
 
-const dialogDeleteKase = document.querySelector("#dialogDeleteKase")
-dialogDeleteKase.materialComponent.listen('MDCDialog:closed', event => {
+const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
+dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        currentKase.delete()
-        clearKase()
+        currentCase.delete()
+        clearCase()
     }
 })
 
-const allKases = db.collection("kases")
-var currentQuery = db.collection("kases")
-var currentKasesSnap, currentKaseSnap
-var currentKase, kaseExists = false
+var cases = db.collection("cases")
+var currentCasesSnap, currentCaseSnap
+var currentCase, caseExists = false
 var stopCurrentQuery = () => { }
+var stopAvailableIDSearch = () => { }
 const contextMenu = document.querySelector("#contextMenu")
 contextMenu.materialComponent.listen("close", () => {
-    currentKase = undefined
+    currentCase = undefined
 })
 
 
@@ -63,7 +63,7 @@ function alert(message) {
     snackbar.materialComponent.open()
 }
 
-clearKase(true)
+clearCase()
 loadInputs()
 loadColumns()
 
@@ -74,7 +74,7 @@ function pageLoaded() {
 }
 
 function loadInputs() {
-    formEditKase.querySelectorAll('input, textarea').forEach(
+    formEditCase.querySelectorAll('input, textarea').forEach(
         (inputEdit) => {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
             inputEdit.oninput = () => {
@@ -137,19 +137,19 @@ inputSearch.oninput = () => {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        var foundKases = new Array()
+        var foundCases = new Array()
 
-        currentKasesSnap.forEach(
-            (kase) => {
-                if (!foundKases.includes(kase.id)) {
-                    if ((String(kase.id) + Object.values(kase.data()).toString().toLowerCase()).includes(searchQuery)) {
-                        foundKases.push(kase.id)
+        currentCasesSnap.forEach(
+            (_case) => {
+                if (!foundCases.includes(_case.id)) {
+                    if ((String(_case.id) + Object.values(_case.data()).toString().toLowerCase()).includes(searchQuery)) {
+                        foundCases.push(_case.id)
                     }
                 }
             }
         )
-        if (foundKases.length > 0) {
-            listKases(currentKasesSnap, foundKases, searchQuery)
+        if (foundCases.length > 0) {
+            listCases(currentCasesSnap, foundCases, searchQuery)
         }
         else {
             setTableOverlayState("empty")
@@ -162,60 +162,56 @@ inputSearch.oninput = () => {
 function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
-    listKases(currentKasesSnap)
+    listCases(currentCasesSnap)
 }
 
-function checkKaseID() {
+function checkCaseID() {
     // if (!buttonLock.unlocked)
-    buttonSave.disabled = currentKase == undefined
+    buttonSave.disabled = currentCase == undefined
 
-    currentKaseID.parentElement.disabled = currentKase == undefined
-    let idIcon = currentKaseID.parentElement.querySelector(".mdi")
-    idIcon.classList.toggle("mdi-pound", currentKase != undefined)
-    idIcon.classList.toggle("mdi-loading", currentKase == undefined)
-    idIcon.classList.toggle("mdi-spin", currentKase == undefined)
+    currentCaseID.parentElement.disabled = currentCase == undefined
+    let idIcon = currentCaseID.parentElement.querySelector(".mdi")
+    idIcon.classList.toggle("mdi-pound", currentCase != undefined)
+    idIcon.classList.toggle("mdi-loading", currentCase == undefined)
+    idIcon.classList.toggle("mdi-spin", currentCase == undefined)
 
-    if (currentKase == undefined)
-        currentKaseID.parentElement.parentElement.title = "Generating available ID..."
+    if (currentCase == undefined)
+        currentCaseID.parentElement.parentElement.title = "Generating available ID..."
     else
-        currentKaseID.parentElement.parentElement.title = ''
+        currentCaseID.parentElement.parentElement.title = ''
 }
 
 var timer = 0
 
-function randomKaseID() {
-    currentKaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-    checkKaseID()
+function randomCaseID() {
+    currentCaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
+    checkCaseID()
     timer++
 }
 
 function buttonCreateClick() {
-    dialogEditKase.materialComponent.open()
-    titleDialogEditKase.innerText = translate("NEW_CASE")
+    dialogEditCase.materialComponent.open()
+    titleDialogEditCase.innerText = translate("NEW_CASE")
 
     timer = 0
-    var repeatRandomKaseID = setInterval(randomKaseID, 50)
+    var repeatRandomCaseID = setInterval(randomCaseID, 50)
 
-    if (currentQuery._delegate._query.filters.length != 0) {
-        stopCurrentQuery()
-    }
-    let stop = allKases.onSnapshot(
+    stopAvailableIDSearch = cases.onSnapshot(
         (snapshot) => {
             do {
-                randomKaseID()
-                kaseExists = snapshot.docs.some((item) => item.id === currentKaseID.innerText)
+                randomCaseID()
+                caseExists = snapshot.docs.some((item) => item.id === currentCaseID.innerText)
 
-                console.log(currentKaseID.innerText + ":" + kaseExists + " in " + snapshot.docs.length + " Time: " + timer)
-            } while (kaseExists)
+                console.log(currentCaseID.innerText + ":" + caseExists + " in " + snapshot.docs.length + " Time: " + timer)
+            } while (caseExists)
 
-            stop()
-            currentKase = allKases.doc(currentKaseID.innerText)
-            checkKaseID()
-            clearInterval(repeatRandomKaseID)
-            formEditKase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
-            formEditKase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
-            formEditKase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
-            formEditKase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
+            currentCase = cases.doc(currentCaseID.innerText)
+            checkCaseID()
+            clearInterval(repeatRandomCaseID)
+            formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
+            formEditCase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
+            formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
+            formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
         },
         (err) => {
             console.error(err)
@@ -232,10 +228,10 @@ function buttonLockClick() {
     //     if (buttonLock.unlocked) {
     //         buttonLock.unlocked = false
 
-    //         if (currentKase != undefined)
+    //         if (currentCase != undefined)
     //             buttonSave.disabled = false
 
-    //         formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+    //         formEditCase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
     //             sideButton.hidden = true
     //             let sideButtonIcon = sideButton.querySelector(".mdi")
 
@@ -277,7 +273,7 @@ function buttonLockClick() {
 
     //         buttonSave.disabled = true
 
-    //         formEditKase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
+    //         formEditCase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
     //             sideButton.hidden = false
 
     //             let inputEdit = sideButton.parentElement.querySelector("input")
@@ -355,18 +351,18 @@ function buttonLockClick() {
     //     }
 }
 
-function editKase() {
-    clearKase(true)
-    dialogEditKase.materialComponent.open()
-    titleDialogEditKase.innerText = translate("CASE_EDIT")
+function editCase() {
+    clearCase()
+    dialogEditCase.materialComponent.open()
+    titleDialogEditCase.innerText = translate("CASE_EDIT")
     buttonDelete.disabled = false
-    currentKase = allKases.doc(currentKaseSnap.id)
-    currentKaseID.innerText = currentKaseSnap.id
-    checkKaseID()
-    kaseExists = true
+    currentCase = cases.doc(currentCaseSnap.id)
+    currentCaseID.innerText = currentCaseSnap.id
+    checkCaseID()
+    caseExists = true
 
-    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
-        let itemValue = currentKaseSnap.get(inputEdit.id)
+    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
+        let itemValue = currentCaseSnap.get(inputEdit.id)
 
         if (itemValue != undefined) {
             if (inputEdit.disabled) {
@@ -388,9 +384,9 @@ function editKase() {
         }
     })
 
-    formEditKase.querySelectorAll('select').forEach(select => {
-        if (currentKaseSnap.get(select.id) != undefined) {
-            let itemValue = currentKaseSnap.get(select.id).path
+    formEditCase.querySelectorAll('select').forEach(select => {
+        if (currentCaseSnap.get(select.id) != undefined) {
+            let itemValue = currentCaseSnap.get(select.id).path
 
             if (itemValue != undefined) {
                 if (select.id.includes('_')) {
@@ -404,11 +400,11 @@ function editKase() {
     })
 }
 
-function saveKase() {
-    let kaseData = new Object()
+function saveCase() {
+    let caseData = new Object()
     let valid = true
 
-    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
+    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
         if (inputEdit != undefined) {
             if (inputEdit.value == '') {
                 if (inputEdit.required) {
@@ -418,16 +414,16 @@ function saveKase() {
             }
             else if (!inputEdit.disabled && !inputEdit.readOnly) {
                 if (inputEdit.mask != undefined) {
-                    kaseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
+                    caseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
                 }
                 else {
-                    kaseData[inputEdit.id] = inputEdit.value
+                    caseData[inputEdit.id] = inputEdit.value
                 }
             }
         }
     })
 
-    formEditKase.querySelectorAll('select').forEach(select => {
+    formEditCase.querySelectorAll('select').forEach(select => {
         if (select != undefined) {
             if (select.tomSelect.getValue() == '') {
                 if (select.required) {
@@ -436,42 +432,43 @@ function saveKase() {
                 }
             }
             else {
-                kaseData[select.id] = db.doc(select.tomSelect.getValue())
+                caseData[select.id] = db.doc(select.tomSelect.getValue())
             }
         }
     })
 
-    console.log(kaseData)
+    console.log(caseData)
 
     if (valid) {
-        if (kaseExists) {
-            kaseData.updateUser = firebase.auth().currentUser.email
-            kaseData.updateDate = new Date().toJSON().substr(0, 10)
-            kaseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
-            currentKase.update(kaseData)
+        if (caseExists) {
+            caseData.updateUser = firebase.auth().currentUser.email
+            caseData.updateDate = new Date().toJSON().substr(0, 10)
+            caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
+            currentCase.update(caseData)
         } else {
-            kaseData.createUser = firebase.auth().currentUser.email
-            kaseData.createDate = new Date().toJSON().substr(0, 10)
-            kaseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
-            kaseData.status = "active"
-            currentKase.set(kaseData)
+            caseData.createUser = firebase.auth().currentUser.email
+            caseData.createDate = new Date().toJSON().substr(0, 10)
+            caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
+            caseData.status = "active"
+            currentCase.set(caseData)
         }
-        clearKase()
+        clearCase()
     }
 }
-buttonSave.onclick = saveKase
+buttonSave.onclick = saveCase
 
-function deleteKase() {
-    dialogDeleteKase.materialComponent.open()
+function deleteCase() {
+    dialogDeleteCase.materialComponent.open()
 }
-buttonDelete.onclick = deleteKase
+buttonDelete.onclick = deleteCase
 
-function clearKase(dontReload) {
-    currentKase = undefined
-    buttonLock.unlocked = true
-    buttonLockClick()
+function clearCase() {
+    stopAvailableIDSearch()
+    currentCase = undefined
+    // buttonLock.unlocked = true
+    // buttonLockClick()
 
-    formEditKase.querySelectorAll('input, textarea').forEach(inputEdit => {
+    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
         // let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
         // if (sideSaveButton != null) {
         //     sideSaveButton.disabled = true
@@ -488,18 +485,15 @@ function clearKase(dontReload) {
         }
     })
 
-    formEditKase.querySelectorAll('select').forEach(select => {
+    formEditCase.querySelectorAll('select').forEach(select => {
         if (!select.id.includes('_')) {
             select.tomSelect.removeItem(select.tomSelect.getValue())
         }
     })
 
-    dialogEditKase.materialComponent.close()
+    dialogEditCase.materialComponent.close()
     buttonDelete.disabled = true
     buttonSave.disabled = true
-    if (dontReload != true) {
-        loadKases()
-    }
 }
 
 function headerClick(headerID) {
@@ -529,22 +523,22 @@ function headerClick(headerID) {
         }
 
         if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
-            orderKase(headerID, "asc")
+            orderCase(headerID, "asc")
             clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
         } else {
-            orderKase(headerID, "desc")
+            orderCase(headerID, "desc")
             clickedHeaderSortIcon.classList.add("mdi-rotate-180")
         }
     }
 }
 
-function loadKases() {
+function loadCases() {
     stopCurrentQuery()
-    stopCurrentQuery = currentQuery.onSnapshot(
+    stopCurrentQuery = cases.orderBy(currentOrder, currentOrderDirection).onSnapshot(
         (snapshot) => {
             console.log(snapshot)
-            listKases(snapshot)
-            currentKasesSnap = snapshot
+            listCases(snapshot)
+            currentCasesSnap = snapshot
         },
         (err) => {
             console.error(err)
@@ -553,28 +547,28 @@ function loadKases() {
     )
 }
 
-function listKases(snap, foundKases, searchQuery) {
+function listCases(snap, foundCases, searchQuery) {
     if (snap.docs.length > 0) {
-        kasesList.innerHTML = ''
+        casesList.innerHTML = ''
         setTableOverlayState("hide")
-        snap.forEach((kaseSnap) => {
-            if (foundKases == undefined || foundKases.includes(kaseSnap.id)) {
+        snap.forEach((caseSnap) => {
+            if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
                 let tr = document.createElement("tr")
-                tr.id = kaseSnap.id
-                tr.dataset.status = kaseSnap.get("status")
+                tr.id = caseSnap.id
+                tr.dataset.status = caseSnap.get("status")
                 tr.ondblclick = () => {
-                    currentKaseSnap = kaseSnap
-                    editKase()
+                    currentCaseSnap = caseSnap
+                    editCase()
                 }
                 tr.oncontextmenu = (mouseEvent) => {
-                    currentKaseSnap = kaseSnap
-                    currentKase = allKases.doc(kaseSnap.id)
+                    currentCaseSnap = caseSnap
+                    currentCase = cases.doc(caseSnap.id)
                     contextMenu.style.left = mouseEvent.clientX + "px"
                     contextMenu.style.top = mouseEvent.clientY + "px"
                     contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                     contextMenu.materialComponent.open = true
                 }
-                kasesList.appendChild(tr)
+                casesList.appendChild(tr)
 
                 for (let column of tableColumnsList.children) {
                     let td = document.createElement("td")
@@ -582,13 +576,13 @@ function listKases(snap, foundKases, searchQuery) {
                     td.id = column.id
 
                     if (td.id == "__name__") {
-                        td.textContent = kaseSnap.id
+                        td.textContent = caseSnap.id
                     }
                     else {
-                        let value = kaseSnap.get(td.id)
+                        let value = caseSnap.get(td.id)
                         if (value != undefined) {
                             if (typeof value === "object" && value !== null) {
-                                td.textContent = value.onSnapshot(
+                                value.onSnapshot(
                                     (snapshot) => {
                                         td.textContent = snapshot.get('name')
                                     },
@@ -621,51 +615,16 @@ function listKases(snap, foundKases, searchQuery) {
                 }
             }
         })
-        orderKase(currentOrder, currentOrderDirection)
     } else {
         setTableOverlayState("empty")
     }
 }
 
-function orderKase(orderBy, orderDirection) {
-    let switching, i, shouldSwitch, switchcount = 0
-    do {
-        switching = false
-        let rows = kasesList.children
-        for (i = 0; i < rows.length - 1; i++) {
-            shouldSwitch = false
-
-            let x = rows[i].querySelector("td#" + orderBy)
-            let y = rows[i + 1].querySelector("td#" + orderBy)
-
-            if (orderDirection == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true
-                    break
-                }
-            } else if (orderDirection == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true
-                    break
-                }
-            }
-        }
-        if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i])
-            switching = true
-
-            switchcount++
-        } else {
-            if (switchcount == 0 && orderDirection == "asc") {
-                orderDirection = "desc"
-                switching = true
-            }
-        }
-    }
-    while (switching)
-
+function orderCase(orderBy, orderDirection) {
     currentOrder = orderBy
     currentOrderDirection = orderDirection
+
+    loadCases()
 }
 
 function setTableOverlayState(state) {
@@ -701,12 +660,12 @@ function setTableOverlayState(state) {
     }
 }
 
-function changeKaseStatus(newStatus) {
-    let kaseData = new Object()
-    kaseData.status = newStatus
-    currentKase.update(kaseData)
+function changeCaseStatus(newStatus) {
+    let caseData = new Object()
+    caseData.status = newStatus
+    currentCase.update(caseData)
 
-    currentKase = undefined
+    currentCase = undefined
 }
 
 function modalExpand(header) {
@@ -731,57 +690,28 @@ function modalExpand(header) {
     hideEmptyFilters()
 }
 
-//#region SortableJS
-
-const Sortable = require("sortablejs")
-
-const properties = {
-    group: "TableColumns",
-    animation: 150,
-    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-    onChange: () => {
-        setTableOverlayState("drag")
-    },
-    onStart: () => {
-        setTableOverlayState("drag")
-    },
-    onEnd: () => {
-        listKases(currentKasesSnap)
-        let enabledColumns = []
-        for (let column of tableColumnsList.children) {
-            enabledColumns.push(column.id)
-        }
-        localStorage.setItem("enabledColumns", enabledColumns)
-    }
-}
-
-Sortable.create(tableColumnsList, properties)
-Sortable.create(hiddenTableColumnsList, properties)
-
-//#endregion
-
 for (let status of statusBar) {
     status.onmouseover = () => {
         if (currentStatus == undefined) {
-            for (let kaseRow of kasesList.children) {
-                kaseRow.classList.toggle("dimmed", kaseRow.dataset.status != status.dataset.status)
+            for (let caseRow of casesList.children) {
+                caseRow.classList.toggle("dimmed", caseRow.dataset.status != status.dataset.status)
             }
         }
     }
     status.onmouseleave = () => {
         if (currentStatus == undefined) {
-            for (let kaseRow of kasesList.children) {
-                kaseRow.classList.remove("dimmed")
+            for (let caseRow of casesList.children) {
+                caseRow.classList.remove("dimmed")
             }
         }
     }
 
     status.onclick = () => {
-        for (let kaseRow of kasesList.children) {
-            kaseRow.classList.remove("dimmed")
+        for (let caseRow of casesList.children) {
+            caseRow.classList.remove("dimmed")
         }
         if (status == currentStatus) {
-            listKases(currentKasesSnap)
+            listCases(currentCasesSnap)
 
             for (let otherStatus of statusBar) {
                 otherStatus.classList.remove("dimmed")
@@ -790,19 +720,19 @@ for (let status of statusBar) {
             currentStatus = undefined
         }
         else {
-            var foundKases = new Array()
+            var foundCases = new Array()
 
-            currentKasesSnap.forEach(
-                (kase) => {
-                    if (!foundKases.includes(kase.id)) {
-                        if (kase.get("status") == status.dataset.status) {
-                            foundKases.push(kase.id)
+            currentCasesSnap.forEach(
+                (_case) => {
+                    if (!foundCases.includes(_case.id)) {
+                        if (_case.get("status") == status.dataset.status) {
+                            foundCases.push(_case.id)
                         }
                     }
                 }
             )
-            if (foundKases.length > 0) {
-                listKases(currentKasesSnap, foundKases)
+            if (foundCases.length > 0) {
+                listCases(currentCasesSnap, foundCases)
             }
             else {
                 setTableOverlayState("empty")
@@ -853,7 +783,6 @@ function hideEmptyFilters() {
 
 function applyFilter() {
     let emptyFilter = true
-    currentQuery = allKases
 
     formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
         if (inputFilter.value != '') {
@@ -867,13 +796,13 @@ function applyFilter() {
 
             switch (inputFilter.id.split('-')[1]) {
                 case "min":
-                    currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
+                    // currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
                     break
                 case "max":
-                    currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
+                    // currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
                     break
                 default:
-                    currentQuery = currentQuery.where(inputFilter.id, "==", value)
+                    // currentQuery = currentQuery.where(inputFilter.id, "==", value)
                     break
             }
         }
@@ -882,13 +811,13 @@ function applyFilter() {
         if (select.tomSelect.getValue() != '') {
             emptyFilter = false
 
-            currentQuery = currentQuery.where(select.id, "==", db.doc(select.tomSelect.getValue()))
+            // currentQuery = currentQuery.where(select.id, "==", db.doc(select.tomSelect.getValue()))
         }
     })
     if (!emptyFilter) {
         buttonClearFilter.disabled = false
         setTableOverlayState("loading")
-        loadKases()
+        loadCases()
     }
     else {
         alert(translate("EMPTY_FILTERS"))
@@ -910,9 +839,8 @@ buttonClearFilter.onclick = () => {
     })
     buttonClearFilter.disabled = true
     hideEmptyFilters()
-    currentQuery = allKases
     setTableOverlayState("loading")
-    loadKases()
+    loadCases()
 }
 
 //#endregion
@@ -939,7 +867,7 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
 
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-        loadKases()
+        loadCases()
     } else {
         dialogLogin.materialComponent.open()
     }

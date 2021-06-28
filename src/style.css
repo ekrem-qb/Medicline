@@ -249,16 +249,13 @@ th:active {
   background-color: #ffffffbf;
   color: var(--mdc-theme-text-disabled-on-background);
   user-select: none;
+  pointer-events: none;
   transition: var(--mdc-transition);
   z-index: 1;
 }
 
 #tableOverlay.hide {
   opacity: 0;
-  transform: scale(0);
-  border-radius: 10rem;
-  width: 20rem;
-  height: 20rem;
 }
 
 #tableOverlay.show-headers {
@@ -364,20 +361,20 @@ form#filter.hide {
   margin: auto;
 }
 
-#currentKaseID {
+#currentCaseID {
   font-size: initial;
 }
 
-form#editKase>.flex-column {
+form#editCase>.flex-column {
   min-width: 22rem;
 }
 
-form#editKase>.flex-column:first-child {
+form#editCase>.flex-column:first-child {
   margin-right: 1rem;
   max-width: 22rem;
 }
 
-form#editKase>.flex-column:last-child {
+form#editCase>.flex-column:last-child {
   margin-left: 1rem;
 }
 
