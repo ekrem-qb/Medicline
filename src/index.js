@@ -45,7 +45,10 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     }
 })
 
-var cases = db.collection("cases")
+const allCases = db.collection("cases")
+var currentQuery = db.collection("cases")
+var searchQuery
+var foundCases
 var currentCasesSnap, currentCaseSnap
 var currentCase, caseExists = false
 var stopCurrentQuery = () => { }
@@ -132,12 +135,12 @@ function newColumn(column) {
     return th
 }
 
-inputSearch.oninput = () => {
-    var searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
+function refreshSearch() {
+    searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        var foundCases = new Array()
+        foundCases = new Array()
 
         currentCasesSnap.forEach(
             (_case) => {
@@ -158,6 +161,8 @@ inputSearch.oninput = () => {
         clearSearch()
     }
 }
+
+inputSearch.oninput = refreshSearch
 
 function clearSearch() {
     buttonClearSearch.disabled = true
@@ -196,7 +201,7 @@ function buttonCreateClick() {
     timer = 0
     var repeatRandomCaseID = setInterval(randomCaseID, 50)
 
-    stopAvailableIDSearch = cases.onSnapshot(
+    stopAvailableIDSearch = allCases.onSnapshot(
         (snapshot) => {
             do {
                 randomCaseID()
@@ -205,7 +210,7 @@ function buttonCreateClick() {
                 console.log(currentCaseID.innerText + ":" + caseExists + " in " + snapshot.docs.length + " Time: " + timer)
             } while (caseExists)
 
-            currentCase = cases.doc(currentCaseID.innerText)
+            currentCase = allCases.doc(currentCaseID.innerText)
             checkCaseID()
             clearInterval(repeatRandomCaseID)
             formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
@@ -356,7 +361,7 @@ function editCase() {
     dialogEditCase.materialComponent.open()
     titleDialogEditCase.innerText = translate("CASE_EDIT")
     buttonDelete.disabled = false
-    currentCase = cases.doc(currentCaseSnap.id)
+    currentCase = allCases.doc(currentCaseSnap.id)
     currentCaseID.innerText = currentCaseSnap.id
     checkCaseID()
     caseExists = true
@@ -534,7 +539,7 @@ function headerClick(headerID) {
 
 function loadCases() {
     stopCurrentQuery()
-    stopCurrentQuery = cases.orderBy(currentOrder, currentOrderDirection).onSnapshot(
+    stopCurrentQuery = currentQuery.onSnapshot(
         (snapshot) => {
             console.log(snapshot)
             listCases(snapshot)
@@ -562,7 +567,7 @@ function listCases(snap, foundCases, searchQuery) {
                 }
                 tr.oncontextmenu = (mouseEvent) => {
                     currentCaseSnap = caseSnap
-                    currentCase = cases.doc(caseSnap.id)
+                    currentCase = allCases.doc(caseSnap.id)
                     contextMenu.style.left = mouseEvent.clientX + "px"
                     contextMenu.style.top = mouseEvent.clientY + "px"
                     contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
@@ -621,10 +626,44 @@ function listCases(snap, foundCases, searchQuery) {
 }
 
 function orderCase(orderBy, orderDirection) {
+    let switching, i, shouldSwitch, switchcount = 0
+    do {
+        switching = false
+        let rows = casesList.children
+        for (i = 0; i < rows.length - 1; i++) {
+            shouldSwitch = false
+
+            let x = rows[i].querySelector("td#" + orderBy)
+            let y = rows[i + 1].querySelector("td#" + orderBy)
+
+            if (orderDirection == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true
+                    break
+                }
+            } else if (orderDirection == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true
+                    break
+                }
+            }
+        }
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i])
+            switching = true
+
+            switchcount++
+        } else {
+            if (switchcount == 0 && orderDirection == "asc") {
+                orderDirection = "desc"
+                switching = true
+            }
+        }
+    }
+    while (switching)
+
     currentOrder = orderBy
     currentOrderDirection = orderDirection
-
-    loadCases()
 }
 
 function setTableOverlayState(state) {
@@ -783,27 +822,30 @@ function hideEmptyFilters() {
 
 function applyFilter() {
     let emptyFilter = true
+    currentQuery = allCases
 
     formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
         if (inputFilter.value != '') {
-            emptyFilter = false
+            if (inputFilter.id.split('-')[0] == 'createDate') {
+                emptyFilter = false
 
-            let value = inputFilter.value
+                let value = inputFilter.value
 
-            if (inputFilter.mask != undefined) {
-                value = inputFilter.mask.unmaskedvalue();
-            }
+                if (inputFilter.mask != undefined) {
+                    value = inputFilter.mask.unmaskedvalue();
+                }
 
-            switch (inputFilter.id.split('-')[1]) {
-                case "min":
-                    // currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
-                    break
-                case "max":
-                    // currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
-                    break
-                default:
-                    // currentQuery = currentQuery.where(inputFilter.id, "==", value)
-                    break
+                switch (inputFilter.id.split('-')[1]) {
+                    case "min":
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
+                        break
+                    case "max":
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
+                        break
+                    default:
+                        currentQuery = currentQuery.where(inputFilter.id, "==", value)
+                        break
+                }
             }
         }
     })
@@ -839,6 +881,7 @@ buttonClearFilter.onclick = () => {
     })
     buttonClearFilter.disabled = true
     hideEmptyFilters()
+    currentQuery = allCases
     setTableOverlayState("loading")
     loadCases()
 }
