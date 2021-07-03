@@ -68,7 +68,7 @@ document.querySelectorAll('select').forEach(select => {
 
     if (!selectID.includes('_')) {
         db.collection(selectID).onSnapshot(
-            (snapshot) => {
+            snapshot => {
                 tomSelect.clearOptions()
 
                 snapshot.docs.forEach(item => {
@@ -81,7 +81,7 @@ document.querySelectorAll('select').forEach(select => {
                     tomSelect.refreshOptions()
                 }
             },
-            (err) => {
+            err => {
                 console.error(err)
             }
         )
@@ -93,13 +93,13 @@ document.querySelectorAll('select').forEach(select => {
                     subInput.value = ""
 
                     db.doc(value).onSnapshot(
-                        (snapshot) => {
+                        snapshot => {
                             let inputValue = snapshot.get(subInput.id.split('_')[1])
                             if (inputValue != undefined) {
                                 subInput.value = inputValue
                             }
                         },
-                        (err) => {
+                        err => {
                             console.error(err)
                         }
                     )
@@ -111,7 +111,7 @@ document.querySelectorAll('select').forEach(select => {
                     subSelect.tomSelect.enable()
 
                     db.doc(value).collection(subSelect.id.split('_')[1]).onSnapshot(
-                        (snapshot) => {
+                        snapshot => {
                             subSelect.tomSelect.clear()
                             subSelect.tomSelect.clearOptions()
 
@@ -125,7 +125,7 @@ document.querySelectorAll('select').forEach(select => {
                                 subSelect.tomSelect.refreshOptions()
                             }
                         },
-                        (err) => {
+                        err => {
                             console.error(err)
                         }
                     )

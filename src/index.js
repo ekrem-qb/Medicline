@@ -53,6 +53,7 @@ var currentCasesSnap, currentCaseSnap
 var currentCase, caseExists = false
 var stopCurrentQuery = () => { }
 var stopAvailableIDSearch = () => { }
+var currentRefQueries = []
 const contextMenu = document.querySelector("#contextMenu")
 contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
@@ -78,7 +79,7 @@ function pageLoaded() {
 
 function loadInputs() {
     formEditCase.querySelectorAll('input, textarea').forEach(
-        (inputEdit) => {
+        inputEdit => {
             let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
             inputEdit.oninput = () => {
                 if (sideSaveButton != null) {
@@ -107,7 +108,7 @@ function loadColumns() {
         enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createTime", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
     }
     enabledColumns.forEach(
-        (column) => {
+        column => {
             if (columnsJSON.hasOwnProperty(column)) {
                 tableColumnsList.appendChild(newColumn(column))
             }
@@ -141,21 +142,57 @@ function refreshSearch() {
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
         foundCases = new Array()
+        let casePromises = []
 
-        currentCasesSnap.forEach(
-            (_case) => {
-                if (!foundCases.includes(_case.id)) {
-                    if ((String(_case.id) + Object.values(_case.data()).toString().toLowerCase()).includes(searchQuery)) {
+
+        currentCasesSnap.forEach(_case => {
+            if (!foundCases.includes(_case.id)) {
+                let data = String(_case.id)
+                let valuePromises = []
+                for (const value of Object.values(_case.data())) {
+                    if (typeof value === "object" && value !== null) {
+                        valuePromises.push(value.get())
+                    } else {
+                        data += " -- " + value.toString().toLowerCase()
+                    }
+                }
+                if (valuePromises.length > 0) {
+                    casePromises.push(
+                        Promise.all(valuePromises).then(values => {
+                            values.forEach(snaphot => {
+                                data += " -- " + snaphot.get('name').toString().toLowerCase()
+                            })
+                            if (data.includes(searchQuery)) {
+                                foundCases.push(_case.id)
+                            }
+                        })
+                    )
+                }
+                else {
+                    if (data.includes(searchQuery)) {
                         foundCases.push(_case.id)
                     }
                 }
             }
-        )
-        if (foundCases.length > 0) {
-            listCases(currentCasesSnap, foundCases, searchQuery)
+        })
+
+        if (casePromises.length > 0) {
+            Promise.all(casePromises).then(cases => {
+                if (foundCases.length > 0) {
+                    listCases(currentCasesSnap, foundCases, searchQuery)
+                }
+                else {
+                    setTableOverlayState("empty")
+                }
+            })
         }
         else {
-            setTableOverlayState("empty")
+            if (foundCases.length > 0) {
+                listCases(currentCasesSnap, foundCases, searchQuery)
+            }
+            else {
+                setTableOverlayState("empty")
+            }
         }
     } else {
         clearSearch()
@@ -202,10 +239,10 @@ function buttonCreateClick() {
     var repeatRandomCaseID = setInterval(randomCaseID, 50)
 
     stopAvailableIDSearch = allCases.onSnapshot(
-        (snapshot) => {
+        snapshot => {
             do {
                 randomCaseID()
-                caseExists = snapshot.docs.some((item) => item.id === currentCaseID.innerText)
+                caseExists = snapshot.docs.some(item => item.id === currentCaseID.innerText)
 
                 console.log(currentCaseID.innerText + ":" + caseExists + " in " + snapshot.docs.length + " Time: " + timer)
             } while (caseExists)
@@ -218,7 +255,7 @@ function buttonCreateClick() {
             formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
             formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
         },
-        (err) => {
+        err => {
             console.error(err)
         }
     )
@@ -537,15 +574,21 @@ function headerClick(headerID) {
     }
 }
 
+function stopCurrentRefQueries() {
+    currentRefQueries.forEach(query => {
+        query()
+    })
+}
+
 function loadCases() {
     stopCurrentQuery()
     stopCurrentQuery = currentQuery.onSnapshot(
-        (snapshot) => {
+        snapshot => {
             console.log(snapshot)
             listCases(snapshot)
             currentCasesSnap = snapshot
         },
-        (err) => {
+        err => {
             console.error(err)
             setTableOverlayState("empty")
         }
@@ -556,7 +599,8 @@ function listCases(snap, foundCases, searchQuery) {
     if (snap.docs.length > 0) {
         casesList.innerHTML = ''
         setTableOverlayState("hide")
-        snap.forEach((caseSnap) => {
+        stopCurrentRefQueries()
+        snap.forEach(caseSnap => {
             if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
                 let tr = document.createElement("tr")
                 tr.id = caseSnap.id
@@ -565,7 +609,7 @@ function listCases(snap, foundCases, searchQuery) {
                     currentCaseSnap = caseSnap
                     editCase()
                 }
-                tr.oncontextmenu = (mouseEvent) => {
+                tr.oncontextmenu = mouseEvent => {
                     currentCaseSnap = caseSnap
                     currentCase = allCases.doc(caseSnap.id)
                     contextMenu.style.left = mouseEvent.clientX + "px"
@@ -587,13 +631,19 @@ function listCases(snap, foundCases, searchQuery) {
                         let value = caseSnap.get(td.id)
                         if (value != undefined) {
                             if (typeof value === "object" && value !== null) {
-                                value.onSnapshot(
-                                    (snapshot) => {
-                                        td.textContent = snapshot.get('name')
-                                    },
-                                    (err) => {
-                                        console.error(err)
-                                    }
+                                currentRefQueries.push(
+                                    value.onSnapshot(
+                                        snapshot => {
+                                            td.textContent = snapshot.get('name')
+
+                                            if (searchQuery != undefined && searchQuery != "") {
+                                                td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                            }
+                                        },
+                                        err => {
+                                            console.error(err)
+                                        }
+                                    )
                                 )
                             } else {
                                 switch (td.id) {
@@ -614,7 +664,7 @@ function listCases(snap, foundCases, searchQuery) {
                         }
                     }
 
-                    if (searchQuery != undefined) {
+                    if (searchQuery != undefined && searchQuery != "") {
                         td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                     }
                 }
@@ -762,7 +812,7 @@ for (let status of statusBar) {
             var foundCases = new Array()
 
             currentCasesSnap.forEach(
-                (_case) => {
+                _case => {
                     if (!foundCases.includes(_case.id)) {
                         if (_case.get("status") == status.dataset.status) {
                             foundCases.push(_case.id)
@@ -929,7 +979,7 @@ function signIn() {
     firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value)
         .then(() => {
             dialogLogin.materialComponent.close()
-        }).catch((error) => {
+        }).catch(error => {
             if (error != null) {
                 alert(error.message)
                 return
