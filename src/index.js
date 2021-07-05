@@ -54,6 +54,8 @@ var currentCase, caseExists = false
 var stopCurrentQuery = () => { }
 var stopAvailableIDSearch = () => { }
 var currentRefQueries = []
+var filters = {}
+
 const contextMenu = document.querySelector("#contextMenu")
 contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
@@ -137,6 +139,7 @@ function newColumn(column) {
 }
 
 function refreshSearch() {
+    setTableOverlayState("loading")
     searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -144,18 +147,17 @@ function refreshSearch() {
         foundCases = new Array()
         let casePromises = []
 
-
         currentCasesSnap.forEach(_case => {
             if (!foundCases.includes(_case.id)) {
                 let data = String(_case.id)
                 let valuePromises = []
-                for (const value of Object.values(_case.data())) {
+                Object.values(_case.data()).forEach(value => {
                     if (typeof value === "object" && value !== null) {
                         valuePromises.push(value.get())
                     } else {
                         data += " -- " + value.toString().toLowerCase()
                     }
-                }
+                })
                 if (valuePromises.length > 0) {
                     casePromises.push(
                         Promise.all(valuePromises).then(values => {
@@ -179,7 +181,7 @@ function refreshSearch() {
         if (casePromises.length > 0) {
             Promise.all(casePromises).then(cases => {
                 if (foundCases.length > 0) {
-                    listCases(currentCasesSnap, foundCases, searchQuery)
+                    listCases(currentCasesSnap)
                 }
                 else {
                     setTableOverlayState("empty")
@@ -188,7 +190,7 @@ function refreshSearch() {
         }
         else {
             if (foundCases.length > 0) {
-                listCases(currentCasesSnap, foundCases, searchQuery)
+                listCases(currentCasesSnap)
             }
             else {
                 setTableOverlayState("empty")
@@ -204,6 +206,8 @@ inputSearch.oninput = refreshSearch
 function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
+    searchQuery = undefined
+    foundCases = undefined
     listCases(currentCasesSnap)
 }
 
@@ -595,81 +599,131 @@ function loadCases() {
     )
 }
 
-function listCases(snap, foundCases, searchQuery) {
+function listCases(snap) {
     if (snap.docs.length > 0) {
+        let noOneFound = true
+
         casesList.innerHTML = ''
-        setTableOverlayState("hide")
         stopCurrentRefQueries()
         snap.forEach(caseSnap => {
             if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
-                let tr = document.createElement("tr")
-                tr.id = caseSnap.id
-                tr.dataset.status = caseSnap.get("status")
-                tr.ondblclick = () => {
-                    currentCaseSnap = caseSnap
-                    editCase()
-                }
-                tr.oncontextmenu = mouseEvent => {
-                    currentCaseSnap = caseSnap
-                    currentCase = allCases.doc(caseSnap.id)
-                    contextMenu.style.left = mouseEvent.clientX + "px"
-                    contextMenu.style.top = mouseEvent.clientY + "px"
-                    contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
-                    contextMenu.materialComponent.open = true
-                }
-                casesList.appendChild(tr)
+                let doesntMatch = false
 
-                for (let column of tableColumnsList.children) {
-                    let td = document.createElement("td")
-                    tr.appendChild(td)
-                    td.id = column.id
-
-                    if (td.id == "__name__") {
-                        td.textContent = caseSnap.id
+                if (currentStatus != undefined) {
+                    if (caseSnap.get('status') != currentStatus.dataset.status) {
+                        doesntMatch = true
                     }
-                    else {
-                        let value = caseSnap.get(td.id)
-                        if (value != undefined) {
-                            if (typeof value === "object" && value !== null) {
-                                currentRefQueries.push(
-                                    value.onSnapshot(
-                                        snapshot => {
-                                            td.textContent = snapshot.get('name')
+                }
 
-                                            if (searchQuery != undefined && searchQuery != "") {
-                                                td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                Object.entries(filters).forEach(filter => {
+                    switch (filter[0].split('-')[1]) {
+                        case "min":
+                            if (caseSnap.get(filter[0].split('-')[0]) < filter[1]) {
+                                doesntMatch = true
+                            }
+                            break
+                        case "max":
+                            if (caseSnap.get(filter[0].split('-')[0]) > filter[1]) {
+                                doesntMatch = true
+                            }
+                            break
+                        default:
+                            let value = caseSnap.get(filter[0].split('-')[0])
+
+                            if (value != undefined) {
+                                if (typeof value === "object" && value !== null) {
+                                    if (value.path != filter[1].path) {
+                                        doesntMatch = true
+                                    }
+                                }
+                                else if (!value.toLowerCase().includes(filter[1].toLowerCase())) {
+                                    doesntMatch = true
+                                }
+                            }
+                            else {
+                                doesntMatch = true
+                            }
+                            break
+                    }
+                })
+
+                if (!doesntMatch) {
+                    setTableOverlayState("hide")
+                    noOneFound = false
+
+                    let tr = document.createElement("tr")
+                    tr.id = caseSnap.id
+                    tr.dataset.status = caseSnap.get("status")
+                    tr.ondblclick = () => {
+                        currentCaseSnap = caseSnap
+                        editCase()
+                    }
+                    tr.oncontextmenu = mouseEvent => {
+                        currentCaseSnap = caseSnap
+                        currentCase = allCases.doc(caseSnap.id)
+                        contextMenu.style.left = mouseEvent.clientX + "px"
+                        contextMenu.style.top = mouseEvent.clientY + "px"
+                        contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
+                        contextMenu.materialComponent.open = true
+                    }
+                    casesList.appendChild(tr)
+
+                    for (let column of tableColumnsList.children) {
+                        let td = document.createElement("td")
+                        tr.appendChild(td)
+                        td.id = column.id
+
+                        if (td.id == "__name__") {
+                            td.textContent = caseSnap.id
+                        }
+                        else {
+                            let value = caseSnap.get(td.id)
+                            if (value != undefined) {
+                                if (typeof value === "object" && value !== null) {
+                                    currentRefQueries.push(
+                                        value.onSnapshot(
+                                            snapshot => {
+                                                td.textContent = snapshot.get('name')
+
+                                                if (searchQuery != undefined && searchQuery != "") {
+                                                    td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                                }
+                                            },
+                                            err => {
+                                                console.error(err)
                                             }
-                                        },
-                                        err => {
-                                            console.error(err)
-                                        }
+                                        )
                                     )
-                                )
-                            } else {
-                                switch (td.id) {
-                                    case "description":
-                                    case "complaints":
-                                        td.textContent = td.title = value
-                                        break
-                                    default:
-                                        if (td.id.includes("Date")) {
-                                            td.textContent = new Date(value).toLocaleDateString("tr")
-                                        }
-                                        else {
-                                            td.textContent = value
-                                        }
-                                        break
+                                } else {
+                                    switch (td.id) {
+                                        case "description":
+                                        case "complaints":
+                                            td.textContent = td.title = value
+                                            break
+                                        default:
+                                            if (td.id.includes("Date")) {
+                                                td.textContent = new Date(value).toLocaleDateString("tr")
+                                            }
+                                            else {
+                                                td.textContent = value
+                                            }
+                                            break
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    if (searchQuery != undefined && searchQuery != "") {
-                        td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                        if (searchQuery != undefined && searchQuery != "") {
+                            td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                        }
                     }
                 }
             }
         })
+
+        if (noOneFound) {
+            setTableOverlayState("empty")
+        }
     } else {
         setTableOverlayState("empty")
     }
@@ -800,39 +854,22 @@ for (let status of statusBar) {
             caseRow.classList.remove("dimmed")
         }
         if (status == currentStatus) {
-            listCases(currentCasesSnap)
-
             for (let otherStatus of statusBar) {
                 otherStatus.classList.remove("dimmed")
                 otherStatus.classList.remove("selected")
             }
+
             currentStatus = undefined
         }
         else {
-            var foundCases = new Array()
-
-            currentCasesSnap.forEach(
-                _case => {
-                    if (!foundCases.includes(_case.id)) {
-                        if (_case.get("status") == status.dataset.status) {
-                            foundCases.push(_case.id)
-                        }
-                    }
-                }
-            )
-            if (foundCases.length > 0) {
-                listCases(currentCasesSnap, foundCases)
-            }
-            else {
-                setTableOverlayState("empty")
-            }
-
             for (let otherStatus of statusBar) {
                 otherStatus.classList.toggle("dimmed", otherStatus != status)
                 otherStatus.classList.toggle("selected", otherStatus == status)
             }
+
             currentStatus = status
         }
+        listCases(currentCasesSnap)
     }
 }
 
@@ -874,16 +911,21 @@ function applyFilter() {
     let emptyFilter = true
     currentQuery = allCases
 
+    filters = {}
+
     formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
         if (inputFilter.value != '') {
+            emptyFilter = false
+
+            let value = inputFilter.value
+
+            if (inputFilter.mask != undefined) {
+                value = inputFilter.mask.unmaskedvalue();
+            }
+
             if (inputFilter.id.split('-')[0] == 'createDate') {
-                emptyFilter = false
-
-                let value = inputFilter.value
-
-                if (inputFilter.mask != undefined) {
-                    value = inputFilter.mask.unmaskedvalue();
-                }
+                setTableOverlayState("loading")
+                loadCases()
 
                 switch (inputFilter.id.split('-')[1]) {
                     case "min":
@@ -897,19 +939,24 @@ function applyFilter() {
                         break
                 }
             }
+            else {
+                filters[inputFilter.id] = value
+            }
         }
     })
     formFilter.querySelectorAll('select').forEach(select => {
         if (select.tomSelect.getValue() != '') {
             emptyFilter = false
 
-            // currentQuery = currentQuery.where(select.id, "==", db.doc(select.tomSelect.getValue()))
+            filters[select.id] = db.doc(select.tomSelect.getValue())
         }
     })
+
     if (!emptyFilter) {
         buttonClearFilter.disabled = false
-        setTableOverlayState("loading")
-        loadCases()
+        if (Object.entries(filters).length > 0) {
+            listCases(currentCasesSnap)
+        }
     }
     else {
         alert(translate("EMPTY_FILTERS"))
@@ -932,6 +979,7 @@ buttonClearFilter.onclick = () => {
     buttonClearFilter.disabled = true
     hideEmptyFilters()
     currentQuery = allCases
+    filters = {}
     setTableOverlayState("loading")
     loadCases()
 }
