@@ -7,7 +7,6 @@ const tableOverlayText = tableOverlay.querySelector("h3")
 const columnsJSON = require("./columns.json")
 const tableColumnsList = document.querySelector("#tableColumnsList")
 const casesList = document.querySelector("#casesList")
-var currentOrder, currentOrderDirection
 
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 
@@ -17,42 +16,22 @@ const buttonClearFilter = document.querySelector("button#clearFilter")
 const statusBar = document.querySelector("#statusBar").children
 var currentStatus
 
-const dialogEditCase = document.querySelector("#dialogEditCase")
-dialogEditCase.materialComponent.scrimClickAction = ''
-dialogEditCase.materialComponent.escapeKeyAction = ''
-dialogEditCase.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "cancel") {
-        clearCase()
-    }
-})
-const buttonLock = dialogEditCase.querySelector("button#lock")
-const titleDialogEditCase = dialogEditCase.querySelector("#titleDialogEditCase")
-const formEditCase = dialogEditCase.querySelector("form#editCase")
-const buttonSave = dialogEditCase.querySelector("button#save")
-const currentCaseID = dialogEditCase.querySelector("#currentCaseID")
-currentCaseID.parentElement.onclick = () => {
-    navigator.clipboard.writeText(currentCaseID.innerText)
-    alert(currentCaseID.innerText + translate("COPIED"))
-}
-
-const buttonDelete = dialogEditCase.querySelector("button#delete")
-
 const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        currentCase.delete()
-        clearCase()
+        currentCase.delete().then(() => {
+            currentCase = undefined
+        }).catch((error) => {
+            console.error("Error removing document: ", error)
+        })
     }
 })
 
-const allCases = db.collection("cases")
 var currentQuery = db.collection("cases")
 var searchQuery
 var foundCases
-var currentCasesSnap, currentCaseSnap
-var currentCase, caseExists = false
+var currentCasesSnap
 var stopCurrentQuery = () => { }
-var stopAvailableIDSearch = () => { }
 var currentRefQueries = []
 var filters = {}
 
@@ -61,43 +40,12 @@ contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
 })
 
-
-const snackbar = document.querySelector("#snackbar")
-function alert(message) {
-    snackbar.materialComponent.close()
-    snackbar.materialComponent.labelText = message
-    snackbar.materialComponent.open()
-}
-
-clearCase()
-loadInputs()
 loadColumns()
 
 function pageLoaded() {
     formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
     applyFilter()
     hideEmptyFilters()
-}
-
-function loadInputs() {
-    formEditCase.querySelectorAll('input, textarea').forEach(
-        inputEdit => {
-            let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
-            inputEdit.oninput = () => {
-                if (sideSaveButton != null) {
-                    sideSaveButton.disabled = inputEdit.value == inputEdit.oldValue || inputEdit.value == ''
-                }
-                if (inputEdit.required && !buttonLock.unlocked) {
-                    inputEdit.valid = String(inputEdit.value).trim() != ''
-                }
-            }
-            inputEdit.onchange = () => {
-                inputEdit.value = String(inputEdit.value).trim()
-                if (inputEdit.required && !buttonLock.unlocked) {
-                    inputEdit.valid = inputEdit.value != ''
-                }
-            }
-        })
 }
 
 function loadColumns() {
@@ -209,337 +157,6 @@ function clearSearch() {
     searchQuery = undefined
     foundCases = undefined
     listCases(currentCasesSnap)
-}
-
-function checkCaseID() {
-    // if (!buttonLock.unlocked)
-    buttonSave.disabled = currentCase == undefined
-
-    currentCaseID.parentElement.disabled = currentCase == undefined
-    let idIcon = currentCaseID.parentElement.querySelector(".mdi")
-    idIcon.classList.toggle("mdi-pound", currentCase != undefined)
-    idIcon.classList.toggle("mdi-loading", currentCase == undefined)
-    idIcon.classList.toggle("mdi-spin", currentCase == undefined)
-
-    if (currentCase == undefined)
-        currentCaseID.parentElement.parentElement.title = "Generating available ID..."
-    else
-        currentCaseID.parentElement.parentElement.title = ''
-}
-
-var timer = 0
-
-function randomCaseID() {
-    currentCaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
-    checkCaseID()
-    timer++
-}
-
-function buttonCreateClick() {
-    dialogEditCase.materialComponent.open()
-    titleDialogEditCase.innerText = translate("NEW_CASE")
-
-    timer = 0
-    var repeatRandomCaseID = setInterval(randomCaseID, 50)
-
-    stopAvailableIDSearch = allCases.onSnapshot(
-        snapshot => {
-            do {
-                randomCaseID()
-                caseExists = snapshot.docs.some(item => item.id === currentCaseID.innerText)
-
-                console.log(currentCaseID.innerText + ":" + caseExists + " in " + snapshot.docs.length + " Time: " + timer)
-            } while (caseExists)
-
-            currentCase = allCases.doc(currentCaseID.innerText)
-            checkCaseID()
-            clearInterval(repeatRandomCaseID)
-            formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
-            formEditCase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
-            formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
-            formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
-        },
-        err => {
-            console.error(err)
-        }
-    )
-}
-
-function buttonLockClick() {
-    //     buttonLock.classList.toggle("mdc-button--green", !buttonLock.unlocked)
-    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock", buttonLock.unlocked)
-    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-lock-open-variant", !buttonLock.unlocked)
-    //     buttonLock.querySelector(".mdc-fab__icon").classList.toggle("mdi-flip-h", !buttonLock.unlocked)
-
-    //     if (buttonLock.unlocked) {
-    //         buttonLock.unlocked = false
-
-    //         if (currentCase != undefined)
-    //             buttonSave.disabled = false
-
-    //         formEditCase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
-    //             sideButton.hidden = true
-    //             let sideButtonIcon = sideButton.querySelector(".mdi")
-
-    //             let inputEdit = sideButton.parentElement.querySelector("input")
-    //             if (sideButton.classList.contains("button--save_item")) {
-    //                 if (inputEdit.classList.contains("editable-select")) {
-    //                     sideButton.classList.add("button--add_select_item")
-    //                     sideButtonIcon.classList.add("mdi-plus")
-    //                     sideButtonIcon.classList.add("mdi-rotate-180")
-    //                     sideButtonIcon.classList.remove("mdi-content-save")
-    //                     sideButton.classList.remove("button--save_item")
-    //                     if (inputEdit.oldValue != undefined) {
-    //                         selectThisItem(inputEdit, inputEdit.oldValue)
-    //                     }
-    //                 } else {
-    //                     inputEdit.disabled = true
-    //                     inputEdit.readOnly = true
-    //                 }
-    //             }
-    //             if (inputEdit.classList.contains("editable-select")) {
-    //                 inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
-    //                 inputEdit.parentElement.querySelector(".es-list").hidden = false
-    //                 inputEdit.onchange = () => {
-    //                     let hasMenuItem = false
-    //                     inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
-    //                         if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
-    //                             hasMenuItem = true
-    //                         }
-    //                     })
-    //                     if (!hasMenuItem) {
-    //                         inputEdit.value = ''
-    //                         $(inputEdit).editableSelect("filter")
-    //                     }
-    //                 }
-    //             }
-    //         })
-    //     } else {
-    //         buttonLock.unlocked = true
-
-    //         buttonSave.disabled = true
-
-    //         formEditCase.querySelectorAll(".button--add_select_item, .button--save_item").forEach(sideButton => {
-    //             sideButton.hidden = false
-
-    //             let inputEdit = sideButton.parentElement.querySelector("input")
-    //             let inputEditID = inputEdit.id.replace(/[0-9]/g, '')
-
-    //             if (sideButton.classList.contains("button--save_item")) {
-    //                 if (inputEdit.oldValue != undefined) {
-    //                     inputEdit.disabled = false
-    //                     inputEdit.readOnly = false
-    //                 }
-    //             }
-
-    //             let sideButtonIcon = sideButton.querySelector(".mdi")
-    //             sideButton.onclick = () => {
-    //                 if (sideButton.classList.contains("button--add_select_item")) {
-    //                     sideButton.classList.remove("button--add_select_item")
-    //                     sideButtonIcon.classList.remove("mdi-plus")
-    //                     sideButtonIcon.classList.remove("mdi-rotate-180")
-    //                     sideButtonIcon.classList.add("mdi-content-save")
-    //                     sideButton.classList.add("button--save_item")
-
-    //                     inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = true
-    //                     inputEdit.parentElement.querySelector(".es-list").hidden = true
-    //                     inputEdit.value = ''
-    //                     inputEdit.valid = true
-    //                     inputEdit.onchange = null
-
-    //                     let subElements = inputEdit.parentElement.parentElement.querySelectorAll("input")
-    //                     subElements.forEach(subElement => {
-    //                         subElementID = subElement.id.replace(/[0-9]/g, '')
-    //                         if (subElement != inputEdit && subElementID.split('_')[0] == inputEditID) {
-    //                             subElement.disabled = true
-    //                             subElement.value = ''
-    //                         }
-    //                     })
-    //                 } else {
-    //                     if (inputEditID.includes('_')) {
-    //                         let parentSelect = inputEdit.parentElement.parentElement.querySelector("input")
-    //                         let data = new Object()
-    //                         data[inputEdit.value] = ''
-    //                         if (inputEdit.classList.contains("editable-select")) {
-    //                             db.collection(inputEditID.split('_')[0]).doc(parentSelect.value).update(data)
-    //                         } else {
-    //                             db.collection(inputEditID.split('_')[0]).doc(parentSelect.value).set(data)
-    //                         }
-    //                     } else {
-    //                         db.collection(inputEditID).doc(inputEdit.value).set({})
-    //                     }
-
-    //                     if (inputEdit.classList.contains("editable-select")) {
-    //                         sideButton.classList.add("button--add_select_item")
-    //                         sideButtonIcon.classList.add("mdi-plus")
-    //                         sideButtonIcon.classList.add("mdi-rotate-180")
-    //                         sideButtonIcon.classList.remove("mdi-content-save")
-    //                         sideButton.classList.remove("button--save_item")
-
-    //                         inputEdit.parentElement.querySelector(".mdc-select__dropdown-icon").hidden = false
-    //                         inputEdit.parentElement.querySelector(".es-list").hidden = false
-    //                         inputEdit.onchange = () => {
-    //                             let hasMenuItem = false
-    //                             inputEdit.parentElement.querySelectorAll("li").forEach(menuItem => {
-    //                                 if (menuItem.innerText.toLowerCase() == inputEdit.value.toLowerCase()) {
-    //                                     hasMenuItem = true
-    //                                 }
-    //                             })
-    //                             if (!hasMenuItem) {
-    //                                 inputEdit.value = ''
-    //                                 $(inputEdit).editableSelect("filter")
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         })
-    //     }
-}
-
-function editCase() {
-    clearCase()
-    dialogEditCase.materialComponent.open()
-    titleDialogEditCase.innerText = translate("CASE_EDIT")
-    buttonDelete.disabled = false
-    currentCase = allCases.doc(currentCaseSnap.id)
-    currentCaseID.innerText = currentCaseSnap.id
-    checkCaseID()
-    caseExists = true
-
-    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
-        let itemValue = currentCaseSnap.get(inputEdit.id)
-
-        if (itemValue != undefined) {
-            if (inputEdit.disabled) {
-                if (itemValue != '') {
-                    inputEdit.parentElement.parentElement.hidden = false
-                }
-            } else {
-                inputEdit.parentElement.parentElement.hidden = false
-            }
-
-            if (!inputEdit.parentElement.parentElement.hidden) {
-                if (inputEdit.getAttribute("mask") == "date") {
-                    inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
-                }
-                else {
-                    inputEdit.value = itemValue
-                }
-            }
-        }
-    })
-
-    formEditCase.querySelectorAll('select').forEach(select => {
-        if (currentCaseSnap.get(select.id) != undefined) {
-            let itemValue = currentCaseSnap.get(select.id).path
-
-            if (itemValue != undefined) {
-                if (select.id.includes('_')) {
-                    setTimeout(() => select.tomSelect.addItem(itemValue), 50)
-                }
-                else {
-                    select.tomSelect.addItem(itemValue)
-                }
-            }
-        }
-    })
-}
-
-function saveCase() {
-    let caseData = new Object()
-    let valid = true
-
-    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
-        if (inputEdit != undefined) {
-            if (inputEdit.value == '') {
-                if (inputEdit.required) {
-                    inputEdit.valid = false
-                    valid = false
-                }
-            }
-            else if (!inputEdit.disabled && !inputEdit.readOnly) {
-                if (inputEdit.mask != undefined) {
-                    caseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
-                }
-                else {
-                    caseData[inputEdit.id] = inputEdit.value
-                }
-            }
-        }
-    })
-
-    formEditCase.querySelectorAll('select').forEach(select => {
-        if (select != undefined) {
-            if (select.tomSelect.getValue() == '') {
-                if (select.required) {
-                    select.valid = false
-                    valid = false
-                }
-            }
-            else {
-                caseData[select.id] = db.doc(select.tomSelect.getValue())
-            }
-        }
-    })
-
-    console.log(caseData)
-
-    if (valid) {
-        if (caseExists) {
-            caseData.updateUser = firebase.auth().currentUser.email
-            caseData.updateDate = new Date().toJSON().substr(0, 10)
-            caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
-            currentCase.update(caseData)
-        } else {
-            caseData.createUser = firebase.auth().currentUser.email
-            caseData.createDate = new Date().toJSON().substr(0, 10)
-            caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
-            caseData.status = "active"
-            currentCase.set(caseData)
-        }
-        clearCase()
-    }
-}
-buttonSave.onclick = saveCase
-
-function deleteCase() {
-    dialogDeleteCase.materialComponent.open()
-}
-buttonDelete.onclick = deleteCase
-
-function clearCase() {
-    stopAvailableIDSearch()
-    currentCase = undefined
-    // buttonLock.unlocked = true
-    // buttonLockClick()
-
-    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
-        // let sideSaveButton = inputEdit.parentElement.querySelector(".button--save_item")
-        // if (sideSaveButton != null) {
-        //     sideSaveButton.disabled = true
-        // }
-
-        inputEdit.value = ''
-        inputEdit.valid = true
-
-        if (inputEdit.id.includes('_')) {
-            inputEdit.disabled = true
-        }
-        else {
-            inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
-        }
-    })
-
-    formEditCase.querySelectorAll('select').forEach(select => {
-        if (!select.id.includes('_')) {
-            select.tomSelect.removeItem(select.tomSelect.getValue())
-        }
-    })
-
-    dialogEditCase.materialComponent.close()
-    buttonDelete.disabled = true
-    buttonSave.disabled = true
 }
 
 function headerClick(headerID) {
@@ -655,11 +272,9 @@ function listCases(snap) {
                     tr.id = caseSnap.id
                     tr.dataset.status = caseSnap.get("status")
                     tr.ondblclick = () => {
-                        currentCaseSnap = caseSnap
-                        editCase()
+                        ipcRenderer.send('case', caseSnap.id)
                     }
                     tr.oncontextmenu = mouseEvent => {
-                        currentCaseSnap = caseSnap
                         currentCase = allCases.doc(caseSnap.id)
                         contextMenu.style.left = mouseEvent.clientX + "px"
                         contextMenu.style.top = mouseEvent.clientY + "px"
@@ -765,9 +380,6 @@ function orderCase(orderBy, orderDirection) {
         }
     }
     while (switching)
-
-    currentOrder = orderBy
-    currentOrderDirection = orderDirection
 }
 
 function setTableOverlayState(state) {
@@ -806,9 +418,11 @@ function setTableOverlayState(state) {
 function changeCaseStatus(newStatus) {
     let caseData = new Object()
     caseData.status = newStatus
-    currentCase.update(caseData)
-
-    currentCase = undefined
+    currentCase.update(caseData).then(() => {
+        currentCase = undefined
+    }).catch((error) => {
+        console.error("Error updating document: ", error)
+    })
 }
 
 function modalExpand(header) {
@@ -988,7 +602,6 @@ buttonClearFilter.onclick = () => {
 
 //#region Update
 
-const { ipcRenderer } = require("electron")
 const dialogUpdate = document.querySelector("#dialogUpdate")
 dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "install") {
@@ -1047,27 +660,5 @@ buttonPasswordVisibility.onclick = () => {
         iconPasswordVisibility.classList.add("mdi-eye-off-outline")
     }
 }
-
-//#endregion
-
-//#region Window Maximize
-
-const maximizeIcon = document.querySelector(".window-action>svg.maximize")
-const dragArea = document.querySelector(".drag-area")
-
-ipcRenderer.on("window-action", (event, action) => {
-    switch (action) {
-        case "maximize":
-            maximizeIcon.classList.remove("maximize")
-            maximizeIcon.classList.add("restore")
-            dragArea.classList.remove("ms-1", "mt-1")
-            break
-        case "unmaximize":
-            maximizeIcon.classList.add("maximize")
-            maximizeIcon.classList.remove("restore")
-            dragArea.classList.add("ms-1", "mt-1")
-            break
-    }
-})
 
 //#endregion

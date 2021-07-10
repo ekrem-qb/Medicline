@@ -5,7 +5,6 @@ async function main() {
     const isDevelopment = require('electron-is-dev')
     const log = require('electron-log')
     const { autoUpdater } = require("electron-updater")
-    var window
 
     autoUpdater.autoInstallOnAppQuit = false
     autoUpdater.fullChangelog = true
@@ -48,18 +47,23 @@ async function main() {
     ipcMain.on("window-action", (event, action) => {
         switch (action) {
             case "minimize":
-                mainWindow.minimize()
+                event.sender.getOwnerBrowserWindow().minimize()
                 break
             case "maximize":
-                if (mainWindow.isMaximized()) {
-                    mainWindow.unmaximize()
+                if (event.sender.getOwnerBrowserWindow().isMaximized()) {
+                    event.sender.getOwnerBrowserWindow().unmaximize()
                 }
                 else {
-                    mainWindow.maximize()
+                    event.sender.getOwnerBrowserWindow().maximize()
                 }
                 break
             case "exit":
-                app.exit()
+                if (event.sender.getOwnerBrowserWindow() == mainWindow) {
+                    app.exit()
+                }
+                else {
+                    event.sender.getOwnerBrowserWindow().close()
+                }
                 break
             default:
                 break
@@ -67,7 +71,7 @@ async function main() {
     })
 
     async function createMainWindow() {
-        window = new BrowserWindow({
+        let window = new BrowserWindow({
             width: 1280,
             height: 720,
             minWidth: 800,
@@ -77,7 +81,6 @@ async function main() {
             webPreferences: {
                 contextIsolation: false,
                 nodeIntegration: true,
-                enableRemoteModule: false,
             }
         })
 
@@ -90,7 +93,7 @@ async function main() {
                 reject(new Error('Window closed prematurely.')))
 
             // initiate the loading
-            window.loadFile(__dirname + "/src/index.html")
+            window.loadFile(__dirname + '/src/index.html')
         })
 
         return window
@@ -138,6 +141,41 @@ async function main() {
 
     mainWindow.on("unmaximize", () => {
         mainWindow.webContents.send('window-action', 'unmaximize')
+    })
+
+    ipcMain.on('case', (event, caseID) => {
+        const caseWindow = new BrowserWindow({
+            width: 1280,
+            height: 720,
+            minWidth: 800,
+            minHeight: 600,
+            frame: false,
+            autoHideMenuBar: true,
+            webPreferences: {
+                contextIsolation: false,
+                nodeIntegration: true,
+            },
+            show: false,
+            backgroundColor: '#fff'
+        })
+
+        caseWindow.loadFile(__dirname + '/src/case.html', {
+            hash: caseID
+        })
+
+        caseWindow.once('ready-to-show', () => { caseWindow.show() })
+
+        caseWindow.on("maximize", () => {
+            caseWindow.webContents.send('window-action', 'maximize')
+        })
+
+        caseWindow.on("unmaximize", () => {
+            caseWindow.webContents.send('window-action', 'unmaximize')
+        })
+
+        if (isDevelopment) {
+            caseWindow.webContents.openDevTools()
+        }
     })
 
     // awaiting terminationPromise here keeps the mainWindow object alive

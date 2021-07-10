@@ -4,9 +4,9 @@
 
 'use strict'
 
-async function main() {
-  const { ipcRenderer } = require('electron')
+const { ipcRenderer } = require('electron')
 
+async function main() {
   // breakpoints should work from here on,
   // toggle them with F9 or just use 'debugger'
   //debugger
@@ -22,8 +22,35 @@ async function main() {
 
   // now both Main and Renderer processes are ready
   // we can do whatever we want
-
 }
+
+document.onkeydown = (ev => {
+  if (ev.key == 'F5') {
+    location.reload()
+  }
+})
+
+//#region Window Maximize
+
+const maximizeIcon = document.querySelector(".window-action>svg.maximize")
+const dragArea = document.querySelector(".drag-area")
+
+ipcRenderer.on("window-action", (event, action) => {
+  switch (action) {
+    case "maximize":
+      maximizeIcon.classList.remove("maximize")
+      maximizeIcon.classList.add("restore")
+      dragArea.classList.remove("ms-1", "mt-1")
+      break
+    case "unmaximize":
+      maximizeIcon.classList.add("maximize")
+      maximizeIcon.classList.remove("restore")
+      dragArea.classList.add("ms-1", "mt-1")
+      break
+  }
+})
+
+//#endregion
 
 main().catch((error) => {
   console.log(error)
