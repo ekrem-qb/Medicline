@@ -1,7 +1,7 @@
 {
-  "name": "medicline",
-  "version": "1.0.4",
-  "description": "Electron based Firebase Firestore App",
+  "name": "Medicline",
+  "version": "0.0.1",
+  "description": "Medicline",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -19,7 +19,7 @@
     "Firestore",
     "Database"
   ],
-  "author": "ekrem007",
+  "author": "ekrem.bayram",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ekrem007/Medicline/issues"
@@ -44,12 +44,12 @@
     "tom-select": "^1.7.6"
   },
   "build": {
-    "appId": "com.ekrem.database_electron",
+    "appId": "com.medicline",
     "win": {
       "publish": {
         "provider": "github",
         "owner": "ekrem007",
-        "token": "487a958ca1b8d3c69e930fcb2a1ff4e8c83e2efc",
+        "token": "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",
         "private": true
       }
     }
