@@ -1,6 +1,6 @@
 {
-    "EMAIL": "Email",
-    "PASSWORD": "Email",
+    "USERNAME": "Username",
+    "PASSWORD": "Password",
     "SIGN_IN": "Sign In",
     "SEARCH": "Search",
     "CREATE": "Create",

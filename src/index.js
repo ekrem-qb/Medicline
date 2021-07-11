@@ -627,21 +627,28 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 })
 
-const dialogLogin = document.querySelector("#dialogLogin")
+const dialogLogin = document.querySelector('#dialogLogin')
 dialogLogin.materialComponent.scrimClickAction = ''
 dialogLogin.materialComponent.escapeKeyAction = ''
 
-const inputEmail = dialogLogin.querySelector("input#email")
-const inputPassword = dialogLogin.querySelector("input#password")
-const buttonPasswordVisibility = dialogLogin.querySelector("button#passwordVisibility")
-const iconPasswordVisibility = dialogLogin.querySelector("button#passwordVisibility>.mdi")
+const inputUserName = dialogLogin.querySelector('input#userName')
+const inputPassword = dialogLogin.querySelector('input#password')
+const buttonPasswordVisibility = dialogLogin.querySelector('button#passwordVisibility')
+const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
+const buttonSignIn = dialogLogin.querySelector('button#signIn')
+const iconSignIn = buttonSignIn.querySelector('.mdi')
 
-function signIn() {
-    firebase.auth().signInWithEmailAndPassword(inputEmail.materialComponent.value, inputPassword.materialComponent.value)
+buttonSignIn.onclick = () => {
+    iconSignIn.classList.remove('mdi-arrow-right')
+    iconSignIn.classList.add('mdi-loading', 'mdi-spin')
+
+    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + '@medicline.com', inputPassword.materialComponent.value)
         .then(() => {
             dialogLogin.materialComponent.close()
         }).catch(error => {
             if (error != null) {
+                iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
+                iconSignIn.classList.add('mdi-arrow-right')
                 alert(error.message)
                 return
             }
@@ -649,15 +656,15 @@ function signIn() {
 }
 
 buttonPasswordVisibility.onclick = () => {
-    if (inputPassword.type == "password") {
-        inputPassword.type = "text"
-        iconPasswordVisibility.classList.add("mdi-eye-outline")
-        iconPasswordVisibility.classList.remove("mdi-eye-off-outline")
+    if (inputPassword.type == 'password') {
+        inputPassword.type = 'text'
+        iconPasswordVisibility.classList.add('mdi-eye-outline')
+        iconPasswordVisibility.classList.remove('mdi-eye-off-outline')
     }
     else {
-        inputPassword.type = "password"
-        iconPasswordVisibility.classList.remove("mdi-eye-outline")
-        iconPasswordVisibility.classList.add("mdi-eye-off-outline")
+        inputPassword.type = 'password'
+        iconPasswordVisibility.classList.remove('mdi-eye-outline')
+        iconPasswordVisibility.classList.add('mdi-eye-off-outline')
     }
 }
 

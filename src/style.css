@@ -94,7 +94,7 @@ body {
 }
 
 #titleBar {
-  z-index: 10;
+  z-index: 100;
 }
 
 .form-group {
@@ -276,6 +276,7 @@ th:active {
 
 #tableOverlay>* {
   margin: 0 auto;
+  user-select: none;
 }
 
 #tableOverlay>.mdi {
@@ -695,7 +696,7 @@ th .mdi.mdi-unfold-more-horizontal::before {
 }
 
 .mdc-dialog .mdc-dialog__content {
-  padding-top: 20px;
+  font-weight: bold;
 }
 
 .mdc-dialog .mdc-dialog__content>.mdi {
