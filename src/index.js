@@ -1,3 +1,6 @@
+const userPanel = document.querySelector("#userPanel")
+const userName = userPanel.querySelector("#userName")
+
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
@@ -619,14 +622,7 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
 
 //#region Login
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        loadCases()
-    } else {
-        dialogLogin.materialComponent.open()
-    }
-})
-
+const emailSuffix = '@medicline.com'
 const dialogLogin = document.querySelector('#dialogLogin')
 dialogLogin.materialComponent.scrimClickAction = ''
 dialogLogin.materialComponent.escapeKeyAction = ''
@@ -642,7 +638,7 @@ buttonSignIn.onclick = () => {
     iconSignIn.classList.remove('mdi-arrow-right')
     iconSignIn.classList.add('mdi-loading', 'mdi-spin')
 
-    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + '@medicline.com', inputPassword.materialComponent.value)
+    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
         .then(() => {
             dialogLogin.materialComponent.close()
         }).catch(error => {
@@ -667,5 +663,19 @@ buttonPasswordVisibility.onclick = () => {
         iconPasswordVisibility.classList.add('mdi-eye-off-outline')
     }
 }
+
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        if (user.displayName != null) {
+            userName.textContent = user.displayName
+        }
+        else {
+            userName.textContent = user.email.replace(emailSuffix, '')
+        }
+        loadCases()
+    } else {
+        dialogLogin.materialComponent.open()
+    }
+})
 
 //#endregion

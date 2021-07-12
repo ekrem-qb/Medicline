@@ -14,6 +14,10 @@
 
 <body class="mdc-typography flex flex-column" onload="pageLoaded()">
     <header id="titleBar" class="flex mdc-elevation--z6">
+        <div class="flex align-items-center px-2 mdc-ripple-surface" id="userPanel">
+            <i class="mdi mdi-account-circle me-2"></i>
+            <h5 class="mb-0" id="userName">User</h5>
+        </div>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
