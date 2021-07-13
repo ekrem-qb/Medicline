@@ -672,8 +672,10 @@ firebase.auth().onAuthStateChanged((user) => {
         else {
             userName.textContent = user.email.replace(emailSuffix, '')
         }
+        userPanel.hidden = false
         loadCases()
     } else {
+        userPanel.hidden = true
         dialogLogin.materialComponent.open()
     }
 })
