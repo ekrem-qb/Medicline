@@ -14,9 +14,25 @@
 
 <body class="mdc-typography flex flex-column" onload="pageLoaded()">
     <header id="titleBar" class="flex mdc-elevation--z6">
-        <div class="flex align-items-center mdc-ripple-surface" id="userPanel" hidden>
-            <i class="mdi mdi-account-circle mx-1"></i>
-            <h5 class="mb-0 me-2" id="userName">User</h5>
+        <div class="flex align-items-center px-2 mdc-ripple-surface" id="userPanel">
+            <i class="mdi mdi-account-circle me-2"></i>
+            <h5 class="mb-0" id="userName">User</h5>
+        </div>
+
+        <div class="mdc-menu mdc-menu-surface" id="userMenu">
+            <ul class="mdc-list">
+                <li class="mdc-list-item" onclick="location.href = 'admin.html'">
+                    <i class="mdi mdi-shield-account"></i>
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__text mx-2" translate>ADMIN_PANEL</span>
+                </li>
+                <!-- <li class="mdc-list-divider"></li> -->
+                <li class="mdc-list-item" onclick="firebase.auth().signOut()">
+                    <i class="mdi mdi-logout"></i>
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__text mx-2" translate>SIGN_OUT</span>
+                </li>
+            </ul>
         </div>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="flex">
@@ -344,7 +360,8 @@
                     </table>
                 </div>
                 <div class="modal-footer flex-column">
-                    <button class="mdc-button mdc-button--outlined" onclick="buttonExportClick()" id="buttonExport">
+                    <button class="mdc-button mdc-button--outlined"
+                        onclick="exportToExcel(document.querySelector('table#cases'))" id="buttonExport">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
                         <span class="mdc-button__label" translate>EXPORT</span>
@@ -367,82 +384,72 @@
     </footer>
     <div class="mdc-menu mdc-menu-surface" id="contextMenu">
         <ul class="mdc-list">
-            <li class="mdc-list-item mdc-ripple-surface" hidden>
-                <i class="me-2 mdi mdi-content-copy"></i>
+            <li class="mdc-list-item" hidden>
+                <i class="mdi mdi-content-copy"></i>
                 <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">Copy</span>
+                <span class="mdc-list-item__text mx-2">Copy</span>
             </li>
-            <li class="mdc-list-item mdc-ripple-surface" onclick="ipcRenderer.send('case', currentCase.id)">
-                <i class="me-2 mdi mdi-pencil"></i>
+            <li class="mdc-list-item" onclick="ipcRenderer.send('case', currentCase.id)">
+                <i class="mdi mdi-pencil"></i>
                 <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text" translate>EDIT</span>
-            </li>
-            <li class="mdc-list-divider"></li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="sentDocs"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">SENT DOCUMENTS</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="invoiced"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">INVOICED</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="dropped"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">DROPPED</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="gop"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">GOP RECEIVED/SENT</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="payIssued"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">PAYMENT ISSUED</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="payReceived"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">PAYMENT RECEIVED</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="multi"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">MULTI PROVIDER</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="payNclaim"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">PAY AND CLAIM</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="active"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">ACTIVE</span>
-            </li>
-            <li class="mdc-list-item mdc-ripple-surface" data-status="receivedDocs"
-                onclick="changeCaseStatus(this.dataset.status)">
-                <i class="me-2 mdi mdi-circle"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text">RECEIVED DOCUMENTS</span>
+                <span class="mdc-list-item__text mx-2" translate>EDIT</span>
             </li>
             <li class="mdc-list-divider"></li>
-            <li class="mdc-list-item mdc-ripple-surface" onclick="dialogDeleteCase.materialComponent.open()">
-                <i class="me-2 mdi mdi-trash-can"></i>
+            <li class="mdc-list-item" data-status="sentDocs" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
                 <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text" translate>DELETE</span>
+                <span class="mdc-list-item__text mx-2">SENT DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-item" data-status="invoiced" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">INVOICED</span>
+            </li>
+            <li class="mdc-list-item" data-status="dropped" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">DROPPED</span>
+            </li>
+            <li class="mdc-list-item" data-status="gop" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">GOP RECEIVED/SENT</span>
+            </li>
+            <li class="mdc-list-item" data-status="payIssued" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAYMENT ISSUED</span>
+            </li>
+            <li class="mdc-list-item" data-status="payReceived" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAYMENT RECEIVED</span>
+            </li>
+            <li class="mdc-list-item" data-status="multi" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">MULTI PROVIDER</span>
+            </li>
+            <li class="mdc-list-item" data-status="payNclaim" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAY AND CLAIM</span>
+            </li>
+            <li class="mdc-list-item" data-status="active" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">ACTIVE</span>
+            </li>
+            <li class="mdc-list-item" data-status="receivedDocs" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">RECEIVED DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-item" onclick="dialogDeleteCase.materialComponent.open()">
+                <i class="mdi mdi-trash-can"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>DELETE</span>
             </li>
         </ul>
     </div>
@@ -585,10 +592,10 @@
     <script src="import/material/ripple.js"></script>
     <script src="import/material/textField.js"></script>
     <script src="import/material/menu.js"></script>
+    <script src="import/material/list.js"></script>
     <script src="import/material/dialog.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="import/sortable.js"></script>
-    <script src="import/tableExport.js"></script>
     <script src="index.js"></script>
 </body>
 

@@ -37,10 +37,10 @@
     "electron-log": "^4.3.5",
     "electron-updater": "^4.3.9",
     "firebase": "^8.7.0",
+    "firebase-admin": "^9.10.0",
     "inputmask": "^5.0.6",
     "material-components-web": "^11.0.0",
     "sortablejs": "^1.14.0",
-    "tableexport": "^5.2.0",
     "tom-select": "^1.7.6"
   },
   "build": {

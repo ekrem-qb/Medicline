@@ -1,5 +1,6 @@
 const userPanel = document.querySelector("#userPanel")
 const userName = userPanel.querySelector("#userName")
+const userMenu = document.querySelector("#userMenu")
 
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
@@ -42,6 +43,74 @@ const contextMenu = document.querySelector("#contextMenu")
 contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
 })
+
+userPanel.onclick = () => {
+    userMenu.materialComponent.open = true
+}
+
+//#region Login
+
+const dialogLogin = document.querySelector('#dialogLogin')
+dialogLogin.materialComponent.scrimClickAction = ''
+dialogLogin.materialComponent.escapeKeyAction = ''
+
+const inputUserName = dialogLogin.querySelector('input#userName')
+const inputPassword = dialogLogin.querySelector('input#password')
+const buttonPasswordVisibility = dialogLogin.querySelector('button#passwordVisibility')
+const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
+const buttonSignIn = dialogLogin.querySelector('button#signIn')
+const iconSignIn = buttonSignIn.querySelector('.mdi')
+
+buttonSignIn.onclick = () => {
+    const signInIconClass = iconSignIn.classList.item(iconSignIn.classList.length - 1)
+    iconSignIn.classList.remove(signInIconClass)
+    iconSignIn.classList.add('mdi-loading', 'mdi-spin')
+
+    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
+        .then(() => {
+            dialogLogin.materialComponent.close()
+            iconSignIn.classList.add(signInIconClass)
+            iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
+            inputUserName.materialComponent.value = ''
+            inputPassword.materialComponent.value = ''
+        }).catch(error => {
+            if (error != null) {
+                iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
+                iconSignIn.classList.add(signInIconClass)
+                alert(error.message)
+                return
+            }
+        })
+}
+
+buttonPasswordVisibility.onclick = () => {
+    if (inputPassword.type == 'password') {
+        inputPassword.type = 'text'
+        iconPasswordVisibility.classList.add('mdi-eye-outline')
+        iconPasswordVisibility.classList.remove('mdi-eye-off-outline')
+    }
+    else {
+        inputPassword.type = 'password'
+        iconPasswordVisibility.classList.remove('mdi-eye-outline')
+        iconPasswordVisibility.classList.add('mdi-eye-off-outline')
+    }
+}
+
+firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+        if (user.displayName != null) {
+            userName.textContent = user.displayName
+        }
+        else {
+            userName.textContent = user.email.replace(emailSuffix, '')
+        }
+        loadCases()
+    } else {
+        dialogLogin.materialComponent.open()
+    }
+})
+
+//#endregion
 
 loadColumns()
 
@@ -542,8 +611,6 @@ function applyFilter() {
 
             if (inputFilter.id.split('-')[0] == 'createDate') {
                 setTableOverlayState("loading")
-                loadCases()
-
                 switch (inputFilter.id.split('-')[1]) {
                     case "min":
                         currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
@@ -555,6 +622,7 @@ function applyFilter() {
                         currentQuery = currentQuery.where(inputFilter.id, "==", value)
                         break
                 }
+                loadCases()
             }
             else {
                 filters[inputFilter.id] = value
@@ -620,64 +688,22 @@ ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
 
 //#endregion
 
-//#region Login
-
-const emailSuffix = '@medicline.com'
-const dialogLogin = document.querySelector('#dialogLogin')
-dialogLogin.materialComponent.scrimClickAction = ''
-dialogLogin.materialComponent.escapeKeyAction = ''
-
-const inputUserName = dialogLogin.querySelector('input#userName')
-const inputPassword = dialogLogin.querySelector('input#password')
-const buttonPasswordVisibility = dialogLogin.querySelector('button#passwordVisibility')
-const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
-const buttonSignIn = dialogLogin.querySelector('button#signIn')
-const iconSignIn = buttonSignIn.querySelector('.mdi')
-
-buttonSignIn.onclick = () => {
-    iconSignIn.classList.remove('mdi-arrow-right')
-    iconSignIn.classList.add('mdi-loading', 'mdi-spin')
-
-    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
-        .then(() => {
-            dialogLogin.materialComponent.close()
-        }).catch(error => {
-            if (error != null) {
-                iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
-                iconSignIn.classList.add('mdi-arrow-right')
-                alert(error.message)
-                return
-            }
-        })
-}
-
-buttonPasswordVisibility.onclick = () => {
-    if (inputPassword.type == 'password') {
-        inputPassword.type = 'text'
-        iconPasswordVisibility.classList.add('mdi-eye-outline')
-        iconPasswordVisibility.classList.remove('mdi-eye-off-outline')
-    }
-    else {
-        inputPassword.type = 'password'
-        iconPasswordVisibility.classList.remove('mdi-eye-outline')
-        iconPasswordVisibility.classList.add('mdi-eye-off-outline')
-    }
-}
-
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-        if (user.displayName != null) {
-            userName.textContent = user.displayName
+function exportToExcel(table) {
+    var uri = 'data:application/vnd.ms-excel;base64,'
+        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
+        , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+        , format = function (s, c) {
+            return s.replace(/{(\w+)}/g, function (m, p) { return c[p] })
         }
-        else {
-            userName.textContent = user.email.replace(emailSuffix, '')
+        , downloadURI = function (uri, name) {
+            var link = document.createElement("a")
+            link.download = name
+            link.href = uri
+            link.click()
         }
-        userPanel.hidden = false
-        loadCases()
-    } else {
-        userPanel.hidden = true
-        dialogLogin.materialComponent.open()
-    }
-})
 
-//#endregion
+    if (!table.nodeType) table = document.getElementById(table)
+    var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+    var resuri = uri + base64(format(template, ctx))
+    downloadURI(resuri, new Date().toLocaleString().replace(',', '') + '.xlsx')
+}
