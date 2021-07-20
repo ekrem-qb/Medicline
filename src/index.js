@@ -1,6 +1,7 @@
 const userPanel = document.querySelector("#userPanel")
-const userName = userPanel.querySelector("#userName")
+const username = userPanel.querySelector("#username")
 const userMenu = document.querySelector("#userMenu")
+const adminButton = userMenu.querySelector("#admin")
 
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
@@ -44,8 +45,21 @@ contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
 })
 
+const admin = require("firebase-admin");
+const serviceAccount = require("./serviceAccountKey.json");
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: "https://medicline-35e34.firebaseio.com"
+})
+
 userPanel.onclick = () => {
-    userMenu.materialComponent.open = true
+    userMenu.materialComponent.open = !userMenu.materialComponent.open
+    admin.auth().getUser(firebase.auth().currentUser.uid).then(user => {
+        adminButton.hidden = !user.customClaims.admin
+    }).catch((error) => {
+        console.error("Error getting user: ", error)
+    })
 }
 
 //#region Login
@@ -54,25 +68,34 @@ const dialogLogin = document.querySelector('#dialogLogin')
 dialogLogin.materialComponent.scrimClickAction = ''
 dialogLogin.materialComponent.escapeKeyAction = ''
 
-const inputUserName = dialogLogin.querySelector('input#userName')
+const inputUsername = dialogLogin.querySelector('input#username')
 const inputPassword = dialogLogin.querySelector('input#password')
 const buttonPasswordVisibility = dialogLogin.querySelector('button#passwordVisibility')
 const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
 const buttonSignIn = dialogLogin.querySelector('button#signIn')
 const iconSignIn = buttonSignIn.querySelector('.mdi')
 
-buttonSignIn.onclick = () => {
+function signIn(openProfile = false) {
     const signInIconClass = iconSignIn.classList.item(iconSignIn.classList.length - 1)
     iconSignIn.classList.remove(signInIconClass)
     iconSignIn.classList.add('mdi-loading', 'mdi-spin')
 
-    firebase.auth().signInWithEmailAndPassword(inputUserName.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
+    firebase.auth().signInWithEmailAndPassword(inputUsername.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
         .then(() => {
             dialogLogin.materialComponent.close()
             iconSignIn.classList.add(signInIconClass)
             iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
-            inputUserName.materialComponent.value = ''
+            inputUsername.materialComponent.value = ''
             inputPassword.materialComponent.value = ''
+            if (inputPassword.type != 'password') {
+                buttonPasswordVisibility.click()
+            }
+            if (openProfile) {
+                ipcRenderer.send('user')
+            }
+            else {
+                loadCases()
+            }
         }).catch(error => {
             if (error != null) {
                 iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
@@ -96,29 +119,46 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
+ipcRenderer.on('user-name-change', (event, newName) => {
+    if (newName != null && newName != undefined && newName != '') {
+        username.textContent = newName
+    }
+    else {
+        username.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
+    }
+})
+
 firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+        dialogLogin.materialComponent.close()
+        userPanel.hidden = false
         if (user.displayName != null) {
-            userName.textContent = user.displayName
+            username.textContent = user.displayName
         }
         else {
-            userName.textContent = user.email.replace(emailSuffix, '')
+            username.textContent = user.email.replace(emailSuffix, '')
         }
-        loadCases()
+        loadSelectMenus()
+        formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
+        applyFilter()
+        hideEmptyFilters()
     } else {
+        userPanel.hidden = true
+        buttonSignIn.onclick = () => signIn(false)
         dialogLogin.materialComponent.open()
     }
 })
 
 //#endregion
 
-loadColumns()
-
-function pageLoaded() {
-    formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
-    applyFilter()
-    hideEmptyFilters()
+function openProfileWindow() {
+    inputUsername.materialComponent.value = firebase.auth().currentUser.email.replace(emailSuffix, '')
+    inputPassword.focus()
+    buttonSignIn.onclick = () => signIn(true)
+    dialogLogin.materialComponent.open()
 }
+
+loadColumns()
 
 function loadColumns() {
     setTableOverlayState("loading")
@@ -671,23 +711,6 @@ buttonClearFilter.onclick = () => {
 
 //#endregion
 
-//#region Update
-
-const dialogUpdate = document.querySelector("#dialogUpdate")
-dialogUpdate.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "install") {
-        ipcRenderer.send("install-update")
-    }
-})
-
-ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
-    dialogUpdate.querySelector("input#currentVersion").materialComponent.value = currentVersion
-    dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
-    dialogUpdate.materialComponent.open()
-})
-
-//#endregion
-
 function exportToExcel(table) {
     var uri = 'data:application/vnd.ms-excel;base64,'
         , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
@@ -705,5 +728,5 @@ function exportToExcel(table) {
     if (!table.nodeType) table = document.getElementById(table)
     var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
     var resuri = uri + base64(format(template, ctx))
-    downloadURI(resuri, new Date().toLocaleString().replace(',', '') + '.xlsx')
+    downloadURI(resuri, new Date().toLocaleString().replace(',', '') + '.xls')
 }

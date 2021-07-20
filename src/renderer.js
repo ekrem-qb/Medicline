@@ -4,7 +4,8 @@
 
 'use strict'
 
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, dialog } = require('electron')
+const log = require('electron-log')
 
 async function main() {
   // breakpoints should work from here on,
@@ -24,11 +25,27 @@ async function main() {
   // we can do whatever we want
 }
 
+Object.assign(console, log.functions)
+
 document.onkeydown = (ev => {
   if (ev.key == 'F5') {
     location.reload()
   }
 })
+
+//#region Update
+
+const dialogUpdate = document.querySelector("#dialogUpdate")
+
+if (dialogUpdate) {
+  ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
+    dialogUpdate.querySelector("input#currentVersion").materialComponent.value = currentVersion
+    dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
+    dialogUpdate.materialComponent.open()
+  })
+}
+
+//#endregion
 
 //#region Window Maximize
 

@@ -70,6 +70,7 @@ function validateInput(input) {
 
 formEditCase.querySelectorAll('input, textarea').forEach(
     inputEdit => {
+        inputEdit.onchange = () => inputEdit.value = inputEdit.value.trim()
         if (inputEdit.id.includes('_')) {
             inputEdit.disabled = true
         }
@@ -78,6 +79,8 @@ formEditCase.querySelectorAll('input, textarea').forEach(
         }
     }
 )
+
+loadSelectMenus()
 
 checkCaseID()
 

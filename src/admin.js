@@ -141,15 +141,15 @@ function listUsers() {
                         let deleteIcon = document.createElement('i')
                         deleteIcon.classList.add('mdi', 'mdi-trash-can')
                         deleteButton.appendChild(deleteIcon)
+
+                        listItem.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
+                            rippleElement.materialRipple = new MDCRipple(rippleElement)
+                            rippleElement.materialRipple.unbounded = true
+                        })
                     }
                 }
             )
-            const { MDCRipple } = require('@material/ripple')
 
-            document.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
-                rippleElement.materialRipple = new MDCRipple(rippleElement)
-                rippleElement.materialRipple.unbounded = true
-            })
         }
     )
 }

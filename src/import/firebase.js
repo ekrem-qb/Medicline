@@ -9,7 +9,10 @@ var firebaseConfig = {
     measurementId: "G-K1XPKRC2L6"
 }
 firebase.initializeApp(firebaseConfig)
-const db = firebase.firestore()
-db.enablePersistence({ synchronizeTabs: true })
-const allCases = db.collection("cases")
 const emailSuffix = '@medicline.com'
+var db, allCases
+if (firebase.firestore != undefined) {
+    db = firebase.firestore()
+    db.enablePersistence({ synchronizeTabs: true })
+    allCases = db.collection("cases")
+}

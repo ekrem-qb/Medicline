@@ -12,21 +12,27 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="mdc-typography flex flex-column" onload="pageLoaded()">
+<body class="mdc-typography flex flex-column">
     <header id="titleBar" class="flex mdc-elevation--z6">
-        <div class="flex align-items-center px-2 mdc-ripple-surface" id="userPanel">
+        <div class="flex align-items-center px-2 mdc-ripple-surface" id="userPanel" hidden>
             <i class="mdi mdi-account-circle me-2"></i>
-            <h5 class="mb-0" id="userName">User</h5>
+            <h5 class="mb-0" id="username">User</h5>
         </div>
 
         <div class="mdc-menu mdc-menu-surface" id="userMenu">
             <ul class="mdc-list">
-                <li class="mdc-list-item" onclick="location.href = 'admin.html'">
+                <li class="mdc-list-item" onclick="openProfileWindow()">
+                    <i class="mdi mdi-pencil"></i>
+                    <span class="mdc-list-item__ripple"></span>
+                    <span class="mdc-list-item__text mx-2" translate>EDIT_USER</span>
+                </li>
+                <li class="mdc-list-divider">
+                <li class="mdc-list-item" id="admin" onclick="location.href = 'admin.html'" hidden>
                     <i class="mdi mdi-shield-account"></i>
                     <span class="mdc-list-item__ripple"></span>
                     <span class="mdc-list-item__text mx-2" translate>ADMIN_PANEL</span>
                 </li>
-                <!-- <li class="mdc-list-divider"></li> -->
+                <li class="mdc-list-divider">
                 <li class="mdc-list-item" onclick="firebase.auth().signOut()">
                     <i class="mdi mdi-logout"></i>
                     <span class="mdc-list-item__ripple"></span>
@@ -324,7 +330,7 @@
         </div>
         <div class="mx-2">
             <div class="mdc-card mdc-elevation--z6">
-                <div class="flex flex-column hide" id="tableOverlay">
+                <div class="flex flex-column" id="tableOverlay">
                     <i class="mdi mdi-loading mdi-spin"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>
@@ -394,7 +400,7 @@
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>EDIT</span>
             </li>
-            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-divider">
             <li class="mdc-list-item" data-status="sentDocs" onclick="changeCaseStatus(this.dataset.status)">
                 <i class="mdi mdi-circle"></i>
                 <span class="mdc-list-item__ripple"></span>
@@ -445,7 +451,7 @@
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2">RECEIVED DOCUMENTS</span>
             </li>
-            <li class="mdc-list-divider"></li>
+            <li class="mdc-list-divider">
             <li class="mdc-list-item" onclick="dialogDeleteCase.materialComponent.open()">
                 <i class="mdi mdi-trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
@@ -485,9 +491,9 @@
                     <h5 class="mb-0">MEDICLINE</h5>
                 </div>
                 <div class="mdc-dialog__content flex-column align-items-stretch">
-                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mb-3">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
-                        <input class="mdc-text-field__input" id="userName" />
+                        <input class="mdc-text-field__input" id="username">
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
                             <div class="mdc-notched-outline__notch">
@@ -500,8 +506,8 @@
                     <label
                         class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-lock"></i>
-                        <input type="password" class="mdc-text-field__input" id="password" />
-                        <button class="mdc-icon-button" id="passwordVisibility">
+                        <input type="password" class="mdc-text-field__input" id="password">
+                        <button class="mdc-icon-button" id="passwordVisibility" tabindex="-1">
                             <span class="mdi mdi-eye-off-outline"></span>
                         </button>
                         <div class="mdc-notched-outline">
@@ -563,7 +569,8 @@
                         <span class="mdc-button__label" translate>LATER</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green"
-                        data-mdc-dialog-action="install" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        onclick="ipcRenderer.send('install-update')" data-mdc-dialog-button-default
+                        data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-arrow-down-circle"></i>
                         <span class="mdc-button__label" translate>INSTALL</span>
@@ -577,7 +584,6 @@
         <div class="mdc-snackbar__surface">
             <div class="mdc-snackbar__label">
             </div>
-            <div class="mdc-snackbar__actions"></div>
         </div>
     </div>
 
