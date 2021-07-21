@@ -42,7 +42,7 @@
 
     <div class="main p-5">
         <li class="list-group-item modal-footer sticky-top">
-            <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="">
+            <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="ipcRenderer.send('user')">
                 <div class="mdc-button__ripple"></div>
                 <i class="mdi mdc-button__icon mdi-plus"></i>
                 <span class="mdc-button__label" translate>CREATE</span>
@@ -141,7 +141,9 @@
     <script src="../node_modules/firebase/firebase-auth.js"></script>
     <script src="../node_modules/firebase/firebase-firestore.js"></script>
     <script src="import/translate.js"></script>
-    <script src="import/firebase.js"></script>
+    <script src="import/firebase/auth.js"></script>
+    <!-- <script src="import/firebase/firestore.js"></script> -->
+    <script src="import/firebase/admin.js"></script>
     <script src="import/material/ripple.js"></script>
     <!-- <script src="import/tomSelect.js"></script> -->
     <!-- <script src="import/inputMask.js"></script> -->

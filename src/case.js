@@ -3,7 +3,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         currentCase.delete().then(() => {
             ipcRenderer.send('window-action', 'exit')
-        }).catch((error) => {
+        }).catch(error => {
             console.error("Error removing document: ", error)
         })
     }
@@ -114,7 +114,8 @@ if (location.hash != '') {
                         if (itemValue != '') {
                             inputEdit.parentElement.parentElement.hidden = false
                         }
-                    } else {
+                    }
+                    else {
                         inputEdit.parentElement.parentElement.hidden = false
                     }
 
@@ -123,6 +124,15 @@ if (location.hash != '') {
                             inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
                         }
                         else {
+                            if (inputEdit.id.includes('User')) {
+                                admin.auth().getUserByEmail(itemValue + emailSuffix).then(user => {
+                                    if (user.displayName) {
+                                        inputEdit.value = user.displayName
+                                    }
+                                }).catch(error => {
+                                    console.error("Error getting user by email: ", error)
+                                })
+                            }
                             inputEdit.value = itemValue
                         }
                     }
@@ -177,7 +187,7 @@ else {
 }
 
 function saveCase() {
-    let caseData = new Object()
+    let caseData = {}
     let valid = true
 
     formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
@@ -218,22 +228,23 @@ function saveCase() {
 
     if (valid) {
         if (caseExists) {
-            caseData.updateUser = firebase.auth().currentUser.email
+            caseData.updateUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
             caseData.updateDate = new Date().toJSON().substr(0, 10)
             caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             currentCase.update(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
-            }).catch((error) => {
+            }).catch(error => {
                 console.error("Error updating document: ", error)
             })
-        } else {
-            caseData.createUser = firebase.auth().currentUser.email
+        }
+        else {
+            caseData.createUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
             caseData.createDate = new Date().toJSON().substr(0, 10)
             caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
             caseData.status = "active"
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
-            }).catch((error) => {
+            }).catch(error => {
                 console.error("Error writing document: ", error)
             })
         }

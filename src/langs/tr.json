@@ -5,6 +5,7 @@
     "SIGN_OUT": "Çıkış",
     "EDIT_USER": "Profili Düzenle",
     "ADMIN_PANEL": "Yönetici Paneli",
+    "USER_EXISTS": "Bu kullanıcı adı zaten başka bir kullanıcı tarafından kullanılıyor",
     "NAME_SURNAME": "Ad Soyad",
     "NEW_PASSWORD": "Yeni Şifre",
     "PASSWORD_VALID": "Şifre en az 6 karakterden oluşmalıdır",

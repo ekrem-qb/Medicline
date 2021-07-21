@@ -2,11 +2,14 @@ const TomSelect = require('tom-select/dist/js/tom-select.base')
 
 function loadSelectMenus() {
     document.querySelectorAll('select').forEach(select => {
-        let tomSelect = select.tomSelect = new TomSelect(select, {
-            maxItems: 1,
-            selectOnTab: true,
-            sortField: "text"
-        })
+        if (select.tomSelect == undefined) {
+            select.tomSelect = new TomSelect(select, {
+                maxItems: 1,
+                selectOnTab: true,
+                sortField: "text"
+            })
+        }
+        let tomSelect = select.tomSelect
         let selectID = select.id.replace(/[0-9]/g, '')
 
         if (!selectID.includes('_')) {

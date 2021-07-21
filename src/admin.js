@@ -1,10 +1,3 @@
-const admin = require("firebase-admin");
-const serviceAccount = require("./serviceAccountKey.json");
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://medicline-35e34.firebaseio.com"
-})
-
 const buttonRefresh = document.querySelector('button#refresh')
 const buttonRefreshIcon = buttonRefresh.querySelector('.mdi')
 const usersList = document.querySelector('#usersList')
@@ -15,7 +8,7 @@ dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         admin.auth().deleteUser(currentUserUID).then(() => {
             document.getElementById(currentUserUID).remove()
-        }).catch((error) => {
+        }).catch(error => {
             console.error("Error deleting user: ", error)
         })
     }
@@ -25,11 +18,11 @@ buttonRefresh.onclick = () => {
     buttonRefreshIcon.classList.remove('mdi-refresh')
     buttonRefreshIcon.classList.add('mdi-loading', 'mdi-spin')
 
-    usersList.innerHTML = ''
     listUsers()
 }
 
 function listUsers() {
+    usersList.innerHTML = ''
     admin.auth().listUsers().then(
         snapshot => {
             snapshot.users.forEach(
@@ -37,7 +30,7 @@ function listUsers() {
                     buttonRefreshIcon.classList.add('mdi-refresh')
                     buttonRefreshIcon.classList.remove('mdi-loading', 'mdi-spin')
 
-                    console.log(user.email + ' - ' + user.customClaims.admin)
+                    console.log(user.email + ' - ' + user.customClaims)
 
                     if (user.uid != firebase.auth().currentUser.uid) {
                         let listItem = document.createElement('li')
@@ -53,18 +46,23 @@ function listUsers() {
                         avatar.classList.add('avatar', 'me-3', 'mdi', 'mdi-account-circle')
                         infoSegment.appendChild(avatar)
 
+                        let textSubSegment = document.createElement('span')
+                        textSubSegment.classList.add('flex', 'flex-column')
+                        infoSegment.appendChild(textSubSegment)
+
                         let bigtext = document.createElement('b')
-                        infoSegment.appendChild(bigtext)
+                        textSubSegment.appendChild(bigtext)
+
+                        let smallText = document.createElement('small')
+                        smallText.classList.add('text-muted')
+                        smallText.textContent = user.email.replace(emailSuffix, '')
+                        textSubSegment.appendChild(smallText)
 
                         if (user.displayName) {
-                            let smallText = document.createElement('small')
-                            smallText.classList.add('text-muted')
-                            infoSegment.appendChild(smallText)
-
                             bigtext.textContent = user.displayName
-                            smallText.textContent = user.email.replace(emailSuffix, '')
                         }
                         else {
+                            smallText.hidden = true
                             bigtext.textContent = user.email.replace(emailSuffix, '')
                         }
 
@@ -75,6 +73,8 @@ function listUsers() {
                         let editButton = document.createElement('button')
                         editButton.classList.add('mdc-icon-button')
                         buttonsSegment.appendChild(editButton)
+
+                        editButton.onclick = () => ipcRenderer.send('user', user.uid)
 
                         let editRipple = document.createElement('div')
                         editRipple.classList.add('mdc-icon-button__ripple')
@@ -94,13 +94,19 @@ function listUsers() {
 
                         let adminIcon = document.createElement('i')
                         adminIcon.classList.add('mdi')
-                        if (user.customClaims.admin) {
-                            adminButton.classList.add('mdc-button--outlined', 'mdc-button--green')
-                            adminIcon.classList.add('mdi-shield-star')
+                        if (user.customClaims != undefined) {
+                            if (user.customClaims.admin) {
+                                adminButton.classList.add('mdc-button--outlined', 'mdc-button--green')
+                                adminIcon.classList.add('mdi-shield-star')
+                            }
+                            else {
+                                adminIcon.classList.add('mdi-shield-off-outline')
+                            }
                         }
                         else {
                             adminIcon.classList.add('mdi-shield-off-outline')
                         }
+
                         adminButton.onclick = () => {
                             adminButton.classList.remove('mdc-button--outlined', 'mdc-button--green')
                             adminIcon.classList.remove('mdi-shield-star', 'mdi-shield-off-outline', 'mdc-button--outlined', 'mdc-button--green')
@@ -116,10 +122,10 @@ function listUsers() {
                                         adminButton.classList.add('mdc-button--outlined', 'mdc-button--green')
                                         adminIcon.classList.add('mdi-shield-star')
                                     }
-                                }).catch((error) => {
+                                }).catch(error => {
                                     console.error("Error setting custom user claims: ", error)
                                 })
-                            }).catch((error) => {
+                            }).catch(error => {
                                 console.error("Error getting user data: ", error)
                             })
                         }
@@ -156,4 +162,26 @@ function listUsers() {
 
 listUsers()
 
-// admin.auth().getUser(firebase.auth().currentUser.uid).then(snapshot => console.log(snapshot.customClaims))
+ipcRenderer.on('user-update', (event, uid, data) => {
+    if (data.displayName != undefined) {
+        let listItem = document.getElementById(uid)
+
+        if (listItem) {
+            let bigText = listItem.querySelector('b')
+            let smallText = listItem.querySelector('small')
+
+            if (data.displayName != '') {
+                bigText.textContent = data.displayName
+                smallText.hidden = false
+            }
+            else {
+                bigText.textContent = smallText.textContent
+                smallText.hidden = true
+            }
+        }
+    }
+})
+
+ipcRenderer.on('user-add', (event) => {
+    listUsers()
+})

@@ -19,69 +19,126 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
-inputNameSurname.onchange = () => inputNameSurname.value = inputNameSurname.value.trim()
-
-inputPassword.materialComponent.useNativeValidation = false
-inputPassword.oninput = () => {
-    inputPassword.value = inputPassword.value.replace(' ', '')
-    if (inputPassword.value.length >= 6 || inputPassword.value.length == 0) {
-        inputPassword.materialComponent.valid = true
-    }
-    else {
-        inputPassword.materialComponent.valid = false
-    }
+inputUsername.oninput = () => {
+    inputUsername.value = inputUsername.value.replace(' ', '')
+    inputUsername.materialComponent.valid = inputUsername.value != ''
 }
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
+inputNameSurname.onchange = () => inputNameSurname.value = inputNameSurname.value.trim()
+
+inputUsername.materialComponent.useNativeValidation = false
+inputPassword.materialComponent.useNativeValidation = false
+
+let currentUser
+
+if (location.hash != '') {
+    inputPassword.oninput = () => {
+        inputPassword.value = inputPassword.value.replace(' ', '')
+        if (inputPassword.value.length >= 6 || inputPassword.value.length == 0) {
+            inputPassword.materialComponent.valid = true
+        }
+        else {
+            inputPassword.materialComponent.valid = false
+        }
+    }
+
+    admin.auth().getUser(location.hash.replace('#', '')).then(user => {
+        currentUser = user
         inputUsername.materialComponent.value = user.email.replace(emailSuffix, '')
         if (user.displayName) {
             inputNameSurname.materialComponent.value = user.displayName
         }
         inputNameSurname.materialComponent.disabled = false
         buttonSave.disabled = false
-    } else {
-    }
-})
+    }).catch(error => {
+        console.error("Error getting user: ", error)
+    })
 
-function updatePassword() {
-    if (inputPassword.value != '' && inputPassword.materialComponent.valid) {
-        iconSave.classList.remove('mdi-content-save')
-        iconSave.classList.add('mdi-loading', 'mdi-spin')
+    buttonSave.onclick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
 
-        firebase.auth().currentUser.updatePassword(inputPassword.value).then(() => {
-            // firebase.auth().signOut()
-            firebase.auth().signInWithEmailAndPassword(inputUsername.value + emailSuffix, inputPassword.value).then(() => {
-                console.log('Signed In')
-                ipcRenderer.send('window-action', 'exit')
-            }).catch(error => {
-                console.error(error)
-            })
-        }).catch((error) => {
-            console.error("Error updating Password: ", error)
+        let data = {}
+
+        if (inputNameSurname.value != currentUser.displayName && !(inputNameSurname.value == '' && currentUser.displayName == null)) {
+            data[displayName] = inputNameSurname.value
+        }
+
+        if (inputPassword.value != '' && inputPassword.materialComponent.valid) {
+            data[password] = inputPassword.value
+        }
+
+        if (Object.entries(data).length > 0) {
+            iconSave.classList.remove('mdi-content-save')
+            iconSave.classList.add('mdi-loading', 'mdi-spin')
+        }
+
+        admin.auth().updateUser(currentUser.uid, data).then(() => {
+            ipcRenderer.send('user-update', currentUser.uid, data)
+            ipcRenderer.send('window-action', 'exit')
+        }).catch(error => {
+            console.error("Error updating user", error)
         })
-    }
-    else {
-        ipcRenderer.send('window-action', 'exit')
     }
 }
+else {
+    inputUsername.materialComponent.disabled = false
+    inputNameSurname.materialComponent.disabled = false
+    inputUsername.required = true
+    inputPassword.required = true
+    buttonSave.disabled = false
 
-buttonSave.onclick = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
-    if (inputNameSurname.value != firebase.auth().currentUser.displayName && !(inputNameSurname.value == '' && firebase.auth().currentUser.displayName == null)) {
-        iconSave.classList.remove('mdi-content-save')
-        iconSave.classList.add('mdi-loading', 'mdi-spin')
-
-        firebase.auth().currentUser.updateProfile({ displayName: inputNameSurname.value }).then(() => {
-            ipcRenderer.send('user-name-change', inputNameSurname.value)
-            updatePassword()
-        }).catch((error) => {
-            console.error("Error updating Name Surname: ", error)
-        })
+    inputPassword.oninput = () => {
+        inputPassword.value = inputPassword.value.replace(' ', '')
+        inputPassword.materialComponent.valid = inputPassword.value.length >= 6
     }
-    else {
-        updatePassword()
+
+    buttonSave.onclick = (event) => {
+        event.preventDefault()
+        event.stopPropagation()
+
+        let data = {}
+
+        if (inputUsername.value != '') {
+            data[email] = inputUsername.value + emailSuffix
+        }
+        else {
+            inputUsername.materialComponent.valid = false
+        }
+
+        if (inputNameSurname.value != '') {
+            data[displayName] = inputNameSurname.value
+        }
+
+        if (inputPassword.value != '' && inputPassword.materialComponent.valid) {
+            data[password] = inputPassword.value
+        }
+        else {
+            inputPassword.materialComponent.valid = false
+        }
+
+        if (data[email] != undefined && data[password] != undefined) {
+            iconSave.classList.remove('mdi-content-save')
+            iconSave.classList.add('mdi-loading', 'mdi-spin')
+
+            admin.auth().createUser(data).then(user => {
+                admin.auth().setCustomUserClaims(user.uid, { admin: false }).then(() => {
+                    ipcRenderer.send('user-add')
+                    ipcRenderer.send('window-action', 'exit')
+                }).catch(error => {
+                    console.error("Error setting custom user claims: ", error)
+                })
+            }).catch(error => {
+                if (error.code == 'auth/email-already-exists') {
+                    alert(translate('USER_EXISTS'))
+                    inputUsername.materialComponent.valid = false
+                    iconSave.classList.add('mdi-content-save')
+                    iconSave.classList.remove('mdi-loading', 'mdi-spin')
+                }
+                else {
+                    console.error("Error creating user", error)
+                }
+            })
+        }
     }
 }

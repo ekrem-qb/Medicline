@@ -49,7 +49,6 @@
 
 * {
   outline: none !important;
-  /* will-change: unset !important; */
 }
 
 ::selection {
@@ -126,7 +125,7 @@ label:last-child {
 }
 
 .ts-input.required:not(.focus, .full),
-input:required:not(:valid, :focus) {
+input:required:not(:valid, :focus, .mdc-text-field__input) {
   background-color: beige;
 }
 
@@ -602,7 +601,12 @@ footer>.status.selected {
   --mdc-transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-focus-opacity: 0;
   --mdc-ripple-hover-opacity: .1;
-  /* filter: invert(.9) hue-rotate(180deg); */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    filter: invert(.9) hue-rotate(180deg);
+  }
 }
 
 .mdi {

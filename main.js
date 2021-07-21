@@ -63,6 +63,8 @@ async function main() {
                 }
                 else {
                     event.sender.getOwnerBrowserWindow().close()
+                    delete caseWindows[event.sender.getURL().split('#')[1]]
+                    delete userWindows[event.sender.getURL().split('#')[1]]
                 }
                 break
             default:
@@ -143,70 +145,89 @@ async function main() {
         mainWindow.webContents.send('window-action', 'unmaximize')
     })
 
+    let caseWindows = {}
+
     ipcMain.on('case', (event, caseID) => {
-        const caseWindow = new BrowserWindow({
-            width: 1280,
-            height: 720,
-            minWidth: 800,
-            minHeight: 600,
-            frame: false,
-            autoHideMenuBar: true,
-            webPreferences: {
-                contextIsolation: false,
-                nodeIntegration: true,
-            },
-        })
-
-        caseWindow.loadFile(__dirname + '/src/case.html', {
-            hash: caseID
-        })
-
-        caseWindow.on("maximize", () => {
-            caseWindow.webContents.send('window-action', 'maximize')
-        })
-
-        caseWindow.on("unmaximize", () => {
-            caseWindow.webContents.send('window-action', 'unmaximize')
-        })
-
-        if (isDevelopment) {
-            caseWindow.webContents.openDevTools()
+        if (caseWindows[caseID] != undefined) {
+            caseWindows[caseID].focus()
         }
+        else {
+            const caseWindow = new BrowserWindow({
+                width: 1280,
+                height: 720,
+                minWidth: 800,
+                minHeight: 600,
+                frame: false,
+                autoHideMenuBar: true,
+                webPreferences: {
+                    contextIsolation: false,
+                    nodeIntegration: true,
+                },
+            })
+
+            if (caseID != undefined) {
+                caseWindows[caseID] = caseWindow
+            }
+
+            caseWindow.loadFile(__dirname + '/src/case.html', {
+                hash: caseID
+            })
+
+            caseWindow.on("maximize", () => {
+                caseWindow.webContents.send('window-action', 'maximize')
+            })
+
+            caseWindow.on("unmaximize", () => {
+                caseWindow.webContents.send('window-action', 'unmaximize')
+            })
+        }
+
     })
+
+    let userWindows = {}
 
     ipcMain.on('user', (event, userUID) => {
-        const userWindow = new BrowserWindow({
-            width: 800,
-            height: 600,
-            minWidth: 800,
-            minHeight: 600,
-            frame: false,
-            autoHideMenuBar: true,
-            webPreferences: {
-                contextIsolation: false,
-                nodeIntegration: true,
-            },
-        })
+        if (userWindows[userUID] != undefined) {
+            userWindows[userUID].focus()
+        }
+        else {
+            const userWindow = new BrowserWindow({
+                width: 800,
+                height: 600,
+                minWidth: 800,
+                minHeight: 600,
+                frame: false,
+                autoHideMenuBar: true,
+                webPreferences: {
+                    contextIsolation: false,
+                    nodeIntegration: true,
+                },
+            })
 
-        userWindow.loadFile(__dirname + '/src/user.html', {
-            hash: userUID
-        })
+            if (userUID != undefined) {
+                userWindows[userUID] = userWindow
+            }
 
-        userWindow.on("maximize", () => {
-            userWindow.webContents.send('window-action', 'maximize')
-        })
+            userWindow.loadFile(__dirname + '/src/user.html', {
+                hash: userUID
+            })
 
-        userWindow.on("unmaximize", () => {
-            userWindow.webContents.send('window-action', 'unmaximize')
-        })
+            userWindow.on("maximize", () => {
+                userWindow.webContents.send('window-action', 'maximize')
+            })
 
-        if (isDevelopment) {
-            userWindow.webContents.openDevTools()
+            userWindow.on("unmaximize", () => {
+                userWindow.webContents.send('window-action', 'unmaximize')
+            })
         }
     })
 
-    ipcMain.on('user-name-change', (event, newName) => {
-        mainWindow.webContents.send('user-name-change', newName)
+    ipcMain.on('user-update', (event, uid, data) => {
+        mainWindow.webContents.send('user-update', uid, data)
+    })
+
+    ipcMain.on('user-add', (event) => {
+        mainWindow.webContents.send('user-add')
     })
 
     // awaiting terminationPromise here keeps the mainWindow object alive

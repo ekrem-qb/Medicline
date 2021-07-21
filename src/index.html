@@ -21,7 +21,7 @@
 
         <div class="mdc-menu mdc-menu-surface" id="userMenu">
             <ul class="mdc-list">
-                <li class="mdc-list-item" onclick="openProfileWindow()">
+                <li class="mdc-list-item" onclick="ipcRenderer.send('user', firebase.auth().currentUser.uid)">
                     <i class="mdi mdi-pencil"></i>
                     <span class="mdc-list-item__ripple"></span>
                     <span class="mdc-list-item__text mx-2" translate>EDIT_USER</span>
@@ -592,7 +592,9 @@
     <script src="../node_modules/firebase/firebase-auth.js"></script>
     <script src="../node_modules/firebase/firebase-firestore.js"></script>
     <script src="import/translate.js"></script>
-    <script src="import/firebase.js"></script>
+    <script src="import/firebase/auth.js"></script>
+    <script src="import/firebase/firestore.js"></script>
+    <script src="import/firebase/admin.js"></script>
     <script src="import/tomSelect.js"></script>
     <script src="import/inputMask.js"></script>
     <script src="import/material/ripple.js"></script>

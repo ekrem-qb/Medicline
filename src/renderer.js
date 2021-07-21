@@ -6,6 +6,7 @@
 
 const { ipcRenderer, dialog } = require('electron')
 const log = require('electron-log')
+const emailSuffix = '@medicline.com'
 
 async function main() {
   // breakpoints should work from here on,
@@ -69,7 +70,7 @@ ipcRenderer.on("window-action", (event, action) => {
 
 //#endregion
 
-main().catch((error) => {
+main().catch(error => {
   console.log(error)
   alert(error)
 })

@@ -26,7 +26,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         currentCase.delete().then(() => {
             currentCase = undefined
-        }).catch((error) => {
+        }).catch(error => {
             console.error("Error removing document: ", error)
         })
     }
@@ -45,19 +45,15 @@ contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
 })
 
-const admin = require("firebase-admin");
-const serviceAccount = require("./serviceAccountKey.json");
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://medicline-35e34.firebaseio.com"
-})
-
 userPanel.onclick = () => {
     userMenu.materialComponent.open = !userMenu.materialComponent.open
+    checkAdminRights()
+}
+
+function checkAdminRights() {
     admin.auth().getUser(firebase.auth().currentUser.uid).then(user => {
         adminButton.hidden = !user.customClaims.admin
-    }).catch((error) => {
+    }).catch(error => {
         console.error("Error getting user: ", error)
     })
 }
@@ -75,7 +71,7 @@ const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
 const buttonSignIn = dialogLogin.querySelector('button#signIn')
 const iconSignIn = buttonSignIn.querySelector('.mdi')
 
-function signIn(openProfile = false) {
+function signIn() {
     const signInIconClass = iconSignIn.classList.item(iconSignIn.classList.length - 1)
     iconSignIn.classList.remove(signInIconClass)
     iconSignIn.classList.add('mdi-loading', 'mdi-spin')
@@ -90,12 +86,7 @@ function signIn(openProfile = false) {
             if (inputPassword.type != 'password') {
                 buttonPasswordVisibility.click()
             }
-            if (openProfile) {
-                ipcRenderer.send('user')
-            }
-            else {
-                loadCases()
-            }
+            loadCases()
         }).catch(error => {
             if (error != null) {
                 iconSignIn.classList.remove('mdi-loading', 'mdi-spin')
@@ -119,16 +110,28 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
-ipcRenderer.on('user-name-change', (event, newName) => {
-    if (newName != null && newName != undefined && newName != '') {
-        username.textContent = newName
-    }
-    else {
-        username.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
+ipcRenderer.on('user-update', (event, uid, data) => {
+    if (firebase.auth().currentUser.uid == uid) {
+        if (data.displayName != '') {
+            username.textContent = data.displayName
+        }
+        else {
+            username.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
+        }
+
+        if (data.password != undefined) {
+            firebase.auth().signOut()
+            firebase.auth().signInWithEmailAndPassword(firebase.auth().currentUser.email, data.password).then(() => {
+                dialogLogin.materialComponent.close()
+                loadCases()
+            }).catch(error => {
+                console.error("Error sign in: ", error)
+            })
+        }
     }
 })
 
-firebase.auth().onAuthStateChanged((user) => {
+firebase.auth().onAuthStateChanged(user => {
     if (user) {
         dialogLogin.materialComponent.close()
         userPanel.hidden = false
@@ -138,11 +141,13 @@ firebase.auth().onAuthStateChanged((user) => {
         else {
             username.textContent = user.email.replace(emailSuffix, '')
         }
+        checkAdminRights()
         loadSelectMenus()
         formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
         applyFilter()
         hideEmptyFilters()
-    } else {
+    }
+    else {
         userPanel.hidden = true
         buttonSignIn.onclick = () => signIn(false)
         dialogLogin.materialComponent.open()
@@ -150,13 +155,6 @@ firebase.auth().onAuthStateChanged((user) => {
 })
 
 //#endregion
-
-function openProfileWindow() {
-    inputUsername.materialComponent.value = firebase.auth().currentUser.email.replace(emailSuffix, '')
-    inputPassword.focus()
-    buttonSignIn.onclick = () => signIn(true)
-    dialogLogin.materialComponent.open()
-}
 
 loadColumns()
 
@@ -166,7 +164,8 @@ function loadColumns() {
     let enabledColumns = []
     if (localStorage.getItem("enabledColumns") != null) {
         enabledColumns = localStorage.getItem("enabledColumns").split(',')
-    } else {
+    }
+    else {
         enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createTime", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
     }
     enabledColumns.forEach(
@@ -182,7 +181,8 @@ function loadColumns() {
     }
     if (enabledColumns.includes("createTime")) {
         headerClick("createTime")
-    } else {
+    }
+    else {
         headerClick(enabledColumns[enabledColumns.length - 1])
     }
 }
@@ -214,7 +214,8 @@ function refreshSearch() {
                 Object.values(_case.data()).forEach(value => {
                     if (typeof value === "object" && value !== null) {
                         valuePromises.push(value.get())
-                    } else {
+                    }
+                    else {
                         data += " -- " + value.toString().toLowerCase()
                     }
                 })
@@ -256,7 +257,8 @@ function refreshSearch() {
                 setTableOverlayState("empty")
             }
         }
-    } else {
+    }
+    else {
         clearSearch()
     }
 }
@@ -300,7 +302,8 @@ function headerClick(headerID) {
         if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
             orderCase(headerID, "asc")
             clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
-        } else {
+        }
+        else {
             orderCase(headerID, "desc")
             clickedHeaderSortIcon.classList.add("mdi-rotate-180")
         }
@@ -421,7 +424,8 @@ function listCases(snap) {
                                             }
                                         )
                                     )
-                                } else {
+                                }
+                                else {
                                     switch (td.id) {
                                         case "description":
                                         case "complaints":
@@ -433,6 +437,15 @@ function listCases(snap) {
                                             }
                                             else {
                                                 td.textContent = value
+                                            }
+                                            if (td.id.includes('User')) {
+                                                admin.auth().getUserByEmail(value + emailSuffix).then(user => {
+                                                    if (user.displayName) {
+                                                        td.textContent = user.displayName
+                                                    }
+                                                }).catch(error => {
+                                                    console.error("Error getting user by email: ", error)
+                                                })
                                             }
                                             break
                                     }
@@ -451,7 +464,8 @@ function listCases(snap) {
         if (noOneFound) {
             setTableOverlayState("empty")
         }
-    } else {
+    }
+    else {
         setTableOverlayState("empty")
     }
 }
@@ -472,7 +486,8 @@ function orderCase(orderBy, orderDirection) {
                     shouldSwitch = true
                     break
                 }
-            } else if (orderDirection == "desc") {
+            }
+            else if (orderDirection == "desc") {
                 if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
                     shouldSwitch = true
                     break
@@ -484,7 +499,8 @@ function orderCase(orderBy, orderDirection) {
             switching = true
 
             switchcount++
-        } else {
+        }
+        else {
             if (switchcount == 0 && orderDirection == "asc") {
                 orderDirection = "desc"
                 switching = true
@@ -528,11 +544,11 @@ function setTableOverlayState(state) {
 }
 
 function changeCaseStatus(newStatus) {
-    let caseData = new Object()
-    caseData.status = newStatus
+    let caseData = {}
+    caseData[status] = newStatus
     currentCase.update(caseData).then(() => {
         currentCase = undefined
-    }).catch((error) => {
+    }).catch(error => {
         console.error("Error updating document: ", error)
     })
 }
