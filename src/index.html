@@ -21,7 +21,8 @@
 
         <div class="mdc-menu mdc-menu-surface" id="userMenu">
             <ul class="mdc-list">
-                <li class="mdc-list-item" onclick="ipcRenderer.send('user', firebase.auth().currentUser.uid)">
+                <li class="mdc-list-item"
+                    onclick="ipcRenderer.send('new-window', 'user', firebase.auth().currentUser.uid)">
                     <i class="mdi mdi-pencil"></i>
                     <span class="mdc-list-item__ripple"></span>
                     <span class="mdc-list-item__text mx-2" translate>EDIT_USER</span>
@@ -309,7 +310,7 @@
                     <div class="col-md-12">
                         <label class="form-label" translate>COMPLAINTS</label>
                         <div class="input-group input-group-sm">
-                            <textarea class="form-control" id="complaints" rows="4"></textarea>
+                            <input class="form-control" id="complaints"></input>
                         </div>
                     </div>
                 </form>
@@ -350,8 +351,8 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('case')"
-                        id="buttonCreate">
+                    <button class="mdc-button mdc-button--raised mdc-button--green"
+                        onclick="ipcRenderer.send('new-window', 'case')" id="buttonCreate">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-plus"></i>
                         <span class="mdc-button__label" translate>CREATE</span>
@@ -395,7 +396,7 @@
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2">Copy</span>
             </li>
-            <li class="mdc-list-item" onclick="ipcRenderer.send('case', currentCase.id)">
+            <li class="mdc-list-item" onclick="ipcRenderer.send('new-window', 'case', currentCase.id)">
                 <i class="mdi mdi-pencil"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>EDIT</span>
@@ -452,7 +453,7 @@
                 <span class="mdc-list-item__text mx-2">RECEIVED DOCUMENTS</span>
             </li>
             <li class="mdc-list-divider">
-            <li class="mdc-list-item" onclick="dialogDeleteCase.materialComponent.open()">
+            <li class="mdc-list-item" id="delete" onclick="dialogDeleteCase.materialComponent.open()">
                 <i class="mdi mdi-trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>DELETE</span>

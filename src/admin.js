@@ -74,7 +74,7 @@ function listUsers() {
                         editButton.classList.add('mdc-icon-button')
                         buttonsSegment.appendChild(editButton)
 
-                        editButton.onclick = () => ipcRenderer.send('user', user.uid)
+                        editButton.onclick = () => ipcRenderer.send('new-window', 'user', user.uid)
 
                         let editRipple = document.createElement('div')
                         editRipple.classList.add('mdc-icon-button__ripple')

@@ -1,7 +1,13 @@
 const userPanel = document.querySelector("#userPanel")
 const username = userPanel.querySelector("#username")
 const userMenu = document.querySelector("#userMenu")
-const adminButton = userMenu.querySelector("#admin")
+const adminOption = userMenu.querySelector("#admin")
+const adminOptionDivider = adminOption.previousElementSibling
+
+userPanel.onclick = () => {
+    checkAdminRights()
+    userMenu.materialComponent.open = true
+}
 
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
@@ -41,18 +47,19 @@ var currentRefQueries = []
 var filters = {}
 
 const contextMenu = document.querySelector("#contextMenu")
+const deleteOption = contextMenu.querySelector("#delete")
+const deleteOptionDivider = deleteOption.previousElementSibling
 contextMenu.materialComponent.listen("close", () => {
     currentCase = undefined
 })
 
-userPanel.onclick = () => {
-    userMenu.materialComponent.open = !userMenu.materialComponent.open
-    checkAdminRights()
-}
-
 function checkAdminRights() {
     admin.auth().getUser(firebase.auth().currentUser.uid).then(user => {
-        adminButton.hidden = !user.customClaims.admin
+        adminOption.hidden = !user.customClaims.admin
+        adminOptionDivider.hidden = !user.customClaims.admin
+
+        deleteOption.hidden = !user.customClaims.admin
+        deleteOptionDivider.hidden = !user.customClaims.admin
     }).catch(error => {
         console.error("Error getting user: ", error)
     })
@@ -387,13 +394,14 @@ function listCases(snap) {
                     tr.id = caseSnap.id
                     tr.dataset.status = caseSnap.get("status")
                     tr.ondblclick = () => {
-                        ipcRenderer.send('case', caseSnap.id)
+                        ipcRenderer.send('new-window', 'case', caseSnap.id)
                     }
                     tr.oncontextmenu = mouseEvent => {
                         currentCase = allCases.doc(caseSnap.id)
                         contextMenu.style.left = mouseEvent.clientX + "px"
                         contextMenu.style.top = mouseEvent.clientY + "px"
                         contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
+                        checkAdminRights()
                         contextMenu.materialComponent.open = true
                     }
                     casesList.appendChild(tr)
@@ -545,7 +553,7 @@ function setTableOverlayState(state) {
 
 function changeCaseStatus(newStatus) {
     let caseData = {}
-    caseData[status] = newStatus
+    caseData.status = newStatus
     currentCase.update(caseData).then(() => {
         currentCase = undefined
     }).catch(error => {

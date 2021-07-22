@@ -63,8 +63,7 @@ async function main() {
                 }
                 else {
                     event.sender.getOwnerBrowserWindow().close()
-                    delete caseWindows[event.sender.getURL().split('#')[1]]
-                    delete userWindows[event.sender.getURL().split('#')[1]]
+                    delete windows[event.sender.getURL().split('#')[1]]
                 }
                 break
             default:
@@ -145,14 +144,14 @@ async function main() {
         mainWindow.webContents.send('window-action', 'unmaximize')
     })
 
-    let caseWindows = {}
+    const windows = {}
 
-    ipcMain.on('case', (event, caseID) => {
-        if (caseWindows[caseID] != undefined) {
-            caseWindows[caseID].focus()
+    ipcMain.on('new-window', (event, type, id) => {
+        if (windows[id] != undefined) {
+            windows[id].focus()
         }
         else {
-            const caseWindow = new BrowserWindow({
+            const options = {
                 width: 1280,
                 height: 720,
                 minWidth: 800,
@@ -162,62 +161,28 @@ async function main() {
                 webPreferences: {
                     contextIsolation: false,
                     nodeIntegration: true,
-                },
-            })
+                }
+            }
+            if (type == 'user') {
+                options.width = 800
+                options.height = 600
+            }
+            const window = new BrowserWindow(options)
 
-            if (caseID != undefined) {
-                caseWindows[caseID] = caseWindow
+            if (id != undefined) {
+                windows[id] = window
             }
 
-            caseWindow.loadFile(__dirname + '/src/case.html', {
-                hash: caseID
+            window.loadFile(__dirname + '/src/' + type + '.html', {
+                hash: id
             })
 
-            caseWindow.on("maximize", () => {
-                caseWindow.webContents.send('window-action', 'maximize')
+            window.on("maximize", () => {
+                window.webContents.send('window-action', 'maximize')
             })
 
-            caseWindow.on("unmaximize", () => {
-                caseWindow.webContents.send('window-action', 'unmaximize')
-            })
-        }
-
-    })
-
-    let userWindows = {}
-
-    ipcMain.on('user', (event, userUID) => {
-        if (userWindows[userUID] != undefined) {
-            userWindows[userUID].focus()
-        }
-        else {
-            const userWindow = new BrowserWindow({
-                width: 800,
-                height: 600,
-                minWidth: 800,
-                minHeight: 600,
-                frame: false,
-                autoHideMenuBar: true,
-                webPreferences: {
-                    contextIsolation: false,
-                    nodeIntegration: true,
-                },
-            })
-
-            if (userUID != undefined) {
-                userWindows[userUID] = userWindow
-            }
-
-            userWindow.loadFile(__dirname + '/src/user.html', {
-                hash: userUID
-            })
-
-            userWindow.on("maximize", () => {
-                userWindow.webContents.send('window-action', 'maximize')
-            })
-
-            userWindow.on("unmaximize", () => {
-                userWindow.webContents.send('window-action', 'unmaximize')
+            window.on("unmaximize", () => {
+                window.webContents.send('window-action', 'unmaximize')
             })
         }
     })

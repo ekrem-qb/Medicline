@@ -42,7 +42,8 @@
 
     <div class="main p-5">
         <li class="list-group-item modal-footer sticky-top">
-            <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="ipcRenderer.send('user')">
+            <button class="mdc-button mdc-button--raised mdc-button--green w-100"
+                onclick="ipcRenderer.send('new-window', 'user')">
                 <div class="mdc-button__ripple"></div>
                 <i class="mdi mdc-button__icon mdi-plus"></i>
                 <span class="mdc-button__label" translate>CREATE</span>

@@ -61,11 +61,11 @@ if (location.hash != '') {
         let data = {}
 
         if (inputNameSurname.value != currentUser.displayName && !(inputNameSurname.value == '' && currentUser.displayName == null)) {
-            data[displayName] = inputNameSurname.value
+            data.displayName = inputNameSurname.value
         }
 
         if (inputPassword.value != '' && inputPassword.materialComponent.valid) {
-            data[password] = inputPassword.value
+            data.password = inputPassword.value
         }
 
         if (Object.entries(data).length > 0) {
@@ -100,24 +100,24 @@ else {
         let data = {}
 
         if (inputUsername.value != '') {
-            data[email] = inputUsername.value + emailSuffix
+            data.email = inputUsername.value + emailSuffix
         }
         else {
             inputUsername.materialComponent.valid = false
         }
 
         if (inputNameSurname.value != '') {
-            data[displayName] = inputNameSurname.value
+            data.displayName = inputNameSurname.value
         }
 
         if (inputPassword.value != '' && inputPassword.materialComponent.valid) {
-            data[password] = inputPassword.value
+            data.password = inputPassword.value
         }
         else {
             inputPassword.materialComponent.valid = false
         }
 
-        if (data[email] != undefined && data[password] != undefined) {
+        if (data.email != undefined && data.password != undefined) {
             iconSave.classList.remove('mdi-content-save')
             iconSave.classList.add('mdi-loading', 'mdi-spin')
 
