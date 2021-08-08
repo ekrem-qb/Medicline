@@ -18,8 +18,8 @@ async function main() {
     autoUpdater.on('update-not-available', () => {
         log.info('Update not available.')
     })
-    autoUpdater.on('error', (err) => {
-        log.error('Error in auto-updater. ' + err)
+    autoUpdater.on('error', (error) => {
+        log.error('Error in auto-updater. ' + error)
     })
     autoUpdater.on('download-progress', (progressObj) => {
         let log_message = "Download speed: " + progressObj.bytesPerSecond
@@ -82,6 +82,7 @@ async function main() {
             webPreferences: {
                 contextIsolation: false,
                 nodeIntegration: true,
+                webviewTag: true
             }
         })
 
@@ -132,10 +133,6 @@ async function main() {
     // notify the Renderer that Main is ready
     mainWindow.webContents.send("mainReady")
 
-    if (isDevelopment) {
-        mainWindow.webContents.openDevTools()
-    }
-
     mainWindow.on("maximize", () => {
         mainWindow.webContents.send('window-action', 'maximize')
     })
@@ -157,6 +154,7 @@ async function main() {
                 minWidth: 800,
                 minHeight: 600,
                 frame: false,
+                show: false,
                 autoHideMenuBar: true,
                 webPreferences: {
                     contextIsolation: false,
@@ -177,6 +175,8 @@ async function main() {
                 hash: id
             })
 
+            window.once('ready-to-show', () => { window.show() })
+
             window.on("maximize", () => {
                 window.webContents.send('window-action', 'maximize')
             })
@@ -191,7 +191,7 @@ async function main() {
         mainWindow.webContents.send('user-update', uid, data)
     })
 
-    ipcMain.on('user-add', (event) => {
+    ipcMain.on('user-add', event => {
         mainWindow.webContents.send('user-add')
     })
 

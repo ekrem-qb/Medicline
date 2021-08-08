@@ -9,17 +9,17 @@ document.querySelectorAll('input[mask]').forEach(input => {
             options.alias = "datetime"
             options.inputFormat = "HH:MM"
             options.placeholder = "--:--"
-            break;
+            break
         case "date":
             options.alias = "datetime"
             options.inputFormat = "dd.mm.yyyy"
             options.outputFormat = "yyyy-mm-dd"
             options.placeholder = "--.--.----"
-            break;
+            break
         case "tel":
             options.alias = "[+]9999999[99999999]"
             options.placeholder = ""
-            break;
+            break
     }
     input.mask = new Inputmask(options).mask(input)
 })

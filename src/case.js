@@ -4,7 +4,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
         currentCase.delete().then(() => {
             ipcRenderer.send('window-action', 'exit')
         }).catch(error => {
-            console.error("Error removing document: ", error)
+            console.error("Error removing case: ", error)
         })
     }
 })
@@ -91,7 +91,7 @@ function randomCaseID() {
 }
 
 if (location.hash != '') {
-    let id = location.hash.replace('#', '')
+    const id = location.hash.replace('#', '')
 
     currentCase = allCases.doc(id)
     currentCaseID.innerText = id
@@ -145,7 +145,7 @@ if (location.hash != '') {
 
                     if (itemValue != undefined) {
                         if (select.id.includes('_')) {
-                            setTimeout(() => select.tomSelect.addItem(itemValue), 50)
+                            setTimeout(() => select.tomSelect.addItem(itemValue), 100)
                         }
                         else {
                             select.tomSelect.addItem(itemValue)

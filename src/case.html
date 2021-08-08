@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark.css">
 </head>
 
 <body class="mdc-typography flex flex-column">
@@ -26,11 +27,9 @@
                     <path></path>
                 </svg>
             </div>
-            <div class="window-action mdc-ripple-surface window-action--red"
-                onclick="ipcRenderer.send('window-action', 'exit')">
+            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
                 <svg aria-hidden="true" version="1.1" width="10" height="10">
-                    <path
-                        d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
+                    <path d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
                     </path>
                 </svg>
             </div>
@@ -290,11 +289,10 @@
         </button>
         <button class="mdc-button mdc-button--outlined" disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="mdi mdc-button__icon mdi-pound"></i>
+            <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
             <span class="mdc-button__label bold" id="currentCaseID">0000000</span>
         </button>
-        <button class="mdc-button mdc-button--raised mdc-button--green" id="save" data-mdc-dialog-button-default
-            data-mdc-dialog-initial-focus disabled>
+        <button class="mdc-button mdc-button--raised mdc-button--green" id="save" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
             <div class="mdc-button__ripple"></div>
             <i class="mdi mdc-button__icon mdi-content-save"></i>
             <span class="mdc-button__label" translate>SAVE</span>
@@ -305,17 +303,15 @@
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
                     <i class="mdi mdi-help-circle-outline me-3"></i>
-                    <p class="mb-0" translate>ASK_DELETE</p>
+                    <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
                 </div>
                 <div class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
-                        data-mdc-dialog-action="cancel">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
-                        data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
@@ -343,8 +339,6 @@
     <script src="import/tomSelect.js"></script>
     <script src="import/inputMask.js"></script>
     <script src="import/material/ripple.js"></script>
-    <script src="import/material/textField.js"></script>
-    <script src="import/material/menu.js"></script>
     <script src="import/material/dialog.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="case.js"></script>

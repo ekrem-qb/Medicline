@@ -331,8 +331,8 @@ function loadCases() {
             listCases(snapshot)
             currentCasesSnap = snapshot
         },
-        err => {
-            console.error(err)
+        error => {
+            console.error(error)
             setTableOverlayState("empty")
         }
     )
@@ -427,8 +427,8 @@ function listCases(snap) {
                                                     td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                                                 }
                                             },
-                                            err => {
-                                                console.error(err)
+                                            error => {
+                                                console.error(error)
                                             }
                                         )
                                     )
@@ -604,18 +604,14 @@ for (let status of statusBar) {
             caseRow.classList.remove("dimmed")
         }
         if (status == currentStatus) {
-            for (let otherStatus of statusBar) {
-                otherStatus.classList.remove("dimmed")
-                otherStatus.classList.remove("selected")
-            }
+            statusBar.classList.remove("dimmed")
+            status.classList.remove("selected")
 
             currentStatus = undefined
         }
         else {
-            for (let otherStatus of statusBar) {
-                otherStatus.classList.toggle("dimmed", otherStatus != status)
-                otherStatus.classList.toggle("selected", otherStatus == status)
-            }
+            statusBar.classList.add("dimmed")
+            status.classList.add("selected")
 
             currentStatus = status
         }

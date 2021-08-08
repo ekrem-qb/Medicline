@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicline</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="mdc-typography flex flex-column">
+    <div class="main p-5">
+        <li class="modal-footer list-group-flush list-group-item sticky-top">
+            <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="ipcRenderer.send('new-window', 'user')">
+                <div class="mdc-button__ripple"></div>
+                <i class="mdi mdc-button__icon mdi-plus"></i>
+                <span class="mdc-button__label" translate>NEW#USER</span>
+            </button>
+            <button class="mdc-icon-button ms-2 me-0" id="refresh">
+                <div class="mdc-icon-button__ripple"></div>
+                <i class="mdi mdi-refresh"></i>
+            </button>
+        </li>
+        <ul id="userList" class="list-group list-group-flush">
+    </div>
+    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteUser">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__content">
+                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <p class="mb-0" translate>ASK_DELETE#THIS_USER</p>
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <span class="mdc-button__label" translate>CANCEL</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="mdc-snackbar" id="snackbar">
+        <div class="mdc-snackbar__surface">
+            <div class="mdc-snackbar__label">
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script src="import/translate.js"></script>
+    <script src="import/firebase/admin.js"></script>
+    <script src="import/material/ripple.js"></script>
+    <script src="import/material/dialog.js"></script>
+    <script src="import/material/snackbar.js"></script>
+    <script src="userList.js"></script>
+</body>
+
+</html>

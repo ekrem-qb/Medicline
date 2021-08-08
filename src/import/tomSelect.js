@@ -27,8 +27,8 @@ function loadSelectMenus() {
                         tomSelect.refreshOptions()
                     }
                 },
-                err => {
-                    console.error(err)
+                error => {
+                    console.error(error)
                 }
             )
             tomSelect.on("item_add", value => {
@@ -45,8 +45,8 @@ function loadSelectMenus() {
                                     subInput.value = inputValue
                                 }
                             },
-                            err => {
-                                console.error(err)
+                            error => {
+                                console.error(error)
                             }
                         )
                     }
@@ -71,8 +71,8 @@ function loadSelectMenus() {
                                     subSelect.tomSelect.refreshOptions()
                                 }
                             },
-                            err => {
-                                console.error(err)
+                            error => {
+                                console.error(error)
                             }
                         )
                     }

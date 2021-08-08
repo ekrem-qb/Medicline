@@ -8,14 +8,73 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
-    <!-- <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.css"> -->
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark.css">
 </head>
 
 <body class="mdc-typography flex flex-column">
     <header id="titleBar" class="flex mdc-elevation--z6">
         <div class="flex align-items-center px-2 mdc-ripple-surface" onclick="location.href = 'index.html'">
             <i class="mdi mdi-arrow-left"></i>
+        </div>
+        <div class="drag-area ms-1 mt-1"></div>
+        <div class="mdc-tab-bar w-auto" role="tablist">
+            <div class="mdc-tab-scroller">
+                <div class="mdc-tab-scroller__scroll-area">
+                    <div class="mdc-tab-scroller__scroll-content">
+                        <button class="mdc-tab mdc-tab--active" role="tab" aria-selected="true" tabindex="0" onclick="webview.src='userList.html'">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon mdi mdi-account-group" aria-hidden="true"></span>
+                                <span class="mdc-tab__text-label" translate>USERS</span>
+                            </span>
+                            <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="true" tabindex="0" onclick="webview.src='addressList.html'">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon mdi mdi-map-marker" aria-hidden="true"></span>
+                                <span class="mdc-tab__text-label" translate>ADDRESS</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <!-- <button class="mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon mdi mdi-earth" aria-hidden="true"></span>
+                                <span class="mdc-tab__text-label" translate>COUNTRY</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon mdi mdi-hospital-building" aria-hidden="true"></span>
+                                <span class="mdc-tab__text-label" translate>PROVIDER</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button>
+                        <button class="mdc-tab" role="tab" aria-selected="true" tabindex="0">
+                            <span class="mdc-tab__content">
+                                <span class="mdc-tab__icon mdi mdi-hospital-box" aria-hidden="true"></span>
+                                <span class="mdc-tab__text-label" translate>INSURANCE</span>
+                            </span>
+                            <span class="mdc-tab-indicator">
+                                <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                            </span>
+                            <span class="mdc-tab__ripple"></span>
+                        </button> -->
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="flex">
@@ -29,58 +88,15 @@
                     <path></path>
                 </svg>
             </div>
-            <div class="window-action mdc-ripple-surface window-action--red"
-                onclick="ipcRenderer.send('window-action', 'exit')">
+            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
                 <svg aria-hidden="true" version="1.1" width="10" height="10">
-                    <path
-                        d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
+                    <path d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
                     </path>
                 </svg>
             </div>
         </div>
     </header>
-
-    <div class="main p-5">
-        <li class="list-group-item modal-footer sticky-top">
-            <button class="mdc-button mdc-button--raised mdc-button--green w-100"
-                onclick="ipcRenderer.send('new-window', 'user')">
-                <div class="mdc-button__ripple"></div>
-                <i class="mdi mdc-button__icon mdi-plus"></i>
-                <span class="mdc-button__label" translate>CREATE</span>
-            </button>
-            <button class="mdc-icon-button ms-2 me-0" id="refresh">
-                <div class="mdc-icon-button__ripple"></div>
-                <i class="mdi mdi-refresh"></i>
-            </button>
-        </li>
-        <ul id="usersList" class="list-group">
-    </div>
-
-    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteUser">
-        <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
-                    <i class="mdi mdi-help-circle-outline me-3"></i>
-                    <p class="mb-0" translate>ASK_DELETE_USER</p>
-                </div>
-                <div class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green"
-                        data-mdc-dialog-action="cancel">
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-close"></i>
-                        <span class="mdc-button__label" translate>CANCEL</span>
-                    </button>
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red"
-                        data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
-                        <span class="mdc-button__label" translate>DELETE</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="mdc-dialog__scrim"></div>
-    </div>
+    <webview class="h-100" src="userList.html" nodeintegration webpreferences="contextIsolation=no"></webview>
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogUpdate">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
@@ -112,15 +128,12 @@
                     </label>
                 </div>
                 <div class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red"
-                        data-mdc-dialog-action="cancel">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-close"></i>
                         <span class="mdc-button__label" translate>LATER</span>
                     </button>
-                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green"
-                        onclick="ipcRenderer.send('install-update')" data-mdc-dialog-button-default
-                        data-mdc-dialog-initial-focus>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('install-update')" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-arrow-down-circle"></i>
                         <span class="mdc-button__label" translate>INSTALL</span>
@@ -138,20 +151,11 @@
     </div>
 
     <script src="renderer.js"></script>
-    <script src="../node_modules/firebase/firebase-app.js"></script>
-    <script src="../node_modules/firebase/firebase-auth.js"></script>
-    <script src="../node_modules/firebase/firebase-firestore.js"></script>
     <script src="import/translate.js"></script>
-    <script src="import/firebase/auth.js"></script>
-    <!-- <script src="import/firebase/firestore.js"></script> -->
-    <script src="import/firebase/admin.js"></script>
     <script src="import/material/ripple.js"></script>
-    <!-- <script src="import/tomSelect.js"></script> -->
-    <!-- <script src="import/inputMask.js"></script> -->
     <script src="import/material/textField.js"></script>
-    <!-- <script src="import/material/list.js"></script> -->
-    <!-- <script src="import/material/menu.js"></script> -->
     <script src="import/material/dialog.js"></script>
+    <script src="import/material/tabBar.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="admin.js"></script>
 </body>

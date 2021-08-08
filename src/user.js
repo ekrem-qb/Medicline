@@ -54,7 +54,7 @@ if (location.hash != '') {
         console.error("Error getting user: ", error)
     })
 
-    buttonSave.onclick = (event) => {
+    buttonSave.onclick = event => {
         event.preventDefault()
         event.stopPropagation()
 
@@ -93,7 +93,7 @@ else {
         inputPassword.materialComponent.valid = inputPassword.value.length >= 6
     }
 
-    buttonSave.onclick = (event) => {
+    buttonSave.onclick = event => {
         event.preventDefault()
         event.stopPropagation()
 

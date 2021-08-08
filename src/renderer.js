@@ -28,8 +28,8 @@ async function main() {
 
 Object.assign(console, log.functions)
 
-document.onkeydown = (ev => {
-  if (ev.key == 'F5') {
+document.onkeydown = (event => {
+  if (event.key == 'F5') {
     location.reload()
   }
 })
@@ -51,19 +51,23 @@ if (dialogUpdate) {
 //#region Window Maximize
 
 const maximizeIcon = document.querySelector(".window-action>svg.maximize")
-const dragArea = document.querySelector(".drag-area")
+const dragAreas = document.querySelectorAll(".drag-area")
 
 ipcRenderer.on("window-action", (event, action) => {
   switch (action) {
     case "maximize":
       maximizeIcon.classList.remove("maximize")
       maximizeIcon.classList.add("restore")
-      dragArea.classList.remove("ms-1", "mt-1")
+      dragAreas.forEach(dragArea => {
+        dragArea.classList.remove("ms-1", "mt-1")
+      })
       break
     case "unmaximize":
       maximizeIcon.classList.add("maximize")
       maximizeIcon.classList.remove("restore")
-      dragArea.classList.add("ms-1", "mt-1")
+      dragAreas.forEach(dragArea => {
+        dragArea.classList.add("ms-1", "mt-1")
+      })
       break
   }
 })
