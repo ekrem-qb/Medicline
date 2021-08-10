@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicline</title>
+    <title>NEW#CASE</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
@@ -15,6 +15,11 @@
 
 <body class="mdc-typography flex flex-column">
     <header id="titleBar" class="flex mdc-elevation--z6">
+        <button class="mdc-button" disabled>
+            <div class="mdc-button__ripple"></div>
+            <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
+            <span class="mdc-button__label bold" id="currentCaseID">0000000</span>
+        </button>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
@@ -286,11 +291,6 @@
             <div class="mdc-button__ripple"></div>
             <i class="mdi mdc-button__icon mdi-trash-can"></i>
             <span class="mdc-button__label" translate>DELETE</span>
-        </button>
-        <button class="mdc-button mdc-button--outlined" disabled>
-            <div class="mdc-button__ripple"></div>
-            <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
-            <span class="mdc-button__label bold" id="currentCaseID">0000000</span>
         </button>
         <button class="mdc-button mdc-button--raised mdc-button--green" id="save" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
             <div class="mdc-button__ripple"></div>

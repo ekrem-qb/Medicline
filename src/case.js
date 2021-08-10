@@ -13,7 +13,7 @@ const buttonSave = document.querySelector("button#save")
 const currentCaseID = document.querySelector("#currentCaseID")
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
-    alert(currentCaseID.innerText + translate("COPIED"))
+    alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
 }
 
 const buttonDelete = document.querySelector("button#delete")
@@ -91,6 +91,7 @@ function randomCaseID() {
 }
 
 if (location.hash != '') {
+    document.title = location.hash
     const id = location.hash.replace('#', '')
 
     currentCase = allCases.doc(id)
@@ -172,6 +173,8 @@ else {
                 counter = 0
             } while (caseExists)
 
+
+            document.title = '#' + currentCaseID.innerText
             currentCase = allCases.doc(currentCaseID.innerText)
             checkCaseID()
             clearInterval(repeatRandomCaseID)
@@ -234,7 +237,7 @@ function saveCase() {
             currentCase.update(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error updating document: ", error)
+                console.error("Error updating case: ", error)
             })
         }
         else {
@@ -245,7 +248,7 @@ function saveCase() {
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error writing document: ", error)
+                console.error("Error creating case: ", error)
             })
         }
     }

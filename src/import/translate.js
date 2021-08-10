@@ -7,7 +7,13 @@ catch (error) {
     translateStrings = require('./langs/en.json')
 }
 
-let textElements = document.querySelectorAll('[translate], [placeholder]')
+const translatedTitle = translate(document.title)
+
+if (translatedTitle != undefined) {
+    document.title = translatedTitle
+}
+
+const textElements = document.querySelectorAll('[translate], [placeholder]')
 textElements.forEach(textElement => {
     if (textElement.hasAttribute('placeholder')) {
         textElement.setAttribute('placeholder', translate(textElement.getAttribute('placeholder')))

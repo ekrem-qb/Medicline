@@ -185,32 +185,43 @@ svg.restore path {
   min-height: 6rem;
 }
 
-tbody tr {
+tbody>tr {
   text-shadow: 0 0;
-  transition: var(--transition);
-  box-shadow: inset 0 2px #212529;
+  transition: filter var(--transition);
+  box-shadow: inset 0 -1px #000, inset 0 1px #000;
 }
 
-tbody tr:first-child,
-.list-group th:first-child {
+tbody>tr:last-child {
+  box-shadow: inset 0 1px #000;
+}
+
+tbody>tr:first-child {
+  box-shadow: inset 0 -1px #000;
+}
+
+tbody>tr.selected {
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
+.list-group>th:first-child,
+table>th:first-child {
   box-shadow: none;
 }
 
-td,
-th {
-  border: 0 !important;
-}
-
-td {
-  transition: inherit;
-  box-shadow: 2px 0 #212529 !important;
+tbody>tr>td {
+  /* transition: inherit; */
+  box-shadow: 1px 0 #000, -1px 0 #000 !important;
   max-width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-td.found {
+tr.selected>td {
+  box-shadow: 2px 0 #fff, -2px 0 #fff !important;
+}
+
+tbody>tr>td.found {
   text-shadow: 0 0 20px currentColor;
   background-color: rgba(255, 255, 255, 0.5);
   font-weight: bold;
@@ -218,8 +229,9 @@ td.found {
 
 th {
   background-color: var(--bs-light) !important;
-  transition: opacity .15s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 0 solid rgb(0 0 0 / 25%);
   cursor: pointer;
+  transition: opacity var(--transition);
   user-select: none;
 }
 
@@ -230,11 +242,37 @@ th:active {
 .table th {
   position: sticky;
   top: 0;
-  box-shadow: inset 2px 0 rgb(0 0 0 / 25%);
 }
 
-.table th:first-child {
-  box-shadow: none;
+.table th:not(:first-child) {
+  border-left-width: 2px;
+}
+
+.list-group th {
+  cursor: grab;
+  padding: .75rem 1.25rem;
+}
+
+.list-group th:not(:first-child) {
+  border-top-width: 2px;
+}
+
+.list-group th:active {
+  cursor: grabbing;
+}
+
+.list-group th:first-child {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.list-group th:last-child {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+}
+
+.list-group th .mdi {
+  display: none;
 }
 
 .list-group-flush:not(:empty) {
@@ -277,33 +315,13 @@ th:active {
   border-top-left-radius: 0;
 }
 
-.list-group th {
-  cursor: grab;
-  padding: .75rem 1.25rem;
-  box-shadow: inset 0 2px rgba(0, 0, 0, .25);
-}
-
-.list-group th:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
-}
-
-.list-group th:last-child {
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
-}
-
-.list-group th .mdi {
-  display: none;
-}
-
 #tableColumnsList {
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, .5));
 }
 
 #tableOverlay {
   width: 100%;
-  height: calc(100% - 8.2rem);
+  height: calc(100% - 8.6rem);
   bottom: 0;
   position: absolute;
   place-self: center;
@@ -323,7 +341,7 @@ th:active {
 }
 
 #tableOverlay.show-headers {
-  height: calc(100% - 10.9rem);
+  height: calc(100% - 11rem);
 }
 
 #tableOverlay>* {
@@ -481,8 +499,9 @@ footer>.status {
   cursor: pointer;
 }
 
-.dimmed footer.dimmed>.status:not(.selected),
-footer:hover>.status:not(:hover) {
+tbody.dimmed tr:not(.not-dimmed),
+footer.dimmed>.status:not(:hover, .selected),
+footer:hover>.status:not(:hover, .selected) {
   filter: grayscale(1) opacity(.25);
 }
 
@@ -708,7 +727,7 @@ footer>.status.selected {
 .mdc-button__ripple::before,
 .mdc-list-item__ripple::before,
 .mdc-fab__ripple::before,
-th .mdi::before,
+.mdi:not(.list-group-item .mdi):before,
 .mdc-dialog__content .mdi::before,
 .mdc-select__dropdown-icon.mdi::before,
 .mdc-tab .mdc-tab__ripple::before,
@@ -727,11 +746,11 @@ th .mdi::before,
   padding-bottom: 0;
   align-self: center;
   margin-left: 0;
-  margin-right: .2rem;
+  margin-right: 0.25rem;
   width: auto;
 }
 
-.mdc-icon-button::before,
+.mdc-icon-button__ripple::before,
 .mdc-dialog__title::before {
   display: none;
 }

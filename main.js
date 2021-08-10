@@ -2,7 +2,6 @@
 
 async function main() {
     const { app, BrowserWindow, ipcMain } = require('electron')
-    const isDevelopment = require('electron-is-dev')
     const log = require('electron-log')
     const { autoUpdater } = require("electron-updater")
 
@@ -10,7 +9,6 @@ async function main() {
     autoUpdater.fullChangelog = true
     autoUpdater.logger = log
     autoUpdater.logger.transports.file.level = 'info'
-    log.info('App starting...')
 
     autoUpdater.on('update-available', () => {
         log.info('Update available.')
@@ -31,6 +29,8 @@ async function main() {
         log.info('Update downloaded')
         mainWindow.webContents.send('update-downloaded', updateInfo, app.getVersion())
     })
+
+    log.info('App starting...')
 
     app.on('ready', () => {
         autoUpdater.checkForUpdates()
@@ -63,7 +63,6 @@ async function main() {
                 }
                 else {
                     event.sender.getOwnerBrowserWindow().close()
-                    delete windows[event.sender.getURL().split('#')[1]]
                 }
                 break
             default:
@@ -183,6 +182,10 @@ async function main() {
 
             window.on("unmaximize", () => {
                 window.webContents.send('window-action', 'unmaximize')
+            })
+
+            window.on("close", () => {
+                delete windows[window.webContents.getURL().split('#')[1]]
             })
         }
     })

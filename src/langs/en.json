@@ -49,6 +49,7 @@
     "HOTEL": "Hotel",
     "ROOM_NO": "Room №",
     "COMPLAINTS": "Complaints",
+    "COPY": "Copy",
     "COPIED": " copied to clipboard",
     "ASK_DELETE": "Are you sure you want to delete #?",
     "CANT_DELETE": "Cannot delete #. There is cases that using it:",

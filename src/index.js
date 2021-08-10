@@ -24,42 +24,37 @@ const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
 
-const statusBar = document.querySelector("#statusBar").children
-var currentStatus
+const statusBar = document.querySelector("#statusBar")
+let selectedStatus
+
+let currentQuery = db.collection("cases")
+let searchQuery
+let foundCases
+let currentCasesSnap
+let stopCurrentQuery = () => { }
+let currentRefQueries = []
+let selectedCase, selectedCaseRow, selectedCaseID
+let filters = {}
+
+const contextMenu = document.querySelector('#contextMenu')
+const copyOption = contextMenu.querySelector('#copy')
 
 const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        currentCase.delete().then(() => {
-            currentCase = undefined
+        selectedCase.delete().then(() => {
+            selectedCase = undefined
+            selectedCaseID = undefined
         }).catch(error => {
-            console.error("Error removing document: ", error)
+            console.error("Error removing case: ", error)
         })
     }
-})
-
-var currentQuery = db.collection("cases")
-var searchQuery
-var foundCases
-var currentCasesSnap
-var stopCurrentQuery = () => { }
-var currentRefQueries = []
-var filters = {}
-
-const contextMenu = document.querySelector("#contextMenu")
-const deleteOption = contextMenu.querySelector("#delete")
-const deleteOptionDivider = deleteOption.previousElementSibling
-contextMenu.materialComponent.listen("close", () => {
-    currentCase = undefined
 })
 
 function checkAdminRights() {
     admin.auth().getUser(firebase.auth().currentUser.uid).then(user => {
         adminOption.hidden = !user.customClaims.admin
         adminOptionDivider.hidden = !user.customClaims.admin
-
-        deleteOption.hidden = !user.customClaims.admin
-        deleteOptionDivider.hidden = !user.customClaims.admin
     }).catch(error => {
         console.error("Error getting user: ", error)
     })
@@ -120,7 +115,9 @@ buttonPasswordVisibility.onclick = () => {
 ipcRenderer.on('user-update', (event, uid, data) => {
     if (firebase.auth().currentUser.uid == uid) {
         if (data.displayName != '') {
-            username.textContent = data.displayName
+            if (data.displayName) {
+                username.textContent = data.displayName
+            }
         }
         else {
             username.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
@@ -163,7 +160,42 @@ firebase.auth().onAuthStateChanged(user => {
 
 //#endregion
 
-loadColumns()
+function newColumn(column) {
+    const th = document.createElement('th')
+    th.classList.add('mdc-ripple-surface')
+    th.materialRipple = new MDCRipple(th)
+    th.id = column
+    th.innerHTML = translate(columnsJSON[column])
+    th.onmousedown = mouseEvent => {
+        if (mouseEvent.button == 0) {
+            if (th.parentElement != tableColumnsList) {
+                setTableOverlayState('drag')
+            }
+        }
+    }
+    th.onmouseup = () => {
+        if (th.parentElement != tableColumnsList) {
+            if (casesList.childElementCount > 0) {
+                setTableOverlayState('hide')
+            }
+            else {
+                setTableOverlayState("empty")
+            }
+        }
+    }
+    th.onclick = () => {
+        if (th.parentElement != hiddenTableColumnsList) {
+            headerClick(column)
+        }
+    }
+
+    const sortIcon = document.createElement('i')
+    sortIcon.classList.add('mdi', 'mdi-unfold-more-horizontal')
+    th.appendChild(sortIcon)
+    th.sortIcon = sortIcon
+
+    return th
+}
 
 function loadColumns() {
     setTableOverlayState("loading")
@@ -194,16 +226,7 @@ function loadColumns() {
     }
 }
 
-function newColumn(column) {
-    let th = document.createElement("th")
-    th.id = column
-    th.innerHTML = translate(columnsJSON[column])
-    th.setAttribute("onclick", "headerClick(this.id)")
-    let sortIcon = document.createElement("span")
-    sortIcon.className = "mdi mdi-unfold-more-horizontal"
-    th.appendChild(sortIcon)
-    return th
-}
+loadColumns()
 
 function refreshSearch() {
     setTableOverlayState("loading")
@@ -281,46 +304,31 @@ function clearSearch() {
 }
 
 function headerClick(headerID) {
-    let clickedHeader = tableColumnsList.querySelector("th#" + headerID)
-    if (clickedHeader != null) {
-        for (let header of tableColumnsList.children) {
-            if (header.id != headerID) {
-                let sortIcon = header.querySelector("span")
-
-                if (sortIcon.classList.contains("mdi-chevron-up")) {
-                    sortIcon.classList.remove("mdi-chevron-up")
-                }
-                if (sortIcon.classList.contains("mdi-rotate-180")) {
-                    sortIcon.classList.remove("mdi-rotate-180")
-                }
-                if (!sortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-                    sortIcon.classList.add("mdi-unfold-more-horizontal")
-                }
+    const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
+    if (clickedHeader) {
+        const otherHeaderIcon = tableColumnsList.querySelector('.mdi-chevron-up')
+        if (otherHeaderIcon) {
+            if (otherHeaderIcon.parentElement != clickedHeader) {
+                otherHeaderIcon.classList.remove('mdi-chevron-up')
+                otherHeaderIcon.classList.remove('mdi-rotate-180')
+                otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
             }
         }
 
-        let clickedHeaderSortIcon = clickedHeader.querySelector("span")
-
-        if (clickedHeaderSortIcon.classList.contains("mdi-unfold-more-horizontal")) {
-            clickedHeaderSortIcon.classList.remove("mdi-unfold-more-horizontal")
-            clickedHeaderSortIcon.classList.add("mdi-chevron-up")
+        if (clickedHeader.sortIcon.classList.contains('mdi-unfold-more-horizontal')) {
+            clickedHeader.sortIcon.classList.remove('mdi-unfold-more-horizontal')
+            clickedHeader.sortIcon.classList.add('mdi-chevron-up')
         }
 
-        if (clickedHeaderSortIcon.classList.contains("mdi-rotate-180")) {
-            orderCase(headerID, "asc")
-            clickedHeaderSortIcon.classList.remove("mdi-rotate-180")
+        clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
+
+        if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
+            orderCase(headerID, 'asc')
         }
         else {
-            orderCase(headerID, "desc")
-            clickedHeaderSortIcon.classList.add("mdi-rotate-180")
+            orderCase(headerID, 'desc')
         }
     }
-}
-
-function stopCurrentRefQueries() {
-    currentRefQueries.forEach(query => {
-        query()
-    })
 }
 
 function loadCases() {
@@ -332,7 +340,7 @@ function loadCases() {
             currentCasesSnap = snapshot
         },
         error => {
-            console.error(error)
+            console.error("Error getting cases: " + error)
             setTableOverlayState("empty")
         }
     )
@@ -343,13 +351,13 @@ function listCases(snap) {
         let noOneFound = true
 
         casesList.innerHTML = ''
-        stopCurrentRefQueries()
+        currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         snap.forEach(caseSnap => {
             if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
                 let doesntMatch = false
 
-                if (currentStatus != undefined) {
-                    if (caseSnap.get('status') != currentStatus.dataset.status) {
+                if (selectedStatus != undefined) {
+                    if (caseSnap.get('status') != selectedStatus.dataset.status) {
                         doesntMatch = true
                     }
                 }
@@ -387,35 +395,65 @@ function listCases(snap) {
                 })
 
                 if (!doesntMatch) {
-                    setTableOverlayState("hide")
+                    setTableOverlayState('hide')
                     noOneFound = false
 
-                    let tr = document.createElement("tr")
+                    let tr = document.createElement('tr')
                     tr.id = caseSnap.id
-                    tr.dataset.status = caseSnap.get("status")
+                    tr.dataset.status = caseSnap.get('status')
                     tr.ondblclick = () => {
-                        ipcRenderer.send('new-window', 'case', caseSnap.id)
+                        if (getSelectedText() == '') {
+                            ipcRenderer.send('new-window', 'case', caseSnap.id)
+                        }
                     }
-                    tr.oncontextmenu = mouseEvent => {
-                        currentCase = allCases.doc(caseSnap.id)
-                        contextMenu.style.left = mouseEvent.clientX + "px"
-                        contextMenu.style.top = mouseEvent.clientY + "px"
-                        contextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
-                        checkAdminRights()
-                        contextMenu.materialComponent.open = true
+                    tr.onmousedown = mouseEvent => {
+                        if (mouseEvent.button != 1) {
+                            if (mouseEvent.button == 2) {
+                                contextMenu.materialComponent.open = false
+                            }
+                            if (selectedCaseRow) {
+                                selectedCaseRow.classList.remove('selected')
+                            }
+                            selectedCase = allCases.doc(caseSnap.id)
+                            selectedCaseID = caseSnap.id
+                            selectedCaseRow = tr
+                            selectedCaseRow.classList.add('selected')
+                        }
+                    }
+                    tr.onmouseup = mouseEvent => {
+                        if (mouseEvent.detail == 3) {
+                            console.log('tripple clicked')
+                        }
+                        const hasSelection = getSelectedText() != ''
+
+                        if (hasSelection || mouseEvent.button == 2) {
+                            copyOption.hidden = !hasSelection
+                            contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+                                option.hidden = hasSelection
+                            })
+                            contextMenu.style.left = (mouseEvent.clientX + 2) + 'px'
+                            contextMenu.style.top = (mouseEvent.clientY + 2) + 'px'
+                            contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX + 2), (mouseEvent.clientY + 2))
+                            contextMenu.materialComponent.open = true
+                        }
+                    }
+                    if (tr.id == selectedCaseID) {
+                        selectedCase = allCases.doc(selectedCaseID)
+                        selectedCaseRow = tr
+                        selectedCaseRow.classList.add('selected')
                     }
                     casesList.appendChild(tr)
 
-                    for (let column of tableColumnsList.children) {
-                        let td = document.createElement("td")
-                        tr.appendChild(td)
+                    for (const column of tableColumnsList.children) {
+                        const td = document.createElement("td")
                         td.id = column.id
+                        tr.appendChild(td)
 
                         if (td.id == "__name__") {
                             td.textContent = caseSnap.id
                         }
                         else {
-                            let value = caseSnap.get(td.id)
+                            const value = caseSnap.get(td.id)
                             if (value != undefined) {
                                 if (typeof value === "object" && value !== null) {
                                     currentRefQueries.push(
@@ -552,12 +590,8 @@ function setTableOverlayState(state) {
 }
 
 function changeCaseStatus(newStatus) {
-    let caseData = {}
-    caseData.status = newStatus
-    currentCase.update(caseData).then(() => {
-        currentCase = undefined
-    }).catch(error => {
-        console.error("Error updating document: ", error)
+    selectedCase.update({ status: newStatus }).catch(error => {
+        console.error("Error updating case: ", error)
     })
 }
 
@@ -583,37 +617,42 @@ function modalExpand(header) {
     hideEmptyFilters()
 }
 
-for (let status of statusBar) {
+for (const status of statusBar.children) {
     status.onmouseover = () => {
-        if (currentStatus == undefined) {
-            for (let caseRow of casesList.children) {
-                caseRow.classList.toggle("dimmed", caseRow.dataset.status != status.dataset.status)
-            }
+        if (selectedStatus == undefined) {
+            casesList.classList.add('dimmed')
+            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+                tr.classList.add('not-dimmed')
+            })
         }
     }
     status.onmouseleave = () => {
-        if (currentStatus == undefined) {
-            for (let caseRow of casesList.children) {
-                caseRow.classList.remove("dimmed")
-            }
+        if (selectedStatus == undefined) {
+            casesList.classList.remove('dimmed')
+            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+                tr.classList.remove('not-dimmed')
+            })
         }
     }
 
     status.onclick = () => {
-        for (let caseRow of casesList.children) {
-            caseRow.classList.remove("dimmed")
-        }
-        if (status == currentStatus) {
-            statusBar.classList.remove("dimmed")
-            status.classList.remove("selected")
+        casesList.classList.remove('dimmed')
+        casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+            tr.classList.remove('not-dimmed')
+        })
 
-            currentStatus = undefined
+        if (selectedStatus) {
+            selectedStatus.classList.remove('selected')
+        }
+
+        statusBar.classList.toggle('dimmed', status != selectedStatus)
+        status.classList.toggle('selected', status != selectedStatus)
+
+        if (status == selectedStatus) {
+            selectedStatus = undefined
         }
         else {
-            statusBar.classList.add("dimmed")
-            status.classList.add("selected")
-
-            currentStatus = status
+            selectedStatus = status
         }
         listCases(currentCasesSnap)
     }
@@ -732,21 +771,38 @@ buttonClearFilter.onclick = () => {
 //#endregion
 
 function exportToExcel(table) {
-    var uri = 'data:application/vnd.ms-excel;base64,'
+    let uri = 'data:application/vnd.ms-excel;base64,'
         , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
         , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
         , format = function (s, c) {
             return s.replace(/{(\w+)}/g, function (m, p) { return c[p] })
         }
         , downloadURI = function (uri, name) {
-            var link = document.createElement("a")
+            let link = document.createElement("a")
             link.download = name
             link.href = uri
             link.click()
         }
 
     if (!table.nodeType) table = document.getElementById(table)
-    var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
-    var resuri = uri + base64(format(template, ctx))
+    let ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+    let resuri = uri + base64(format(template, ctx))
     downloadURI(resuri, new Date().toLocaleString().replace(',', '') + '.xls')
+}
+
+function getSelectedText() {
+    if (getSelection().toString().replaceAll('\n', '').replaceAll('\t', '').trim() != '') {
+        return getSelection().toString()
+    }
+    else {
+        return ''
+    }
+}
+
+function copySelectionToClipboard() {
+    const selectedText = getSelectedText()
+    if (selectedText != '') {
+        navigator.clipboard.writeText(selectedText)
+        alert('"' + selectedText + '"' + translate("COPIED"))
+    }
 }

@@ -1,6 +1,5 @@
 const webview = document.querySelector('webview')
 webview.addEventListener('dom-ready', () => {
-    webview.openDevTools()
     webview.send('current-user', location.hash.replace('#', ''))
 })
 

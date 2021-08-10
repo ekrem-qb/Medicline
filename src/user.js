@@ -44,6 +44,7 @@ if (location.hash != '') {
 
     admin.auth().getUser(location.hash.replace('#', '')).then(user => {
         currentUser = user
+        document.title = user.email.replace(emailSuffix, '')
         inputUsername.materialComponent.value = user.email.replace(emailSuffix, '')
         if (user.displayName) {
             inputNameSurname.materialComponent.value = user.displayName
