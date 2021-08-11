@@ -4,7 +4,7 @@
 
 'use strict'
 
-const { ipcRenderer, dialog } = require('electron')
+const { ipcRenderer } = require('electron')
 const log = require('electron-log')
 const emailSuffix = '@medicline.com'
 

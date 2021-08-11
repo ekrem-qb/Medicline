@@ -27,7 +27,7 @@
   "homepage": "https://github.com/ekrem007/Medicline#readme",
   "devDependencies": {
     "@types/node": "^16.4.13",
-    "electron": "^13.1.8",
+    "electron": "^13.1.9",
     "electron-builder": "^22.9.1"
   },
   "dependencies": {
@@ -35,12 +35,13 @@
     "bootstrap": "^5.1.0",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.3.9",
-    "firebase": "^8.9.0",
+    "firebase": "^8.9.1",
     "firebase-admin": "^9.11.0",
     "inputmask": "^5.0.6",
     "material-components-web": "^12.0.0",
     "sortablejs": "^1.14.0",
-    "tom-select": "^1.7.7"
+    "tom-select": "^1.7.7",
+    "xlsx": "^0.17.0"
   },
   "build": {
     "appId": "com.medicline",

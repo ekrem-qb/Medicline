@@ -1,7 +1,7 @@
 'use strict'
 
 async function main() {
-    const { app, BrowserWindow, ipcMain } = require('electron')
+    const { app, BrowserWindow, ipcMain, dialog } = require('electron')
     const log = require('electron-log')
     const { autoUpdater } = require("electron-updater")
 
@@ -196,6 +196,17 @@ async function main() {
 
     ipcMain.on('user-add', event => {
         mainWindow.webContents.send('user-add')
+    })
+
+    ipcMain.on('dialog-save', (event, fileName) => {
+        dialog.showSaveDialog(event.sender.getOwnerBrowserWindow(), {
+            defaultPath: fileName,
+            filters: [{ name: 'Excel', extensions: ['xlsx'] }]
+        }).then(dialogEvent => {
+            if (!dialogEvent.canceled) {
+                event.sender.send('file-save', dialogEvent.filePath)
+            }
+        })
     })
 
     // awaiting terminationPromise here keeps the mainWindow object alive

@@ -15,10 +15,12 @@ const buttonClearSearch = document.querySelector("button#clearSearch")
 const tableOverlay = document.querySelector("#tableOverlay")
 const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
-const columnsJSON = require("./columns.json")
-const tableColumnsList = document.querySelector("#tableColumnsList")
-const casesList = document.querySelector("#casesList")
 
+const casesTable = document.querySelector("table#cases")
+const casesList = casesTable.querySelector("tbody#casesList")
+
+const columnsJSON = require("./columns.json")
+const tableColumnsList = casesTable.querySelector("#tableColumnsList")
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 
 const formFilter = document.querySelector("form#filter")
@@ -770,25 +772,15 @@ buttonClearFilter.onclick = () => {
 
 //#endregion
 
-function exportToExcel(table) {
-    let uri = 'data:application/vnd.ms-excel;base64,'
-        , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>'
-        , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
-        , format = function (s, c) {
-            return s.replace(/{(\w+)}/g, function (m, p) { return c[p] })
-        }
-        , downloadURI = function (uri, name) {
-            let link = document.createElement("a")
-            link.download = name
-            link.href = uri
-            link.click()
-        }
+const { writeFile, utils } = require('xlsx')
 
-    if (!table.nodeType) table = document.getElementById(table)
-    let ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
-    let resuri = uri + base64(format(template, ctx))
-    downloadURI(resuri, new Date().toLocaleString().replace(',', '') + '.xls')
+function exportToExcel() {
+    ipcRenderer.send('dialog-save', new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
+
+ipcRenderer.on('file-save', (event, filePath) => {
+    writeFile(utils.table_to_book(casesTable, { raw: true }), filePath)
+})
 
 function getSelectedText() {
     if (getSelection().toString().replaceAll('\n', '').replaceAll('\t', '').trim() != '') {
