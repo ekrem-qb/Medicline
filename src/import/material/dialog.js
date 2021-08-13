@@ -1,5 +1,5 @@
 const { MDCDialog } = require('@material/dialog')
 
-document.querySelectorAll('.mdc-dialog').forEach(dialogElement => {
-    dialogElement.materialComponent = new MDCDialog(dialogElement)
-})
+for (const element of document.getElementsByClassName('mdc-dialog')) {
+    element.materialComponent = new MDCDialog(element)
+}

@@ -430,9 +430,6 @@ function listCases(snap) {
                         }
                     }
                     tr.onmouseup = mouseEvent => {
-                        if (mouseEvent.detail == 3) {
-                            console.log('tripple clicked')
-                        }
                         const hasSelection = getSelectedText() != ''
 
                         if (hasSelection || mouseEvent.button == 2) {

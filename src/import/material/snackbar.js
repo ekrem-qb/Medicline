@@ -1,5 +1,5 @@
 const { MDCSnackbar } = require('@material/snackbar')
-const snackbar = document.querySelector("#snackbar")
+const snackbar = document.getElementById('snackbar')
 
 if (snackbar != undefined) {
     snackbar.materialComponent = new MDCSnackbar(snackbar)

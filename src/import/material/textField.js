@@ -1,5 +1,5 @@
 const { MDCTextField } = require('@material/textfield')
 
-document.querySelectorAll('.mdc-text-field').forEach(inputElement => {
-    inputElement.querySelector('input, textarea').materialComponent = new MDCTextField(inputElement)
-})
+for (const element of document.getElementsByClassName('mdc-text-field')) {
+    element.getElementsByTagName('input', 'textarea')[0].materialComponent = new MDCTextField(element)
+}
