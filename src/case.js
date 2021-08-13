@@ -11,6 +11,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 const formEditCase = document.querySelector("form#editCase")
 const buttonSave = document.querySelector("button#save")
 const currentCaseID = document.querySelector("#currentCaseID")
+const currentCaseIDIcon = currentCaseID.parentElement.querySelector(".mdi")
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
     alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
@@ -19,21 +20,15 @@ currentCaseID.parentElement.onclick = () => {
 const buttonDelete = document.querySelector("button#delete")
 buttonDelete.onclick = () => dialogDeleteCase.materialComponent.open()
 
-var currentCase, caseExists = false
+let currentCase, caseExists = false
+let stopIDSearch = () => { }
 
 function checkCaseID() {
-    buttonSave.disabled = currentCase == undefined
-
     currentCaseID.parentElement.disabled = currentCase == undefined
-    let idIcon = currentCaseID.parentElement.querySelector(".mdi")
-    idIcon.classList.toggle("mdi-pound", currentCase != undefined)
-    idIcon.classList.toggle("mdi-loading", currentCase == undefined)
-    idIcon.classList.toggle("mdi-spin", currentCase == undefined)
-
-    if (currentCase == undefined)
-        currentCaseID.parentElement.parentElement.title = "Generating available ID..."
-    else
-        currentCaseID.parentElement.parentElement.title = ''
+    currentCaseIDIcon.classList.toggle("mdi-pound", currentCase != undefined)
+    currentCaseIDIcon.classList.toggle("mdi-loading", currentCase == undefined)
+    currentCaseIDIcon.classList.toggle("mdi-spin", currentCase == undefined)
+    buttonSave.disabled = currentCase == undefined
 }
 
 function validateInput(input) {
@@ -84,7 +79,7 @@ loadSelectMenus()
 
 checkCaseID()
 
-function randomCaseID() {
+function generateCaseID() {
     currentCaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
     checkCaseID()
     counter++
@@ -122,7 +117,7 @@ if (location.hash != '') {
 
                     if (!inputEdit.parentElement.parentElement.hidden) {
                         if (inputEdit.getAttribute("mask") == "date") {
-                            inputEdit.value = new Date(itemValue).toLocaleDateString("tr")
+                            inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
                         }
                         else {
                             if (inputEdit.id.includes('User')) {
@@ -159,34 +154,34 @@ if (location.hash != '') {
     caseExists = true
 }
 else {
-    var counter = 0
-
-    var repeatRandomCaseID = setInterval(randomCaseID, 50)
-
-    allCases.onSnapshot(
+    console.time()
+    stopIDSearch()
+    stopIDSearch = allCases.onSnapshot(
         snapshot => {
-            do {
-                randomCaseID()
-                caseExists = snapshot.docs.some(item => item.id === currentCaseID.innerText)
+            console.timeEnd()
 
-                console.log(currentCaseID.innerText + ":" + caseExists + " in " + snapshot.docs.length + " Time: " + counter)
-                counter = 0
-            } while (caseExists)
+            const today = new Date().toLocaleDateString('tr').split('.')
+            let newID = today[2].substr(-2) + today[1] + '100'
 
+            if (snapshot.docs[snapshot.docs.length - 1]) {
+                if (snapshot.docs[snapshot.docs.length - 1].id.substr(0, 4) == newID.substr(0, 4)) {
+                    newID = newID.replace('100', (Number.parseInt(snapshot.docs[snapshot.docs.length - 1].id.substr(-3)) + 1).toString())
+                }
+            }
 
-            document.title = '#' + currentCaseID.innerText
-            currentCase = allCases.doc(currentCaseID.innerText)
+            currentCase = allCases.doc(newID)
+            document.title = '#' + newID
+            currentCaseID.innerText = newID
             checkCaseID()
-            clearInterval(repeatRandomCaseID)
-            formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString("tr")
-            formEditCase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
-            formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString("tr")
-            formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
         },
         err => {
             console.error(err)
         }
     )
+    formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString('tr')
+    formEditCase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
+    formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString('tr')
+    formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
 }
 
 function saveCase() {
@@ -230,9 +225,11 @@ function saveCase() {
     console.log('isValid: ' + valid)
 
     if (valid) {
+        stopIDSearch()
+        const today = new Date().toLocaleDateString('tr').split('.')
         if (caseExists) {
             caseData.updateUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
-            caseData.updateDate = new Date().toJSON().substr(0, 10)
+            caseData.updateDate = today[2] + '-' + today[1] + '-' + today[0]
             caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
             currentCase.update(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
@@ -242,7 +239,7 @@ function saveCase() {
         }
         else {
             caseData.createUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
-            caseData.createDate = new Date().toJSON().substr(0, 10)
+            caseData.createDate = today[2] + '-' + today[1] + '-' + today[0]
             caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
             caseData.status = "active"
             currentCase.set(caseData).then(() => {

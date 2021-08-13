@@ -31,7 +31,6 @@
     "PATIENT_STATUS": "Состояние пациента",
     "COUNTRY": "Страна",
     "PROVIDER": "Провайдер",
-    "DESCRIPTION": "Описание",
     "CREATE_USER": "Оператор создавший",
     "CREATE_DATE": "Дата создания",
     "CREATE_TIME": "Время создания",

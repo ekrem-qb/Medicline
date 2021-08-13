@@ -136,6 +136,13 @@
                     </div>
 
                     <div class="col-md-12">
+                        <label class="form-label" translate>COMPLAINTS</label>
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" id="complaints"></input>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
                         <label class="form-label" translate>PROVIDER</label>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
@@ -300,13 +307,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-md-12">
-                        <label class="form-label" translate>COMPLAINTS</label>
-                        <div class="input-group input-group-sm">
-                            <input class="form-control" id="complaints"></input>
-                        </div>
-                    </div>
                 </form>
                 <div class="modal-footer justify-content-between flex-wrap">
                     <button class="mdc-button mdc-button--raised mdc-button--green" onclick="applyFilter()" id="buttonApplyFilter">
@@ -322,7 +322,7 @@
                 </div>
             </div>
         </div>
-        <div class="mx-2">
+        <div class="mx-2" id="casesPanel">
             <div class="mdc-card mdc-elevation--z6">
                 <div class="flex flex-column" id="tableOverlay">
                     <i class="mdi mdi-loading mdi-spin"></i>
@@ -387,7 +387,7 @@
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>COPY</span>
             </li>
-            <li class="mdc-list-item" onclick="ipcRenderer.send('new-window', 'case', currentCase.id)">
+            <li class="mdc-list-item" onclick="ipcRenderer.send('new-window', 'case', selectedCase.id)">
                 <i class="mdi mdi-pencil"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>EDIT</span>

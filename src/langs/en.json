@@ -30,7 +30,6 @@
     "PATIENT_STATUS": "Patient Status",
     "COUNTRY": "Country",
     "PROVIDER": "Provider",
-    "DESCRIPTION": "Description",
     "CREATE_USER": "Operator Created",
     "CREATE_DATE": "Date of Creation",
     "CREATE_TIME": "Time of Creation",

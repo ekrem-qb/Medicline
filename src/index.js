@@ -18,6 +18,7 @@ const tableOverlayText = tableOverlay.querySelector("h3")
 
 const casesTable = document.querySelector("table#cases")
 const casesList = casesTable.querySelector("tbody#casesList")
+let currentOrder, currentOrderDirection
 
 const columnsJSON = require("./columns.json")
 const tableColumnsList = casesTable.querySelector("#tableColumnsList")
@@ -149,11 +150,16 @@ firebase.auth().onAuthStateChanged(user => {
         }
         checkAdminRights()
         loadSelectMenus()
-        formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString("tr")
-        applyFilter()
-        hideEmptyFilters()
+        if (Object.entries(filters).length == 0) {
+            formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString('tr')
+            applyFilter()
+            hideEmptyFilters()
+        }
     }
     else {
+        stopCurrentQuery()
+        currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+        selectMenuQueries.forEach(stopQuery => stopQuery())
         userPanel.hidden = true
         buttonSignIn.onclick = () => signIn(false)
         dialogLogin.materialComponent.open()
@@ -322,14 +328,14 @@ function headerClick(headerID) {
             clickedHeader.sortIcon.classList.add('mdi-chevron-up')
         }
 
-        clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
-
         if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
-            orderCase(headerID, 'asc')
+            orderCases(headerID, 'asc')
         }
         else {
-            orderCase(headerID, 'desc')
+            orderCases(headerID, 'desc')
         }
+
+        clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
     }
 }
 
@@ -354,6 +360,7 @@ function listCases(snap) {
 
         casesList.innerHTML = ''
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+        currentRefQueries = []
         snap.forEach(caseSnap => {
             if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
                 let doesntMatch = false
@@ -466,6 +473,8 @@ function listCases(snap) {
                                                 if (searchQuery != undefined && searchQuery != "") {
                                                     td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                                                 }
+
+                                                orderCases(currentOrder, currentOrderDirection)
                                             },
                                             error => {
                                                 console.error(error)
@@ -475,13 +484,12 @@ function listCases(snap) {
                                 }
                                 else {
                                     switch (td.id) {
-                                        case "description":
                                         case "complaints":
                                             td.textContent = td.title = value
                                             break
                                         default:
                                             if (td.id.includes("Date")) {
-                                                td.textContent = new Date(value).toLocaleDateString("tr")
+                                                td.textContent = new Date(value).toJSON().substr(0, 10)
                                             }
                                             else {
                                                 td.textContent = value
@@ -508,6 +516,7 @@ function listCases(snap) {
                 }
             }
         })
+        orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
             setTableOverlayState("empty")
@@ -518,16 +527,15 @@ function listCases(snap) {
     }
 }
 
-function orderCase(orderBy, orderDirection) {
-    let switching, i, shouldSwitch, switchcount = 0
+function orderCases(orderBy, orderDirection) {
+    let switching, i, shouldSwitch
     do {
         switching = false
-        let rows = casesList.children
-        for (i = 0; i < rows.length - 1; i++) {
+        for (i = 0; i < casesList.children.length - 1; i++) {
             shouldSwitch = false
 
-            let x = rows[i].querySelector("td#" + orderBy)
-            let y = rows[i + 1].querySelector("td#" + orderBy)
+            const x = casesList.children[i].querySelector("td#" + orderBy)
+            const y = casesList.children[i + 1].querySelector("td#" + orderBy)
 
             if (orderDirection == "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
@@ -543,19 +551,14 @@ function orderCase(orderBy, orderDirection) {
             }
         }
         if (shouldSwitch) {
-            rows[i].parentNode.insertBefore(rows[i + 1], rows[i])
+            casesList.children[i].parentElement.insertBefore(casesList.children[i + 1], casesList.children[i])
             switching = true
-
-            switchcount++
-        }
-        else {
-            if (switchcount == 0 && orderDirection == "asc") {
-                orderDirection = "desc"
-                switching = true
-            }
         }
     }
     while (switching)
+
+    currentOrder = orderBy
+    currentOrderDirection = orderDirection
 }
 
 function setTableOverlayState(state) {
@@ -749,7 +752,7 @@ function applyFilter() {
     }
 }
 
-buttonClearFilter.onclick = () => {
+function clearFilter() {
     formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
         if (inputFilter.value != '') {
             inputFilter.value = ''
@@ -770,6 +773,8 @@ buttonClearFilter.onclick = () => {
     loadCases()
 }
 
+buttonClearFilter.onclick = clearFilter
+
 //#endregion
 
 const { writeFile, utils } = require('xlsx')
@@ -779,7 +784,7 @@ function exportToExcel() {
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(casesTable, { raw: true }), filePath)
+    writeFile(utils.table_to_book(casesTable), filePath)
 })
 
 function getSelectedText() {

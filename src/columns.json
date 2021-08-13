@@ -11,7 +11,6 @@
     "provider": "PROVIDER",
     "provider2": "PROVIDER2",
     "provider3": "PROVIDER3",
-    "description": "DESCRIPTION",
     "createUser": "CREATE_USER",
     "createDate": "CREATE_DATE",
     "createTime": "CREATE_TIME",

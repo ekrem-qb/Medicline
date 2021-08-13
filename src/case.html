@@ -18,7 +18,7 @@
         <button class="mdc-button" disabled>
             <div class="mdc-button__ripple"></div>
             <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
-            <span class="mdc-button__label bold" id="currentCaseID">0000000</span>
+            <span class="mdc-button__label bold" id="currentCaseID"></span>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="flex">
@@ -96,9 +96,9 @@
             </div>
 
             <div class="col-md-12">
-                <label class="form-label" translate>DESCRIPTION</label>
+                <label class="form-label" translate>COMPLAINTS</label>
                 <div class="input-group input-group-sm">
-                    <textarea class="form-control" id="description" rows="6"></textarea>
+                    <textarea class="form-control" id="complaints" rows="6"></textarea>
                 </div>
             </div>
         </div>
@@ -259,7 +259,7 @@
                     <label class="form-label" translate>ADDRESS</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span>
-                        <select class="form-control" id="address"></select>
+                        <select class="form-control" id="address" required></select>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -275,13 +275,6 @@
                         <span class="input-group-text"><i class="mdi mdi-counter"></i></span>
                         <input class="form-control" id="address_roomNo" disabled></select>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-12">
-                <label class="form-label" translate>COMPLAINTS</label>
-                <div class="input-group input-group-sm">
-                    <textarea class="form-control" id="complaints" rows="6"></textarea>
                 </div>
             </div>
         </div>

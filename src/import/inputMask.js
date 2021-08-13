@@ -19,6 +19,7 @@ document.querySelectorAll('input[mask]').forEach(input => {
         case "tel":
             options.alias = "[+]9999999[99999999]"
             options.placeholder = ""
+            options.onUnMask = (maskedValue) => { return maskedValue }
             break
     }
     input.mask = new Inputmask(options).mask(input)
