@@ -168,8 +168,18 @@ svg.restore path {
   d: path("m 2 0.00001 l 0 2 l -2 0 l 0 8 l 8 0 l 0 -2 l 2 0 l 0 -8 Z m 1 1 l 6 0 l 0 6 l -1 0 l 0 -5 l -5 0 Z m -2 2 l 6 0 l 0 6 l -6 0 Z");
 }
 
-#userMenu {
-  margin-top: 2.2rem;
+#buttonDrawer {
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+#buttonDrawer:active>.mdi {
+  transform: scale(0.75);
+}
+
+#buttonDrawer>.mdi {
+  transition: var(--transition);
 }
 
 .flex {
@@ -703,7 +713,7 @@ footer>.status.selected {
 .mdi {
   font-size: 1.5rem;
   line-height: 1;
-  height: auto !important;
+  height: auto;
 }
 
 .mdc-tab--active {
@@ -726,7 +736,9 @@ footer>.status.selected {
 :not(.mdc-list-item--disabled).mdc-list-item:hover .mdc-list-item__ripple::before,
 :not(.mdc-list-item--disabled).mdc-list-item.mdc-ripple-surface--hover .mdc-list-item__ripple::before,
 .mdc-tab:hover .mdc-tab__ripple::before,
-.mdc-tab.mdc-ripple-surface--hover .mdc-tab__ripple::before {
+.mdc-tab.mdc-ripple-surface--hover .mdc-tab__ripple::before,
+:not(.mdc-deprecated-list-item--disabled).mdc-deprecated-list-item--activated.mdc-ripple-upgraded--background-focused .mdc-deprecated-list-item__ripple::before,
+:not(.mdc-deprecated-list-item--disabled).mdc-deprecated-list-item--activated:not(.mdc-ripple-upgraded):focus .mdc-deprecated-list-item__ripple::before {
   opacity: var(--mdc-ripple-hover-opacity);
 }
 
@@ -739,7 +751,8 @@ footer>.status.selected {
 .mdc-select__dropdown-icon.mdi::before,
 .mdc-tab .mdc-tab__ripple::before,
 .mdc-tab__icon,
-.mdc-tab__text-label {
+.mdc-tab__text-label,
+.mdc-deprecated-list-item__ripple::before {
   transition: var(--transition) !important;
 }
 
@@ -765,6 +778,11 @@ footer>.status.selected {
 .mdc-ripple-surface::before,
 .mdc-ripple-surface::after {
   background-color: currentColor;
+}
+
+.mdc-drawer__title,
+.mdc-drawer__subtitle {
+  user-select: none;
 }
 
 th .mdi {
@@ -897,6 +915,17 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-list-item__text {
   white-space: nowrap;
+}
+
+.mdc-deprecated-list-item__text {
+  font-weight: bold;
+  color: rgb(0 0 0 / 60%);
+}
+
+.mdc-drawer .mdc-deprecated-list-item--activated,
+.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__graphic,
+.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__text {
+  color: var(--mdc-theme-primary);
 }
 
 .mdc-card__actions {

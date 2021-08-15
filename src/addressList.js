@@ -1,5 +1,5 @@
-const addressList = document.querySelector('#addressList')
-const hotelList = document.querySelector('#hotelList')
+const addressList = document.getElementById('addressList')
+const hotelList = document.getElementById('hotelList')
 let curentAddressListSnapshot, curentHotelListSnapshot
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
@@ -156,7 +156,7 @@ function listItems(collection, list) {
 listItems('address', addressList)
 
 let selectedAddressID
-const inlineEdit = document.querySelector('#inlineEdit')
+const inlineEdit = document.getElementById('inlineEdit')
 const inlineEditInput = inlineEdit.querySelector('input')
 let inlineEditPath, inlineEditAnchorID
 const saveButton = inlineEdit.querySelector('button#save')

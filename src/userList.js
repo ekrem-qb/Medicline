@@ -1,6 +1,6 @@
 const buttonRefresh = document.querySelector('button#refresh')
 const buttonRefreshIcon = buttonRefresh.querySelector('.mdi')
-const userList = document.querySelector('#userList')
+const userList = document.getElementById('userList')
 var selectedUserUID, currentUserUID
 
 const dialogDeleteUser = document.querySelector("#dialogDeleteUser")

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicline</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="mdc-typography flex flex-column">
+    <div class="main flex justify-content-center py-3">
+        <div class="mx-2" id="toolsPanel">
+            <div class="mdc-card mdc-elevation--z6">
+                <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
+                    <i class="mdi mdi-eye-off me-3"></i>
+                    <h5 class="modal-title" translate>HIDDEN_COLUMNS</h5>
+                    <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                </div>
+                <div class="modal-body collapsed">
+                    <table class="list-group list-group-flush mdc-elevation--z3" id="hiddenTableColumnsList"></table>
+                </div>
+            </div>
+            <div class="mdc-card mdc-elevation--z6">
+                <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
+                    <i class="mdi mdi-filter me-3"></i>
+                    <h5 class="modal-title" translate>FILTER</h5>
+                    <i class="mdc-select__dropdown-icon mdi mdi-chevron-down"></i>
+                </div>
+                <form class="modal-body collapsed row g-2 m-0 p-2" id="filter">
+                    <div class="col-md-12">
+                        <label class="form-label" translate>SURNAME_NAME</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-account"></i></span>
+                            <input type="text" class="form-control" id="surnameName">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>BIRTH_DATE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                            <input mask="date" type="text" class="form-control" id="birthDate-min" placeholder="MIN">
+                            <input mask="date" type="text" class="form-control" id="birthDate-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PHONE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                            <input mask="tel" class="form-control" id="phone">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PHONE2</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                            <input mask="tel" class="form-control" id="phone2">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PHONE3</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                            <input mask="tel" class="form-control" id="phone3">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PATIENT_STATUS</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-control" id="patientStatus"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>COUNTRY</label>
+                        <div class="input-group input-group-sm">
+                            <select class="form-control" id="country"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>COMPLAINTS</label>
+                        <div class="input-group input-group-sm">
+                            <input class="form-control" id="complaints"></input>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PROVIDER</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                            <select class="form-control" id="provider"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PROVIDER2</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                            <select class="form-control" id="provider2"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>PROVIDER3</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                            <select class="form-control" id="provider3"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>INSURANCE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-hospital-box"></i></span>
+                            <select class="form-control" id="insurance"></select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>POLICY_NO</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" id="policyNo">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>INSURANCE_REF__NO</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" id="insuranceRefNo">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CREATE_USER</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
+                            <input type="text" class="form-control" id="createUser">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CREATE_DATE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                            <input mask="date" type="text" class="form-control" id="createDate-min" placeholder="MIN">
+                            <input mask="date" type="text" class="form-control" id="createDate-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CREATE_TIME</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                            <input mask="time" type="text" class="form-control" id="createTime-min" placeholder="MIN">
+                            <input mask="time" type="text" class="form-control" id="createTime-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>UPDATE_USER</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
+                            <input type="text" class="form-control" id="updateUser">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>UPDATE_DATE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                            <input mask="date" type="text" class="form-control" id="updateDate-min" placeholder="MIN">
+                            <input mask="date" type="text" class="form-control" id="updateDate-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>UPDATE_TIME</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                            <input mask="time" type="text" class="form-control" id="updateTime-min" placeholder="MIN">
+                            <input mask="time" type="text" class="form-control" id="updateTime-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CALLER</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-card-account-phone"></i></span>
+                            <input type="text" class="form-control" id="caller">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CALL_DATE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                            <input mask="date" type="text" class="form-control" id="callDate-min" placeholder="MIN">
+                            <input mask="date" type="text" class="form-control" id="callDate-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>CALL_TIME</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                            <input mask="time" type="text" class="form-control" id="callTime-min" placeholder="MIN">
+                            <input mask="time" type="text" class="form-control" id="callTime-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>APPOINTMENT_DATE</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                            <input mask="date" type="text" class="form-control" id="appointmentDate-min" placeholder="MIN">
+                            <input mask="date" type="text" class="form-control" id="appointmentDate-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" translate>APPOINTMENT_TIME</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                            <input mask="time" type="text" class="form-control" id="appointmentTime-min" placeholder="MIN">
+                            <input mask="time" type="text" class="form-control" id="appointmentTime-max" placeholder="MAX">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mt-0">
+                        <div class="col-md-12">
+                            <label class="form-label" translate>ADDRESS</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span>
+                                <select class="form-control" id="address"></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" translate>HOTEL</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="mdi mdi-office-building"></i></span>
+                                <select class="form-control" id="address_hotel" disabled></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" translate>ROOM_NO</label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text"><i class="mdi mdi-counter"></i></span>
+                                <input class="form-control" id="address_roomNo" disabled></select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer justify-content-between flex-wrap">
+                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="applyFilter()" id="buttonApplyFilter">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-check"></i>
+                        <span class="mdc-button__label" translate>APPLY</span>
+                    </button>
+                    <button class="mdc-button mdc-button--outlined mdc-button--red" id="clearFilter" disabled>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <span class="mdc-button__label" translate>CLEAR</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mx-2" id="casesPanel">
+            <div class="mdc-card mdc-elevation--z6">
+                <div class="flex flex-column" id="tableOverlay">
+                    <i class="mdi mdi-loading mdi-spin"></i>
+                    <h3 class="my-2" hidden></h3>
+                </div>
+                <div class="modal-header flex-column">
+                    <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
+                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-magnify"></i>
+                        <input type="text" class="mdc-text-field__input" id="search" />
+                        <button class="mdc-icon-button" id="clearSearch" onclick="clearSearch()" disabled>
+                            <div class="mdc-icon-button__ripple"></div>
+                            <span class="mdi mdi-close"></span>
+                        </button>
+                        <div class="mdc-notched-outline">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__notch">
+                                <span class="mdc-floating-label" translate>SEARCH</span>
+                            </div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('new-window', 'case')" id="buttonCreate">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-plus"></i>
+                        <span class="mdc-button__label" translate>NEW#CASE</span>
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-borderless" id="cases">
+                        <thead>
+                            <tr id="tableColumnsList"></tr>
+                        </thead>
+                        <tbody id="casesList"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer flex-column">
+                    <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()" id="buttonExport">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
+                        <span class="mdc-button__label" translate>EXPORT</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer id="statusBar" class="flex flex-row">
+        <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
+        <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
+        <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>
+        <div class="status mdc-ripple-surface" data-status="gop">GOP RECEIVED/SENT</div>
+        <div class="status mdc-ripple-surface" data-status="payIssued">PAYMENT ISSUED</div>
+        <div class="status mdc-ripple-surface" data-status="payReceived">PAYMENT RECEIVED</div>
+        <div class="status mdc-ripple-surface" data-status="multi">MULTI PROVIDER</div>
+        <div class="status mdc-ripple-surface" data-status="payNclaim">PAY AND CLAIM</div>
+        <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
+        <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
+    </footer>
+    <div class="mdc-menu mdc-menu-surface" id="contextMenu">
+        <ul class="mdc-list">
+            <li class="mdc-list-item" id="copy" hidden onclick="copySelectionToClipboard()">
+                <i class="mdi mdi-content-copy"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>COPY</span>
+            </li>
+            <li class="mdc-list-item" onclick="ipcRenderer.send('new-window', 'case', selectedCase.id)">
+                <i class="mdi mdi-pencil"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>EDIT</span>
+            </li>
+            <li class="mdc-list-divider">
+            <li class="mdc-list-item" data-status="sentDocs" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">SENT DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-item" data-status="invoiced" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">INVOICED</span>
+            </li>
+            <li class="mdc-list-item" data-status="dropped" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">DROPPED</span>
+            </li>
+            <li class="mdc-list-item" data-status="gop" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">GOP RECEIVED/SENT</span>
+            </li>
+            <li class="mdc-list-item" data-status="payIssued" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAYMENT ISSUED</span>
+            </li>
+            <li class="mdc-list-item" data-status="payReceived" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAYMENT RECEIVED</span>
+            </li>
+            <li class="mdc-list-item" data-status="multi" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">MULTI PROVIDER</span>
+            </li>
+            <li class="mdc-list-item" data-status="payNclaim" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">PAY AND CLAIM</span>
+            </li>
+            <li class="mdc-list-item" data-status="active" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">ACTIVE</span>
+            </li>
+            <li class="mdc-list-item" data-status="receivedDocs" onclick="changeCaseStatus(this.dataset.status)">
+                <i class="mdi mdi-circle"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2">RECEIVED DOCUMENTS</span>
+            </li>
+            <li class="mdc-list-divider">
+            <li class="mdc-list-item" id="delete" onclick="dialogDeleteCase.materialComponent.open()">
+                <i class="mdi mdi-trash-can"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+            </li>
+        </ul>
+    </div>
+    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteCase">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__content">
+                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <span class="mdc-button__label" translate>CANCEL</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="mdc-snackbar" id="snackbar">
+        <div class="mdc-snackbar__surface">
+            <div class="mdc-snackbar__label">
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script src="../node_modules/firebase/firebase-app.js"></script>
+    <script src="../node_modules/firebase/firebase-auth.js"></script>
+    <script src="../node_modules/firebase/firebase-firestore.js"></script>
+    <script src="import/translate.js"></script>
+    <script src="import/firebase/auth.js"></script>
+    <script src="import/firebase/firestore.js"></script>
+    <script src="import/firebase/admin.js"></script>
+    <script src="import/tomSelect.js"></script>
+    <script src="import/inputMask.js"></script>
+    <script src="import/material/ripple.js"></script>
+    <script src="import/material/textField.js"></script>
+    <script src="import/material/menu.js"></script>
+    <script src="import/material/list.js"></script>
+    <script src="import/material/dialog.js"></script>
+    <script src="import/material/snackbar.js"></script>
+    <script src="import/sortable.js"></script>
+    <script src="caseList.js"></script>
+</body>
+
+</html>

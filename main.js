@@ -36,9 +36,11 @@ async function main() {
         autoUpdater.checkForUpdates()
     })
 
-    setInterval(() => {
-        autoUpdater.checkForUpdates()
-    }, 1000 * 60 * 15)
+    if (app.isPackaged) {
+        setInterval(() => {
+            autoUpdater.checkForUpdates()
+        }, 1000 * 60 * 15)
+    }
 
     ipcMain.on("install-update", () => {
         autoUpdater.quitAndInstall(false, true)

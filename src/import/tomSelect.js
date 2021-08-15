@@ -83,7 +83,6 @@ function loadSelectMenus() {
                                             value: item.ref.path,
                                             text: item.get('name')
                                         })
-                                        console.log(item.get('name'))
                                     })
                                     if (subSelect.tomSelect.isOpen) {
                                         subSelect.tomSelect.refreshOptions()
