@@ -8,11 +8,11 @@ buttonDrawer.onclick = () => {
     drawer.materialComponent.open = !drawer.materialComponent.open
 }
 
-const drawer = document.getElementsByClassName('mdc-drawer')[0]
-const list = drawer.getElementsByClassName('mdc-deprecated-list')[0]
+const drawer = document.querySelector('.mdc-drawer')
+const list = drawer.querySelector('.mdc-deprecated-list')
 
 list.onclick = () => {
-    drawer.materialComponent.open = false
+
 }
 
 const displayName = drawer.querySelector('.mdc-drawer__title')
@@ -30,19 +30,23 @@ drawer.materialComponent.listen('MDCDrawer:opened', () => {
 })
 
 const editProfileOption = document.getElementById('editProfile')
-editProfileOption.onclick = event => {
-    event.preventDefault()
-    event.stopPropagation()
+editProfileOption.onmousedown = event => {
+    if (event.button == 0) {
+        event.preventDefault()
+        event.stopPropagation()
 
-    ipcRenderer.send('new-window', 'user', firebase.auth().currentUser.uid)
+        ipcRenderer.send('new-window', 'user', firebase.auth().currentUser.uid)
+    }
 }
 
 const signOutOption = document.getElementById('signOut')
-signOutOption.onclick = event => {
-    event.preventDefault()
-    event.stopPropagation()
+signOutOption.onmousedown = event => {
+    if (event.button == 0) {
+        event.preventDefault()
+        event.stopPropagation()
 
-    firebase.auth().signOut()
+        firebase.auth().signOut()
+    }
 }
 
 //#region Login
@@ -106,6 +110,7 @@ ipcRenderer.on('user-update', (event, uid, data) => {
         }
         else {
             displayName.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
+            email.textContent = ''
         }
 
         if (data.password != undefined) {
@@ -139,6 +144,10 @@ firebase.auth().onAuthStateChanged(user => {
 
 const webview = document.querySelector('webview')
 
+webview.addEventListener('dom-ready', () => {
+    drawer.materialComponent.open = false
+})
+
 ipcRenderer.on('user-update', (event, uid, data) => {
     webview.send('user-update', uid, data)
 })
@@ -148,11 +157,17 @@ ipcRenderer.on('user-add', event => {
 })
 
 const casesOption = document.getElementById('cases')
-casesOption.onclick = () => webview.src = 'caseList.html'
+casesOption.onmousedown = event => {
+    if (event.button == 0) {
+        webview.src = 'caseList.html'
+    }
+}
 
 const usersOption = document.getElementById('users')
-usersOption.onclick = () => {
-    webview.src = 'userList.html'
+usersOption.onmousedown = event => {
+    if (event.button == 0) {
+        webview.src = 'userList.html'
+    }
 }
 
 webview.addEventListener('dom-ready', () => {
@@ -161,5 +176,9 @@ webview.addEventListener('dom-ready', () => {
     }
 })
 
-const addressesOption = document.getElementById('addresses')
-addressesOption.onclick = () => webview.src = 'addressList.html'
+const hotelsOption = document.getElementById('hotels')
+hotelsOption.onmousedown = event => {
+    if (event.button == 0) {
+        webview.src = 'addressList.html'
+    }
+}

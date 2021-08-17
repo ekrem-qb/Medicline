@@ -169,7 +169,7 @@ svg.restore path {
 }
 
 #buttonDrawer {
-  padding: 0.25rem 0.5rem;
+  padding: 0.25rem 0.75rem;
   display: flex;
   align-items: center;
 }
@@ -193,7 +193,7 @@ svg.restore path {
 
 .table-responsive {
   max-width: 74vw;
-  min-height: 6rem;
+  min-height: 7.3rem;
 }
 
 tbody>tr {
@@ -228,11 +228,13 @@ tbody>tr>td {
 }
 
 tbody>tr>td:not(:first-child) {
-  box-shadow: inset 2px 0 #000 !important;
+  border-left: 2px solid #000;
+  box-shadow: 2px 0 transparent, -2px 0 transparent;
 }
 
 tbody>tr.selected>td {
-  box-shadow: 3px 0 #fff, -1px 0 #fff !important;
+  border-color: #fff;
+  box-shadow: 2px 0 #fff, -2px 0 #fff;
 }
 
 tbody>tr>td.found {
@@ -262,7 +264,11 @@ th:active {
 }
 
 .table th:not(:first-child) {
-  box-shadow: inset 2px 0 var(--bs-gray-500);
+  box-shadow: inset 1px 0 var(--bs-gray-500), -1px 0 var(--bs-gray-500);
+}
+
+.list-group:empty {
+  display: none;
 }
 
 .list-group>th {
@@ -338,7 +344,7 @@ th:active {
 
 #tableOverlay {
   width: 100%;
-  height: calc(100% - 8.6rem);
+  height: calc(100% - 8.5rem);
   bottom: 0;
   position: absolute;
   place-self: center;
@@ -535,8 +541,8 @@ footer>.status.selected {
   width: 8rem;
 }
 
-#dialogLogin {
-  backdrop-filter: blur(15px);
+#dialogLogin>.mdc-dialog__scrim {
+  background-color: var(--mdc-theme-background);
 }
 
 #inlineEdit {
@@ -778,6 +784,10 @@ footer>.status.selected {
 .mdc-ripple-surface::before,
 .mdc-ripple-surface::after {
   background-color: currentColor;
+}
+
+.mdc-drawer-scrim {
+  top: auto;
 }
 
 .mdc-drawer__title,

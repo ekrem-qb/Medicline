@@ -23,9 +23,9 @@ buttonRefresh.onclick = () => {
 
 function listUsers() {
     if (currentUserUID) {
-        userList.innerHTML = ''
         admin.auth().listUsers().then(
             snapshot => {
+                userList.innerHTML = ''
                 snapshot.users.forEach(
                     user => {
                         buttonRefreshIcon.classList.add('mdi-refresh')
@@ -154,7 +154,6 @@ function listUsers() {
                         }
                     }
                 )
-
             }
         )
     }
