@@ -261,7 +261,7 @@
                     </div>
                 </form>
                 <div class="modal-footer justify-content-between flex-wrap">
-                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="applyFilter()" id="buttonApplyFilter">
+                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="applyFilter()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-check"></i>
                         <span class="mdc-button__label" translate>APPLY</span>
@@ -296,7 +296,7 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('new-window', 'case')" id="buttonCreate">
+                    <button class="mdc-button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('new-window', 'case')">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-plus"></i>
                         <span class="mdc-button__label" translate>NEW#CASE</span>
@@ -311,7 +311,7 @@
                     </table>
                 </div>
                 <div class="modal-footer flex-column">
-                    <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()" id="buttonExport">
+                    <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
                         <span class="mdc-button__label" translate>EXPORT</span>
@@ -450,7 +450,7 @@
     <script src="import/material/dialog.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="import/sortable.js"></script>
-    <script src="caseList.js"></script>
+    <script src="casesList.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 const buttonRefresh = document.querySelector('button#refresh')
 const buttonRefreshIcon = buttonRefresh.querySelector('.mdi')
-const userList = document.getElementById('userList')
+const usersList = document.getElementById('usersList')
 var selectedUserUID, currentUserUID
 
 const dialogDeleteUser = document.querySelector("#dialogDeleteUser")
@@ -25,7 +25,7 @@ function listUsers() {
     if (currentUserUID) {
         admin.auth().listUsers().then(
             snapshot => {
-                userList.innerHTML = ''
+                usersList.innerHTML = ''
                 snapshot.users.forEach(
                     user => {
                         buttonRefreshIcon.classList.add('mdi-refresh')
@@ -35,7 +35,7 @@ function listUsers() {
                             let listItem = document.createElement('li')
                             listItem.classList.add('list-group-item', 'flex', 'align-items-center', 'justify-content-between', 'p-2')
                             listItem.id = user.uid
-                            userList.appendChild(listItem)
+                            usersList.appendChild(listItem)
 
                             let infoSegment = document.createElement('div')
                             infoSegment.classList.add('flex', 'align-items-center')

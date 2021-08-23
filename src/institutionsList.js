@@ -1,3 +1,13 @@
+const selectInstitutionType = document.getElementById('institutionType')
+selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
+    labelButtonNew.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+})
+const buttonNew = document.querySelector('button#new')
+buttonNew.onclick = () => {
+    ipcRenderer.send('new-window', 'institution')
+}
+const labelButtonNew = buttonNew.querySelector('.mdc-button__label')
+
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
@@ -5,12 +15,12 @@ const tableOverlay = document.querySelector("#tableOverlay")
 const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
 
-const casesTable = document.querySelector("table#cases")
-const casesList = casesTable.querySelector("tbody#casesList")
+const institutionsTable = document.querySelector("table#institutions")
+const institutionsList = institutionsTable.querySelector("tbody#institutionsList")
 let currentOrder, currentOrderDirection
 
-const columnsJSON = require("./columns.json")
-const tableColumnsList = casesTable.querySelector("#tableColumnsList")
+const columnsJSON = require("./institutionColumns.json")
+const tableColumnsList = institutionsTable.querySelector("#tableColumnsList")
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 
 const formFilter = document.querySelector("form#filter")
@@ -19,10 +29,10 @@ const buttonClearFilter = document.querySelector("button#clearFilter")
 const statusBar = document.querySelector("#statusBar")
 let selectedStatus
 
-let currentQuery = db.collection("cases")
+let currentQuery = db.collection("institutions")
 let searchQuery
-let foundCases
-let currentCasesSnap
+let foundinstitutions
+let currentinstitutionsSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
 let selectedCase, selectedCaseRow, selectedCaseID
@@ -74,7 +84,7 @@ function newColumn(column) {
     }
     th.onmouseup = () => {
         if (th.parentElement != tableColumnsList) {
-            if (casesList.childElementCount > 0) {
+            if (institutionsList.childElementCount > 0) {
                 setTableOverlayState('hide')
             }
             else {
@@ -133,11 +143,11 @@ function refreshSearch() {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        foundCases = new Array()
+        foundinstitutions = new Array()
         let casePromises = []
 
-        currentCasesSnap.forEach(_case => {
-            if (!foundCases.includes(_case.id)) {
+        currentinstitutionsSnap.forEach(_case => {
+            if (!foundinstitutions.includes(_case.id)) {
                 let data = String(_case.id)
                 let valuePromises = []
                 Object.values(_case.data()).forEach(value => {
@@ -155,23 +165,23 @@ function refreshSearch() {
                                 data += " -- " + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
-                                foundCases.push(_case.id)
+                                foundinstitutions.push(_case.id)
                             }
                         })
                     )
                 }
                 else {
                     if (data.includes(searchQuery)) {
-                        foundCases.push(_case.id)
+                        foundinstitutions.push(_case.id)
                     }
                 }
             }
         })
 
         if (casePromises.length > 0) {
-            Promise.all(casePromises).then(cases => {
-                if (foundCases.length > 0) {
-                    listCases(currentCasesSnap)
+            Promise.all(casePromises).then(institutions => {
+                if (foundinstitutions.length > 0) {
+                    listinstitutions(currentinstitutionsSnap)
                 }
                 else {
                     setTableOverlayState("empty")
@@ -179,8 +189,8 @@ function refreshSearch() {
             })
         }
         else {
-            if (foundCases.length > 0) {
-                listCases(currentCasesSnap)
+            if (foundinstitutions.length > 0) {
+                listinstitutions(currentinstitutionsSnap)
             }
             else {
                 setTableOverlayState("empty")
@@ -198,8 +208,8 @@ function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
     searchQuery = undefined
-    foundCases = undefined
-    listCases(currentCasesSnap)
+    foundinstitutions = undefined
+    listinstitutions(currentinstitutionsSnap)
 }
 
 function headerClick(headerID) {
@@ -220,44 +230,44 @@ function headerClick(headerID) {
         }
 
         if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
-            orderCases(headerID, 'asc')
+            orderinstitutions(headerID, 'asc')
         }
         else {
-            orderCases(headerID, 'desc')
+            orderinstitutions(headerID, 'desc')
         }
 
         clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
     }
 }
 
-function loadCases() {
+function loadinstitutions() {
     stopCurrentQuery()
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             console.log(snapshot)
-            listCases(snapshot)
-            currentCasesSnap = snapshot
+            listinstitutions(snapshot)
+            currentinstitutionsSnap = snapshot
         },
         error => {
-            console.error("Error getting cases: " + error)
+            console.error("Error getting institutions: " + error)
             setTableOverlayState("empty")
         }
     )
 }
 
-function listCases(snap) {
+function listinstitutions(snap) {
     if (snap.docs.length > 0) {
         let noOneFound = true
 
-        casesList.innerHTML = ''
+        institutionsList.innerHTML = ''
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentRefQueries = []
-        snap.forEach(caseSnap => {
-            if (foundCases == undefined || foundCases.includes(caseSnap.id)) {
+        snap.forEach(institutionsnap => {
+            if (foundinstitutions == undefined || foundinstitutions.includes(institutionsnap.id)) {
                 let doesntMatch = false
 
                 if (selectedStatus != undefined) {
-                    if (caseSnap.get('status') != selectedStatus.dataset.status) {
+                    if (institutionsnap.get('status') != selectedStatus.dataset.status) {
                         doesntMatch = true
                     }
                 }
@@ -265,17 +275,17 @@ function listCases(snap) {
                 Object.entries(filters).forEach(filter => {
                     switch (filter[0].split('-')[1]) {
                         case "min":
-                            if (caseSnap.get(filter[0].split('-')[0]) < filter[1]) {
+                            if (institutionsnap.get(filter[0].split('-')[0]) < filter[1]) {
                                 doesntMatch = true
                             }
                             break
                         case "max":
-                            if (caseSnap.get(filter[0].split('-')[0]) > filter[1]) {
+                            if (institutionsnap.get(filter[0].split('-')[0]) > filter[1]) {
                                 doesntMatch = true
                             }
                             break
                         default:
-                            let value = caseSnap.get(filter[0].split('-')[0])
+                            let value = institutionsnap.get(filter[0].split('-')[0])
 
                             if (value != undefined) {
                                 if (typeof value === "object" && value !== null) {
@@ -299,11 +309,11 @@ function listCases(snap) {
                     noOneFound = false
 
                     let tr = document.createElement('tr')
-                    tr.id = caseSnap.id
-                    tr.dataset.status = caseSnap.get('status')
+                    tr.id = institutionsnap.id
+                    tr.dataset.status = institutionsnap.get('status')
                     tr.ondblclick = () => {
                         if (getSelectedText() == '') {
-                            ipcRenderer.send('new-window', 'case', caseSnap.id)
+                            ipcRenderer.send('new-window', 'case', institutionsnap.id)
                         }
                     }
                     tr.onmousedown = mouseEvent => {
@@ -314,8 +324,8 @@ function listCases(snap) {
                             if (selectedCaseRow) {
                                 selectedCaseRow.classList.remove('selected')
                             }
-                            selectedCase = allCases.doc(caseSnap.id)
-                            selectedCaseID = caseSnap.id
+                            selectedCase = allinstitutions.doc(institutionsnap.id)
+                            selectedCaseID = institutionsnap.id
                             selectedCaseRow = tr
                             selectedCaseRow.classList.add('selected')
                         }
@@ -335,11 +345,11 @@ function listCases(snap) {
                         }
                     }
                     if (tr.id == selectedCaseID) {
-                        selectedCase = allCases.doc(selectedCaseID)
+                        selectedCase = allinstitutions.doc(selectedCaseID)
                         selectedCaseRow = tr
                         selectedCaseRow.classList.add('selected')
                     }
-                    casesList.appendChild(tr)
+                    institutionsList.appendChild(tr)
 
                     for (const column of tableColumnsList.children) {
                         const td = document.createElement("td")
@@ -347,10 +357,10 @@ function listCases(snap) {
                         tr.appendChild(td)
 
                         if (td.id == "__name__") {
-                            td.textContent = caseSnap.id
+                            td.textContent = institutionsnap.id
                         }
                         else {
-                            const value = caseSnap.get(td.id)
+                            const value = institutionsnap.get(td.id)
                             if (value != undefined) {
                                 if (typeof value === "object" && value !== null) {
                                     currentRefQueries.push(
@@ -362,7 +372,7 @@ function listCases(snap) {
                                                     td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                                                 }
 
-                                                orderCases(currentOrder, currentOrderDirection)
+                                                orderinstitutions(currentOrder, currentOrderDirection)
                                             },
                                             error => {
                                                 console.error(error)
@@ -404,7 +414,7 @@ function listCases(snap) {
                 }
             }
         })
-        orderCases(currentOrder, currentOrderDirection)
+        orderinstitutions(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
             setTableOverlayState("empty")
@@ -415,15 +425,15 @@ function listCases(snap) {
     }
 }
 
-function orderCases(orderBy, orderDirection) {
+function orderinstitutions(orderBy, orderDirection) {
     let switching, i, shouldSwitch
     do {
         switching = false
-        for (i = 0; i < casesList.children.length - 1; i++) {
+        for (i = 0; i < institutionsList.children.length - 1; i++) {
             shouldSwitch = false
 
-            const x = casesList.children[i].querySelector("td#" + orderBy)
-            const y = casesList.children[i + 1].querySelector("td#" + orderBy)
+            const x = institutionsList.children[i].querySelector("td#" + orderBy)
+            const y = institutionsList.children[i + 1].querySelector("td#" + orderBy)
 
             if (orderDirection == "asc") {
                 if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
@@ -439,7 +449,7 @@ function orderCases(orderBy, orderDirection) {
             }
         }
         if (shouldSwitch) {
-            casesList.children[i].parentElement.insertBefore(casesList.children[i + 1], casesList.children[i])
+            institutionsList.children[i].parentElement.insertBefore(institutionsList.children[i + 1], institutionsList.children[i])
             switching = true
         }
     }
@@ -464,7 +474,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("CASES_NOT_FOUND")
+            tableOverlayText.innerText = translate("institutions_NOT_FOUND")
             break
         case "drag":
             tableOverlay.classList.remove("hide")
@@ -482,7 +492,7 @@ function setTableOverlayState(state) {
     }
 }
 
-function changeCaseStatus(newStatus) {
+function changeinstitutionstatus(newStatus) {
     selectedCase.update({ status: newStatus }).catch(error => {
         console.error("Error updating case: ", error)
     })
@@ -513,24 +523,24 @@ function modalExpand(header) {
 for (const status of statusBar.children) {
     status.onmouseover = () => {
         if (selectedStatus == undefined) {
-            casesList.classList.add('dimmed')
-            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+            institutionsList.classList.add('dimmed')
+            institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
                 tr.classList.add('not-dimmed')
             })
         }
     }
     status.onmouseleave = () => {
         if (selectedStatus == undefined) {
-            casesList.classList.remove('dimmed')
-            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+            institutionsList.classList.remove('dimmed')
+            institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
                 tr.classList.remove('not-dimmed')
             })
         }
     }
 
     status.onclick = () => {
-        casesList.classList.remove('dimmed')
-        casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
+        institutionsList.classList.remove('dimmed')
+        institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
             tr.classList.remove('not-dimmed')
         })
 
@@ -547,7 +557,7 @@ for (const status of statusBar.children) {
         else {
             selectedStatus = status
         }
-        listCases(currentCasesSnap)
+        listinstitutions(currentinstitutionsSnap)
     }
 }
 
@@ -587,7 +597,7 @@ function hideEmptyFilters() {
 
 function applyFilter() {
     let emptyFilter = true
-    currentQuery = allCases
+    currentQuery = allinstitutions
 
     filters = {}
 
@@ -614,7 +624,7 @@ function applyFilter() {
                         currentQuery = currentQuery.where(inputFilter.id, "==", value)
                         break
                 }
-                loadCases()
+                loadinstitutions()
             }
             else {
                 filters[inputFilter.id] = value
@@ -632,7 +642,7 @@ function applyFilter() {
     if (!emptyFilter) {
         buttonClearFilter.disabled = false
         if (Object.entries(filters).length > 0) {
-            listCases(currentCasesSnap)
+            listinstitutions(currentinstitutionsSnap)
         }
     }
     else {
@@ -655,10 +665,10 @@ function clearFilter() {
     })
     buttonClearFilter.disabled = true
     hideEmptyFilters()
-    currentQuery = allCases
+    currentQuery = allinstitutions
     filters = {}
     setTableOverlayState("loading")
-    loadCases()
+    loadinstitutions()
 }
 
 buttonClearFilter.onclick = clearFilter
@@ -672,7 +682,7 @@ function exportToExcel() {
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(casesTable), filePath)
+    writeFile(utils.table_to_book(institutionsTable), filePath)
 })
 
 function getSelectedText() {

@@ -9,12 +9,6 @@ buttonDrawer.onclick = () => {
 }
 
 const drawer = document.querySelector('.mdc-drawer')
-const list = drawer.querySelector('.mdc-deprecated-list')
-
-list.onclick = () => {
-
-}
-
 const displayName = drawer.querySelector('.mdc-drawer__title')
 const email = drawer.querySelector('.mdc-drawer__subtitle')
 
@@ -27,6 +21,8 @@ drawer.materialComponent.listen('MDCDrawer:opened', () => {
     buttonDrawerIcon.classList.remove('mdi-menu')
     buttonDrawerIcon.classList.remove('mdi-rotate-180')
     buttonDrawerIcon.classList.add('mdi-arrow-left')
+
+    drawer.materialComponent.list.listElements[drawer.materialComponent.list.selectedIndex].focus()
 })
 
 const editProfileOption = document.getElementById('editProfile')
@@ -48,6 +44,15 @@ signOutOption.onmousedown = event => {
         firebase.auth().signOut()
     }
 }
+
+drawer.materialComponent.list.listElements.forEach((listItem, index) => {
+    listItem.onmousedown = event => {
+        if (event.button == 0) {
+            webview.src = listItem.id + 'List.html'
+            drawer.materialComponent.list.selectedIndex = index
+        }
+    }
+})
 
 //#region Login
 
@@ -152,33 +157,12 @@ ipcRenderer.on('user-update', (event, uid, data) => {
     webview.send('user-update', uid, data)
 })
 
-ipcRenderer.on('user-add', event => {
+ipcRenderer.on('user-add', () => {
     webview.send('user-add')
 })
 
-const casesOption = document.getElementById('cases')
-casesOption.onmousedown = event => {
-    if (event.button == 0) {
-        webview.src = 'caseList.html'
-    }
-}
-
-const usersOption = document.getElementById('users')
-usersOption.onmousedown = event => {
-    if (event.button == 0) {
-        webview.src = 'userList.html'
-    }
-}
-
 webview.addEventListener('dom-ready', () => {
-    if (webview.src.includes('userList.html')) {
+    if (webview.src.includes('usersList.html')) {
         webview.send('current-user', firebase.auth().currentUser.uid)
     }
 })
-
-const hotelsOption = document.getElementById('hotels')
-hotelsOption.onmousedown = event => {
-    if (event.button == 0) {
-        webview.src = 'addressList.html'
-    }
-}

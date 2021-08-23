@@ -393,7 +393,7 @@ th:active {
   font-size: 1.25rem;
 }
 
-.modal-header .mdc-select__dropdown-icon {
+.modal-header>.mdc-select__dropdown-icon {
   margin-right: .25rem;
 }
 
@@ -712,7 +712,6 @@ footer>.status.selected {
   --mdc-theme-secondary: var(--bs-red);
   --mdc-ripple-color: currentColor;
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
-  --mdc-ripple-focus-opacity: 0;
   --mdc-ripple-hover-opacity: .1;
 }
 
@@ -793,6 +792,17 @@ footer>.status.selected {
 .mdc-drawer__title,
 .mdc-drawer__subtitle {
   user-select: none;
+}
+
+.mdc-drawer .mdc-deprecated-list-item__text {
+  font-weight: bold;
+  color: rgb(0 0 0 / 60%);
+}
+
+.mdc-drawer .mdc-deprecated-list-item--activated,
+.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__graphic,
+.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__text {
+  color: var(--mdc-theme-primary);
 }
 
 th .mdi {
@@ -927,17 +937,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
   white-space: nowrap;
 }
 
-.mdc-deprecated-list-item__text {
-  font-weight: bold;
-  color: rgb(0 0 0 / 60%);
-}
-
-.mdc-drawer .mdc-deprecated-list-item--activated,
-.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__graphic,
-.mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__text {
-  color: var(--mdc-theme-primary);
-}
-
 .mdc-card__actions {
   border-top: 1px solid rgba(0, 0, 0, .38);
 }
@@ -989,8 +988,20 @@ form .mdc-text-field {
   color: var(--mdc-theme-error);
 }
 
-.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-select__dropdown-icon::before {
+.mdc-select:not(.mdc-select--disabled) .mdc-select__dropdown-icon {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.mdc-select:not(.mdc-select--disabled).mdc-select--focused .mdc-select__dropdown-icon {
+  color: var(--mdc-theme-primary, #6200ee);
+}
+
+.mdc-select--activated .mdc-select__dropdown-icon::before {
   transform: rotate(180deg);
+}
+
+.mdc-select__anchor {
+  width: auto;
 }
 
 .mdc-text-field--focused+.mdc-text-field-helper-line .mdc-text-field-helper-text:not(.mdc-text-field-helper-text--persistent) {

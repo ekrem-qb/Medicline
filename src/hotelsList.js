@@ -1,11 +1,11 @@
 const addressList = document.getElementById('addressList')
-const hotelList = document.getElementById('hotelList')
-let curentAddressListSnapshot, curentHotelListSnapshot
+const hotelsList = document.getElementById('hotelsList')
+let curentAddressListSnapshot, curenthotelsListSnapshot
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
 
 addressList.onscroll = () => moveInlineEditToAnchor()
-hotelList.onscroll = () => moveInlineEditToAnchor()
+hotelsList.onscroll = () => moveInlineEditToAnchor()
 
 function listItems(collection, list) {
     stopHotelQuery()
@@ -29,12 +29,12 @@ function listItems(collection, list) {
                             }
                             selectedAddressID = listItem.id
                             listItem.classList.add('active')
-                            stopHotelQuery = listItems(item.ref.path + '/hotel', hotelList)
+                            stopHotelQuery = listItems(item.ref.path + '/hotel', hotelsList)
                         }
                     }
                 }
                 else {
-                    curentHotelListSnapshot = snapshot
+                    curenthotelsListSnapshot = snapshot
                 }
 
                 const bigtext = document.createElement('b')
