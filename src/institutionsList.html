@@ -31,14 +31,12 @@
                         <span class="mdc-select__dropdown-icon mdi mdi-chevron-down">
                         </span>
                     </div>
-                    <div class="mdc-select__menu demo-width-class mdc-menu mdc-menu-surface">
+                    <div class="mdc-select__menu mdc-menu mdc-menu-surface">
                         <ul class="mdc-deprecated-list">
-                            <li class="mdc-deprecated-list-item mdc-deprecated-list-item--selected" data-value="insurance" aria-selected="true">
-                                <span class="mdc-deprecated-list-item__ripple"></span>
+                            <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="insurance" aria-selected="true">
                                 <span class="mdc-deprecated-list-item__text" translate>INSURANCE</span>
                             </li>
-                            <li class="mdc-deprecated-list-item" data-value="provider">
-                                <span class="mdc-deprecated-list-item__ripple"></span>
+                            <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="provider">
                                 <span class="mdc-deprecated-list-item__text" translate>PROVIDER</span>
                             </li>
                         </ul>
@@ -83,6 +81,29 @@
         </div>
     </div>
 
+    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteInstitution">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__content">
+                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <p class="mb-0" translate>ASK_DELETE#THIS_INSTITUTION</p>
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <span class="mdc-button__label" translate>CANCEL</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
     <div class="mdc-snackbar" id="snackbar">
         <div class="mdc-snackbar__surface">
             <div class="mdc-snackbar__label">

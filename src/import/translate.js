@@ -36,4 +36,7 @@ function translate(textToTranslate) {
     else if (!Number.isNaN(parseInt(textToTranslate.slice(-1)))) {
         return translateStrings[textToTranslate.slice(0, -1)] + ' ' + textToTranslate.slice(-1)
     }
+    else {
+        return textToTranslate
+    }
 }

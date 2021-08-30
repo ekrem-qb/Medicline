@@ -71,5 +71,7 @@
     "CASES_NOT_FOUND": "Случаи не найдены",
     "DRAG_AND_DROP": "Перетащить и отпустить",
     "NEW_VERSION": "Новая версия",
-    "CURRENT_VERSION": "Текущая версия"
+    "CURRENT_VERSION": "Текущая версия",
+    "INSTITUTION_NAME": "Название учреждения",
+    "REPRESENTATIVE": "Представитель"
 }

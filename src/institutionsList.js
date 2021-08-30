@@ -1,5 +1,7 @@
 const selectInstitutionType = document.getElementById('institutionType')
 selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
+    currentQuery = db.collection(selectInstitutionType.materialComponent.value)
+    loadInstitutions()
     labelButtonNew.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
 })
 const buttonNew = document.querySelector('button#new')
@@ -20,52 +22,39 @@ const institutionsList = institutionsTable.querySelector("tbody#institutionsList
 let currentOrder, currentOrderDirection
 
 const columnsJSON = require("./institutionColumns.json")
-const tableColumnsList = institutionsTable.querySelector("#tableColumnsList")
+const institutionColumnsList = institutionsTable.querySelector("#tableColumnsList")
 const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
 
-const formFilter = document.querySelector("form#filter")
-const buttonClearFilter = document.querySelector("button#clearFilter")
-
-const statusBar = document.querySelector("#statusBar")
-let selectedStatus
-
-let currentQuery = db.collection("institutions")
+let currentQuery = db.collection('insurance')
 let searchQuery
-let foundinstitutions
-let currentinstitutionsSnap
+let foundInstitutions
+let currentInstitutionsSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
-let selectedCase, selectedCaseRow, selectedCaseID
-let filters = {}
+let selectedInstitution, selectedInstitutionRow, selectedInstitutionID
 
 const contextMenu = document.getElementById('contextMenu')
 const copyOption = document.getElementById('copy')
 
-const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
-dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
+const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        selectedCase.delete().then(() => {
-            selectedCase = undefined
-            selectedCaseID = undefined
+        selectedInstitution.delete().then(() => {
+            selectedInstitution = undefined
+            selectedInstitutionID = undefined
         }).catch(error => {
-            console.error("Error removing case: ", error)
+            console.error("Error removing institution: ", error)
         })
     }
 })
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
-        loadSelectMenus()
-        if (Object.entries(filters).length == 0) {
-            formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString('tr')
-            applyFilter()
-            hideEmptyFilters()
-        }
+        loadInstitutions()
     }
     else {
         stopCurrentQuery()
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
-        selectMenuQueries.forEach(stopQuery => stopQuery())
     }
 })
 
@@ -77,13 +66,13 @@ function newColumn(column) {
     th.innerHTML = translate(columnsJSON[column])
     th.onmousedown = mouseEvent => {
         if (mouseEvent.button == 0) {
-            if (th.parentElement != tableColumnsList) {
+            if (th.parentElement != institutionColumnsList) {
                 setTableOverlayState('drag')
             }
         }
     }
     th.onmouseup = () => {
-        if (th.parentElement != tableColumnsList) {
+        if (th.parentElement != institutionColumnsList) {
             if (institutionsList.childElementCount > 0) {
                 setTableOverlayState('hide')
             }
@@ -106,33 +95,42 @@ function newColumn(column) {
     return th
 }
 
+const Sortable = require("sortablejs")
+
 function loadColumns() {
     setTableOverlayState("loading")
 
-    let enabledColumns = []
-    if (localStorage.getItem("enabledColumns") != null) {
-        enabledColumns = localStorage.getItem("enabledColumns").split(',')
+    let columns = Object.keys(columnsJSON)
+    if (localStorage.getItem("institutionColumns") != null) {
+        columns = localStorage.getItem("institutionColumns").split(',')
+    }
+    columns.forEach(column => institutionColumnsList.appendChild(newColumn(column)))
+    if (columns.includes('name')) {
+        headerClick('name')
     }
     else {
-        enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createTime", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
+        headerClick(columns[columns.length - 1])
     }
-    enabledColumns.forEach(
-        column => {
-            if (columnsJSON.hasOwnProperty(column)) {
-                tableColumnsList.appendChild(newColumn(column))
+
+    Sortable.create(institutionColumnsList, {
+        animation: 150,
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+        onStart: () => setTableOverlayState('drag'),
+        onEnd: () => {
+            if (institutionsList.childElementCount > 0) {
+                setTableOverlayState('hide')
             }
-        })
-    for (let column in columnsJSON) {
-        if (!enabledColumns.includes(column)) {
-            hiddenTableColumnsList.appendChild(newColumn(column))
+            else {
+                setTableOverlayState("empty")
+            }
+            listInstitutions(currentInstitutionsSnap)
+            let institutionColumns = []
+            for (let column of tableColumnsList.children) {
+                institutionColumns.push(column.id)
+            }
+            localStorage.setItem('institutionColumns', institutionColumns)
         }
-    }
-    if (enabledColumns.includes("createTime")) {
-        headerClick("createTime")
-    }
-    else {
-        headerClick(enabledColumns[enabledColumns.length - 1])
-    }
+    })
 }
 
 loadColumns()
@@ -143,14 +141,14 @@ function refreshSearch() {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        foundinstitutions = new Array()
-        let casePromises = []
+        foundInstitutions = new Array()
+        let institutionPromises = []
 
-        currentinstitutionsSnap.forEach(_case => {
-            if (!foundinstitutions.includes(_case.id)) {
-                let data = String(_case.id)
+        currentInstitutionsSnap.forEach(institution => {
+            if (!foundInstitutions.includes(institution.id)) {
+                let data = String(institution.id)
                 let valuePromises = []
-                Object.values(_case.data()).forEach(value => {
+                Object.values(institution.data()).forEach(value => {
                     if (typeof value === "object" && value !== null) {
                         valuePromises.push(value.get())
                     }
@@ -159,29 +157,29 @@ function refreshSearch() {
                     }
                 })
                 if (valuePromises.length > 0) {
-                    casePromises.push(
+                    institutionPromises.push(
                         Promise.all(valuePromises).then(values => {
                             values.forEach(snaphot => {
                                 data += " -- " + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
-                                foundinstitutions.push(_case.id)
+                                foundInstitutions.push(institution.id)
                             }
                         })
                     )
                 }
                 else {
                     if (data.includes(searchQuery)) {
-                        foundinstitutions.push(_case.id)
+                        foundInstitutions.push(institution.id)
                     }
                 }
             }
         })
 
-        if (casePromises.length > 0) {
-            Promise.all(casePromises).then(institutions => {
-                if (foundinstitutions.length > 0) {
-                    listinstitutions(currentinstitutionsSnap)
+        if (institutionPromises.length > 0) {
+            Promise.all(institutionPromises).then(institutions => {
+                if (foundInstitutions.length > 0) {
+                    listInstitutions(currentInstitutionsSnap)
                 }
                 else {
                     setTableOverlayState("empty")
@@ -189,8 +187,8 @@ function refreshSearch() {
             })
         }
         else {
-            if (foundinstitutions.length > 0) {
-                listinstitutions(currentinstitutionsSnap)
+            if (foundInstitutions.length > 0) {
+                listInstitutions(currentInstitutionsSnap)
             }
             else {
                 setTableOverlayState("empty")
@@ -208,14 +206,14 @@ function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
     searchQuery = undefined
-    foundinstitutions = undefined
-    listinstitutions(currentinstitutionsSnap)
+    foundInstitutions = undefined
+    listInstitutions(currentInstitutionsSnap)
 }
 
 function headerClick(headerID) {
-    const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
+    const clickedHeader = institutionColumnsList.querySelector('th#' + headerID)
     if (clickedHeader) {
-        const otherHeaderIcon = tableColumnsList.querySelector('.mdi-chevron-up')
+        const otherHeaderIcon = institutionColumnsList.querySelector('.mdi-chevron-up')
         if (otherHeaderIcon) {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
@@ -240,13 +238,13 @@ function headerClick(headerID) {
     }
 }
 
-function loadinstitutions() {
+function loadInstitutions() {
     stopCurrentQuery()
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             console.log(snapshot)
-            listinstitutions(snapshot)
-            currentinstitutionsSnap = snapshot
+            listInstitutions(snapshot)
+            currentInstitutionsSnap = snapshot
         },
         error => {
             console.error("Error getting institutions: " + error)
@@ -255,161 +253,118 @@ function loadinstitutions() {
     )
 }
 
-function listinstitutions(snap) {
+function listInstitutions(snap) {
     if (snap.docs.length > 0) {
         let noOneFound = true
 
         institutionsList.innerHTML = ''
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentRefQueries = []
-        snap.forEach(institutionsnap => {
-            if (foundinstitutions == undefined || foundinstitutions.includes(institutionsnap.id)) {
-                let doesntMatch = false
+        snap.forEach(institutionSnap => {
+            if (foundInstitutions == undefined || foundInstitutions.includes(institutionSnap.id)) {
+                setTableOverlayState('hide')
+                noOneFound = false
 
-                if (selectedStatus != undefined) {
-                    if (institutionsnap.get('status') != selectedStatus.dataset.status) {
-                        doesntMatch = true
+                let tr = document.createElement('tr')
+                tr.id = institutionSnap.id
+                tr.ondblclick = () => {
+                    if (getSelectedText() == '') {
+                        ipcRenderer.send('new-window', 'institution', institutionSnap.id)
                     }
                 }
+                tr.onmousedown = mouseEvent => {
+                    if (mouseEvent.button != 1) {
+                        if (mouseEvent.button == 2) {
+                            contextMenu.materialComponent.open = false
+                        }
+                        if (selectedInstitutionRow) {
+                            selectedInstitutionRow.classList.remove('selected')
+                        }
+                        selectedInstitution = currentQuery.doc(institutionSnap.id)
+                        selectedInstitutionID = institutionSnap.id
+                        selectedInstitutionRow = tr
+                        selectedInstitutionRow.classList.add('selected')
+                    }
+                }
+                tr.onmouseup = mouseEvent => {
+                    const hasSelection = getSelectedText() != ''
 
-                Object.entries(filters).forEach(filter => {
-                    switch (filter[0].split('-')[1]) {
-                        case "min":
-                            if (institutionsnap.get(filter[0].split('-')[0]) < filter[1]) {
-                                doesntMatch = true
-                            }
-                            break
-                        case "max":
-                            if (institutionsnap.get(filter[0].split('-')[0]) > filter[1]) {
-                                doesntMatch = true
-                            }
-                            break
-                        default:
-                            let value = institutionsnap.get(filter[0].split('-')[0])
+                    if (hasSelection || mouseEvent.button == 2) {
+                        copyOption.hidden = !hasSelection
+                        contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+                            option.hidden = hasSelection
+                        })
+                        contextMenu.style.left = (mouseEvent.clientX + 2) + 'px'
+                        contextMenu.style.top = (mouseEvent.clientY + 2) + 'px'
+                        contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX + 2), (mouseEvent.clientY + 2))
+                        contextMenu.materialComponent.open = true
+                    }
+                }
+                if (tr.id == selectedInstitutionID) {
+                    selectedInstitution = currentQuery.doc(selectedInstitutionID)
+                    selectedInstitutionRow = tr
+                    selectedInstitutionRow.classList.add('selected')
+                }
+                institutionsList.appendChild(tr)
 
-                            if (value != undefined) {
-                                if (typeof value === "object" && value !== null) {
-                                    if (value.path != filter[1].path) {
-                                        doesntMatch = true
-                                    }
-                                }
-                                else if (!value.toLowerCase().includes(filter[1].toLowerCase())) {
-                                    doesntMatch = true
-                                }
+                for (const column of institutionColumnsList.children) {
+                    const td = document.createElement("td")
+                    td.id = column.id
+                    tr.appendChild(td)
+
+                    if (td.id == "__name__") {
+                        td.textContent = institutionSnap.id
+                    }
+                    else {
+                        const value = institutionSnap.get(td.id)
+                        if (value != undefined) {
+                            if (typeof value === "object" && value !== null) {
+                                currentRefQueries.push(
+                                    value.onSnapshot(
+                                        snapshot => {
+                                            td.textContent = snapshot.get('name')
+
+                                            if (searchQuery != undefined && searchQuery != "") {
+                                                td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                            }
+
+                                            orderinstitutions(currentOrder, currentOrderDirection)
+                                        },
+                                        error => {
+                                            console.error(error)
+                                        }
+                                    )
+                                )
                             }
                             else {
-                                doesntMatch = true
-                            }
-                            break
-                    }
-                })
-
-                if (!doesntMatch) {
-                    setTableOverlayState('hide')
-                    noOneFound = false
-
-                    let tr = document.createElement('tr')
-                    tr.id = institutionsnap.id
-                    tr.dataset.status = institutionsnap.get('status')
-                    tr.ondblclick = () => {
-                        if (getSelectedText() == '') {
-                            ipcRenderer.send('new-window', 'case', institutionsnap.id)
-                        }
-                    }
-                    tr.onmousedown = mouseEvent => {
-                        if (mouseEvent.button != 1) {
-                            if (mouseEvent.button == 2) {
-                                contextMenu.materialComponent.open = false
-                            }
-                            if (selectedCaseRow) {
-                                selectedCaseRow.classList.remove('selected')
-                            }
-                            selectedCase = allinstitutions.doc(institutionsnap.id)
-                            selectedCaseID = institutionsnap.id
-                            selectedCaseRow = tr
-                            selectedCaseRow.classList.add('selected')
-                        }
-                    }
-                    tr.onmouseup = mouseEvent => {
-                        const hasSelection = getSelectedText() != ''
-
-                        if (hasSelection || mouseEvent.button == 2) {
-                            copyOption.hidden = !hasSelection
-                            contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
-                                option.hidden = hasSelection
-                            })
-                            contextMenu.style.left = (mouseEvent.clientX + 2) + 'px'
-                            contextMenu.style.top = (mouseEvent.clientY + 2) + 'px'
-                            contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX + 2), (mouseEvent.clientY + 2))
-                            contextMenu.materialComponent.open = true
-                        }
-                    }
-                    if (tr.id == selectedCaseID) {
-                        selectedCase = allinstitutions.doc(selectedCaseID)
-                        selectedCaseRow = tr
-                        selectedCaseRow.classList.add('selected')
-                    }
-                    institutionsList.appendChild(tr)
-
-                    for (const column of tableColumnsList.children) {
-                        const td = document.createElement("td")
-                        td.id = column.id
-                        tr.appendChild(td)
-
-                        if (td.id == "__name__") {
-                            td.textContent = institutionsnap.id
-                        }
-                        else {
-                            const value = institutionsnap.get(td.id)
-                            if (value != undefined) {
-                                if (typeof value === "object" && value !== null) {
-                                    currentRefQueries.push(
-                                        value.onSnapshot(
-                                            snapshot => {
-                                                td.textContent = snapshot.get('name')
-
-                                                if (searchQuery != undefined && searchQuery != "") {
-                                                    td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                switch (td.id) {
+                                    case "complaints":
+                                        td.textContent = td.title = value
+                                        break
+                                    default:
+                                        if (td.id.includes("Date")) {
+                                            td.textContent = new Date(value).toJSON().substr(0, 10)
+                                        }
+                                        else {
+                                            td.textContent = value
+                                        }
+                                        if (td.id.includes('User')) {
+                                            admin.auth().getUserByEmail(value + emailSuffix).then(user => {
+                                                if (user.displayName) {
+                                                    td.textContent = user.displayName
                                                 }
-
-                                                orderinstitutions(currentOrder, currentOrderDirection)
-                                            },
-                                            error => {
-                                                console.error(error)
-                                            }
-                                        )
-                                    )
-                                }
-                                else {
-                                    switch (td.id) {
-                                        case "complaints":
-                                            td.textContent = td.title = value
-                                            break
-                                        default:
-                                            if (td.id.includes("Date")) {
-                                                td.textContent = new Date(value).toJSON().substr(0, 10)
-                                            }
-                                            else {
-                                                td.textContent = value
-                                            }
-                                            if (td.id.includes('User')) {
-                                                admin.auth().getUserByEmail(value + emailSuffix).then(user => {
-                                                    if (user.displayName) {
-                                                        td.textContent = user.displayName
-                                                    }
-                                                }).catch(error => {
-                                                    console.error("Error getting user by email: ", error)
-                                                })
-                                            }
-                                            break
-                                    }
+                                            }).catch(error => {
+                                                console.error("Error getting user by email: ", error)
+                                            })
+                                        }
+                                        break
                                 }
                             }
                         }
+                    }
 
-                        if (searchQuery != undefined && searchQuery != "") {
-                            td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
-                        }
+                    if (searchQuery != undefined && searchQuery != "") {
+                        td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                     }
                 }
             }
@@ -491,189 +446,6 @@ function setTableOverlayState(state) {
             break
     }
 }
-
-function changeinstitutionstatus(newStatus) {
-    selectedCase.update({ status: newStatus }).catch(error => {
-        console.error("Error updating case: ", error)
-    })
-}
-
-function modalExpand(header) {
-    let currentModalBody = header.parentElement.querySelector(".modal-body")
-    let currentExpandIcon = currentModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
-
-    let otherModalBody
-    header.parentElement.parentElement.querySelectorAll(".modal-body").forEach(modalBody => {
-        if (modalBody != currentModalBody) {
-            otherModalBody = modalBody
-        }
-    })
-    let otherExpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
-
-    if (currentModalBody.classList.contains("collapsed")) {
-        otherModalBody.classList.add("collapsed")
-        otherExpandIcon.classList.remove("mdi-rotate-180")
-    }
-
-    currentExpandIcon.classList.toggle("mdi-rotate-180", currentModalBody.classList.contains("collapsed"))
-    currentModalBody.classList.toggle("collapsed", !currentModalBody.classList.contains("collapsed"))
-    hideEmptyFilters()
-}
-
-for (const status of statusBar.children) {
-    status.onmouseover = () => {
-        if (selectedStatus == undefined) {
-            institutionsList.classList.add('dimmed')
-            institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-                tr.classList.add('not-dimmed')
-            })
-        }
-    }
-    status.onmouseleave = () => {
-        if (selectedStatus == undefined) {
-            institutionsList.classList.remove('dimmed')
-            institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-                tr.classList.remove('not-dimmed')
-            })
-        }
-    }
-
-    status.onclick = () => {
-        institutionsList.classList.remove('dimmed')
-        institutionsList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-            tr.classList.remove('not-dimmed')
-        })
-
-        if (selectedStatus) {
-            selectedStatus.classList.remove('selected')
-        }
-
-        statusBar.classList.toggle('dimmed', status != selectedStatus)
-        status.classList.toggle('selected', status != selectedStatus)
-
-        if (status == selectedStatus) {
-            selectedStatus = undefined
-        }
-        else {
-            selectedStatus = status
-        }
-        listinstitutions(currentinstitutionsSnap)
-    }
-}
-
-//#region Filter
-
-function hideEmptyFilters() {
-    let hide = true
-    for (let filter of formFilter.children) {
-        let collapsed = true
-        filter.querySelectorAll('input, textarea').forEach(inputFilter => {
-            inputFilter.onchange = () => {
-                inputFilter.value = String(inputFilter.value).trim()
-            }
-            if (String(inputFilter.value).trim() != '') {
-                collapsed = false
-                hide = false
-                return
-            }
-        })
-        filter.querySelectorAll('select').forEach(select => {
-            if (select.tomSelect.getValue() != '') {
-                collapsed = false
-                hide = false
-                return
-            }
-        })
-        filter.classList.toggle("collapsed", collapsed && formFilter.classList.contains("collapsed"))
-    }
-    if (formFilter.classList.contains("collapsed")) {
-        formFilter.classList.toggle("hide", hide)
-    }
-    else {
-        formFilter.classList.remove("hide")
-    }
-
-}
-
-function applyFilter() {
-    let emptyFilter = true
-    currentQuery = allinstitutions
-
-    filters = {}
-
-    formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
-        if (inputFilter.value != '') {
-            emptyFilter = false
-
-            let value = inputFilter.value
-
-            if (inputFilter.mask != undefined) {
-                value = inputFilter.mask.unmaskedvalue();
-            }
-
-            if (inputFilter.id.split('-')[0] == 'createDate') {
-                setTableOverlayState("loading")
-                switch (inputFilter.id.split('-')[1]) {
-                    case "min":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
-                        break
-                    case "max":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
-                        break
-                    default:
-                        currentQuery = currentQuery.where(inputFilter.id, "==", value)
-                        break
-                }
-                loadinstitutions()
-            }
-            else {
-                filters[inputFilter.id] = value
-            }
-        }
-    })
-    formFilter.querySelectorAll('select').forEach(select => {
-        if (select.tomSelect.getValue() != '') {
-            emptyFilter = false
-
-            filters[select.id] = db.doc(select.tomSelect.getValue())
-        }
-    })
-
-    if (!emptyFilter) {
-        buttonClearFilter.disabled = false
-        if (Object.entries(filters).length > 0) {
-            listinstitutions(currentinstitutionsSnap)
-        }
-    }
-    else {
-        alert(translate("EMPTY_FILTERS"))
-    }
-}
-
-function clearFilter() {
-    formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
-        if (inputFilter.value != '') {
-            inputFilter.value = ''
-        }
-    })
-    formFilter.querySelectorAll('select').forEach(select => {
-        if (!select.id.includes('_')) {
-            if (select.tomSelect.getValue() != '') {
-                select.tomSelect.removeItem(select.tomSelect.getValue())
-            }
-        }
-    })
-    buttonClearFilter.disabled = true
-    hideEmptyFilters()
-    currentQuery = allinstitutions
-    filters = {}
-    setTableOverlayState("loading")
-    loadinstitutions()
-}
-
-buttonClearFilter.onclick = clearFilter
-
-//#endregion
 
 const { writeFile, utils } = require('xlsx')
 

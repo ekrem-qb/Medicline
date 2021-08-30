@@ -69,5 +69,7 @@
     "CASES_NOT_FOUND": "Cases Not Found",
     "DRAG_AND_DROP": "Drag & Drop",
     "NEW_VERSION": "New version",
-    "CURRENT_VERSION": "Current version"
+    "CURRENT_VERSION": "Current version",
+    "INSTITUTION_NAME": "Institution Name",
+    "REPRESENTATIVE": "Representative"
 }

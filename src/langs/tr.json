@@ -70,5 +70,7 @@
     "CASES_NOT_FOUND": "Vakalar Bulunamadı",
     "DRAG_AND_DROP": "Sürükle Ve Bırak",
     "NEW_VERSION": "Yeni sürüm",
-    "CURRENT_VERSION": "Mevcut sürüm"
+    "CURRENT_VERSION": "Mevcut sürüm",
+    "INSTITUTION_NAME": "Kurum Adı",
+    "REPRESENTATIVE": "Yetkili"
 }

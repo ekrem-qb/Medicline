@@ -1,8 +1,8 @@
 {
-    "institutionName": "INSTITUTION_NAME",
+    "name": "INSTITUTION_NAME",
     "representative": "REPRESENTATIVE",
     "phone": "PHONE",
     "phone2": "PHONE2",
-    "email": "EMAIL",
+    "email": "Email",
     "address": "ADDRESS"
 }

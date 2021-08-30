@@ -188,12 +188,18 @@ svg.restore path {
 
 .table {
   margin: 0;
-  width: max-content;
 }
 
 .table-responsive {
-  max-width: 74vw;
   min-height: 7.3rem;
+}
+
+.panel-wide {
+  max-width: 74vw;
+}
+
+.w-max {
+  width: max-content;
 }
 
 tbody>tr {
