@@ -6,7 +6,7 @@ selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
 })
 const buttonNew = document.querySelector('button#new')
 buttonNew.onclick = () => {
-    ipcRenderer.send('new-window', 'institution')
+    ipcRenderer.send('new-window', 'institution', selectInstitutionType.materialComponent.value)
 }
 const labelButtonNew = buttonNew.querySelector('.mdc-button__label')
 
@@ -106,6 +106,7 @@ function loadColumns() {
     }
     columns.forEach(column => institutionColumnsList.appendChild(newColumn(column)))
     if (columns.includes('name')) {
+        headerClick('name')
         headerClick('name')
     }
     else {

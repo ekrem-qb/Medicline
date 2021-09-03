@@ -583,7 +583,8 @@ footer>.status.selected {
   white-space: nowrap;
 }
 
-#foundCasesLinks::-webkit-scrollbar {
+#foundCasesLinks::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
   box-shadow: inset 0 0 var(--bs-gray-300);
 }
 
@@ -759,6 +760,7 @@ footer>.status.selected {
 .mdc-fab__ripple::before,
 .mdi:not(.list-group-item .mdi):before,
 .mdc-dialog__content .mdi::before,
+.mdc-select__anchor .mdc-select__ripple::before,
 .mdc-select__dropdown-icon.mdi::before,
 .mdc-tab .mdc-tab__ripple::before,
 .mdc-tab__icon,
@@ -955,6 +957,10 @@ form .mdc-text-field {
   text-shadow: 0 0;
 }
 
+.mdc-text-field__resizer {
+  resize: none;
+}
+
 .mdc-text-field--outlined .mdc-text-field__input {
   height: inherit;
 }
@@ -994,11 +1000,15 @@ form .mdc-text-field {
   color: var(--mdc-theme-error);
 }
 
+.mdc-select--filled:not(.mdc-select--disabled) .mdc-select__anchor {
+  background-color: initial;
+}
+
 .mdc-select:not(.mdc-select--disabled) .mdc-select__dropdown-icon {
   color: rgba(0, 0, 0, 0.54);
 }
 
-.mdc-select:not(.mdc-select--disabled).mdc-select--focused .mdc-select__dropdown-icon {
+.mdc-select:not(.mdc-select--disabled, .mdc-select--filled).mdc-select--focused .mdc-select__dropdown-icon {
   color: var(--mdc-theme-primary, #6200ee);
 }
 

@@ -162,7 +162,7 @@ async function main() {
                     nodeIntegration: true,
                 }
             }
-            if (type == 'user') {
+            if (type == 'user' || type == 'institution') {
                 options.width = 800
                 options.height = 600
             }
