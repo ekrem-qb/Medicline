@@ -6,7 +6,7 @@ selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
 })
 const buttonNew = document.querySelector('button#new')
 buttonNew.onclick = () => {
-    ipcRenderer.send('new-window', 'institution', selectInstitutionType.materialComponent.value)
+    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.materialComponent.value)
 }
 const labelButtonNew = buttonNew.querySelector('.mdc-button__label')
 
@@ -32,21 +32,6 @@ let currentInstitutionsSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
 let selectedInstitution, selectedInstitutionRow, selectedInstitutionID
-
-const contextMenu = document.getElementById('contextMenu')
-const copyOption = document.getElementById('copy')
-
-const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
-dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
-        selectedInstitution.delete().then(() => {
-            selectedInstitution = undefined
-            selectedInstitutionID = undefined
-        }).catch(error => {
-            console.error("Error removing institution: ", error)
-        })
-    }
-})
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -270,7 +255,7 @@ function listInstitutions(snap) {
                 tr.id = institutionSnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
-                        ipcRenderer.send('new-window', 'institution', institutionSnap.id)
+                        ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
                     }
                 }
                 tr.onmousedown = mouseEvent => {
@@ -456,6 +441,26 @@ function exportToExcel() {
 
 ipcRenderer.on('file-save', (event, filePath) => {
     writeFile(utils.table_to_book(institutionsTable), filePath)
+})
+
+const contextMenu = document.getElementById('contextMenu')
+const copyOption = document.getElementById('copy')
+copyOption.onclick = copySelectionToClipboard
+const editOption = document.getElementById('edit')
+editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
+const deleteOption = document.getElementById('delete')
+deleteOption.onclick = () => dialogDeleteInstitution.materialComponent.open()
+
+const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "delete") {
+        selectedInstitution.delete().then(() => {
+            selectedInstitution = undefined
+            selectedInstitutionID = undefined
+        }).catch(error => {
+            console.error("Error removing institution: ", error)
+        })
+    }
 })
 
 function getSelectedText() {

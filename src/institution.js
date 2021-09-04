@@ -16,9 +16,12 @@ let currentInstitution
 
 const buttonSave = document.getElementById('save')
 
-if (location.hash != '') {
-    selectInstitutionType.materialComponent.value = location.hash.replace('#', '')
+if (location.search != '') {
+    selectInstitutionType.materialComponent.value = location.search.replace('?', '')
     buttonSave.disabled = false
+    if (location.hash) {
+
+    }
 }
 
 function validateInput(input) {

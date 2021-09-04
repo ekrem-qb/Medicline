@@ -62,7 +62,7 @@
 }
 
 .table-responsive::-webkit-scrollbar {
-  box-shadow: inset 0 1px var(--bs-gray-300);
+  box-shadow: inset 0 0 0 1px var(--bs-gray-300);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -258,10 +258,6 @@ th {
 
 th:active {
   cursor: grabbing;
-}
-
-#casesPanel>.mdc-card {
-  max-height: 100%;
 }
 
 .table th {
@@ -726,6 +722,10 @@ textarea::-webkit-scrollbar {
   font-size: 1.5rem;
   line-height: 1;
   height: auto;
+}
+
+.mdc-card {
+  max-height: 100%;
 }
 
 .mdc-tab--active {

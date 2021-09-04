@@ -144,9 +144,12 @@ async function main() {
 
     const windows = {}
 
-    ipcMain.on('new-window', (event, type, id) => {
-        if (windows[id] != undefined) {
-            windows[id].focus()
+    ipcMain.on('new-window', (event, type, hash, search) => {
+        if (windows[hash] != undefined) {
+            windows[hash].focus()
+        }
+        else if (windows[search + hash] != undefined) {
+            windows[search + hash].focus()
         }
         else {
             const options = {
@@ -168,12 +171,18 @@ async function main() {
             }
             const window = new BrowserWindow(options)
 
-            if (id != undefined) {
-                windows[id] = window
+            if (hash != undefined) {
+                if (search != undefined) {
+                    windows[search + hash] = window
+                }
+                else {
+                    windows[hash] = window
+                }
             }
 
             window.loadFile(__dirname + '/src/' + type + '.html', {
-                hash: id
+                hash: hash,
+                search: search
             })
 
             window.once('ready-to-show', () => { window.show() })
@@ -187,7 +196,12 @@ async function main() {
             })
 
             window.on("close", () => {
-                delete windows[window.webContents.getURL().split('#')[1]]
+                if (windows[window.webContents.getURL().split('#')[1]] != undefined) {
+                    delete windows[window.webContents.getURL().split('#')[1]]
+                }
+                else if (windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]] != undefined) {
+                    delete windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]]
+                }
             })
         }
     })

@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <div class="mdc-card mdc-elevation--z6 m-3">
+<body class="mdc-typography flex flex-column p-3">
+    <div class="mdc-card mdc-elevation--z6 ">
         <div class="flex flex-column" id="tableOverlay">
             <i class="mdi mdi-loading mdi-spin"></i>
             <h3 class="my-2" hidden></h3>
@@ -80,7 +80,26 @@
             </button>
         </div>
     </div>
-
+    <div class="mdc-menu mdc-menu-surface" id="contextMenu">
+        <ul class="mdc-list">
+            <li class="mdc-list-item" id="copy" hidden>
+                <i class="mdi mdi-content-copy"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>COPY</span>
+            </li>
+            <li class="mdc-list-item" id="edit">
+                <i class="mdi mdi-pencil"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>EDIT</span>
+            </li>
+            <li class="mdc-list-divider">
+            <li class="mdc-list-item" id="delete">
+                <i class="mdi mdi-trash-can"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+            </li>
+        </ul>
+    </div>
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteInstitution">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
@@ -120,6 +139,7 @@
     <script src="import/firebase/firestore.js"></script>
     <script src="import/material/ripple.js"></script>
     <script src="import/material/textField.js"></script>
+    <script src="import/material/menu.js"></script>
     <script src="import/material/dialog.js"></script>
     <script src="import/material/select.js"></script>
     <script src="import/material/snackbar.js"></script>
