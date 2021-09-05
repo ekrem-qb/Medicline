@@ -226,7 +226,6 @@ tbody>tr.selected:first-child:last-child {
 }
 
 tbody>tr>td {
-  /* transition: inherit; */
   max-width: 20rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -235,12 +234,12 @@ tbody>tr>td {
 
 tbody>tr>td:not(:first-child) {
   border-left: 2px solid #000;
-  box-shadow: 2px 0 transparent, -2px 0 transparent;
+  box-shadow: inset 1px 0 transparent, inset -1px 0 transparent;
 }
 
 tbody>tr.selected>td {
   border-color: #fff;
-  box-shadow: 2px 0 #fff, -2px 0 #fff;
+  box-shadow: inset 1px 0 #fff, inset -1px 0 #fff;
 }
 
 tbody>tr>td.found {
@@ -266,7 +265,7 @@ th:active {
 }
 
 .table th:not(:first-child) {
-  box-shadow: inset 1px 0 var(--bs-gray-500), -1px 0 var(--bs-gray-500);
+  border-left: 2px solid var(--bs-gray-500);
 }
 
 .list-group:empty {
@@ -346,7 +345,7 @@ th:active {
 
 #tableOverlay {
   width: 100%;
-  height: calc(100% - 8.5rem);
+  height: calc(100% - 8.3rem);
   bottom: 0;
   position: absolute;
   place-self: center;
@@ -739,6 +738,10 @@ textarea::-webkit-scrollbar {
 
 .input-group-text .mdi {
   font-size: 1rem;
+}
+
+.mdc-ripple-surface {
+  will-change: auto;
 }
 
 .mdc-ripple-surface:hover::before,

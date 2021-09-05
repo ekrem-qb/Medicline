@@ -78,8 +78,8 @@ async function main() {
             height: 720,
             minWidth: 1280,
             minHeight: 720,
-            frame: false,
-            autoHideMenuBar: true,
+            titleBarStyle: 'hidden',
+            show: false,
             webPreferences: {
                 contextIsolation: false,
                 nodeIntegration: true,
@@ -97,6 +97,8 @@ async function main() {
 
             // initiate the loading
             window.loadFile(__dirname + '/src/index.html')
+
+            window.once('ready-to-show', () => { window.show() })
         })
 
         return window
@@ -157,7 +159,7 @@ async function main() {
                 height: 720,
                 minWidth: 800,
                 minHeight: 600,
-                frame: false,
+                titleBarStyle: 'hidden',
                 show: false,
                 autoHideMenuBar: true,
                 webPreferences: {
@@ -199,8 +201,10 @@ async function main() {
                 if (windows[window.webContents.getURL().split('#')[1]] != undefined) {
                     delete windows[window.webContents.getURL().split('#')[1]]
                 }
-                else if (windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]] != undefined) {
-                    delete windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]]
+                else if (window.webContents.getURL().split('?')[1] != undefined) {
+                    if (windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]] != undefined) {
+                        delete windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]]
+                    }
                 }
             })
         }
