@@ -15,36 +15,7 @@ formInstitution.querySelectorAll('input, textarea').forEach(input => input.oncha
 let currentInstitution
 
 const buttonSave = document.getElementById('save')
-
-if (location.search != '') {
-    selectInstitutionType.materialComponent.value = location.search.replace('?', '')
-    buttonSave.disabled = false
-    if (location.hash) {
-
-    }
-}
-
-function validateInput(input) {
-    if (input.target) {
-        input = input.target
-    }
-    if (input.mask) {
-        input.materialComponent.valid = input.mask.isValid()
-        if (!input.required && input.mask.unmaskedvalue() == '') {
-            input.materialComponent.valid = true
-        }
-    }
-    else {
-        input.value = String(input.value).trim()
-        if (input.required) {
-            input.materialComponent.valid = input.value != ''
-        }
-        input.materialComponent.valid = input.validity.valid
-    }
-    return input.materialComponent.valid
-}
-
-function saveInstitution() {
+buttonSave.onclick = () => {
     let data = {}
     let valid = true
 
@@ -87,4 +58,87 @@ function saveInstitution() {
         }
     }
 }
-buttonSave.onclick = saveInstitution
+
+const buttonDelete = document.getElementById('delete')
+buttonDelete.onclick = () => dialogDeleteInstitution.materialComponent.open()
+
+const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "delete") {
+        currentInstitution.delete().then(() => {
+            currentInstitution = undefined
+        }).catch(error => {
+            console.error("Error removing institution: ", error)
+        })
+    }
+})
+
+function validateInput(input) {
+    if (input.target) {
+        input = input.target
+    }
+    if (input.mask) {
+        input.materialComponent.valid = input.mask.isValid()
+        if (!input.required && input.mask.unmaskedvalue() == '') {
+            input.materialComponent.valid = true
+        }
+    }
+    else {
+        input.value = String(input.value).trim()
+        if (input.required) {
+            input.materialComponent.valid = input.value != ''
+        }
+        input.materialComponent.valid = input.validity.valid
+    }
+    return input.materialComponent.valid
+}
+
+if (location.search != '') {
+    selectInstitutionType.materialComponent.value = location.search.replace('?', '')
+
+    if (location.hash) {
+        document.title = location.hash
+        const id = location.hash.replace('#', '')
+
+        currentInstitution = db.collection(selectInstitutionType.materialComponent.value).doc(id)
+        selectInstitutionType.materialComponent.disabled = true
+
+        console.time()
+
+        currentInstitution.get().then(snapshot => {
+            console.timeLog()
+
+            buttonDelete.disabled = !snapshot.exists
+            buttonSave.disabled = false
+
+            if (snapshot.exists) {
+                formInstitution.querySelectorAll('input, textarea').forEach(input => {
+                    let itemValue = snapshot.get(input.id)
+
+                    if (itemValue != undefined) {
+                        if (input.disabled) {
+                            if (itemValue != '') {
+                                input.parentElement.parentElement.hidden = false
+                            }
+                        }
+                        else {
+                            input.parentElement.parentElement.hidden = false
+                        }
+
+                        if (!input.parentElement.parentElement.hidden) {
+                            if (input.getAttribute("mask") == "date") {
+                                input.materialComponent.value = new Date(itemValue).toLocaleDateString('tr')
+                            }
+                            else {
+                                input.materialComponent.value = itemValue
+                            }
+                        }
+                    }
+                })
+            }
+        })
+    }
+    else {
+        buttonSave.disabled = false
+    }
+}

@@ -220,9 +220,14 @@ tbody>tr:first-child:last-child {
   box-shadow: none;
 }
 
+#cases>tbody>tr.selected,
+#cases>tbody>tr.selected:first-child:last-child {
+  box-shadow: inset 0 0 0 4px #fff;
+}
+
 tbody>tr.selected,
 tbody>tr.selected:first-child:last-child {
-  box-shadow: inset 0 0 0 4px #fff;
+  box-shadow: inset 0 0 0 4px var(--mdc-theme-primary);
 }
 
 tbody>tr>td {
@@ -237,9 +242,14 @@ tbody>tr>td:not(:first-child) {
   box-shadow: inset 1px 0 transparent, inset -1px 0 transparent;
 }
 
-tbody>tr.selected>td {
+#cases>tbody>tr.selected>td {
   border-color: #fff;
   box-shadow: inset 1px 0 #fff, inset -1px 0 #fff;
+}
+
+tbody>tr.selected>td {
+  border-color: var(--mdc-theme-primary);
+  box-shadow: inset 1px 0 var(--mdc-theme-primary), inset -1px 0 var(--mdc-theme-primary);
 }
 
 tbody>tr>td.found {
@@ -1001,6 +1011,15 @@ form .mdc-text-field {
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label,
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdi {
   color: var(--mdc-theme-error);
+}
+
+.mdc-select--filled.mdc-select--disabled>.mdc-select__anchor,
+.mdc-select--disabled>.mdc-select__anchor {
+  background-color: transparent;
+}
+
+.mdc-select.mdc-select--disabled .mdc-select__dropdown-icon {
+  color: rgba(0, 0, 0, 0.38);
 }
 
 .mdc-select--filled:not(.mdc-select--disabled) .mdc-select__anchor {

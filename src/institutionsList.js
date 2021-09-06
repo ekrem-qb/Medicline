@@ -443,22 +443,82 @@ ipcRenderer.on('file-save', (event, filePath) => {
     writeFile(utils.table_to_book(institutionsTable), filePath)
 })
 
+let stopFilteredCasesQuery = () => { }
+
 const contextMenu = document.getElementById('contextMenu')
 const copyOption = document.getElementById('copy')
 copyOption.onclick = copySelectionToClipboard
 const editOption = document.getElementById('edit')
 editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
 const deleteOption = document.getElementById('delete')
-deleteOption.onclick = () => dialogDeleteInstitution.materialComponent.open()
+deleteOption.onclick = () => {
+    const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
 
-const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+    stopFilteredCasesQuery()
+    stopFilteredCasesQuery = filteredCases.onSnapshot(
+        snapshot => {
+            let prefix
+
+            foundCasesLinks.innerHTML = ''
+
+            if (snapshot.docs.length > 0) {
+                iconDialogDeleteInstitution.classList.remove('mdi-help-circle-outline')
+                iconDialogDeleteInstitution.classList.add('mdi-alert')
+
+                prefix = 'CANT_DELETE#THIS_'
+                textDialogDeleteInstitution.classList.remove('mb-0')
+                textDialogDeleteInstitution.classList.add('mb-2')
+
+                for (let i = 0; i < snapshot.docs.length; i++) {
+                    const _case = snapshot.docs[i];
+
+                    const link = document.createElement('a')
+                    link.href = '#'
+                    link.innerText = '#' + _case.id
+                    link.id = _case.id
+                    link.onclick = () => ipcRenderer.send('new-window', 'case', _case.id)
+                    foundCasesLinks.appendChild(link)
+
+                    if (i < snapshot.docs.length - 1) {
+                        const comma = document.createElement('b')
+                        comma.innerText = ' , '
+                        foundCasesLinks.appendChild(comma)
+                    }
+                }
+                dialogDeleteInstitution.materialComponent.buttons[1].disabled = true
+            }
+            else {
+                iconDialogDeleteInstitution.classList.add('mdi-help-circle-outline')
+                iconDialogDeleteInstitution.classList.remove('mdi-alert')
+
+                prefix = 'ASK_DELETE#THIS_'
+                textDialogDeleteInstitution.classList.add('mb-0')
+                textDialogDeleteInstitution.classList.remove('mb-2')
+
+                dialogDeleteInstitution.materialComponent.buttons[1].disabled = false
+            }
+            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.materialComponent.value.toUpperCase())
+
+            dialogDeleteInstitution.materialComponent.open()
+        },
+        error => {
+            console.error("Error getting filtered cases: " + error)
+        }
+    )
+}
+
+const dialogDeleteInstitution = document.querySelector('#dialogDeleteInstitution')
+const iconDialogDeleteInstitution = dialogDeleteInstitution.querySelector('.mdi')
+const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
+const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
+
 dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         selectedInstitution.delete().then(() => {
             selectedInstitution = undefined
             selectedInstitutionID = undefined
         }).catch(error => {
-            console.error("Error removing institution: ", error)
+            console.error('Error removing institution: ', error)
         })
     }
 })
