@@ -5,6 +5,8 @@ function loadSelectMenus() {
     selectMenuQueries.forEach(stopQuery => stopQuery())
     selectMenuQueries = []
     document.querySelectorAll('select').forEach(select => {
+        const selectID = select.id.replace(/[0-9]/g, '')
+
         if (select.tomSelect == undefined) {
             select.tomSelect = new TomSelect(select, {
                 maxItems: 1,
@@ -20,30 +22,40 @@ function loadSelectMenus() {
                 }
             })
         }
-        let tomSelect = select.tomSelect
-        let selectID = select.id.replace(/[0-9]/g, '')
+
+        if (selectID != 'patientStatus' && selectID != 'country') {
+            select.tomSelect.settings.create = value => {
+                if (selectID == 'address') {
+                    db.collection(selectID).add({ name: value }).then(snapshot => {
+                        select.tomSelect.addItem(snapshot.path)
+                    }).catch(error => {
+                        console.error("Error creating " + selectID + ": ", error)
+                    })
+                }
+            }
+        }
 
         if (!selectID.includes('_')) {
             selectMenuQueries.push(
                 db.collection(selectID).onSnapshot(
                     snapshot => {
-                        const oldValue = tomSelect.getValue()
+                        const oldValue = select.tomSelect.getValue()
 
-                        tomSelect.clear()
-                        tomSelect.clearOptions()
+                        select.tomSelect.clear()
+                        select.tomSelect.clearOptions()
 
                         snapshot.docs.forEach(item => {
-                            tomSelect.addOption({
+                            select.tomSelect.addOption({
                                 value: item.ref.path,
                                 text: item.get('name')
                             })
                         })
-                        if (tomSelect.isOpen) {
-                            tomSelect.refreshOptions()
+                        if (select.tomSelect.isOpen) {
+                            select.tomSelect.refreshOptions()
                         }
 
                         if (oldValue) {
-                            tomSelect.addItem(oldValue)
+                            select.tomSelect.addItem(oldValue)
                         }
                     },
                     error => {
@@ -51,7 +63,7 @@ function loadSelectMenus() {
                     }
                 )
             )
-            tomSelect.on("item_add", value => {
+            select.tomSelect.on("item_add", value => {
                 let subInputs = select.parentElement.parentElement.parentElement.querySelectorAll('input:not([role="combobox"])')
                 subInputs.forEach(subInput => {
                     if (subInput.id.split('_')[0] == select.id) {
@@ -76,6 +88,15 @@ function loadSelectMenus() {
                 let subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select')
                 subSelects.forEach(subSelect => {
                     if (subSelect != select && subSelect.id.split('_')[0] == select.id) {
+                        subSelect.tomSelect.settings.create = value => {
+                            if (subSelect.id.split('_')[1] == 'hotel') {
+                                db.doc(select.tomSelect.getValue()).collection(subSelect.id.split('_')[1]).add({ name: value }).then(snapshot => {
+                                    subSelect.tomSelect.addItem(snapshot.path)
+                                }).catch(error => {
+                                    console.error("Error creating " + subSelect.id.split('_')[1] + ": ", error)
+                                })
+                            }
+                        }
                         subSelect.tomSelect.enable()
 
                         selectMenuQueries.push(
@@ -108,7 +129,7 @@ function loadSelectMenus() {
                     }
                 })
             })
-            tomSelect.on("item_remove", () => {
+            select.tomSelect.on("item_remove", () => {
                 let subInputs = select.parentElement.parentElement.parentElement.querySelectorAll('input:not([role="combobox"])')
                 subInputs.forEach(subInput => {
                     if (subInput.id.split('_')[0] == select.id) {
