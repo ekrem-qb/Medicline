@@ -73,5 +73,7 @@
     "NEW_VERSION": "New version",
     "CURRENT_VERSION": "Current version",
     "INSTITUTION_NAME": "Institution Name",
-    "REPRESENTATIVE": "Representative"
+    "REPRESENTATIVE": "Representative",
+    "ADD": "Add",
+    "NOT_FOUND": "not found"
 }

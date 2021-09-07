@@ -74,5 +74,7 @@
     "NEW_VERSION": "Yeni sürüm",
     "CURRENT_VERSION": "Mevcut sürüm",
     "INSTITUTION_NAME": "Kurum Adı",
-    "REPRESENTATIVE": "Yetkili"
+    "REPRESENTATIVE": "Yetkili",
+    "ADD": "Ekle",
+    "NOT_FOUND": "bulunamadı"
 }

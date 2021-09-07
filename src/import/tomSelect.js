@@ -9,7 +9,15 @@ function loadSelectMenus() {
             select.tomSelect = new TomSelect(select, {
                 maxItems: 1,
                 selectOnTab: true,
-                sortField: "text"
+                sortField: "text",
+                render: {
+                    option_create: function (data, escape) {
+                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
+                    },
+                    no_results: function (data, escape) {
+                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+                    }
+                }
             })
         }
         let tomSelect = select.tomSelect

@@ -165,7 +165,8 @@ if (location.search != '') {
 
         console.time()
 
-        selectedInstitution.get().then(snapshot => {
+        const stopQuery = selectedInstitution.onSnapshot(snapshot => {
+            stopQuery()
             console.timeLog()
 
             buttonDelete.disabled = !snapshot.exists

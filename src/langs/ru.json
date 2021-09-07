@@ -78,5 +78,7 @@
     "NEW_VERSION": "Новая версия",
     "CURRENT_VERSION": "Текущая версия",
     "INSTITUTION_NAME": "Название учреждения",
-    "REPRESENTATIVE": "Представитель"
+    "REPRESENTATIVE": "Представитель",
+    "ADD": "Добавить",
+    "NOT_FOUND": "не найдено"
 }

@@ -94,7 +94,8 @@ if (location.hash != '') {
 
     console.time()
 
-    currentCase.get().then(snapshot => {
+    const stopQuery = currentCase.onSnapshot(snapshot => {
+        stopQuery()
         console.timeLog()
 
         caseExists = snapshot.exists

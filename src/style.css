@@ -124,7 +124,7 @@ label:last-child {
   background-color: initial;
 }
 
-.ts-input.required:not(.focus, .full),
+.ts-control.required:not(.focus, .full),
 input:required:not(:valid, :focus, .mdc-text-field__input) {
   background-color: beige;
 }
@@ -688,11 +688,11 @@ textarea::-webkit-scrollbar {
 
 /*#region Tom Select */
 
-.ts-input.disabled {
+.ts-control.disabled {
   opacity: 1;
 }
 
-.ts-control:not(.form-select).single .ts-input {
+.ts-wrapper:not(.form-select).single .ts-control {
   padding: 0 .5rem;
 }
 
@@ -700,7 +700,7 @@ textarea::-webkit-scrollbar {
   padding: 0;
 }
 
-.ts-input .item,
+.ts-control .item,
 .ts-dropdown .option {
   text-shadow: 0 0;
 }
@@ -710,7 +710,7 @@ textarea::-webkit-scrollbar {
 }
 
 #country,
-#country+.ts-control>.ts-input .item,
+#country+.ts-wrapper>.ts-control .item,
 #country-ts-dropdown .option {
   font-family: TwemojiMozilla, var(--mdc-typography-font-family, Roboto, sans-serif);
 }

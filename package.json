@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@mdi/font": "^5.9.55",
-    "bootstrap": "^5.1.0",
+    "bootstrap": "^5.1.1",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.3.9",
     "firebase": "^8.10.0",
@@ -40,7 +40,7 @@
     "inputmask": "^5.0.6",
     "material-components-web": "^12.0.0",
     "sortablejs": "^1.14.0",
-    "tom-select": "^1.7.8",
+    "tom-select": "^2.0.0-rc.2",
     "xlsx": "^0.17.1"
   },
   "build": {
