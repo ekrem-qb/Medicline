@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/ekrem007/Medicline#readme",
   "devDependencies": {
-    "@types/node": "^16.7.10",
+    "@types/node": "^16.7.13",
     "electron": "^14.0.0",
     "electron-builder": "^22.11.7"
   },
