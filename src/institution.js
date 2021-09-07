@@ -12,7 +12,7 @@ formInstitution.querySelectorAll('input, textarea').forEach(input => input.oncha
     validateInput(input)
 })
 
-let currentInstitution
+let selectedInstitution
 
 const buttonSave = document.getElementById('save')
 buttonSave.onclick = () => {
@@ -42,8 +42,8 @@ buttonSave.onclick = () => {
     console.log('isValid: ' + valid)
 
     if (valid) {
-        if (currentInstitution) {
-            currentInstitution.update(data).then(() => {
+        if (selectedInstitution) {
+            selectedInstitution.update(data).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
                 console.error("Error updating institution: ", error)
@@ -59,19 +59,79 @@ buttonSave.onclick = () => {
     }
 }
 
-const buttonDelete = document.getElementById('delete')
-buttonDelete.onclick = () => dialogDeleteInstitution.materialComponent.open()
+let stopFilteredCasesQuery = () => { }
 
 const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+const iconDialogDeleteInstitution = dialogDeleteInstitution.querySelector('.mdi')
+const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
+const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
+
 dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        currentInstitution.delete().then(() => {
-            currentInstitution = undefined
+        selectedInstitution.delete().then(() => {
+            ipcRenderer.send('window-action', 'exit')
         }).catch(error => {
             console.error("Error removing institution: ", error)
         })
     }
 })
+
+const buttonDelete = document.getElementById('delete')
+buttonDelete.onclick = () => {
+    const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
+
+    stopFilteredCasesQuery()
+    stopFilteredCasesQuery = filteredCases.onSnapshot(
+        snapshot => {
+            let prefix
+
+            foundCasesLinks.innerHTML = ''
+
+            if (snapshot.docs.length > 0) {
+                iconDialogDeleteInstitution.classList.remove('mdi-help-circle-outline')
+                iconDialogDeleteInstitution.classList.add('mdi-alert')
+
+                prefix = 'CANT_DELETE#THIS_'
+                textDialogDeleteInstitution.classList.remove('mb-0')
+                textDialogDeleteInstitution.classList.add('mb-2')
+
+                for (let i = 0; i < snapshot.docs.length; i++) {
+                    const _case = snapshot.docs[i];
+
+                    const link = document.createElement('a')
+                    link.href = '#'
+                    link.innerText = '#' + _case.id
+                    link.id = _case.id
+                    link.onclick = () => ipcRenderer.send('new-window', 'case', _case.id)
+                    foundCasesLinks.appendChild(link)
+
+                    if (i < snapshot.docs.length - 1) {
+                        const comma = document.createElement('b')
+                        comma.innerText = ' , '
+                        foundCasesLinks.appendChild(comma)
+                    }
+                }
+                dialogDeleteInstitution.materialComponent.buttons[1].disabled = true
+            }
+            else {
+                iconDialogDeleteInstitution.classList.add('mdi-help-circle-outline')
+                iconDialogDeleteInstitution.classList.remove('mdi-alert')
+
+                prefix = 'ASK_DELETE#THIS_'
+                textDialogDeleteInstitution.classList.add('mb-0')
+                textDialogDeleteInstitution.classList.remove('mb-2')
+
+                dialogDeleteInstitution.materialComponent.buttons[1].disabled = false
+            }
+            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.materialComponent.value.toUpperCase())
+
+            dialogDeleteInstitution.materialComponent.open()
+        },
+        error => {
+            console.error("Error getting filtered cases: " + error)
+        }
+    )
+}
 
 function validateInput(input) {
     if (input.target) {
@@ -100,12 +160,12 @@ if (location.search != '') {
         document.title = location.hash
         const id = location.hash.replace('#', '')
 
-        currentInstitution = db.collection(selectInstitutionType.materialComponent.value).doc(id)
+        selectedInstitution = db.collection(selectInstitutionType.materialComponent.value).doc(id)
         selectInstitutionType.materialComponent.disabled = true
 
         console.time()
 
-        currentInstitution.get().then(snapshot => {
+        selectedInstitution.get().then(snapshot => {
             console.timeLog()
 
             buttonDelete.disabled = !snapshot.exists

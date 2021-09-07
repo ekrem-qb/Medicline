@@ -214,10 +214,10 @@ function headerClick(headerID) {
         }
 
         if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
-            orderinstitutions(headerID, 'asc')
+            orderInstitutions(headerID, 'asc')
         }
         else {
-            orderinstitutions(headerID, 'desc')
+            orderInstitutions(headerID, 'desc')
         }
 
         clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
@@ -314,7 +314,7 @@ function listInstitutions(snap) {
                                                 td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
                                             }
 
-                                            orderinstitutions(currentOrder, currentOrderDirection)
+                                            orderInstitutions(currentOrder, currentOrderDirection)
                                         },
                                         error => {
                                             console.error(error)
@@ -355,7 +355,7 @@ function listInstitutions(snap) {
                 }
             }
         })
-        orderinstitutions(currentOrder, currentOrderDirection)
+        orderInstitutions(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
             setTableOverlayState("empty")
@@ -366,7 +366,7 @@ function listInstitutions(snap) {
     }
 }
 
-function orderinstitutions(orderBy, orderDirection) {
+function orderInstitutions(orderBy, orderDirection) {
     let switching, i, shouldSwitch
     do {
         switching = false
