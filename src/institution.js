@@ -2,6 +2,9 @@ let currentQuery = db.collection('insurance')
 const selectInstitutionType = document.getElementById('institutionType')
 selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
     currentQuery = db.collection(selectInstitutionType.materialComponent.value)
+    if (!location.hash) {
+        document.title = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+    }
 })
 
 const formInstitution = document.getElementById('institution')

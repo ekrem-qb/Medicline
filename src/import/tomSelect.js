@@ -23,13 +23,14 @@ function loadSelectMenus() {
 
         if (selectID != 'patientStatus' && selectID != 'country') {
             select.tomselect.settings.create = value => {
-                if (selectID == 'address') {
-                    db.collection(selectID).add({ name: value }).then(snapshot => {
-                        select.tomselect.addItem(snapshot.path)
-                    }).catch(error => {
-                        console.error("Error creating " + selectID + ": ", error)
-                    })
-                }
+                db.collection(selectID).add({ name: value }).then(snapshot => {
+                    select.tomselect.addItem(snapshot.path)
+                    if (selectID == 'insurance' || selectID == 'provider') {
+                        ipcRenderer.send('new-window', 'institution', snapshot.id, selectID)
+                    }
+                }).catch(error => {
+                    console.error("Error creating " + selectID + ": ", error)
+                })
             }
         }
 
