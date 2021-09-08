@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
-    <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.css">
+    <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dark.css">
 </head>
@@ -103,51 +103,45 @@
             </div>
         </div>
         <div class="col-md-4 row g-2 m-0">
-            <div class="row g-2 mt-0">
-                <div class="col-md-12">
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
                         <select class="form-control" id="provider" required></select>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
-                        <input mask="tel" class="form-control" id="provider_phone" readonly disabled></input>
-                    </div>
+                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                    <i class="mdi mdi-phone"></i>
+                    <span class="small" id="provider_phone"></span>
                 </div>
             </div>
 
-            <div class="row g-2 mt-0">
-                <div class="col-md-12">
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER2</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
                         <select class="form-control" id="provider2"></select>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
-                        <input mask="tel" class="form-control" id="provider2_phone" readonly disabled></input>
-                    </div>
+                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                    <i class="mdi mdi-phone"></i>
+                    <span class="small" id="provider2_phone"></span>
                 </div>
             </div>
 
-            <div class="row g-2 mt-0">
-                <div class="col-md-12">
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER3</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
                         <select class="form-control" id="provider3"></select>
                     </div>
                 </div>
-                <div class="col-md-12">
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
-                        <input mask="tel" class="form-control" id="provider3_phone" readonly disabled></input>
-                    </div>
+                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                    <i class="mdi mdi-phone"></i>
+                    <span class="small" id="provider3_phone"></span>
                 </div>
             </div>
 
@@ -172,23 +166,22 @@
                     <input type="text" class="form-control" id="insuranceRefNo" required>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 row g-2 m-0">
-            <div class="col-md-12">
+
+            <div class="col-md-12" hidden>
                 <label class="form-label" translate>CREATE_USER</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
                     <input type="text" class="form-control" id="createUser" disabled>
                 </div>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-7" hidden>
                 <label class="form-label" translate>CREATE_DATE</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                     <input mask="date" type="text" class="form-control" id="createDate" disabled>
                 </div>
             </div>
-            <div class="col-lg-5">
+            <div class="col-lg-5" hidden>
                 <label class="form-label" translate>CREATE_TIME</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
@@ -196,28 +189,29 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
+            <div class="col-md-12" hidden>
                 <label class="form-label" translate>UPDATE_USER</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
                     <input type="text" class="form-control" id="updateUser" disabled>
                 </div>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-7" hidden>
                 <label class="form-label" translate>UPDATE_DATE</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
                     <input mask="date" type="text" class="form-control" id="updateDate" disabled>
                 </div>
             </div>
-            <div class="col-lg-5">
+            <div class="col-lg-5" hidden>
                 <label class="form-label" translate>UPDATE_TIME</label>
                 <div class="input-group input-group-sm">
                     <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
                     <input mask="time" type="text" class="form-control" id="updateTime" disabled>
                 </div>
             </div>
-
+        </div>
+        <div class="col-md-4 row g-2 m-0">
             <div class="col-md-12">
                 <label class="form-label" translate>CALLER</label>
                 <div class="input-group input-group-sm">
@@ -254,26 +248,32 @@
                 </div>
             </div>
 
-            <div class="row g-2 mt-0">
-                <div class="col-md-12">
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>ADDRESS</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span>
                         <select class="form-control" id="address" required></select>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>HOTEL</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-bed"></i></span>
                         <select class="form-control" id="address_hotel" disabled></select>
                     </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-12 pe-0">
                     <label class="form-label" translate>ROOM_NO</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="mdi mdi-counter"></i></span>
                         <input class="form-control" id="address_roomNo" disabled></select>
+                    </div>
+                </div>
+                <div class="col-md-12 pe-0">
+                    <label class="form-label" translate>ADDRESS_DESCRIPTION</label>
+                    <div class="input-group input-group-sm">
+                        <textarea class="form-control" id="address_description" rows="6" disabled></textarea>
                     </div>
                 </div>
             </div>

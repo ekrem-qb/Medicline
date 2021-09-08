@@ -568,7 +568,7 @@ function hideEmptyFilters() {
             }
         })
         filter.querySelectorAll('select').forEach(select => {
-            if (select.tomSelect.getValue() != '') {
+            if (select.tomselect.getValue() != '') {
                 collapsed = false
                 hide = false
                 return
@@ -622,10 +622,10 @@ function applyFilter() {
         }
     })
     formFilter.querySelectorAll('select').forEach(select => {
-        if (select.tomSelect.getValue() != '') {
+        if (select.tomselect.getValue() != '') {
             emptyFilter = false
 
-            filters[select.id] = db.doc(select.tomSelect.getValue())
+            filters[select.id] = db.doc(select.tomselect.getValue())
         }
     })
 
@@ -648,8 +648,8 @@ function clearFilter() {
     })
     formFilter.querySelectorAll('select').forEach(select => {
         if (!select.id.includes('_')) {
-            if (select.tomSelect.getValue() != '') {
-                select.tomSelect.removeItem(select.tomSelect.getValue())
+            if (select.tomselect.getValue() != '') {
+                select.tomselect.removeItem(select.tomselect.getValue())
             }
         }
     })

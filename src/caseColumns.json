@@ -28,5 +28,6 @@
     "address": "ADDRESS",
     "address_hotel": "HOTEL",
     "address_roomNo": "ROOM_NO",
+    "address_description": "ADDRESS_DESCRIPTION",
     "complaints": "COMPLAINTS"
 }

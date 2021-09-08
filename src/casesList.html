@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
-    <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.css">
+    <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -236,26 +236,32 @@
                         </div>
                     </div>
 
-                    <div class="row g-2 mt-0">
-                        <div class="col-md-12">
+                    <div class="row g-2 mt-0 pe-0">
+                        <div class="col-md-12 pe-0">
                             <label class="form-label" translate>ADDRESS</label>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span>
                                 <select class="form-control" id="address"></select>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 pe-0">
                             <label class="form-label" translate>HOTEL</label>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="mdi mdi-office-building"></i></span>
                                 <select class="form-control" id="address_hotel" disabled></select>
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-12 pe-0">
                             <label class="form-label" translate>ROOM_NO</label>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="mdi mdi-counter"></i></span>
                                 <input class="form-control" id="address_roomNo" disabled></select>
+                            </div>
+                        </div>
+                        <div class="col-md-12 pe-0">
+                            <label class="form-label" translate>ADDRESS_DESCRIPTION</label>
+                            <div class="input-group input-group-sm">
+                                <input class="form-control" id="address_description" disabled></input>
                             </div>
                         </div>
                     </div>

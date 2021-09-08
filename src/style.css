@@ -278,6 +278,23 @@ th:active {
   border-left: 2px solid var(--bs-gray-500);
 }
 
+.helper-text {
+  height: 1rem;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.helper-text.hide {
+  height: 0;
+  margin: 0;
+  opacity: 0;
+}
+
+.helper-text>.mdi {
+  font-size: .875rem;
+  margin-right: .25rem;
+}
+
 .list-group:empty {
   display: none;
 }
@@ -688,7 +705,7 @@ textarea::-webkit-scrollbar {
 
 /*#region Tom Select */
 
-.ts-control.disabled {
+.disabled .ts-control {
   opacity: 1;
 }
 

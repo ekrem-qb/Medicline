@@ -142,10 +142,10 @@ if (location.hash != '') {
 
                     if (itemValue != undefined) {
                         if (select.id.includes('_')) {
-                            setTimeout(() => select.tomSelect.addItem(itemValue), 100)
+                            setTimeout(() => select.tomselect.addItem(itemValue), 100)
                         }
                         else {
-                            select.tomSelect.addItem(itemValue)
+                            select.tomselect.addItem(itemValue)
                         }
                     }
                 }
@@ -216,8 +216,8 @@ function saveCase() {
                 valid = false
             }
 
-            if (select.tomSelect.getValue() != '') {
-                caseData[select.id] = db.doc(select.tomSelect.getValue())
+            if (select.tomselect.getValue() != '') {
+                caseData[select.id] = db.doc(select.tomselect.getValue())
             }
         }
     })
