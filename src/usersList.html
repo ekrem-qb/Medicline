@@ -55,6 +55,31 @@
             </div>
         </div>
     </div>
+    <template id="listItemTemplate">
+        <li class="list-group-item flex align-items-center justify-content-between p-2">
+            <div class="flex align-items-center">
+                <i class="avatar me-3 mdi mdi-account-circle"></i>
+                <span class="flex flex-column">
+                    <b></b>
+                    <small class="text-secondary"></small>
+                </span>
+            </div>
+            <div class="flex align-items-center">
+                <button class="mdc-icon-button" id="edit">
+                    <div class="mdc-icon-button__ripple"></div>
+                    <i class="mdi mdi-pencil"></i>
+                </button>
+                <button class="mdc-icon-button mdc-button--outlined mdc-button--green" id="admin">
+                    <div class="mdc-icon-button__ripple"></div>
+                    <i class="mdi mdi-shield-star"></i>
+                </button>
+                <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete">
+                    <div class="mdc-icon-button__ripple"></div>
+                    <i class="mdi mdi-trash-can"></i>
+                </button>
+            </div>
+        </li>
+    </template>
 
     <script src="renderer.js"></script>
     <script src="import/translate.js"></script>

@@ -1,25 +1,26 @@
 const buttonRefresh = document.querySelector('button#refresh')
 const buttonRefreshIcon = buttonRefresh.querySelector('.mdi')
-const usersList = document.getElementById('usersList')
-var selectedUserUID, currentUserUID
-
-const dialogDeleteUser = document.querySelector("#dialogDeleteUser")
-dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
-        admin.auth().deleteUser(selectedUserUID).then(() => {
-            document.getElementById(selectedUserUID).remove()
-        }).catch(error => {
-            console.error("Error deleting user: ", error)
-        })
-    }
-})
-
 buttonRefresh.onclick = () => {
     buttonRefreshIcon.classList.remove('mdi-refresh')
     buttonRefreshIcon.classList.add('mdi-loading', 'mdi-spin')
 
     listUsers()
 }
+
+const usersList = document.getElementById('usersList')
+const listItemTemplate = document.getElementById('listItemTemplate')
+let selectedUserUID, currentUserUID
+
+ipcRenderer.on('current-user', (event, uid) => {
+    admin.auth().getUser(uid).then(user => {
+        if (user.customClaims.admin) {
+            currentUserUID = uid
+            listUsers()
+        }
+    }).catch(error => {
+        console.error("Error getting user: ", error)
+    })
+})
 
 function listUsers() {
     if (currentUserUID) {
@@ -32,94 +33,56 @@ function listUsers() {
                         buttonRefreshIcon.classList.remove('mdi-loading', 'mdi-spin')
 
                         if (user.uid != currentUserUID) {
-                            let listItem = document.createElement('li')
-                            listItem.classList.add('list-group-item', 'flex', 'align-items-center', 'justify-content-between', 'p-2')
+                            console.time()
+
+                            const listItem = listItemTemplate.content.cloneNode(true)
                             listItem.id = user.uid
-                            usersList.appendChild(listItem)
 
-                            let infoSegment = document.createElement('div')
-                            infoSegment.classList.add('flex', 'align-items-center')
-                            listItem.appendChild(infoSegment)
-
-                            let avatar = document.createElement('i')
-                            avatar.classList.add('avatar', 'me-3', 'mdi', 'mdi-account-circle')
-                            infoSegment.appendChild(avatar)
-
-                            let textSubSegment = document.createElement('span')
-                            textSubSegment.classList.add('flex', 'flex-column')
-                            infoSegment.appendChild(textSubSegment)
-
-                            let bigtext = document.createElement('b')
-                            textSubSegment.appendChild(bigtext)
-
-                            let smallText = document.createElement('small')
-                            smallText.classList.add('text-muted')
-                            smallText.textContent = user.email.replace(emailSuffix, '')
-                            textSubSegment.appendChild(smallText)
+                            const textPrimary = listItem.querySelector('b')
+                            const textSecondary = listItem.querySelector('.text-secondary')
 
                             if (user.displayName) {
-                                bigtext.textContent = user.displayName
+                                textPrimary.textContent = user.displayName
+                                textSecondary.textContent = user.email.replace(emailSuffix, '')
                             }
                             else {
-                                smallText.hidden = true
-                                bigtext.textContent = user.email.replace(emailSuffix, '')
+                                textPrimary.textContent = user.email.replace(emailSuffix, '')
+                                textSecondary.hidden = true
                             }
 
-                            let buttonsSegment = document.createElement('div')
-                            buttonsSegment.classList.add('flex', 'align-items-center')
-                            listItem.appendChild(buttonsSegment)
+                            const buttonEdit = listItem.querySelector('button#edit')
+                            buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.uid)
 
-                            let editButton = document.createElement('button')
-                            editButton.classList.add('mdc-icon-button')
-                            buttonsSegment.appendChild(editButton)
+                            const buttonAdmin = listItem.querySelector('button#admin')
+                            const iconButtonAdmin = buttonAdmin.querySelector('.mdi')
 
-                            editButton.onclick = () => ipcRenderer.send('new-window', 'user', user.uid)
-
-                            let editRipple = document.createElement('div')
-                            editRipple.classList.add('mdc-icon-button__ripple')
-                            editButton.appendChild(editRipple)
-
-                            let editIcon = document.createElement('i')
-                            editIcon.classList.add('mdi', 'mdi-pencil')
-                            editButton.appendChild(editIcon)
-
-                            let adminButton = document.createElement('button')
-                            adminButton.classList.add('mdc-icon-button')
-                            buttonsSegment.appendChild(adminButton)
-
-                            let adminRipple = document.createElement('div')
-                            adminRipple.classList.add('mdc-icon-button__ripple')
-                            adminButton.appendChild(adminRipple)
-
-                            let adminIcon = document.createElement('i')
-                            adminIcon.classList.add('mdi')
                             if (user.customClaims != undefined) {
                                 if (user.customClaims.admin) {
-                                    adminButton.classList.add('mdc-button--outlined', 'mdc-button--green')
-                                    adminIcon.classList.add('mdi-shield-star')
+                                    buttonAdmin.classList.add('mdc-button--outlined', 'mdc-button--green')
+                                    iconButtonAdmin.classList.add('mdi-shield-star')
                                 }
                                 else {
-                                    adminIcon.classList.add('mdi-shield-off-outline')
+                                    iconButtonAdmin.classList.add('mdi-shield-off-outline')
                                 }
                             }
                             else {
-                                adminIcon.classList.add('mdi-shield-off-outline')
+                                iconButtonAdmin.classList.add('mdi-shield-off-outline')
                             }
 
-                            adminButton.onclick = () => {
-                                adminButton.classList.remove('mdc-button--outlined', 'mdc-button--green')
-                                adminIcon.classList.remove('mdi-shield-star', 'mdi-shield-off-outline', 'mdc-button--outlined', 'mdc-button--green')
-                                adminIcon.classList.add('mdi-loading', 'mdi-spin')
+                            buttonAdmin.onclick = () => {
+                                buttonAdmin.classList.remove('mdc-button--outlined', 'mdc-button--green')
+                                iconButtonAdmin.classList.remove('mdi-shield-star', 'mdi-shield-off-outline', 'mdc-button--outlined', 'mdc-button--green')
+                                iconButtonAdmin.classList.add('mdi-loading', 'mdi-spin')
 
                                 admin.auth().getUser(user.uid).then(userSnapshot => {
                                     admin.auth().setCustomUserClaims(userSnapshot.uid, { admin: !userSnapshot.customClaims.admin }).then(() => {
-                                        adminIcon.classList.remove('mdi-loading', 'mdi-spin')
+                                        iconButtonAdmin.classList.remove('mdi-loading', 'mdi-spin')
                                         if (userSnapshot.customClaims.admin) {
-                                            adminIcon.classList.add('mdi-shield-off-outline')
+                                            iconButtonAdmin.classList.add('mdi-shield-off-outline')
                                         }
                                         else {
-                                            adminButton.classList.add('mdc-button--outlined', 'mdc-button--green')
-                                            adminIcon.classList.add('mdi-shield-star')
+                                            buttonAdmin.classList.add('mdc-button--outlined', 'mdc-button--green')
+                                            iconButtonAdmin.classList.add('mdi-shield-star')
                                         }
                                     }).catch(error => {
                                         console.error("Error setting custom user claims: ", error)
@@ -128,29 +91,21 @@ function listUsers() {
                                     console.error("Error getting user data: ", error)
                                 })
                             }
-                            adminButton.appendChild(adminIcon)
 
-                            let deleteButton = document.createElement('button')
-                            deleteButton.classList.add('mdc-icon-button', 'mdc-button--outlined', 'mdc-button--red')
-                            buttonsSegment.appendChild(deleteButton)
-
-                            deleteButton.onclick = () => {
+                            const buttonDelete = listItem.querySelector('button#delete')
+                            buttonDelete.onclick = () => {
                                 selectedUserUID = user.uid
                                 dialogDeleteUser.materialComponent.open()
                             }
-
-                            let deleteRipple = document.createElement('div')
-                            deleteRipple.classList.add('mdc-icon-button__ripple')
-                            deleteButton.appendChild(deleteRipple)
-
-                            let deleteIcon = document.createElement('i')
-                            deleteIcon.classList.add('mdi', 'mdi-trash-can')
-                            deleteButton.appendChild(deleteIcon)
 
                             listItem.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
                                 rippleElement.materialRipple = new MDCRipple(rippleElement)
                                 rippleElement.materialRipple.unbounded = true
                             })
+
+                            usersList.appendChild(listItem)
+
+                            console.timeEnd()
                         }
                     }
                 )
@@ -158,17 +113,6 @@ function listUsers() {
         )
     }
 }
-
-ipcRenderer.on('current-user', (event, uid) => {
-    admin.auth().getUser(uid).then(user => {
-        if (user.customClaims.admin) {
-            currentUserUID = uid
-            listUsers()
-        }
-    }).catch(error => {
-        console.error("Error getting user: ", error)
-    })
-})
 
 ipcRenderer.on('user-add', event => {
     listUsers()
@@ -191,5 +135,16 @@ ipcRenderer.on('user-update', (event, uid, data) => {
                 smallText.hidden = true
             }
         }
+    }
+})
+
+const dialogDeleteUser = document.querySelector("#dialogDeleteUser")
+dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "delete") {
+        admin.auth().deleteUser(selectedUserUID).then(() => {
+            document.getElementById(selectedUserUID).remove()
+        }).catch(error => {
+            console.error("Error deleting user: ", error)
+        })
     }
 })
