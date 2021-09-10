@@ -12,19 +12,125 @@
 </head>
 
 <body class="mdc-typography flex flex-column">
-    <div class="main p-5">
-        <li class="modal-footer list-group-flush list-group-item sticky-top">
-            <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="ipcRenderer.send('new-window', 'user')">
-                <div class="mdc-button__ripple"></div>
-                <i class="mdi mdc-button__icon mdi-plus"></i>
-                <span class="mdc-button__label" translate>NEW#USER</span>
-            </button>
-            <button class="mdc-icon-button ms-2 me-0" id="refresh">
-                <div class="mdc-icon-button__ripple"></div>
-                <i class="mdi mdi-refresh"></i>
-            </button>
-        </li>
-        <ul id="usersList" class="list-group list-group-flush"></ul>
+    <div class="main flex p-5">
+        <div class="flex-grow-1">
+            <li class="modal-footer list-group-flush list-group-item sticky-top">
+                <button class="mdc-button mdc-button--raised mdc-button--green w-100" onclick="ipcRenderer.send('new-window', 'user')">
+                    <div class="mdc-button__ripple"></div>
+                    <i class="mdi mdc-button__icon mdi-plus"></i>
+                    <span class="mdc-button__label" translate>NEW#USER</span>
+                </button>
+                <button class="mdc-icon-button ms-2 me-0" id="refresh">
+                    <div class="mdc-icon-button__ripple"></div>
+                    <i class="mdi mdi-refresh"></i>
+                </button>
+            </li>
+            <ul id="usersList" class="list-group list-group-flush"></ul>
+            <template id="listItemTemplate">
+                <li class="list-group-item flex align-items-center justify-content-between p-2">
+                    <div class="flex align-items-center">
+                        <i class="avatar me-3 mdi mdi-account-circle"></i>
+                        <span class="flex flex-column">
+                            <b></b>
+                            <small class="text-secondary"></small>
+                        </span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <button class="mdc-icon-button" id="edit">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                        <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-trash-can"></i>
+                        </button>
+                    </div>
+                </li>
+            </template>
+        </div>
+        <div class="flex-grow-1">
+            <li class="modal-footer list-group-flush list-group-item sticky-top justify-content-between">
+                <h3 class="user-select-none" translate>PERMISSIONS</h3>
+                <button class="mdc-icon-button ms-2 me-0" id="refresh">
+                    <div class="mdc-icon-button__ripple"></div>
+                    <i class="mdi mdi-refresh"></i>
+                </button>
+            </li>
+            <ul id="permissionsList" class="list-group list-group-flush">
+                <li class="list-group-item flex align-items-center justify-content-between p-2">
+                    <div class="flex align-items-end ms-2">
+                        <i class="me-3 mdi mdi-table-large"></i>
+                        <span class="flex flex-column">
+                            <b class="user-select-none" translate>CASES</b>
+                        </span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <button class="mdc-icon-button" id="view">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <button class="mdc-icon-button" id="edit">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="list-group-item flex align-items-center justify-content-between p-2">
+                    <div class="flex align-items-end ms-2">
+                        <i class="me-3 mdi mdi-account-group"></i>
+                        <span class="flex flex-column">
+                            <b class="user-select-none" translate>USERS</b>
+                        </span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <button class="mdc-icon-button" id="view">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <button class="mdc-icon-button" id="edit">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="list-group-item flex align-items-center justify-content-between p-2">
+                    <div class="flex align-items-end ms-2">
+                        <i class="me-3 mdi mdi-bed"></i>
+                        <span class="flex flex-column">
+                            <b class="user-select-none" translate>HOTELS</b>
+                        </span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <button class="mdc-icon-button" id="view">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <button class="mdc-icon-button" id="edit">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                    </div>
+                </li>
+                <li class="list-group-item flex align-items-center justify-content-between p-2">
+                    <div class="flex align-items-end ms-2">
+                        <i class="me-3 mdi mdi-office-building"></i>
+                        <span class="flex flex-column">
+                            <b class="user-select-none" translate>INSTITUTIONS</b>
+                        </span>
+                    </div>
+                    <div class="flex align-items-center">
+                        <button class="mdc-icon-button" id="view">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-eye"></i>
+                        </button>
+                        <button class="mdc-icon-button" id="edit">
+                            <div class="mdc-icon-button__ripple"></div>
+                            <i class="mdi mdi-pencil"></i>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteUser">
         <div class="mdc-dialog__container">
@@ -55,31 +161,6 @@
             </div>
         </div>
     </div>
-    <template id="listItemTemplate">
-        <li class="list-group-item flex align-items-center justify-content-between p-2">
-            <div class="flex align-items-center">
-                <i class="avatar me-3 mdi mdi-account-circle"></i>
-                <span class="flex flex-column">
-                    <b></b>
-                    <small class="text-secondary"></small>
-                </span>
-            </div>
-            <div class="flex align-items-center">
-                <button class="mdc-icon-button" id="edit">
-                    <div class="mdc-icon-button__ripple"></div>
-                    <i class="mdi mdi-pencil"></i>
-                </button>
-                <button class="mdc-icon-button mdc-button--outlined mdc-button--green" id="admin">
-                    <div class="mdc-icon-button__ripple"></div>
-                    <i class="mdi mdi-shield-star"></i>
-                </button>
-                <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete">
-                    <div class="mdc-icon-button__ripple"></div>
-                    <i class="mdi mdi-trash-can"></i>
-                </button>
-            </div>
-        </li>
-    </template>
 
     <script src="renderer.js"></script>
     <script src="import/translate.js"></script>

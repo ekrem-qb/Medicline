@@ -33,9 +33,7 @@ function listUsers() {
                         buttonRefreshIcon.classList.remove('mdi-loading', 'mdi-spin')
 
                         if (user.uid != currentUserUID) {
-                            console.time()
-
-                            const listItem = listItemTemplate.content.cloneNode(true)
+                            const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
                             listItem.id = user.uid
 
                             const textPrimary = listItem.querySelector('b')
@@ -53,45 +51,6 @@ function listUsers() {
                             const buttonEdit = listItem.querySelector('button#edit')
                             buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.uid)
 
-                            const buttonAdmin = listItem.querySelector('button#admin')
-                            const iconButtonAdmin = buttonAdmin.querySelector('.mdi')
-
-                            if (user.customClaims != undefined) {
-                                if (user.customClaims.admin) {
-                                    buttonAdmin.classList.add('mdc-button--outlined', 'mdc-button--green')
-                                    iconButtonAdmin.classList.add('mdi-shield-star')
-                                }
-                                else {
-                                    iconButtonAdmin.classList.add('mdi-shield-off-outline')
-                                }
-                            }
-                            else {
-                                iconButtonAdmin.classList.add('mdi-shield-off-outline')
-                            }
-
-                            buttonAdmin.onclick = () => {
-                                buttonAdmin.classList.remove('mdc-button--outlined', 'mdc-button--green')
-                                iconButtonAdmin.classList.remove('mdi-shield-star', 'mdi-shield-off-outline', 'mdc-button--outlined', 'mdc-button--green')
-                                iconButtonAdmin.classList.add('mdi-loading', 'mdi-spin')
-
-                                admin.auth().getUser(user.uid).then(userSnapshot => {
-                                    admin.auth().setCustomUserClaims(userSnapshot.uid, { admin: !userSnapshot.customClaims.admin }).then(() => {
-                                        iconButtonAdmin.classList.remove('mdi-loading', 'mdi-spin')
-                                        if (userSnapshot.customClaims.admin) {
-                                            iconButtonAdmin.classList.add('mdi-shield-off-outline')
-                                        }
-                                        else {
-                                            buttonAdmin.classList.add('mdc-button--outlined', 'mdc-button--green')
-                                            iconButtonAdmin.classList.add('mdi-shield-star')
-                                        }
-                                    }).catch(error => {
-                                        console.error("Error setting custom user claims: ", error)
-                                    })
-                                }).catch(error => {
-                                    console.error("Error getting user data: ", error)
-                                })
-                            }
-
                             const buttonDelete = listItem.querySelector('button#delete')
                             buttonDelete.onclick = () => {
                                 selectedUserUID = user.uid
@@ -104,8 +63,6 @@ function listUsers() {
                             })
 
                             usersList.appendChild(listItem)
-
-                            console.timeEnd()
                         }
                     }
                 )

@@ -337,12 +337,6 @@ th:active {
   transition-property: color, background-color, border-color;
 }
 
-.list-group-item b,
-.list-group-item small {
-  cursor: text;
-  user-select: text;
-}
-
 .list-group-item.active {
   cursor: default;
   pointer-events: none;
@@ -364,6 +358,11 @@ th:active {
 .list-group-item.sticky-top+.list-group {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
+}
+
+#addressList .list-group-item b,
+#hotelsList .list-group-item b {
+  cursor: text;
 }
 
 #tableColumnsList {
