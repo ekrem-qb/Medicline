@@ -105,30 +105,6 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
-ipcRenderer.on('user-update', (event, uid, data) => {
-    if (firebase.auth().currentUser.uid == uid) {
-        if (data.displayName != '') {
-            if (data.displayName) {
-                displayName.textContent = data.displayName
-                email.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
-            }
-        }
-        else {
-            displayName.textContent = firebase.auth().currentUser.email.replace(emailSuffix, '')
-            email.textContent = ''
-        }
-
-        if (data.password != undefined) {
-            firebase.auth().signOut()
-            firebase.auth().signInWithEmailAndPassword(firebase.auth().currentUser.email, data.password).then(() => {
-                dialogLogin.materialComponent.close()
-            }).catch(error => {
-                console.error("Error sign in: ", error)
-            })
-        }
-    }
-})
-
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         dialogLogin.materialComponent.close()
@@ -151,18 +127,4 @@ const webview = document.querySelector('webview')
 
 webview.addEventListener('dom-ready', () => {
     drawer.materialComponent.open = false
-})
-
-ipcRenderer.on('user-update', (event, uid, data) => {
-    webview.send('user-update', uid, data)
-})
-
-ipcRenderer.on('user-add', () => {
-    webview.send('user-add')
-})
-
-webview.addEventListener('dom-ready', () => {
-    if (webview.src.includes('usersList.html')) {
-        webview.send('current-user', firebase.auth().currentUser.uid)
-    }
 })

@@ -1,105 +1,70 @@
-const buttonRefresh = document.querySelector('button#refresh')
-const buttonRefreshIcon = buttonRefresh.querySelector('.mdi')
-buttonRefresh.onclick = () => {
-    buttonRefreshIcon.classList.remove('mdi-refresh')
-    buttonRefreshIcon.classList.add('mdi-loading', 'mdi-spin')
-
-    listUsers()
-}
-
 const usersList = document.getElementById('usersList')
 const listItemTemplate = document.getElementById('listItemTemplate')
-let selectedUserUID, currentUserUID
+const allUsers = db.collection('users')
+let selectedUserID, stopCurrentQuery = () => { }
 
-ipcRenderer.on('current-user', (event, uid) => {
-    admin.auth().getUser(uid).then(user => {
-        if (user.customClaims.admin) {
-            currentUserUID = uid
-            listUsers()
-        }
-    }).catch(error => {
-        console.error("Error getting user: ", error)
-    })
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        listUsers()
+    }
+    else {
+        stopCurrentQuery()
+    }
 })
 
 function listUsers() {
-    if (currentUserUID) {
-        admin.auth().listUsers().then(
-            snapshot => {
-                usersList.innerHTML = ''
-                snapshot.users.forEach(
-                    user => {
-                        buttonRefreshIcon.classList.add('mdi-refresh')
-                        buttonRefreshIcon.classList.remove('mdi-loading', 'mdi-spin')
+    stopCurrentQuery()
+    stopCurrentQuery = allUsers.onSnapshot(
+        snapshot => {
+            usersList.innerHTML = ''
+            snapshot.forEach(
+                user => {
+                    if (user.id != firebase.auth().currentUser.uid) {
+                        const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
+                        listItem.id = user.id
 
-                        if (user.uid != currentUserUID) {
-                            const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
-                            listItem.id = user.uid
+                        const textPrimary = listItem.querySelector('b')
+                        const textSecondary = listItem.querySelector('.text-secondary')
 
-                            const textPrimary = listItem.querySelector('b')
-                            const textSecondary = listItem.querySelector('.text-secondary')
-
-                            if (user.displayName) {
-                                textPrimary.textContent = user.displayName
-                                textSecondary.textContent = user.email.replace(emailSuffix, '')
-                            }
-                            else {
-                                textPrimary.textContent = user.email.replace(emailSuffix, '')
-                                textSecondary.hidden = true
-                            }
-
-                            const buttonEdit = listItem.querySelector('button#edit')
-                            buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.uid)
-
-                            const buttonDelete = listItem.querySelector('button#delete')
-                            buttonDelete.onclick = () => {
-                                selectedUserUID = user.uid
-                                dialogDeleteUser.materialComponent.open()
-                            }
-
-                            listItem.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
-                                rippleElement.materialRipple = new MDCRipple(rippleElement)
-                                rippleElement.materialRipple.unbounded = true
-                            })
-
-                            usersList.appendChild(listItem)
+                        if (user.get('name')) {
+                            textPrimary.textContent = user.get('name')
+                            textSecondary.textContent = user.get('username')
                         }
+                        else {
+                            textPrimary.textContent = user.get('username')
+                            textSecondary.hidden = true
+                        }
+
+                        const buttonEdit = listItem.querySelector('button#edit')
+                        buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.id)
+
+                        const buttonDelete = listItem.querySelector('button#delete')
+                        buttonDelete.onclick = () => {
+                            selectedUserID = user.id
+                            dialogDeleteUser.materialComponent.open()
+                        }
+
+                        listItem.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
+                            rippleElement.materialRipple = new MDCRipple(rippleElement)
+                            rippleElement.materialRipple.unbounded = true
+                        })
+
+                        usersList.appendChild(listItem)
                     }
-                )
-            }
-        )
-    }
-}
-
-ipcRenderer.on('user-add', event => {
-    listUsers()
-})
-
-ipcRenderer.on('user-update', (event, uid, data) => {
-    if (data.displayName != undefined) {
-        let listItem = document.getElementById(uid)
-
-        if (listItem) {
-            let bigText = listItem.querySelector('b')
-            let smallText = listItem.querySelector('small')
-
-            if (data.displayName != '') {
-                bigText.textContent = data.displayName
-                smallText.hidden = false
-            }
-            else {
-                bigText.textContent = smallText.textContent
-                smallText.hidden = true
-            }
+                }
+            )
         }
-    }
-})
+    )
+}
 
 const dialogDeleteUser = document.querySelector("#dialogDeleteUser")
 dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
-        admin.auth().deleteUser(selectedUserUID).then(() => {
-            document.getElementById(selectedUserUID).remove()
+        admin.auth().deleteUser(selectedUserID).then(() => {
+            allUsers.doc(selectedUserID).delete().then(() => {
+            }).catch(error => {
+                console.error("Error deleting user: ", error)
+            })
         }).catch(error => {
             console.error("Error deleting user: ", error)
         })

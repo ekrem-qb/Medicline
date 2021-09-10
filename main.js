@@ -210,14 +210,6 @@ async function main() {
         }
     })
 
-    ipcMain.on('user-update', (event, uid, data) => {
-        mainWindow.webContents.send('user-update', uid, data)
-    })
-
-    ipcMain.on('user-add', event => {
-        mainWindow.webContents.send('user-add')
-    })
-
     ipcMain.on('dialog-save', (event, fileName) => {
         dialog.showSaveDialog(event.sender.getOwnerBrowserWindow(), {
             defaultPath: fileName,

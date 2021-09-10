@@ -20,10 +20,6 @@
                     <i class="mdi mdc-button__icon mdi-plus"></i>
                     <span class="mdc-button__label" translate>NEW#USER</span>
                 </button>
-                <button class="mdc-icon-button ms-2 me-0" id="refresh">
-                    <div class="mdc-icon-button__ripple"></div>
-                    <i class="mdi mdi-refresh"></i>
-                </button>
             </li>
             <ul id="usersList" class="list-group list-group-flush"></ul>
             <template id="listItemTemplate">
@@ -51,10 +47,6 @@
         <div class="flex-grow-1">
             <li class="modal-footer list-group-flush list-group-item sticky-top justify-content-between">
                 <h3 class="user-select-none" translate>PERMISSIONS</h3>
-                <button class="mdc-icon-button ms-2 me-0" id="refresh">
-                    <div class="mdc-icon-button__ripple"></div>
-                    <i class="mdi mdi-refresh"></i>
-                </button>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush">
                 <li class="list-group-item flex align-items-center justify-content-between p-2">
@@ -164,6 +156,11 @@
 
     <script src="renderer.js"></script>
     <script src="import/translate.js"></script>
+    <script src="../node_modules/firebase/firebase-app.js"></script>
+    <script src="../node_modules/firebase/firebase-auth.js"></script>
+    <script src="../node_modules/firebase/firebase-firestore.js"></script>
+    <script src="import/firebase/auth.js"></script>
+    <script src="import/firebase/firestore.js"></script>
     <script src="import/firebase/admin.js"></script>
     <script src="import/material/ripple.js"></script>
     <script src="import/material/dialog.js"></script>
