@@ -46,7 +46,7 @@ buttonSave.onclick = () => {
 
     if (valid) {
         if (selectedInstitution) {
-            selectedInstitution.update(data).then(() => {
+            selectedInstitution.set(data).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
                 console.error("Error updating institution: ", error)

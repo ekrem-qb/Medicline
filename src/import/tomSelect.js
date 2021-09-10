@@ -5,7 +5,7 @@ function loadSelectMenus() {
     selectMenuQueries.forEach(stopQuery => stopQuery())
     selectMenuQueries = []
     document.querySelectorAll('select').forEach(select => {
-        const selectID = select.id.replace(/[0-9]/g, '')
+        const selectID = select.id.replace(/[0-9]/g, '').replace('createUser', 'users').replace('updateUser', 'users')
 
         if (select.tomselect == undefined) {
             new TomSelect(select, {
@@ -23,7 +23,7 @@ function loadSelectMenus() {
             })
         }
 
-        if (selectID != 'patientStatus' && selectID != 'country') {
+        if (selectID != 'patientStatus' && selectID != 'country' && selectID != 'users') {
             select.tomselect.settings.create = value => {
                 db.collection(selectID).add({ name: value }).then(snapshot => {
                     select.tomselect.addItem(snapshot.path)

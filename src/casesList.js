@@ -382,15 +382,6 @@ function listCases(snap) {
                                             else {
                                                 td.textContent = value
                                             }
-                                            if (td.id.includes('User')) {
-                                                admin.auth().getUserByEmail(value + emailSuffix).then(user => {
-                                                    if (user.displayName) {
-                                                        td.textContent = user.displayName
-                                                    }
-                                                }).catch(error => {
-                                                    console.error("Error getting user by email: ", error)
-                                                })
-                                            }
                                             break
                                     }
                                 }
@@ -483,7 +474,12 @@ function setTableOverlayState(state) {
 }
 
 function changeCaseStatus(newStatus) {
-    selectedCase.update({ status: newStatus }).catch(error => {
+    selectedCase.update({
+        status: newStatus,
+        updateUser: allUsers.doc(firebase.auth().currentUser.uid),
+        updateDate: today[2] + '-' + today[1] + '-' + today[0],
+        updateTime: new Date().toLocaleTimeString().substr(0, 5)
+    }).catch(error => {
         console.error("Error updating case: ", error)
     })
 }

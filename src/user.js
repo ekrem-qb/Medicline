@@ -62,18 +62,17 @@ if (location.hash != '') {
         event.preventDefault()
         event.stopPropagation()
 
-        let data = {}
+        iconSave.classList.remove('mdi-content-save')
+        iconSave.classList.add('mdi-loading', 'mdi-spin')
 
-        data.name = inputName.value
-
-        if (Object.entries(data).length > 0) {
-            iconSave.classList.remove('mdi-content-save')
-            iconSave.classList.add('mdi-loading', 'mdi-spin')
-        }
-
-        allUsers.doc(selectedUserID).update(data).then(() => {
+        allUsers.doc(selectedUserID).set({
+            username: inputUsername.value,
+            name: inputName.value
+        }).then(() => {
             if (inputPassword.value != '') {
-                admin.auth().updateUser(selectedUserID, { password: inputPassword.value }).then(() => {
+                admin.auth().updateUser(selectedUserID, {
+                    password: inputPassword.value
+                }).then(() => {
                     if (firebase.auth().currentUser.uid == selectedUserID) {
                         firebase.auth().signOut()
                         firebase.auth().signInWithEmailAndPassword(firebase.auth().currentUser.email, inputPassword.value).then(() => {

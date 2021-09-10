@@ -121,15 +121,6 @@ if (location.hash != '') {
                             inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
                         }
                         else {
-                            if (inputEdit.id.includes('User')) {
-                                admin.auth().getUserByEmail(itemValue + emailSuffix).then(user => {
-                                    if (user.displayName) {
-                                        inputEdit.value = user.displayName
-                                    }
-                                }).catch(error => {
-                                    console.error("Error getting user by email: ", error)
-                                })
-                            }
                             inputEdit.value = itemValue
                         }
                     }
@@ -142,10 +133,28 @@ if (location.hash != '') {
 
                     if (itemValue != undefined) {
                         if (select.id.includes('_')) {
-                            setTimeout(() => select.tomselect.addItem(itemValue), 100)
+                            setTimeout(() => {
+                                select.tomselect.addItem(itemValue)
+                                if (select.disabled) {
+                                    if (itemValue != '') {
+                                        select.parentElement.parentElement.hidden = false
+                                    }
+                                }
+                                else {
+                                    select.parentElement.parentElement.hidden = false
+                                }
+                            }, 100)
                         }
                         else {
                             select.tomselect.addItem(itemValue)
+                            if (select.disabled) {
+                                if (itemValue != '') {
+                                    select.parentElement.parentElement.hidden = false
+                                }
+                            }
+                            else {
+                                select.parentElement.parentElement.hidden = false
+                            }
                         }
                     }
                 }
@@ -197,7 +206,7 @@ function saveCase() {
                 valid = false
             }
 
-            if (inputEdit.value != '' && !inputEdit.disabled && !inputEdit.readOnly) {
+            if (inputEdit.value != '' && !inputEdit.readOnly) {
                 if (inputEdit.mask != undefined) {
                     caseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
                 }
@@ -229,17 +238,17 @@ function saveCase() {
         stopIDSearch()
         const today = new Date().toLocaleDateString('tr').split('.')
         if (caseExists) {
-            caseData.updateUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
+            caseData.updateUser = allUsers.doc(firebase.auth().currentUser.uid)
             caseData.updateDate = today[2] + '-' + today[1] + '-' + today[0]
             caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
-            currentCase.update(caseData).then(() => {
+            currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
                 console.error("Error updating case: ", error)
             })
         }
         else {
-            caseData.createUser = firebase.auth().currentUser.email.replace(emailSuffix, '')
+            caseData.createUser = allUsers.doc(firebase.auth().currentUser.uid)
             caseData.createDate = today[2] + '-' + today[1] + '-' + today[0]
             caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
             caseData.status = "active"

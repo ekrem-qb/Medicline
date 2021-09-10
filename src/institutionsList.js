@@ -323,28 +323,7 @@ function listInstitutions(snap) {
                                 )
                             }
                             else {
-                                switch (td.id) {
-                                    case "complaints":
-                                        td.textContent = td.title = value
-                                        break
-                                    default:
-                                        if (td.id.includes("Date")) {
-                                            td.textContent = new Date(value).toJSON().substr(0, 10)
-                                        }
-                                        else {
-                                            td.textContent = value
-                                        }
-                                        if (td.id.includes('User')) {
-                                            admin.auth().getUserByEmail(value + emailSuffix).then(user => {
-                                                if (user.displayName) {
-                                                    td.textContent = user.displayName
-                                                }
-                                            }).catch(error => {
-                                                console.error("Error getting user by email: ", error)
-                                            })
-                                        }
-                                        break
-                                }
+                                td.textContent = value
                             }
                         }
                     }
