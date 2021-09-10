@@ -7,19 +7,21 @@ function loadSelectMenus() {
     document.querySelectorAll('select').forEach(select => {
         const selectID = select.id.replace(/[0-9]/g, '')
 
-        new TomSelect(select, {
-            maxItems: 1,
-            selectOnTab: true,
-            sortField: "text",
-            render: {
-                option_create: function (data, escape) {
-                    return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
-                },
-                no_results: function (data, escape) {
-                    return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+        if (select.tomselect == undefined) {
+            new TomSelect(select, {
+                maxItems: 1,
+                selectOnTab: true,
+                sortField: "text",
+                render: {
+                    option_create: function (data, escape) {
+                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
+                    },
+                    no_results: function (data, escape) {
+                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+                    }
                 }
-            }
-        })
+            })
+        }
 
         if (selectID != 'patientStatus' && selectID != 'country') {
             select.tomselect.settings.create = value => {

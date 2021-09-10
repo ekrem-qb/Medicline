@@ -1,6 +1,5 @@
 const usersList = document.getElementById('usersList')
 const listItemTemplate = document.getElementById('listItemTemplate')
-const allUsers = db.collection('users')
 let selectedUserID, stopCurrentQuery = () => { }
 
 firebase.auth().onAuthStateChanged(user => {

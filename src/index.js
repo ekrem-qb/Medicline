@@ -9,8 +9,6 @@ buttonDrawer.onclick = () => {
 }
 
 const drawer = document.querySelector('.mdc-drawer')
-const displayName = drawer.querySelector('.mdc-drawer__title')
-const email = drawer.querySelector('.mdc-drawer__subtitle')
 
 drawer.materialComponent.listen('MDCDrawer:closed', () => {
     buttonDrawerIcon.classList.add('mdi-menu')
@@ -105,16 +103,24 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
+const textName = drawer.querySelector('.mdc-drawer__title')
+const textUsername = drawer.querySelector('.mdc-drawer__subtitle')
+let stopUserQuery = () => { }
+
 firebase.auth().onAuthStateChanged(user => {
+    stopUserQuery()
     if (user) {
         dialogLogin.materialComponent.close()
-        if (user.displayName != null) {
-            displayName.textContent = user.displayName
-            email.textContent = user.email.replace(emailSuffix, '')
-        }
-        else {
-            displayName.textContent = user.email.replace(emailSuffix, '')
-        }
+        stopUserQuery = allUsers.doc(user.uid).onSnapshot(snapshot => {
+            if (snapshot.get('name')) {
+                textName.textContent = snapshot.get('name')
+                textUsername.textContent = snapshot.get('username')
+            }
+            else {
+                textName.textContent = snapshot.get('username')
+                textUsername.textContent = ''
+            }
+        })
     }
     else {
         dialogLogin.materialComponent.open()

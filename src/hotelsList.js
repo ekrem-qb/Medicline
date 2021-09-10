@@ -1,6 +1,7 @@
 const addressList = document.getElementById('addressList')
 const hotelsList = document.getElementById('hotelsList')
 let curentAddressListSnapshot, curenthotelsListSnapshot
+let stopAddressQuery = () => { }
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
 
@@ -148,12 +149,21 @@ function listItems(collection, list) {
             moveInlineEditToAnchor()
         },
         error => {
-            console.error("Error getting " + colllection + error)
+            console.error('Error getting ' + collection + ' ' + error)
         }
     )
 }
 
-listItems('address', addressList)
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        stopAddressQuery = listItems('address', addressList)
+    }
+    else {
+        stopAddressQuery()
+        stopHotelQuery()
+        stopFilteredCasesQuery()
+    }
+})
 
 let selectedAddressID
 const inlineEdit = document.getElementById('inlineEdit')

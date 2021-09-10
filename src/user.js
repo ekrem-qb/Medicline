@@ -29,8 +29,6 @@ inputName.onchange = () => inputName.value = inputName.value.trim()
 inputUsername.materialComponent.useNativeValidation = false
 inputPassword.materialComponent.useNativeValidation = false
 
-const allUsers = db.collection('users')
-
 if (location.hash != '') {
     const selectedUserID = location.hash.replace('#', '')
 
