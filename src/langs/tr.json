@@ -78,5 +78,7 @@
     "REPRESENTATIVE": "Yetkili",
     "ADD": "Ekle",
     "NOT_FOUND": "bulunamadı",
-    "PERMISSIONS": "Izinler"
+    "PERMISSIONS": "Izinler",
+    "CAN_EDIT": "Düzenleme",
+    "CAN_VIEW": "Görüntüleme"
 }

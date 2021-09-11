@@ -82,5 +82,7 @@
     "REPRESENTATIVE": "Представитель",
     "ADD": "Добавить",
     "NOT_FOUND": "не найдено",
-    "PERMISSIONS": "Разрешения"
+    "PERMISSIONS": "Разрешения",
+    "CAN_EDIT": "Редактирование",
+    "CAN_VIEW": "Просмотр"
 }

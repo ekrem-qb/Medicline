@@ -129,10 +129,6 @@ input:required:not(:valid, :focus, .mdc-text-field__input) {
   background-color: beige;
 }
 
-input {
-  cursor: text;
-}
-
 textarea {
   resize: none;
 }
@@ -363,6 +359,10 @@ th:active {
 #addressList .list-group-item b,
 #hotelsList .list-group-item b {
   cursor: text;
+}
+
+#permissionsList .list-group-item {
+  min-height: auto;
 }
 
 #tableColumnsList {
@@ -612,10 +612,6 @@ footer>.status.selected {
 #foundCasesLinks::-webkit-scrollbar,
 textarea::-webkit-scrollbar {
   box-shadow: inset 0 0 var(--bs-gray-300);
-}
-
-#usersList {
-  max-height: 84vh;
 }
 
 /*#region [data-status] */

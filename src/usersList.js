@@ -21,9 +21,21 @@ function listUsers() {
                     if (user.id != firebase.auth().currentUser.uid) {
                         const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
                         listItem.id = user.id
+                        listItem.onclick = event => {
+                            if (event.target.parentElement != buttonEdit && event.target.parentElement != buttonDelete) {
+                                const activeItem = usersList.querySelector('.list-group-item.active')
+                                if (activeItem) {
+                                    activeItem.classList.remove('active')
+                                }
+                                selectedUserID = listItem.id
+                                listItem.classList.add('active')
+                                refreshPermissions()
+                            }
+                        }
+                        new MDCRipple(listItem)
 
                         const textPrimary = listItem.querySelector('b')
-                        const textSecondary = listItem.querySelector('.text-secondary')
+                        const textSecondary = listItem.querySelector('small')
 
                         if (user.get('name')) {
                             textPrimary.textContent = user.get('name')
@@ -69,3 +81,13 @@ dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
         })
     }
 })
+
+const permissionsList = document.getElementById('permissionsList')
+let stopPermissionsQuery = () => { }
+
+function refreshPermissions() {
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(snapshot => {
+        console.log(snapshot)
+    })
+}
