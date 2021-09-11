@@ -486,7 +486,7 @@ function changeCaseStatus(newStatus) {
 
 function modalExpand(header) {
     let currentModalBody = header.parentElement.querySelector(".modal-body")
-    let currentExpandIcon = currentModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
+    let currentExpandIcon = currentModalBody.parentElement.querySelector(".dropdown-icon")
 
     let otherModalBody
     header.parentElement.parentElement.querySelectorAll(".modal-body").forEach(modalBody => {
@@ -494,7 +494,7 @@ function modalExpand(header) {
             otherModalBody = modalBody
         }
     })
-    let otherExpandIcon = otherModalBody.parentElement.querySelector(".mdc-select__dropdown-icon")
+    let otherExpandIcon = otherModalBody.parentElement.querySelector(".dropdown-icon")
 
     if (currentModalBody.classList.contains("collapsed")) {
         otherModalBody.classList.add("collapsed")

@@ -327,6 +327,22 @@ th:active {
   border: 1px solid rgba(0, 0, 0, .125);
 }
 
+.sub-list-group {
+  height: 5rem;
+  width: 94%;
+  overflow: hidden;
+  will-change: height;
+  transition: var(--transition);
+}
+
+.sub-list-group.collapsed {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  height: 0;
+  border: 0;
+  opacity: 0;
+}
+
 .list-group-item {
   min-height: 52px;
   transition: var(--transition);
@@ -420,7 +436,7 @@ th:active {
   font-size: 1.25rem;
 }
 
-.modal-header>.mdc-select__dropdown-icon {
+.modal-header>.dropdown-icon {
   margin-right: .25rem;
 }
 
@@ -775,6 +791,10 @@ textarea::-webkit-scrollbar {
   will-change: auto;
 }
 
+.mdc-ripple-surface input[type=checkbox] {
+  pointer-events: none;
+}
+
 .mdc-ripple-surface:hover::before,
 .mdc-ripple-surface.mdc-ripple-surface--hover::before,
 .mdc-button:hover .mdc-button__ripple::before,
@@ -795,7 +815,7 @@ textarea::-webkit-scrollbar {
 .mdi:not(.list-group-item .mdi):before,
 .mdc-dialog__content .mdi::before,
 .mdc-select__anchor .mdc-select__ripple::before,
-.mdc-select__dropdown-icon.mdi::before,
+.dropdown-icon.mdi::before,
 .mdc-tab .mdc-tab__ripple::before,
 .mdc-tab__icon,
 .mdc-tab__text-label,
