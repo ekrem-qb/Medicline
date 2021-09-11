@@ -81,5 +81,6 @@
     "INSTITUTION_NAME": "Название учреждения",
     "REPRESENTATIVE": "Представитель",
     "ADD": "Добавить",
-    "NOT_FOUND": "не найдено"
+    "NOT_FOUND": "не найдено",
+    "PERMISSIONS": "Разрешения"
 }

@@ -21,7 +21,7 @@
                     <span class="mdc-button__label" translate>NEW#USER</span>
                 </button>
             </li>
-            <ul id="usersList" class="list-group list-group-flush"></ul>
+            <ul id="usersList" class="list-group list-group-flush overflow-auto"></ul>
             <template id="listItemTemplate">
                 <li class="list-group-item flex align-items-center justify-content-between p-2">
                     <div class="flex align-items-center">
@@ -44,9 +44,9 @@
                 </li>
             </template>
         </div>
-        <div class="flex-grow-1">
-            <li class="modal-footer list-group-flush list-group-item sticky-top justify-content-between">
-                <h3 class="user-select-none" translate>PERMISSIONS</h3>
+        <div class="flex-grow-1 sticky-top">
+            <li class="modal-footer list-group-flush list-group-item justify-content-between">
+                <h3 class="my-1-5px user-select-none" translate>PERMISSIONS</h3>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush">
                 <li class="list-group-item flex align-items-center justify-content-between p-2">

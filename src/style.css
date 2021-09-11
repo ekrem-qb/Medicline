@@ -350,12 +350,12 @@ th:active {
   color: inherit;
 }
 
-.list-group-item.sticky-top {
+.list-group-flush.list-group-item {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 
-.list-group-item.sticky-top+.list-group {
+.list-group-flush.list-group-item+.list-group {
   border-top-right-radius: 0;
   border-top-left-radius: 0;
 }
@@ -497,6 +497,11 @@ form#filter.hide {
   }
 }
 
+.my-1-5px {
+  margin-top: 1.5px;
+  margin-bottom: 1.5px;
+}
+
 .form {
   max-height: 80vh;
   max-width: 75vw;
@@ -607,6 +612,10 @@ footer>.status.selected {
 #foundCasesLinks::-webkit-scrollbar,
 textarea::-webkit-scrollbar {
   box-shadow: inset 0 0 var(--bs-gray-300);
+}
+
+#usersList {
+  max-height: 84vh;
 }
 
 /*#region [data-status] */

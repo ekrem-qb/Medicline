@@ -76,5 +76,6 @@
     "INSTITUTION_NAME": "Institution Name",
     "REPRESENTATIVE": "Representative",
     "ADD": "Add",
-    "NOT_FOUND": "not found"
+    "NOT_FOUND": "not found",
+    "PERMISSIONS": "Permissions"
 }

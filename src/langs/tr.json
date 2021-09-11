@@ -77,5 +77,6 @@
     "INSTITUTION_NAME": "Kurum Adı",
     "REPRESENTATIVE": "Yetkili",
     "ADD": "Ekle",
-    "NOT_FOUND": "bulunamadı"
+    "NOT_FOUND": "bulunamadı",
+    "PERMISSIONS": "Izinler"
 }
