@@ -8,12 +8,13 @@ firebase.auth().onAuthStateChanged(user => {
     }
     else {
         stopCurrentQuery()
+        stopPermissionsQuery()
     }
 })
 
 function listUsers() {
     stopCurrentQuery()
-    stopCurrentQuery = allUsers.onSnapshot(
+    stopCurrentQuery = allUsers.orderBy('name', 'asc').onSnapshot(
         snapshot => {
             usersList.innerHTML = ''
             snapshot.forEach(
@@ -29,7 +30,7 @@ function listUsers() {
                                 }
                                 selectedUserID = listItem.id
                                 listItem.classList.add('active')
-                                refreshPermissions()
+                                listPermissions()
                             }
                         }
                         new MDCRipple(listItem)
@@ -93,18 +94,44 @@ for (const listItem of permissionsList.children) {
         listItem.subList.classList.toggle('collapsed')
     }
     for (const subListItem of listItem.subList.children) {
-        subListItem.switch = subListItem.querySelector('input[type=checkbox]')
+        subListItem.toggle = subListItem.querySelector('input[type=checkbox]')
         subListItem.onclick = () => {
-            subListItem.switch.checked = !subListItem.switch.checked
+            subListItem.toggle.checked = !subListItem.toggle.checked
+            let data = {}
+            data[subListItem.id] = subListItem.toggle.checked
+            allUsers.doc(selectedUserID).collection('permissions').doc(listItem.id).update(data).then(() => {
+            }).catch(error => {
+                if (error.code == 'not-found') {
+                    allUsers.doc(selectedUserID).collection('permissions').doc(listItem.id).set(data).then(() => {
+                    }).catch(error => {
+                        console.error("Error toggle permission: ", error)
+                    })
+                }
+                else {
+                    console.error("Error toggle permission: ", error)
+                }
+            })
         }
     }
 }
 
 let stopPermissionsQuery = () => { }
 
-function refreshPermissions() {
+function listPermissions() {
     stopPermissionsQuery()
+    permissionsList.querySelectorAll('input[type=checkbox]:checked').forEach(toggle => {
+        toggle.checked = false
+    })
     stopPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(snapshot => {
         console.log(snapshot)
+        snapshot.docs.forEach(permission => {
+            const listItem = permissionsList.children[permission.id]
+            for (const subListItem of listItem.subList.children) {
+                const toggle = permission.data()[subListItem.id]
+                if (toggle != undefined) {
+                    subListItem.toggle.checked = toggle
+                }
+            }
+        })
     })
 }
