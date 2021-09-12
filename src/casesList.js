@@ -1,7 +1,4 @@
-const inputSearch = document.querySelector("input#search")
-const buttonClearSearch = document.querySelector("button#clearSearch")
-
-const tableOverlay = document.querySelector("#tableOverlay")
+const tableOverlay = document.getElementById("tableOverlay")
 const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
 
@@ -11,12 +8,83 @@ let currentOrder, currentOrderDirection
 
 const columnsJSON = require("./caseColumns.json")
 const tableColumnsList = casesTable.querySelector("#tableColumnsList")
-const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
+const hiddenTableColumnsList = document.getElementById("hiddenTableColumnsList")
+const headerTemplate = document.getElementById("headerTemplate")
+
+function newHeader(headerID) {
+    const th = headerTemplate.content.firstElementChild.cloneNode(true)
+    new MDCRipple(th)
+    th.id = headerID
+
+    th.onmousedown = mouseEvent => {
+        if (mouseEvent.button == 0) {
+            if (th.parentElement != tableColumnsList) {
+                setTableOverlayState('drag')
+            }
+        }
+    }
+    th.onmouseup = () => {
+        if (th.parentElement != tableColumnsList) {
+            if (casesList.childElementCount > 0) {
+                setTableOverlayState('hide')
+            }
+            else {
+                setTableOverlayState("empty")
+            }
+        }
+    }
+    th.onclick = () => {
+        if (th.parentElement != hiddenTableColumnsList) {
+            headerClick(headerID)
+        }
+    }
+
+    const label = th.querySelector('label')
+    label.textContent = translate(columnsJSON[headerID])
+
+    th.sortIcon = th.querySelector('i')
+
+    return th
+}
+
+function loadColumns() {
+    setTableOverlayState("loading")
+
+    let enabledColumns = []
+    if (localStorage.getItem("enabledColumns") != null) {
+        enabledColumns = localStorage.getItem("enabledColumns").split(',')
+    }
+    else {
+        enabledColumns.push("insuranceRefNo", "insurance", "callDate", 'createTime', "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
+    }
+    enabledColumns.forEach(
+        column => {
+            if (columnsJSON.hasOwnProperty(column)) {
+                tableColumnsList.appendChild(newHeader(column))
+            }
+        })
+    for (let column in columnsJSON) {
+        if (!enabledColumns.includes(column)) {
+            hiddenTableColumnsList.appendChild(newHeader(column))
+        }
+    }
+    if (tableColumnsList.children['createTime']) {
+        headerClick('createTime')
+    }
+    else {
+        headerClick(tableColumnsList.firstChild.id)
+    }
+}
+
+loadColumns()
+
+const inputSearch = document.querySelector("input#search")
+const buttonClearSearch = document.querySelector("button#clearSearch")
 
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
 
-const statusBar = document.querySelector("#statusBar")
+const statusBar = document.getElementById("statusBar")
 let selectedStatus
 
 let currentQuery = db.collection("cases")
@@ -31,7 +99,7 @@ let filters = {}
 const contextMenu = document.getElementById('contextMenu')
 const copyOption = document.getElementById('copy')
 
-const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
+const dialogDeleteCase = document.getElementById("dialogDeleteCase")
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         selectedCase.delete().then(() => {
@@ -58,74 +126,6 @@ firebase.auth().onAuthStateChanged(user => {
         selectMenuQueries.forEach(stopQuery => stopQuery())
     }
 })
-
-function newColumn(column) {
-    const th = document.createElement('th')
-    th.classList.add('mdc-ripple-surface')
-    th.materialRipple = new MDCRipple(th)
-    th.id = column
-    th.innerHTML = translate(columnsJSON[column])
-    th.onmousedown = mouseEvent => {
-        if (mouseEvent.button == 0) {
-            if (th.parentElement != tableColumnsList) {
-                setTableOverlayState('drag')
-            }
-        }
-    }
-    th.onmouseup = () => {
-        if (th.parentElement != tableColumnsList) {
-            if (casesList.childElementCount > 0) {
-                setTableOverlayState('hide')
-            }
-            else {
-                setTableOverlayState("empty")
-            }
-        }
-    }
-    th.onclick = () => {
-        if (th.parentElement != hiddenTableColumnsList) {
-            headerClick(column)
-        }
-    }
-
-    const sortIcon = document.createElement('i')
-    sortIcon.classList.add('mdi', 'mdi-unfold-more-horizontal')
-    th.appendChild(sortIcon)
-    th.sortIcon = sortIcon
-
-    return th
-}
-
-function loadColumns() {
-    setTableOverlayState("loading")
-
-    let enabledColumns = []
-    if (localStorage.getItem("enabledColumns") != null) {
-        enabledColumns = localStorage.getItem("enabledColumns").split(',')
-    }
-    else {
-        enabledColumns.push("insuranceRefNo", "insurance", "callDate", "createTime", "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
-    }
-    enabledColumns.forEach(
-        column => {
-            if (columnsJSON.hasOwnProperty(column)) {
-                tableColumnsList.appendChild(newColumn(column))
-            }
-        })
-    for (let column in columnsJSON) {
-        if (!enabledColumns.includes(column)) {
-            hiddenTableColumnsList.appendChild(newColumn(column))
-        }
-    }
-    if (enabledColumns.includes("createTime")) {
-        headerClick("createTime")
-    }
-    else {
-        headerClick(enabledColumns[enabledColumns.length - 1])
-    }
-}
-
-loadColumns()
 
 function refreshSearch() {
     setTableOverlayState("loading")
@@ -203,16 +203,15 @@ function clearSearch() {
 }
 
 function headerClick(headerID) {
-    const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
+    const clickedHeader = tableColumnsList.children[headerID]
     if (clickedHeader) {
-        const otherHeaderIcon = tableColumnsList.querySelector('.mdi-chevron-up')
-        if (otherHeaderIcon) {
+        document.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
                 otherHeaderIcon.classList.remove('mdi-rotate-180')
                 otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
             }
-        }
+        })
 
         if (clickedHeader.sortIcon.classList.contains('mdi-unfold-more-horizontal')) {
             clickedHeader.sortIcon.classList.remove('mdi-unfold-more-horizontal')
@@ -407,37 +406,47 @@ function listCases(snap) {
 }
 
 function orderCases(orderBy, orderDirection) {
-    let switching, i, shouldSwitch
-    do {
-        switching = false
-        for (i = 0; i < casesList.children.length - 1; i++) {
-            shouldSwitch = false
+    if (tableColumnsList.children[orderBy]) {
+        let switching, i, shouldSwitch
+        do {
+            switching = false
+            for (i = 0; i < casesList.children.length - 1; i++) {
+                shouldSwitch = false
 
-            const x = casesList.children[i].querySelector("td#" + orderBy)
-            const y = casesList.children[i + 1].querySelector("td#" + orderBy)
+                const a = casesList.children[i].children[orderBy]
+                const b = casesList.children[i + 1].children[orderBy]
 
-            if (orderDirection == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true
-                    break
+                if (orderDirection == 'asc') {
+                    if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                        shouldSwitch = true
+                        break
+                    }
+                }
+                else if (orderDirection == 'desc') {
+                    if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                        shouldSwitch = true
+                        break
+                    }
                 }
             }
-            else if (orderDirection == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                    shouldSwitch = true
-                    break
-                }
+            if (shouldSwitch) {
+                casesList.children[i].parentElement.insertBefore(casesList.children[i + 1], casesList.children[i])
+                switching = true
             }
         }
-        if (shouldSwitch) {
-            casesList.children[i].parentElement.insertBefore(casesList.children[i + 1], casesList.children[i])
-            switching = true
+        while (switching)
+
+        currentOrder = orderBy
+        currentOrderDirection = orderDirection
+    }
+    else {
+        if (tableColumnsList.children['createTime']) {
+            headerClick('createTime')
+        }
+        else {
+            headerClick(tableColumnsList.firstChild.id)
         }
     }
-    while (switching)
-
-    currentOrder = orderBy
-    currentOrderDirection = orderDirection
 }
 
 function setTableOverlayState(state) {
@@ -474,6 +483,7 @@ function setTableOverlayState(state) {
 }
 
 function changeCaseStatus(newStatus) {
+    const today = new Date().toLocaleDateString('tr').split('.')
     selectedCase.update({
         status: newStatus,
         updateUser: allUsers.doc(firebase.auth().currentUser.uid),

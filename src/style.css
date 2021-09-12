@@ -111,15 +111,6 @@ body {
   z-index: auto;
 }
 
-label {
-  margin-bottom: .75rem;
-  user-select: none;
-}
-
-label:last-child {
-  margin-bottom: 0;
-}
-
 .form-control[readonly]:enabled {
   background-color: initial;
 }
@@ -272,6 +263,10 @@ th:active {
 
 .table th:not(:first-child) {
   border-left: 2px solid var(--bs-gray-500);
+}
+
+th>label {
+  cursor: inherit;
 }
 
 .helper-text {
@@ -856,7 +851,8 @@ textarea::-webkit-scrollbar {
   user-select: none;
 }
 
-.mdc-deprecated-list-item--disabled {
+.mdc-deprecated-list-item--disabled,
+.mdc-deprecated-list-item--activated {
   pointer-events: none;
 }
 
@@ -1022,6 +1018,10 @@ th .mdi.mdi-unfold-more-horizontal::before {
 
 .mdc-card__actions {
   border-top: 1px solid rgba(0, 0, 0, .38);
+}
+
+.mdc-text-field:not(:last-child) {
+  margin-bottom: .75rem;
 }
 
 form .mdc-text-field {
