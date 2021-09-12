@@ -24,7 +24,7 @@ drawer.materialComponent.listen('MDCDrawer:opened', () => {
 })
 
 const editProfileOption = document.getElementById('editProfile')
-editProfileOption.onmousedown = event => {
+editProfileOption.onclick = event => {
     if (event.button == 0) {
         event.preventDefault()
         event.stopPropagation()
@@ -34,7 +34,7 @@ editProfileOption.onmousedown = event => {
 }
 
 const signOutOption = document.getElementById('signOut')
-signOutOption.onmousedown = event => {
+signOutOption.onclick = event => {
     if (event.button == 0) {
         event.preventDefault()
         event.stopPropagation()
@@ -46,6 +46,7 @@ signOutOption.onmousedown = event => {
 drawer.materialComponent.list.listElements.forEach((listItem, index) => {
     listItem.onmousedown = event => {
         if (event.button == 0) {
+            webview.hidden = false
             webview.src = listItem.id + 'List.html'
             drawer.materialComponent.list.selectedIndex = index
         }
@@ -103,31 +104,79 @@ buttonPasswordVisibility.onclick = () => {
     }
 }
 
+//#endregion
+
 const textName = drawer.querySelector('.mdc-drawer__title')
 const textUsername = drawer.querySelector('.mdc-drawer__subtitle')
 let stopUserQuery = () => { }
 
 firebase.auth().onAuthStateChanged(user => {
-    stopUserQuery()
     if (user) {
         dialogLogin.materialComponent.close()
-        stopUserQuery = allUsers.doc(user.uid).onSnapshot(snapshot => {
-            if (snapshot.get('name')) {
-                textName.textContent = snapshot.get('name')
-                textUsername.textContent = snapshot.get('username')
+        stopUserQuery = allUsers.doc(user.uid).onSnapshot(
+            snapshot => {
+                if (snapshot.get('name')) {
+                    textName.textContent = snapshot.get('name')
+                    textUsername.textContent = snapshot.get('username')
+                }
+                else {
+                    textName.textContent = snapshot.get('username')
+                    textUsername.textContent = ''
+                }
+            },
+            error => {
+                console.error('Error getting user profile: ' + error)
             }
-            else {
-                textName.textContent = snapshot.get('username')
-                textUsername.textContent = ''
-            }
-        })
+        )
+        loadPermissions()
     }
     else {
+        stopUserQuery()
+        stopPermissionsQuery()
         dialogLogin.materialComponent.open()
     }
 })
 
-//#endregion
+let stopPermissionsQuery = () => { }
+
+function loadPermissions() {
+    drawer.materialComponent.list.listElements.forEach(listItem => {
+        listItem.classList.add('mdc-deprecated-list-item--disabled')
+    })
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').onSnapshot(
+        snapshot => {
+            snapshot.docs.forEach(permission => {
+                const listItem = drawer.materialComponent.list.root.children[permission.id]
+                if (listItem != undefined) {
+                    if (permission.get('view')) {
+                        listItem.classList.remove('mdc-deprecated-list-item--disabled')
+                    }
+                    else {
+                        listItem.classList.add('mdc-deprecated-list-item--disabled')
+                    }
+                }
+            })
+            const activeButDisabledTab = drawer.materialComponent.list.root.querySelector('.mdc-deprecated-list-item--activated.mdc-deprecated-list-item--disabled')
+            if (activeButDisabledTab) {
+                const availableTab = drawer.materialComponent.list.root.querySelector('.mdc-deprecated-list-item:not(.mdc-deprecated-list-item--disabled)')
+                if (availableTab) {
+                    if (!webview.src.includes(availableTab.id + 'List.html')) {
+                        webview.hidden = false
+                        webview.src = availableTab.id + 'List.html'
+                        drawer.materialComponent.list.selectedIndex = drawer.materialComponent.list.listElements.indexOf(drawer.materialComponent.list.root.querySelector('.mdc-deprecated-list-item:not(.mdc-deprecated-list-item--disabled)'))
+                    }
+                }
+                else {
+                    webview.hidden = true
+                }
+            }
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
+}
 
 const webview = document.querySelector('webview')
 

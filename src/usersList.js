@@ -66,6 +66,9 @@ function listUsers() {
                 }
             )
             usersList.children[0].click()
+        },
+        error => {
+            console.error('Error getting users: ' + error)
         }
     )
 }
@@ -122,16 +125,23 @@ function listPermissions() {
     permissionsList.querySelectorAll('input[type=checkbox]:checked').forEach(toggle => {
         toggle.checked = false
     })
-    stopPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(snapshot => {
-        console.log(snapshot)
-        snapshot.docs.forEach(permission => {
-            const listItem = permissionsList.children[permission.id]
-            for (const subListItem of listItem.subList.children) {
-                const toggle = permission.data()[subListItem.id]
-                if (toggle != undefined) {
-                    subListItem.toggle.checked = toggle
+    stopPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(
+        snapshot => {
+            console.log(snapshot)
+            snapshot.docs.forEach(permission => {
+                const listItem = permissionsList.children[permission.id]
+                if (listItem != undefined) {
+                    for (const subListItem of listItem.subList.children) {
+                        const toggle = permission.data()[subListItem.id]
+                        if (toggle != undefined) {
+                            subListItem.toggle.checked = toggle
+                        }
+                    }
                 }
-            }
-        })
-    })
+            })
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
 }

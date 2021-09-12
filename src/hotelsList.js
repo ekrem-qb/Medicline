@@ -9,7 +9,6 @@ addressList.onscroll = () => moveInlineEditToAnchor()
 hotelsList.onscroll = () => moveInlineEditToAnchor()
 
 function listItems(collection, list) {
-    stopHotelQuery()
     return db.collection(collection).orderBy('name', 'asc').onSnapshot(
         snapshot => {
             list.innerHTML = ''
@@ -30,6 +29,7 @@ function listItems(collection, list) {
                             }
                             selectedAddressID = listItem.id
                             listItem.classList.add('active')
+                            stopHotelQuery()
                             stopHotelQuery = listItems(item.ref.path + '/hotel', hotelsList)
                         }
                     }
@@ -149,13 +149,14 @@ function listItems(collection, list) {
             moveInlineEditToAnchor()
         },
         error => {
-            console.error('Error getting ' + collection + ' ' + error)
+            console.error('Error getting ' + collection + ': ' + error)
         }
     )
 }
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
+        stopAddressQuery()
         stopAddressQuery = listItems('address', addressList)
     }
     else {
