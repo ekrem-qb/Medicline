@@ -1,4 +1,4 @@
-const dialogDeleteCase = document.querySelector("#dialogDeleteCase")
+const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         currentCase.delete().then(() => {
@@ -9,16 +9,16 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     }
 })
 const formEditCase = document.querySelector("form#editCase")
-const buttonSave = document.querySelector("button#save")
-const currentCaseID = document.querySelector("#currentCaseID")
+const currentCaseID = document.getElementById('currentCaseID')
 const currentCaseIDIcon = currentCaseID.parentElement.querySelector(".mdi")
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
     alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
 }
 
-const buttonDelete = document.querySelector("button#delete")
-buttonDelete.onclick = () => dialogDeleteCase.materialComponent.open()
+const actionButtonsPanel = document.getElementById('actionButtonsPanel')
+const buttonDelete = actionButtonsPanel.querySelector("button#delete")
+const buttonSave = actionButtonsPanel.querySelector("button#save")
 
 let currentCase, caseExists = false
 let stopIDSearch = () => { }
@@ -83,6 +83,47 @@ function generateCaseID() {
     currentCaseID.innerText = new Date().getFullYear().toString().substr(-2) + (Math.floor(Math.random() * (99999 - 10000)) + 10000).toString()
     checkCaseID()
     counter++
+}
+
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        loadPermissions()
+    }
+    else {
+        stopPermissionsQuery()
+    }
+})
+
+let stopPermissionsQuery = () => { }
+
+function toggleEditMode(editIsAllowed) {
+    actionButtonsPanel.classList.toggle('hide', !editIsAllowed)
+    if (editIsAllowed) {
+        buttonDelete.onclick = () => dialogDeleteCase.materialComponent.open()
+        buttonDelete.tabIndex = 0
+        buttonSave.onclick = saveCase
+        buttonSave.tabIndex = 0
+    }
+    else {
+        buttonDelete.onclick = () => { }
+        buttonDelete.tabIndex = -1
+        buttonSave.onclick = () => { }
+        buttonSave.tabIndex = -1
+    }
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('cases').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
 }
 
 if (location.hash != '') {
@@ -260,5 +301,3 @@ function saveCase() {
         }
     }
 }
-
-buttonSave.onclick = saveCase

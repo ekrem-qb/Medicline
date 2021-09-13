@@ -945,6 +945,21 @@ th .mdi.mdi-unfold-more-horizontal::before {
   border-color: rgba(0, 0, 0, .12);
 }
 
+.mdc-dialog__actions {
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.mdc-dialog__actions.hide {
+  user-select: none;
+  pointer-events: none;
+  height: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+}
+
 .mdc-dialog__button {
   flex: 1;
 }
