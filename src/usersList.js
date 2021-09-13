@@ -1,3 +1,6 @@
+const buttonCreate = document.querySelector('button#create')
+buttonCreate.onclick = () => ipcRenderer.send('new-window', 'user')
+
 const usersList = document.getElementById('usersList')
 const listItemTemplate = document.getElementById('listItemTemplate')
 let selectedUserID, stopCurrentQuery = () => { }
@@ -5,12 +8,43 @@ let selectedUserID, stopCurrentQuery = () => { }
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         listUsers()
+        loadPermissions()
     }
     else {
-        stopCurrentQuery()
         stopPermissionsQuery()
+        stopCurrentQuery()
+        stopSelectedUserPermissionsQuery()
     }
 })
+
+let stopPermissionsQuery = () => { }
+
+function toggleEditMode(editIsAllowed) {
+    buttonCreate.disabled = !editIsAllowed
+    for (const listItem of permissionsList.children) {
+        for (const subListItem of listItem.subList.children) {
+            subListItem.classList.toggle('disabled', !editIsAllowed)
+            subListItem.toggle.disabled = !editIsAllowed
+        }
+    }
+    for (const iconButton of usersList.getElementsByClassName('mdc-icon-button')) {
+        iconButton.disabled = !editIsAllowed
+    }
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('users').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
+}
 
 function listUsers() {
     stopCurrentQuery()
@@ -30,7 +64,7 @@ function listUsers() {
                                 }
                                 selectedUserID = listItem.id
                                 listItem.classList.add('active')
-                                listPermissions()
+                                loadSelectedUserPermissions()
                             }
                         }
                         new MDCRipple(listItem)
@@ -118,14 +152,14 @@ for (const listItem of permissionsList.children) {
     }
 }
 
-let stopPermissionsQuery = () => { }
+let stopSelectedUserPermissionsQuery = () => { }
 
-function listPermissions() {
-    stopPermissionsQuery()
+function loadSelectedUserPermissions() {
+    stopSelectedUserPermissionsQuery()
     permissionsList.querySelectorAll('input[type=checkbox]:checked').forEach(toggle => {
         toggle.checked = false
     })
-    stopPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(
+    stopSelectedUserPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(
         snapshot => {
             console.log(snapshot)
             snapshot.docs.forEach(permission => {

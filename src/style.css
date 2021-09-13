@@ -357,6 +357,10 @@ th>label {
   color: inherit;
 }
 
+.list-group-item.active>:disabled .mdi {
+  color: #fff;
+}
+
 .list-group-flush.list-group-item {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
@@ -1068,7 +1072,8 @@ form .mdc-text-field {
 .mdc-text-field--disabled .mdc-text-field__icon--trailing,
 :disabled .mdi,
 .mdi-eye-off-outline {
-  color: rgba(0, 0, 0, .3);
+  color: #000;
+  opacity: .3;
 }
 
 .mdc-notched-outline__leading,
