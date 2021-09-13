@@ -851,6 +851,7 @@ textarea::-webkit-scrollbar {
   user-select: none;
 }
 
+.mdc-list-item--disabled,
 .mdc-deprecated-list-item--disabled,
 .mdc-deprecated-list-item--activated {
   pointer-events: none;
@@ -868,20 +869,20 @@ textarea::-webkit-scrollbar {
   color: rgb(0 0 0 / 60%);
 }
 
-.mdc-deprecated-list-item--disabled .mdc-deprecated-list-item__graphic {
-  opacity: .38;
-}
-
 .mdc-drawer .mdc-deprecated-list-item--activated,
 .mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__graphic,
 .mdc-drawer .mdc-deprecated-list-item--activated>.mdc-deprecated-list-item__text {
   color: var(--mdc-theme-primary);
 }
 
+.mdc-list-item--disabled,
+.mdc-list-item--disabled>.mdc-list-item__graphic,
+.mdc-list-item--disabled>.mdc-list-item__text,
 .mdc-drawer .mdc-deprecated-list-item--disabled,
 .mdc-drawer .mdc-deprecated-list-item--disabled>.mdc-deprecated-list-item__graphic,
 .mdc-drawer .mdc-deprecated-list-item--disabled>.mdc-deprecated-list-item__text {
-  color: inherit;
+  opacity: .38 !important;
+  color: inherit !important;
 }
 
 th .mdi {

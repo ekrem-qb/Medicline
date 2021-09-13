@@ -81,6 +81,9 @@ loadColumns()
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
 
+const buttonCreate = document.querySelector("button#create")
+buttonCreate.onclick = () => ipcRenderer.send('new-window', 'case')
+
 const formFilter = document.querySelector("form#filter")
 const buttonClearFilter = document.querySelector("button#clearFilter")
 
@@ -96,23 +99,9 @@ let currentRefQueries = []
 let selectedCase, selectedCaseRow, selectedCaseID
 let filters = {}
 
-const contextMenu = document.getElementById('contextMenu')
-const copyOption = document.getElementById('copy')
-
-const dialogDeleteCase = document.getElementById("dialogDeleteCase")
-dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
-        selectedCase.delete().then(() => {
-            selectedCase = undefined
-            selectedCaseID = undefined
-        }).catch(error => {
-            console.error("Error removing case: ", error)
-        })
-    }
-})
-
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
+        loadPermissions()
         loadSelectMenus()
         if (Object.entries(filters).length == 0) {
             formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString('tr')
@@ -121,11 +110,44 @@ firebase.auth().onAuthStateChanged(user => {
         }
     }
     else {
+        stopPermissionsQuery()
         stopCurrentQuery()
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         selectMenuQueries.forEach(stopQuery => stopQuery())
     }
 })
+
+let stopPermissionsQuery = () => { }
+
+function toggleEditMode(editIsAllowed) {
+    buttonCreate.disabled = !editIsAllowed
+    editOption.icon.classList.toggle('mdi-eye', !editIsAllowed)
+    editOption.icon.classList.toggle('mdi-pencil', editIsAllowed)
+
+    contextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
+        option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+    })
+    if (editIsAllowed) {
+        editOption.label.textContent = translate('EDIT')
+    }
+    else {
+        editOption.label.textContent = translate('VIEW')
+    }
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('cases').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
+}
 
 function refreshSearch() {
     setTableOverlayState("loading")
@@ -670,6 +692,27 @@ function clearFilter() {
 buttonClearFilter.onclick = clearFilter
 
 //#endregion
+
+const dialogDeleteCase = document.getElementById("dialogDeleteCase")
+dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == "delete") {
+        selectedCase.delete().then(() => {
+            selectedCase = undefined
+            selectedCaseID = undefined
+        }).catch(error => {
+            console.error("Error removing case: ", error)
+        })
+    }
+})
+
+const contextMenu = document.getElementById('contextMenu')
+const copyOption = contextMenu.children[0].children['copy']
+const editOption = contextMenu.children[0].children['edit']
+editOption.icon = editOption.querySelector('.mdi')
+editOption.label = editOption.querySelector('.mdc-list-item__text')
+editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
+const deleteOption = contextMenu.children[0].children['delete']
+deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 
 const { writeFile, utils } = require('xlsx')
 
