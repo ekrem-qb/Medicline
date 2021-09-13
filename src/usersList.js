@@ -18,6 +18,7 @@ firebase.auth().onAuthStateChanged(user => {
 })
 
 let stopPermissionsQuery = () => { }
+let haveEditPermission = false
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
@@ -30,6 +31,7 @@ function toggleEditMode(editIsAllowed) {
     for (const iconButton of usersList.getElementsByClassName('mdc-icon-button')) {
         iconButton.disabled = !editIsAllowed
     }
+    haveEditPermission = editIsAllowed
 }
 
 function loadPermissions() {
@@ -83,12 +85,14 @@ function listUsers() {
 
                         const buttonEdit = listItem.querySelector('button#edit')
                         buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.id)
+                        buttonEdit.disabled = !haveEditPermission
 
                         const buttonDelete = listItem.querySelector('button#delete')
                         buttonDelete.onclick = () => {
                             selectedUserID = user.id
                             dialogDeleteUser.materialComponent.open()
                         }
+                        buttonDelete.disabled = !haveEditPermission
 
                         listItem.querySelectorAll('.mdc-icon-button').forEach(rippleElement => {
                             rippleElement.materialRipple = new MDCRipple(rippleElement)

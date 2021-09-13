@@ -371,12 +371,19 @@ th>label {
   border-top-left-radius: 0;
 }
 
-#addressList .list-group-item b,
-#hotelsList .list-group-item b {
+#addressList>.list-group-item b,
+#hotelsList>.list-group-item b {
   cursor: text;
+  pointer-events: auto;
 }
 
-#permissionsList .list-group-item {
+#addressList>.list-group-item b.disabled,
+#hotelsList>.list-group-item b.disabled {
+  pointer-events: none;
+  user-select: text;
+}
+
+#permissionsList>.list-group-item {
   min-height: auto;
 }
 

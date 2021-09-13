@@ -1,3 +1,8 @@
+const buttonCreateAddress = document.querySelector('button#createAddress')
+buttonCreateAddress.onclick = () => showInlineEdit(this, 'address')
+const buttonCreateHotel = document.querySelector('button#createHotel')
+buttonCreateHotel.onclick = () => showInlineEdit(this, 'hotel')
+
 const addressList = document.getElementById('addressList')
 const hotelsList = document.getElementById('hotelsList')
 let curentAddressListSnapshot, curenthotelsListSnapshot
@@ -40,14 +45,17 @@ function listItems(collection, list) {
 
                 const bigtext = document.createElement('b')
                 bigtext.classList.add('ms-2')
-                listItem.appendChild(bigtext)
                 bigtext.textContent = item.get('name')
+                listItem.appendChild(bigtext)
+                listItem.label = bigtext
 
                 bigtext.onclick = () => showInlineEdit(listItem, listItem.id, bigtext.textContent)
+                bigtext.classList.toggle('disabled', !haveEditPermission)
 
                 const deleteButton = document.createElement('button')
                 deleteButton.classList.add('mdc-icon-button', 'mdc-button--outlined', 'mdc-button--red')
                 listItem.appendChild(deleteButton)
+                listItem.deleteButton = deleteButton
 
                 deleteButton.onclick = () => {
                     deleteAddressPath = listItem.id
@@ -121,6 +129,7 @@ function listItems(collection, list) {
                         }
                     )
                 }
+                deleteButton.disabled = !haveEditPermission
 
                 const deleteRipple = document.createElement('div')
                 deleteRipple.classList.add('mdc-icon-button__ripple')
@@ -158,13 +167,48 @@ firebase.auth().onAuthStateChanged(user => {
     if (user) {
         stopAddressQuery()
         stopAddressQuery = listItems('address', addressList)
+        loadPermissions()
     }
     else {
         stopAddressQuery()
         stopHotelQuery()
         stopFilteredCasesQuery()
+        stopPermissionsQuery()
     }
 })
+
+let stopPermissionsQuery = () => { }
+let haveEditPermission = false
+
+function toggleEditMode(editIsAllowed) {
+    buttonCreateAddress.disabled = !editIsAllowed
+    buttonCreateHotel.disabled = !editIsAllowed
+
+    for (const listItem of addressList.children) {
+        listItem.label.classList.toggle('disabled', !editIsAllowed)
+        listItem.deleteButton.disabled = !editIsAllowed
+    }
+    for (const listItem of hotelsList.children) {
+        listItem.label.classList.toggle('disabled', !editIsAllowed)
+        listItem.deleteButton.disabled = !editIsAllowed
+    }
+
+    haveEditPermission = editIsAllowed
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('hotels').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
+}
 
 let selectedAddressID
 const inlineEdit = document.getElementById('inlineEdit')
