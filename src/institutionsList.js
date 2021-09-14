@@ -2,13 +2,13 @@ const selectInstitutionType = document.getElementById('institutionType')
 selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
     currentQuery = db.collection(selectInstitutionType.materialComponent.value)
     loadInstitutions()
-    labelButtonNew.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
 })
-const buttonNew = document.querySelector('button#new')
-buttonNew.onclick = () => {
+const buttonCreate = document.querySelector('button#create')
+buttonCreate.onclick = () => {
     ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.materialComponent.value)
 }
-const labelButtonNew = buttonNew.querySelector('.mdc-button__label')
+const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
 
 const inputSearch = document.querySelector("input#search")
 const buttonClearSearch = document.querySelector("button#clearSearch")
@@ -36,12 +36,43 @@ let selectedInstitution, selectedInstitutionRow, selectedInstitutionID
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         loadInstitutions()
+        loadPermissions()
     }
     else {
+        stopPermissionsQuery()
         stopCurrentQuery()
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
     }
 })
+
+let stopPermissionsQuery = () => { }
+
+function toggleEditMode(editIsAllowed) {
+    buttonCreate.disabled = !editIsAllowed
+    editOption.icon.classList.toggle('mdi-eye', !editIsAllowed)
+    editOption.icon.classList.toggle('mdi-pencil', editIsAllowed)
+    deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+    if (editIsAllowed) {
+        editOption.label.textContent = translate('EDIT')
+    }
+    else {
+        editOption.label.textContent = translate('VIEW')
+    }
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('institutions').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
+        }
+    )
+}
 
 function newColumn(column) {
     const th = document.createElement('th')
@@ -425,11 +456,13 @@ ipcRenderer.on('file-save', (event, filePath) => {
 let stopFilteredCasesQuery = () => { }
 
 const contextMenu = document.getElementById('contextMenu')
-const copyOption = document.getElementById('copy')
+const copyOption = contextMenu.children[0].children['copy']
 copyOption.onclick = copySelectionToClipboard
-const editOption = document.getElementById('edit')
+const editOption = contextMenu.children[0].children['edit']
+editOption.icon = editOption.querySelector('.mdi')
+editOption.label = editOption.querySelector('.mdc-list-item__text')
 editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
-const deleteOption = document.getElementById('delete')
+const deleteOption = contextMenu.children[0].children['delete']
 deleteOption.onclick = () => {
     const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
 

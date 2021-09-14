@@ -707,6 +707,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 
 const contextMenu = document.getElementById('contextMenu')
 const copyOption = contextMenu.children[0].children['copy']
+copyOption.onclick = copySelectionToClipboard
 const editOption = contextMenu.children[0].children['edit']
 editOption.icon = editOption.querySelector('.mdi')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
