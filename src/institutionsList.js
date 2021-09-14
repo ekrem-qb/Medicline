@@ -1,18 +1,3 @@
-const selectInstitutionType = document.getElementById('institutionType')
-selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
-    currentQuery = db.collection(selectInstitutionType.materialComponent.value)
-    loadInstitutions()
-    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
-})
-const buttonCreate = document.querySelector('button#create')
-buttonCreate.onclick = () => {
-    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.materialComponent.value)
-}
-const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
-
-const inputSearch = document.querySelector("input#search")
-const buttonClearSearch = document.querySelector("button#clearSearch")
-
 const tableOverlay = document.querySelector("#tableOverlay")
 const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
@@ -22,8 +7,82 @@ const institutionsList = institutionsTable.querySelector("tbody#institutionsList
 let currentOrder, currentOrderDirection
 
 const columnsJSON = require("./institutionColumns.json")
-const institutionColumnsList = institutionsTable.querySelector("#tableColumnsList")
-const hiddenTableColumnsList = document.querySelector("#hiddenTableColumnsList")
+const tableColumnsList = institutionsTable.querySelector("#tableColumnsList")
+const headerTemplate = document.getElementById("headerTemplate")
+
+function newHeader(headerID) {
+    const th = headerTemplate.content.firstElementChild.cloneNode(true)
+    new MDCRipple(th)
+    th.id = headerID
+
+    th.onmousedown = mouseEvent => {
+        if (mouseEvent.button == 0) {
+            if (th.parentElement != tableColumnsList) {
+                setTableOverlayState('drag')
+            }
+        }
+    }
+    th.onmouseup = () => {
+        if (th.parentElement != tableColumnsList) {
+            if (institutionsList.childElementCount > 0) {
+                setTableOverlayState('hide')
+            }
+            else {
+                setTableOverlayState("empty")
+            }
+        }
+    }
+    th.onclick = () => headerClick(headerID)
+
+    const label = th.querySelector('label')
+    label.textContent = translate(columnsJSON[headerID])
+
+    th.sortIcon = th.querySelector('i')
+
+    return th
+}
+
+const Sortable = require("sortablejs")
+
+function loadColumns() {
+    setTableOverlayState("loading")
+
+    let columns = Object.keys(columnsJSON)
+    if (localStorage.getItem("institutionColumns") != null) {
+        columns = localStorage.getItem("institutionColumns").split(',')
+    }
+    columns.forEach(headerID => tableColumnsList.appendChild(newHeader(headerID)))
+
+    if (tableColumnsList.children['name']) {
+        headerClick('name')
+        headerClick('name')
+    }
+    else {
+        headerClick(tableColumnsList.firstChild.id)
+    }
+
+    Sortable.create(tableColumnsList, {
+        animation: 150,
+        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+        onStart: () => setTableOverlayState('drag'),
+        onEnd: () => {
+            if (institutionsList.childElementCount > 0) {
+                setTableOverlayState('hide')
+            }
+            else {
+                setTableOverlayState("empty")
+            }
+            listInstitutions(currentInstitutionsSnap)
+            let institutionColumns = []
+            for (let column of tableColumnsList.children) {
+                institutionColumns.push(column.id)
+            }
+            localStorage.setItem('institutionColumns', institutionColumns)
+        }
+    })
+}
+
+loadColumns()
 
 let currentQuery = db.collection('insurance')
 let searchQuery
@@ -73,84 +132,22 @@ function loadPermissions() {
         }
     )
 }
-
-function newColumn(column) {
-    const th = document.createElement('th')
-    th.classList.add('mdc-ripple-surface')
-    th.materialRipple = new MDCRipple(th)
-    th.id = column
-    th.innerHTML = translate(columnsJSON[column])
-    th.onmousedown = mouseEvent => {
-        if (mouseEvent.button == 0) {
-            if (th.parentElement != institutionColumnsList) {
-                setTableOverlayState('drag')
-            }
-        }
-    }
-    th.onmouseup = () => {
-        if (th.parentElement != institutionColumnsList) {
-            if (institutionsList.childElementCount > 0) {
-                setTableOverlayState('hide')
-            }
-            else {
-                setTableOverlayState("empty")
-            }
-        }
-    }
-    th.onclick = () => {
-        if (th.parentElement != hiddenTableColumnsList) {
-            headerClick(column)
-        }
-    }
-
-    const sortIcon = document.createElement('i')
-    sortIcon.classList.add('mdi', 'mdi-unfold-more-horizontal')
-    th.appendChild(sortIcon)
-    th.sortIcon = sortIcon
-
-    return th
+const selectInstitutionType = document.getElementById('institutionType')
+selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
+    currentQuery = db.collection(selectInstitutionType.materialComponent.value)
+    loadInstitutions()
+    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+})
+const buttonCreate = document.querySelector('button#create')
+buttonCreate.onclick = () => {
+    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.materialComponent.value)
 }
+const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
 
-const Sortable = require("sortablejs")
+const inputSearch = document.querySelector("input#search")
+const buttonClearSearch = document.querySelector("button#clearSearch")
 
-function loadColumns() {
-    setTableOverlayState("loading")
-
-    let columns = Object.keys(columnsJSON)
-    if (localStorage.getItem("institutionColumns") != null) {
-        columns = localStorage.getItem("institutionColumns").split(',')
-    }
-    columns.forEach(column => institutionColumnsList.appendChild(newColumn(column)))
-    if (columns.includes('name')) {
-        headerClick('name')
-        headerClick('name')
-    }
-    else {
-        headerClick(columns[columns.length - 1])
-    }
-
-    Sortable.create(institutionColumnsList, {
-        animation: 150,
-        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
-        onStart: () => setTableOverlayState('drag'),
-        onEnd: () => {
-            if (institutionsList.childElementCount > 0) {
-                setTableOverlayState('hide')
-            }
-            else {
-                setTableOverlayState("empty")
-            }
-            listInstitutions(currentInstitutionsSnap)
-            let institutionColumns = []
-            for (let column of tableColumnsList.children) {
-                institutionColumns.push(column.id)
-            }
-            localStorage.setItem('institutionColumns', institutionColumns)
-        }
-    })
-}
-
-loadColumns()
+inputSearch.oninput = refreshSearch
 
 function refreshSearch() {
     setTableOverlayState("loading")
@@ -217,8 +214,6 @@ function refreshSearch() {
     }
 }
 
-inputSearch.oninput = refreshSearch
-
 function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.materialComponent.value = ''
@@ -228,16 +223,15 @@ function clearSearch() {
 }
 
 function headerClick(headerID) {
-    const clickedHeader = institutionColumnsList.querySelector('th#' + headerID)
+    const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
     if (clickedHeader) {
-        const otherHeaderIcon = institutionColumnsList.querySelector('.mdi-chevron-up')
-        if (otherHeaderIcon) {
+        document.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
                 otherHeaderIcon.classList.remove('mdi-rotate-180')
                 otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
             }
-        }
+        })
 
         if (clickedHeader.sortIcon.classList.contains('mdi-unfold-more-horizontal')) {
             clickedHeader.sortIcon.classList.remove('mdi-unfold-more-horizontal')
@@ -324,7 +318,7 @@ function listInstitutions(snap) {
                 }
                 institutionsList.appendChild(tr)
 
-                for (const column of institutionColumnsList.children) {
+                for (const column of tableColumnsList.children) {
                     const td = document.createElement("td")
                     td.id = column.id
                     tr.appendChild(td)
@@ -383,17 +377,17 @@ function orderInstitutions(orderBy, orderDirection) {
         for (i = 0; i < institutionsList.children.length - 1; i++) {
             shouldSwitch = false
 
-            const x = institutionsList.children[i].querySelector("td#" + orderBy)
-            const y = institutionsList.children[i + 1].querySelector("td#" + orderBy)
+            const a = institutionsList.children[i].children[orderBy]
+            const b = institutionsList.children[i + 1].children[orderBy]
 
             if (orderDirection == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
                     shouldSwitch = true
                     break
                 }
             }
             else if (orderDirection == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
                     shouldSwitch = true
                     break
                 }
@@ -425,7 +419,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("institutions_NOT_FOUND")
+            tableOverlayText.innerText = translate("INSTITUTIONS") + " " + translate("NOT_FOUND")
             break
         case "drag":
             tableOverlay.classList.remove("hide")

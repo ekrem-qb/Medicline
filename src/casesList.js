@@ -486,7 +486,7 @@ function setTableOverlayState(state) {
             tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
             tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("CASES_NOT_FOUND")
+            tableOverlayText.innerText = translate("CASES") + " " + translate("NOT_FOUND")
             break
         case "drag":
             tableOverlay.classList.remove("hide")
