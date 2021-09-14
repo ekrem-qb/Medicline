@@ -506,16 +506,6 @@ form#filter.hide {
   margin: 0;
 }
 
-@media (max-width: 1409px) {
-  #toolsPanel .modal-footer {
-    flex-direction: column;
-  }
-
-  #toolsPanel .modal-footer>*:first-child {
-    margin-bottom: .5rem;
-  }
-}
-
 .my-1-5px {
   margin-top: 1.5px;
   margin-bottom: 1.5px;
