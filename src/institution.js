@@ -17,51 +17,6 @@ formInstitution.querySelectorAll('input, textarea').forEach(input => input.oncha
 
 let selectedInstitution
 
-const buttonSave = document.getElementById('save')
-buttonSave.onclick = () => {
-    let data = {}
-    let valid = true
-
-    formInstitution.querySelectorAll('input, textarea').forEach(input => {
-        if (input != undefined) {
-            input.oninput = validateInput
-
-            if (!validateInput(input)) {
-                valid = false
-            }
-
-            if (input.value != '' && !input.disabled && !input.readOnly) {
-                if (input.mask != undefined) {
-                    data[input.id] = input.mask.unmaskedvalue()
-                }
-                else {
-                    data[input.id] = input.value
-                }
-            }
-        }
-    })
-
-    console.log(data)
-    console.log('isValid: ' + valid)
-
-    if (valid) {
-        if (selectedInstitution) {
-            selectedInstitution.set(data).then(() => {
-                ipcRenderer.send('window-action', 'exit')
-            }).catch(error => {
-                console.error("Error updating institution: ", error)
-            })
-        }
-        else {
-            currentQuery.add(data).then(() => {
-                ipcRenderer.send('window-action', 'exit')
-            }).catch(error => {
-                console.error("Error creating institution: ", error)
-            })
-        }
-    }
-}
-
 let stopFilteredCasesQuery = () => { }
 
 const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
@@ -79,8 +34,7 @@ dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
     }
 })
 
-const buttonDelete = document.getElementById('delete')
-buttonDelete.onclick = () => {
+function deleteInstitution() {
     const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
 
     stopFilteredCasesQuery()
@@ -132,6 +86,98 @@ buttonDelete.onclick = () => {
         },
         error => {
             console.error("Error getting filtered cases: " + error)
+        }
+    )
+}
+
+function saveInstitution() {
+    let data = {}
+    let valid = true
+
+    formInstitution.querySelectorAll('input, textarea').forEach(input => {
+        if (input != undefined) {
+            input.oninput = validateInput
+
+            if (!validateInput(input)) {
+                valid = false
+            }
+
+            if (input.value != '' && !input.disabled && !input.readOnly) {
+                if (input.mask != undefined) {
+                    data[input.id] = input.mask.unmaskedvalue()
+                }
+                else {
+                    data[input.id] = input.value
+                }
+            }
+        }
+    })
+
+    console.log(data)
+    console.log('isValid: ' + valid)
+
+    if (valid) {
+        if (selectedInstitution) {
+            selectedInstitution.set(data).then(() => {
+                ipcRenderer.send('window-action', 'exit')
+            }).catch(error => {
+                console.error("Error updating institution: ", error)
+            })
+        }
+        else {
+            currentQuery.add(data).then(() => {
+                ipcRenderer.send('window-action', 'exit')
+            }).catch(error => {
+                console.error("Error creating institution: ", error)
+            })
+        }
+    }
+}
+
+const actionButtonsPanel = document.getElementById('actionButtonsPanel')
+const buttonDelete = actionButtonsPanel.querySelector("button#delete")
+buttonDelete.onclick = deleteInstitution
+const buttonSave = actionButtonsPanel.querySelector("button#save")
+buttonSave.onclick = saveInstitution
+
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        loadPermissions()
+    }
+    else {
+        stopPermissionsQuery()
+        stopFilteredCasesQuery()
+    }
+})
+
+let stopPermissionsQuery = () => { }
+
+function toggleEditMode(editIsAllowed) {
+    actionButtonsPanel.classList.toggle('hide', !editIsAllowed)
+    if (editIsAllowed) {
+        buttonDelete.onclick = deleteInstitution
+        buttonDelete.tabIndex = 0
+        buttonSave.onclick = saveInstitution
+        buttonSave.tabIndex = 0
+    }
+    else {
+        buttonDelete.onclick = () => { }
+        buttonDelete.tabIndex = -1
+        buttonSave.onclick = () => { }
+        buttonSave.tabIndex = -1
+    }
+}
+
+function loadPermissions() {
+    toggleEditMode(false)
+
+    stopPermissionsQuery()
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('institutions').onSnapshot(
+        snapshot => {
+            toggleEditMode(snapshot.get('edit'))
+        },
+        error => {
+            console.error('Error getting permissions: ' + error)
         }
     )
 }

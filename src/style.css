@@ -742,6 +742,7 @@ textarea::-webkit-scrollbar {
   --mdc-ripple-color: currentColor;
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-hover-opacity: .1;
+  --mdc-typography-button-text-transform: normal;
 }
 
 .mdi {
@@ -1104,6 +1105,10 @@ form .mdc-text-field {
 
 .mdc-select__anchor {
   width: auto;
+}
+
+.mdc-select__selected-text {
+  user-select: none;
 }
 
 .mdc-text-field--focused+.mdc-text-field-helper-line .mdc-text-field-helper-text:not(.mdc-text-field-helper-text--persistent) {

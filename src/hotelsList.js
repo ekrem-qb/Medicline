@@ -1,7 +1,7 @@
 const buttonCreateAddress = document.querySelector('button#createAddress')
-buttonCreateAddress.onclick = () => showInlineEdit(this, 'address')
+buttonCreateAddress.onclick = () => showInlineEdit(buttonCreateAddress, 'address')
 const buttonCreateHotel = document.querySelector('button#createHotel')
-buttonCreateHotel.onclick = () => showInlineEdit(this, 'hotel')
+buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
 
 const addressList = document.getElementById('addressList')
 const hotelsList = document.getElementById('hotelsList')
