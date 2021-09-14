@@ -175,6 +175,7 @@ svg.restore path {
 
 .table {
   margin: 0;
+  min-width: max-content;
 }
 
 .table-responsive {
@@ -183,10 +184,6 @@ svg.restore path {
 
 .panel-wide {
   max-width: 74vw;
-}
-
-.w-max {
-  width: max-content;
 }
 
 tbody>tr {
@@ -383,7 +380,7 @@ th>label {
   user-select: text;
 }
 
-#permissionsList>.list-group-item {
+#permissionsList .list-group-item {
   min-height: auto;
 }
 
@@ -461,6 +458,10 @@ th>label {
   margin-top: 0;
 }
 
+#toolsPanel {
+  max-width: 20.5rem;
+}
+
 form {
   overflow: auto;
 }
@@ -468,10 +469,6 @@ form {
 form#editCase {
   line-height: normal;
   height: inherit;
-}
-
-form#filter {
-  max-width: 20.5rem;
 }
 
 #filter .col-md-12 {
@@ -522,29 +519,6 @@ form#filter.hide {
 .my-1-5px {
   margin-top: 1.5px;
   margin-bottom: 1.5px;
-}
-
-.form {
-  max-height: 80vh;
-  max-width: 75vw;
-  margin: auto;
-}
-
-#currentCaseID {
-  font-size: initial;
-}
-
-form#editCase>.flex-column {
-  min-width: 22rem;
-}
-
-form#editCase>.flex-column:first-child {
-  margin-right: 1rem;
-  max-width: 22rem;
-}
-
-form#editCase>.flex-column:last-child {
-  margin-left: 1rem;
 }
 
 .flex-row>label {
