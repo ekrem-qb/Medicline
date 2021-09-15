@@ -93,7 +93,7 @@ function listItems(collection, list) {
                                     link.href = '#'
                                     link.innerText = '#' + _case.id
                                     link.id = _case.id
-                                    link.onclick = () => ipcRenderer.send('new-window', 'case', _case.id)
+                                    link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
                                     foundCasesLinks.appendChild(link)
 
                                     if (i < snapshot.docs.length - 1) {
@@ -336,7 +336,7 @@ function moveInlineEditToAnchor() {
 }
 
 let deleteAddressPath
-const dialogDeleteAddress = document.querySelector("#dialogDeleteAddress")
+const dialogDeleteAddress = document.getElementById("dialogDeleteAddress")
 const iconDialogDeleteAddress = dialogDeleteAddress.querySelector(".mdi")
 const textDialogDeleteAddress = dialogDeleteAddress.querySelector("p")
 const foundCasesLinks = dialogDeleteAddress.querySelector("span")

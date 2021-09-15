@@ -36,7 +36,7 @@ document.onkeydown = (event => {
 
 //#region Update
 
-const dialogUpdate = document.querySelector("#dialogUpdate")
+const dialogUpdate = document.getElementById("dialogUpdate")
 
 if (dialogUpdate) {
   ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {

@@ -14,6 +14,7 @@ firebase.auth().onAuthStateChanged(user => {
         stopPermissionsQuery()
         stopCurrentQuery()
         stopSelectedUserPermissionsQuery()
+        stopFilteredCasesQueries()
     }
 })
 
@@ -90,7 +91,83 @@ function listUsers() {
                         const buttonDelete = listItem.querySelector('button#delete')
                         buttonDelete.onclick = () => {
                             selectedUserID = user.id
-                            dialogDeleteUser.materialComponent.open()
+                            const casesFilteredByCreateUser = allCases.where('createUser', '==', allUsers.doc(selectedUserID))
+
+                            stopFilteredCasesQueries()
+                            filteredCasesQueries.push(
+                                casesFilteredByCreateUser.onSnapshot(
+                                    snapshot => {
+                                        let casesFoundByCreateUser = []
+                                        snapshot.docs.forEach(foundCase => {
+                                            casesFoundByCreateUser.push(foundCase.id)
+                                        })
+
+                                        const casesFilteredByUpdateUser = allCases.where('updateUser', '==', allUsers.doc(selectedUserID))
+
+                                        filteredCasesQueries.push(
+                                            casesFilteredByUpdateUser.onSnapshot(
+                                                snapshot => {
+                                                    let casesFoundByUpdateUser = []
+                                                    snapshot.docs.forEach(foundCase => {
+                                                        if (!casesFoundByCreateUser.includes(foundCase.id)) {
+                                                            casesFoundByUpdateUser.push(foundCase.id)
+                                                        }
+                                                    })
+
+                                                    const foundCases = casesFoundByCreateUser.concat(casesFoundByUpdateUser)
+                                                    let prefix
+
+                                                    foundCasesLinks.innerHTML = ''
+
+                                                    if (foundCases.length > 0) {
+                                                        iconDialogDeleteUser.classList.remove('mdi-help-circle-outline')
+                                                        iconDialogDeleteUser.classList.add('mdi-alert')
+
+                                                        prefix = 'CANT_DELETE#THIS_'
+                                                        textDialogDeleteUser.classList.remove('mb-0')
+                                                        textDialogDeleteUser.classList.add('mb-2')
+
+                                                        for (let i = 0; i < foundCases.length; i++) {
+                                                            const link = document.createElement('a')
+                                                            link.href = '#'
+                                                            link.innerText = '#' + foundCases[i]
+                                                            link.id = foundCases[i]
+                                                            link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
+                                                            foundCasesLinks.appendChild(link)
+
+                                                            if (i < foundCases.length - 1) {
+                                                                const comma = document.createElement('b')
+                                                                comma.innerText = ' , '
+                                                                foundCasesLinks.appendChild(comma)
+                                                            }
+                                                        }
+                                                        dialogDeleteUser.materialComponent.buttons[1].disabled = true
+                                                    }
+                                                    else {
+                                                        iconDialogDeleteUser.classList.add('mdi-help-circle-outline')
+                                                        iconDialogDeleteUser.classList.remove('mdi-alert')
+
+                                                        prefix = 'ASK_DELETE#THIS_'
+                                                        textDialogDeleteUser.classList.add('mb-0')
+                                                        textDialogDeleteUser.classList.remove('mb-2')
+
+                                                        dialogDeleteUser.materialComponent.buttons[1].disabled = false
+                                                    }
+                                                    textDialogDeleteUser.innerText = translate(prefix + 'user'.toUpperCase())
+
+                                                    dialogDeleteUser.materialComponent.open()
+                                                },
+                                                error => {
+                                                    console.error("Error getting filtered cases: " + error)
+                                                }
+                                            )
+                                        )
+                                    },
+                                    error => {
+                                        console.error("Error getting filtered cases: " + error)
+                                    }
+                                )
+                            )
                         }
                         buttonDelete.disabled = !haveEditPermission
 
@@ -111,7 +188,17 @@ function listUsers() {
     )
 }
 
-const dialogDeleteUser = document.querySelector("#dialogDeleteUser")
+let filteredCasesQueries = []
+function stopFilteredCasesQueries() {
+    filteredCasesQueries.forEach(stopQuery => stopQuery())
+    filteredCasesQueries = []
+}
+
+const dialogDeleteUser = document.getElementById("dialogDeleteUser")
+const iconDialogDeleteUser = dialogDeleteUser.querySelector('.mdi')
+const textDialogDeleteUser = dialogDeleteUser.querySelector('p')
+const foundCasesLinks = dialogDeleteUser.querySelector('span')
+
 dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == "delete") {
         admin.auth().deleteUser(selectedUserID).then(() => {

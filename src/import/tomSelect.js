@@ -40,6 +40,10 @@ function loadSelectMenus() {
                                 value: item.ref.path,
                                 text: item.get('name')
                             })
+                            select.tomselect.trigger('option_add', item.ref.path, {
+                                value: item.ref.path,
+                                text: item.get('name')
+                            })
                         })
                         if (select.tomselect.isOpen) {
                             select.tomselect.refreshOptions()
@@ -85,6 +89,7 @@ function loadSelectMenus() {
                 subSelects.forEach(subSelect => {
                     if (subSelect != select && subSelect.id.split('_')[0] == select.id) {
                         subSelect.tomselect.upperSelect = select.tomselect
+                        select.tomselect.subSelect = subSelect.tomselect
                         subSelect.tomselect.enable()
 
                         selectMenuQueries.push(
@@ -97,6 +102,10 @@ function loadSelectMenus() {
 
                                     snapshot.docs.forEach(item => {
                                         subSelect.tomselect.addOption({
+                                            value: item.ref.path,
+                                            text: item.get('name')
+                                        })
+                                        subSelect.tomselect.trigger('option_add', item.ref.path, {
                                             value: item.ref.path,
                                             text: item.get('name')
                                         })

@@ -1,4 +1,4 @@
-const tableOverlay = document.querySelector("#tableOverlay")
+const tableOverlay = document.getElementById("tableOverlay")
 const tableOverlayIcon = tableOverlay.querySelector(".mdi")
 const tableOverlayText = tableOverlay.querySelector("h3")
 
@@ -482,7 +482,7 @@ deleteOption.onclick = () => {
                     link.href = '#'
                     link.innerText = '#' + _case.id
                     link.id = _case.id
-                    link.onclick = () => ipcRenderer.send('new-window', 'case', _case.id)
+                    link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
                     foundCasesLinks.appendChild(link)
 
                     if (i < snapshot.docs.length - 1) {

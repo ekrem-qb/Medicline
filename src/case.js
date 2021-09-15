@@ -143,7 +143,7 @@ if (location.hash != '') {
 
         if (caseExists) {
             formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
-                let itemValue = snapshot.get(inputEdit.id)
+                const itemValue = snapshot.get(inputEdit.id)
 
                 if (itemValue != undefined) {
                     if (inputEdit.disabled) {
@@ -156,7 +156,7 @@ if (location.hash != '') {
                     }
 
                     if (!inputEdit.parentElement.parentElement.hidden) {
-                        if (inputEdit.getAttribute("mask") == "date") {
+                        if (inputEdit.getAttribute('mask') == 'date') {
                             inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
                         }
                         else {
@@ -168,24 +168,16 @@ if (location.hash != '') {
 
             formEditCase.querySelectorAll('select').forEach(select => {
                 if (snapshot.get(select.id) != undefined) {
-                    let itemValue = snapshot.get(select.id).path
+                    const itemValue = snapshot.get(select.id).path
 
                     if (itemValue != undefined) {
-                        if (select.id.includes('_')) {
-                            setTimeout(() => {
-                                select.tomselect.addItem(itemValue)
-                                if (select.disabled) {
-                                    if (itemValue != '') {
-                                        select.parentElement.parentElement.hidden = false
-                                    }
+                        if (!select.tomselect.upperSelect) {
+                            select.tomselect.on("option_add", option => {
+                                if (option == itemValue) {
+                                    select.tomselect.addItem(itemValue)
+                                    select.tomselect.on("option_add", () => { })
                                 }
-                                else {
-                                    select.parentElement.parentElement.hidden = false
-                                }
-                            }, 100)
-                        }
-                        else {
-                            select.tomselect.addItem(itemValue)
+                            })
                             if (select.disabled) {
                                 if (itemValue != '') {
                                     select.parentElement.parentElement.hidden = false

@@ -19,7 +19,7 @@ let selectedInstitution
 
 let stopFilteredCasesQuery = () => { }
 
-const dialogDeleteInstitution = document.querySelector("#dialogDeleteInstitution")
+const dialogDeleteInstitution = document.getElementById("dialogDeleteInstitution")
 const iconDialogDeleteInstitution = dialogDeleteInstitution.querySelector('.mdi')
 const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
 const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
@@ -59,7 +59,7 @@ function deleteInstitution() {
                     link.href = '#'
                     link.innerText = '#' + _case.id
                     link.id = _case.id
-                    link.onclick = () => ipcRenderer.send('new-window', 'case', _case.id)
+                    link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
                     foundCasesLinks.appendChild(link)
 
                     if (i < snapshot.docs.length - 1) {
