@@ -71,6 +71,7 @@ function listUsers() {
                             }
                         }
                         new MDCRipple(listItem)
+                        usersList.appendChild(listItem)
 
                         const textPrimary = listItem.querySelector('b')
                         const textSecondary = listItem.querySelector('small')
@@ -84,11 +85,11 @@ function listUsers() {
                             textSecondary.hidden = true
                         }
 
-                        const buttonEdit = listItem.querySelector('button#edit')
+                        const buttonEdit = listItem.children['edit']
                         buttonEdit.onclick = () => ipcRenderer.send('new-window', 'user', user.id)
                         buttonEdit.disabled = !haveEditPermission
 
-                        const buttonDelete = listItem.querySelector('button#delete')
+                        const buttonDelete = listItem.children['delete']
                         buttonDelete.onclick = () => {
                             selectedUserID = user.id
                             const casesFilteredByCreateUser = allCases.where('createUser', '==', allUsers.doc(selectedUserID))
@@ -98,7 +99,7 @@ function listUsers() {
                                 casesFilteredByCreateUser.onSnapshot(
                                     snapshot => {
                                         let casesFoundByCreateUser = []
-                                        snapshot.docs.forEach(foundCase => {
+                                        snapshot.forEach(foundCase => {
                                             casesFoundByCreateUser.push(foundCase.id)
                                         })
 
@@ -108,7 +109,7 @@ function listUsers() {
                                             casesFilteredByUpdateUser.onSnapshot(
                                                 snapshot => {
                                                     let casesFoundByUpdateUser = []
-                                                    snapshot.docs.forEach(foundCase => {
+                                                    snapshot.forEach(foundCase => {
                                                         if (!casesFoundByCreateUser.includes(foundCase.id)) {
                                                             casesFoundByUpdateUser.push(foundCase.id)
                                                         }
@@ -175,12 +176,16 @@ function listUsers() {
                             rippleElement.materialRipple = new MDCRipple(rippleElement)
                             rippleElement.materialRipple.unbounded = true
                         })
-
-                        usersList.appendChild(listItem)
                     }
                 }
             )
-            usersList.children[0].click()
+            if (usersList.children[selectedUserID]) {
+                usersList.children[selectedUserID].click()
+            }
+            else {
+                selectedUserID = usersList.children[0].id
+                usersList.children[0].click()
+            }
         },
         error => {
             console.error('Error getting users: ' + error)
@@ -253,7 +258,7 @@ function loadSelectedUserPermissions() {
     stopSelectedUserPermissionsQuery = allUsers.doc(selectedUserID).collection('permissions').onSnapshot(
         snapshot => {
             console.log(snapshot)
-            snapshot.docs.forEach(permission => {
+            snapshot.forEach(permission => {
                 const listItem = permissionsList.children[permission.id]
                 if (listItem != undefined) {
                     for (const subListItem of listItem.subList.children) {

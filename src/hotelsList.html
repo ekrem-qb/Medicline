@@ -13,7 +13,7 @@
 
 <body class="mdc-typography flex flex-column">
     <div class="flex overflow-auto m-5">
-        <div class="flex flex-column flex-grow-1">
+        <div class="flex flex-column w-50">
             <li class="list-group-flush list-group-item sticky-top p-2">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createAddress" disabled>
                     <div class="mdc-button__ripple"></div>
@@ -23,7 +23,7 @@
             </li>
             <ul id="addressList" class="list-group list-group-flush overflow-auto">
         </div>
-        <div class="flex flex-column flex-grow-1">
+        <div class="flex flex-column w-50">
             <li class="list-group-flush list-group-item sticky-top p-2">
                 <button class="mdc-button mdc-button--outlined mdc-button--green w-100" id="createHotel" disabled>
                     <div class="mdc-button__ripple"></div>
@@ -31,9 +31,19 @@
                     <span class="mdc-button__label" translate>NEW#HOTEL</span>
                 </button>
             </li>
-            <ul id="hotelsList" class="list-group list-group-flush overflow-auto">
+            <ul id="hotelsList" class="list-group list-group-flush overflow-auto"></ul>
         </div>
     </div>
+
+    <template id="listItemTemplate">
+        <li class="list-group-item flex align-items-center px-2">
+            <b class="ms-2 me-auto" id="label"></b>
+            <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete" disabled>
+                <div class="mdc-icon-button__ripple"></div>
+                <i class="mdi mdi-trash-can"></i>
+            </button>
+        </li>
+    </template>
 
     <div id="inlineEdit" class="p-2">
         <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">

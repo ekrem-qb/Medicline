@@ -35,7 +35,7 @@ function loadSelectMenus() {
                         select.tomselect.clear()
                         select.tomselect.clearOptions()
 
-                        snapshot.docs.forEach(item => {
+                        snapshot.forEach(item => {
                             select.tomselect.addOption({
                                 value: item.ref.path,
                                 text: item.get('name')
@@ -100,7 +100,7 @@ function loadSelectMenus() {
                                     subSelect.tomselect.clear()
                                     subSelect.tomselect.clearOptions()
 
-                                    snapshot.docs.forEach(item => {
+                                    snapshot.forEach(item => {
                                         subSelect.tomselect.addOption({
                                             value: item.ref.path,
                                             text: item.get('name')
@@ -227,7 +227,7 @@ function loadSelectPermissions() {
         allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').where('edit', '==', true).onSnapshot(
             snapshot => {
                 let allowedPermissions = []
-                snapshot.docs.forEach(permission => {
+                snapshot.forEach(permission => {
                     allowedPermissions.push(permission.id)
                 })
                 toggleCreateOptions(allowedPermissions)

@@ -146,7 +146,7 @@ function loadPermissions() {
     stopPermissionsQuery()
     stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').onSnapshot(
         snapshot => {
-            snapshot.docs.forEach(permission => {
+            snapshot.forEach(permission => {
                 const listItem = drawer.materialComponent.list.root.children[permission.id]
                 if (listItem != undefined) {
                     if (permission.get('view')) {
