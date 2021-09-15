@@ -1,39 +1,29 @@
 const TomSelect = require('tom-select/dist/js/tom-select.base')
 let selectMenuQueries = []
+let selectMenus = []
 
 function loadSelectMenus() {
-    selectMenuQueries.forEach(stopQuery => stopQuery())
-    selectMenuQueries = []
+    selectMenus = []
     document.querySelectorAll('select').forEach(select => {
         const selectID = select.id.replace(/[0-9]/g, '').replace('createUser', 'users').replace('updateUser', 'users')
 
         if (select.tomselect == undefined) {
-            new TomSelect(select, {
-                maxItems: 1,
-                selectOnTab: true,
-                sortField: "text",
-                render: {
-                    option_create: function (data, escape) {
-                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
-                    },
-                    no_results: function (data, escape) {
-                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+            selectMenus.push(
+                new TomSelect(select, {
+                    maxItems: 1,
+                    selectOnTab: true,
+                    sortField: "text",
+                    render: {
+                        option_create: function (data, escape) {
+                            return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
+                        },
+                        no_results: function (data, escape) {
+                            return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+                        }
                     }
-                }
-            })
-        }
-
-        if (selectID != 'patientStatus' && selectID != 'country' && selectID != 'users') {
-            select.tomselect.settings.create = value => {
-                db.collection(selectID).add({ name: value }).then(snapshot => {
-                    select.tomselect.addItem(snapshot.path)
-                    if (selectID == 'insurance' || selectID == 'provider') {
-                        ipcRenderer.send('new-window', 'institution', snapshot.id, selectID)
-                    }
-                }).catch(error => {
-                    console.error("Error creating " + selectID + ": ", error)
                 })
-            }
+            )
+            select.tomselect.selectID = selectID
         }
 
         if (!selectID.includes('_')) {
@@ -94,15 +84,7 @@ function loadSelectMenus() {
                 const subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select')
                 subSelects.forEach(subSelect => {
                     if (subSelect != select && subSelect.id.split('_')[0] == select.id) {
-                        subSelect.tomselect.settings.create = value => {
-                            if (subSelect.id.split('_')[1] == 'hotel') {
-                                db.doc(select.tomselect.getValue()).collection(subSelect.id.split('_')[1]).add({ name: value }).then(snapshot => {
-                                    subSelect.tomselect.addItem(snapshot.path)
-                                }).catch(error => {
-                                    console.error("Error creating " + subSelect.id.split('_')[1] + ": ", error)
-                                })
-                            }
-                        }
+                        subSelect.tomselect.upperSelect = select.tomselect
                         subSelect.tomselect.enable()
 
                         selectMenuQueries.push(
@@ -159,4 +141,91 @@ function loadSelectMenus() {
             })
         }
     })
+}
+
+function createOption(value, select) {
+    if (select.upperSelect) {
+        db.doc(select.upperSelect.getValue()).collection(select.inputId.split('_')[1]).add({ name: value }).then(snapshot => {
+            select.addItem(snapshot.path)
+        }).catch(error => {
+            console.error("Error creating " + select.inputId.split('_')[1] + ": ", error)
+        })
+    }
+    else {
+        db.collection(select.selectID).add({ name: value }).then(snapshot => {
+            select.addItem(snapshot.path)
+            switch (select.selectID) {
+                case 'insurance':
+                case 'provider':
+                    ipcRenderer.send('new-window', 'institution', snapshot.id, select.selectID)
+                    break;
+            }
+        }).catch(error => {
+            console.error("Error creating " + select.selectID + ": ", error)
+        })
+    }
+}
+
+firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+        loadSelectMenus()
+        loadSelectPermissions()
+    }
+    else {
+        selectMenuQueries.forEach(stopQuery => stopQuery())
+        selectMenuQueries = []
+        stopSelectPermissionsQueries()
+    }
+})
+
+const stopSelectPermissionsQueries = () => {
+    selectPermissionsQueries.forEach(stopQuery => stopQuery())
+    selectPermissionsQueries = []
+}
+let selectPermissionsQueries = []
+
+function toggleCreateOptions(allowedPermissions) {
+    selectMenus.forEach(select => {
+        let isAllowed = false
+
+        if (select.inputId.includes('address')) {
+            isAllowed = allowedPermissions.includes('hotels')
+        }
+        if (select.inputId.includes('provider') || select.inputId.includes('insurance')) {
+            isAllowed = allowedPermissions.includes('institutions')
+        }
+
+        if (isAllowed) {
+            select.settings.create = value => createOption(value, select)
+            if (select.isOpen) {
+                select.refreshOptions()
+            }
+        }
+        else {
+            select.settings.create = false
+            if (select.isOpen) {
+                select.refreshOptions()
+            }
+        }
+    })
+}
+
+function loadSelectPermissions() {
+    toggleCreateOptions([])
+
+    stopSelectPermissionsQueries()
+    selectPermissionsQueries.push(
+        allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').where('edit', '==', true).onSnapshot(
+            snapshot => {
+                let allowedPermissions = []
+                snapshot.docs.forEach(permission => {
+                    allowedPermissions.push(permission.id)
+                })
+                toggleCreateOptions(allowedPermissions)
+            },
+            error => {
+                console.error('Error getting permissions: ' + error)
+            }
+        )
+    )
 }

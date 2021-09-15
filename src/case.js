@@ -75,8 +75,6 @@ formEditCase.querySelectorAll('input, textarea').forEach(
     }
 )
 
-loadSelectMenus()
-
 checkCaseID()
 
 function generateCaseID() {

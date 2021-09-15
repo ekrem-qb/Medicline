@@ -5,7 +5,7 @@ buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
 
 const addressList = document.getElementById('addressList')
 const hotelsList = document.getElementById('hotelsList')
-let curentAddressListSnapshot, curenthotelsListSnapshot
+let curentAddressListSnapshot, curentHotelsListSnapshot
 let stopAddressQuery = () => { }
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
@@ -40,7 +40,7 @@ function listItems(collection, list) {
                     }
                 }
                 else {
-                    curenthotelsListSnapshot = snapshot
+                    curentHotelsListSnapshot = snapshot
                 }
 
                 const bigtext = document.createElement('b')

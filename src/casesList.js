@@ -102,7 +102,6 @@ let filters = {}
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         loadPermissions()
-        loadSelectMenus()
         if (Object.entries(filters).length == 0) {
             formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString('tr')
             applyFilter()
