@@ -368,6 +368,13 @@ th>label {
   border-top-left-radius: 0;
 }
 
+.list-group-item b,
+.list-group-item small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #addressList>.list-group-item b,
 #hotelsList>.list-group-item b {
   cursor: text;
