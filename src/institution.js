@@ -1,9 +1,9 @@
 let currentQuery = db.collection('insurance')
-const selectInstitutionType = document.getElementById('institutionType')
-selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
-    currentQuery = db.collection(selectInstitutionType.materialComponent.value)
+const selectInstitutionType = document.getElementById('institutionType').materialComponent
+selectInstitutionType.listen('MDCSelect:change', () => {
+    currentQuery = db.collection(selectInstitutionType.value)
     if (!location.hash) {
-        document.title = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+        document.title = translate('NEW#' + selectInstitutionType.value.toUpperCase())
     }
 })
 
@@ -35,7 +35,7 @@ dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 function deleteInstitution() {
-    const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
+    const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))
 
     stopFilteredCasesQuery()
     stopFilteredCasesQuery = filteredCases.onSnapshot(
@@ -80,7 +80,7 @@ function deleteInstitution() {
 
                 dialogDeleteInstitution.materialComponent.buttons[1].disabled = false
             }
-            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.materialComponent.value.toUpperCase())
+            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.value.toUpperCase())
 
             dialogDeleteInstitution.materialComponent.open()
         },
@@ -203,14 +203,14 @@ function validateInput(input) {
 }
 
 if (location.search != '') {
-    selectInstitutionType.materialComponent.value = location.search.replace('?', '')
+    selectInstitutionType.value = location.search.replace('?', '')
 
     if (location.hash) {
         document.title = location.hash
         const id = location.hash.replace('#', '')
 
-        selectedInstitution = db.collection(selectInstitutionType.materialComponent.value).doc(id)
-        selectInstitutionType.materialComponent.disabled = true
+        selectedInstitution = db.collection(selectInstitutionType.value).doc(id)
+        selectInstitutionType.disabled = true
 
         console.time()
 

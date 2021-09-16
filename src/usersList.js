@@ -218,13 +218,22 @@ dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const permissionsList = document.getElementById('permissionsList')
-
 for (const listItem of permissionsList.children) {
     listItem.expandIcon = listItem.querySelector('.dropdown-icon')
     listItem.subList = listItem.children[1]
     listItem.children[0].onclick = () => {
         listItem.expandIcon.classList.toggle('mdi-rotate-180')
         listItem.subList.classList.toggle('collapsed')
+
+        const collapsedListIcon = permissionsList.querySelector('.dropdown-icon:not(.mdi-rotate-180)')
+        if (!collapsedListIcon) {
+            permissionsHeader.expandIcon.classList.add('mdi-rotate-180')
+        }
+
+        const notCollapsedListIcon = permissionsList.querySelector('.dropdown-icon.mdi-rotate-180')
+        if (!notCollapsedListIcon) {
+            permissionsHeader.expandIcon.classList.remove('mdi-rotate-180')
+        }
     }
     for (const subListItem of listItem.subList.children) {
         subListItem.toggle = subListItem.querySelector('input[type=checkbox]')
@@ -246,6 +255,15 @@ for (const listItem of permissionsList.children) {
             })
         }
     }
+}
+const permissionsHeader = document.getElementById('permissionsHeader')
+permissionsHeader.expandIcon = permissionsHeader.querySelector('.dropdown-icon')
+permissionsHeader.onclick = () => {
+    for (const listItem of permissionsList.children) {
+        listItem.expandIcon.classList.toggle('mdi-rotate-180', !permissionsHeader.expandIcon.classList.contains('mdi-rotate-180'))
+        listItem.subList.classList.toggle('collapsed', permissionsHeader.expandIcon.classList.contains('mdi-rotate-180'))
+    }
+    permissionsHeader.expandIcon.classList.toggle('mdi-rotate-180')
 }
 
 let stopSelectedUserPermissionsQuery = () => { }

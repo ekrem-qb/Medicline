@@ -132,15 +132,15 @@ function loadPermissions() {
         }
     )
 }
-const selectInstitutionType = document.getElementById('institutionType')
-selectInstitutionType.materialComponent.listen('MDCSelect:change', () => {
-    currentQuery = db.collection(selectInstitutionType.materialComponent.value)
+const selectInstitutionType = document.getElementById('institutionType').materialComponent
+selectInstitutionType.listen('MDCSelect:change', () => {
+    currentQuery = db.collection(selectInstitutionType.value)
     loadInstitutions()
-    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.materialComponent.value.toUpperCase())
+    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.value.toUpperCase())
 })
 const buttonCreate = document.querySelector('button#create')
 buttonCreate.onclick = () => {
-    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.materialComponent.value)
+    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.value)
 }
 const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
 
@@ -280,7 +280,7 @@ function listInstitutions(snap) {
                 tr.id = institutionSnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
-                        ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
+                        ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
                     }
                 }
                 tr.onmousedown = mouseEvent => {
@@ -440,7 +440,7 @@ function setTableOverlayState(state) {
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
@@ -455,10 +455,10 @@ copyOption.onclick = copySelectionToClipboard
 const editOption = contextMenu.children[0].children['edit']
 editOption.icon = editOption.querySelector('.mdi')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
-editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.materialComponent.value)
+editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
 const deleteOption = contextMenu.children[0].children['delete']
 deleteOption.onclick = () => {
-    const filteredCases = allCases.where(selectInstitutionType.materialComponent.value, '==', db.doc(selectInstitutionType.materialComponent.value + '/' + selectedInstitution.id))
+    const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))
 
     stopFilteredCasesQuery()
     stopFilteredCasesQuery = filteredCases.onSnapshot(
@@ -503,7 +503,7 @@ deleteOption.onclick = () => {
 
                 dialogDeleteInstitution.materialComponent.buttons[1].disabled = false
             }
-            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.materialComponent.value.toUpperCase())
+            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.value.toUpperCase())
 
             dialogDeleteInstitution.materialComponent.open()
         },

@@ -717,7 +717,7 @@ deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate('CASES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
