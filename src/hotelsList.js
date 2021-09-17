@@ -6,7 +6,7 @@ buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
 const addressList = document.getElementById('addressList')
 const hotelsList = document.getElementById('hotelsList')
 const listItemTemplate = document.getElementById('listItemTemplate')
-let curentAddressListSnapshot, curentHotelsListSnapshot
+let selectedAddress
 let stopAddressQuery = () => { }
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
@@ -15,129 +15,152 @@ addressList.onscroll = () => moveInlineEditToAnchor()
 hotelsList.onscroll = () => moveInlineEditToAnchor()
 
 function listItems(collection, list) {
+    list.innerHTML = ''
     return db.collection(collection).orderBy('name', 'asc').onSnapshot(
         snapshot => {
-            list.innerHTML = ''
-            snapshot.forEach(
-                item => {
-                    const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
-                    listItem.id = item.ref.path
-                    if (collection == 'address') {
-                        curentAddressListSnapshot = snapshot
-                        listItem.classList.add('mdc-ripple-surface')
-                        new MDCRipple(listItem)
-                        listItem.onclick = event => {
-                            if (event.target == listItem) {
-                                const activeItem = list.querySelector('.list-group-item.active')
-                                if (activeItem) {
-                                    activeItem.classList.remove('active')
-                                }
-                                selectedAddressID = listItem.id
-                                listItem.classList.add('active')
-                                stopHotelQuery()
-                                stopHotelQuery = listItems(item.ref.path + '/hotel', hotelsList)
-                            }
-                        }
-                    }
-                    else {
-                        curentHotelsListSnapshot = snapshot
-                    }
-                    list.appendChild(listItem)
-
-                    const label = listItem.children['label']
-                    label.textContent = item.get('name')
-                    label.onclick = () => showInlineEdit(listItem, listItem.id, label.textContent)
-                    label.classList.toggle('disabled', !haveEditPermission)
-
-                    listItem.label = label
-
-                    const buttonDelete = listItem.children['delete']
-                    buttonDelete.disabled = !haveEditPermission
-                    buttonDelete.onclick = () => {
-                        deleteAddressPath = listItem.id
-
-                        let filteredCases
-
-                        switch (item.ref.path.split('/').length) {
-                            case 2:
-                                filteredCases = allCases.where(item.ref.path.split('/')[0], '==', item.ref)
-                                break
-                            case 4:
-                                filteredCases = allCases.where(item.ref.path.split('/')[0] + '_' + item.ref.path.split('/')[2], '==', item.ref)
-                                break
-                        }
-
-                        stopFilteredCasesQuery()
-                        stopFilteredCasesQuery = filteredCases.onSnapshot(
-                            snapshot => {
-                                let prefix
-
-                                foundCasesLinks.innerHTML = ''
-
-                                if (snapshot.docs.length > 0) {
-                                    iconDialogDeleteAddress.classList.remove('mdi-help-circle-outline')
-                                    iconDialogDeleteAddress.classList.add('mdi-alert')
-
-                                    prefix = 'CANT_DELETE#THIS_'
-                                    textDialogDeleteAddress.classList.remove('mb-0')
-                                    textDialogDeleteAddress.classList.add('mb-2')
-
-                                    for (let i = 0; i < snapshot.docs.length; i++) {
-                                        const _case = snapshot.docs[i];
-
-                                        const link = document.createElement('a')
-                                        link.href = '#'
-                                        link.innerText = '#' + _case.id
-                                        link.id = _case.id
-                                        link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
-                                        foundCasesLinks.appendChild(link)
-
-                                        if (i < snapshot.docs.length - 1) {
-                                            const comma = document.createElement('b')
-                                            comma.innerText = ' , '
-                                            foundCasesLinks.appendChild(comma)
+            console.log(snapshot.docChanges())
+            snapshot.docChanges().forEach(
+                change => {
+                    switch (change.type) {
+                        case 'added':
+                            const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
+                            listItem.id = change.doc.ref.path
+                            if (collection == 'address') {
+                                listItem.classList.add('mdc-ripple-surface')
+                                new MDCRipple(listItem)
+                                listItem.onclick = event => {
+                                    if (event.target == listItem) {
+                                        const activeItem = list.querySelector('.list-group-item.active')
+                                        if (activeItem) {
+                                            activeItem.classList.remove('active')
                                         }
+                                        selectedAddress = listItem
+                                        listItem.classList.add('active')
+                                        stopHotelQuery()
+                                        stopHotelQuery = listItems(change.doc.ref.path + '/hotel', hotelsList)
                                     }
-                                    dialogDeleteAddress.materialComponent.buttons[1].disabled = true
                                 }
-                                else {
-                                    iconDialogDeleteAddress.classList.add('mdi-help-circle-outline')
-                                    iconDialogDeleteAddress.classList.remove('mdi-alert')
-
-                                    prefix = 'ASK_DELETE#THIS_'
-                                    textDialogDeleteAddress.classList.add('mb-0')
-                                    textDialogDeleteAddress.classList.remove('mb-2')
-
-                                    dialogDeleteAddress.materialComponent.buttons[1].disabled = false
-                                }
-
-                                if (collection == 'address') {
-                                    textDialogDeleteAddress.innerText = translate(prefix + collection.toUpperCase())
-                                }
-                                else {
-                                    textDialogDeleteAddress.innerText = translate(prefix + collection.split('/')[2].toUpperCase())
-                                }
-
-                                dialogDeleteAddress.materialComponent.open()
-                            },
-                            error => {
-                                console.error("Error getting filtered cases: " + error)
                             }
-                        )
-                    }
-                    buttonDelete.materialRipple = new MDCRipple(buttonDelete)
-                    buttonDelete.materialRipple.unbounded = true
 
-                    listItem.deleteButton = buttonDelete
+                            const label = listItem.children['label']
+                            label.textContent = change.doc.get('name')
+                            label.onclick = () => showInlineEdit(listItem, listItem.id, label.textContent)
+                            label.classList.toggle('disabled', !haveEditPermission)
+
+                            listItem.label = label
+
+                            const buttonDelete = listItem.children['delete']
+                            buttonDelete.disabled = !haveEditPermission
+                            buttonDelete.onclick = () => {
+                                deleteAddressPath = listItem.id
+
+                                let filteredCases
+
+                                switch (change.doc.ref.path.split('/').length) {
+                                    case 2:
+                                        filteredCases = allCases.where(change.doc.ref.path.split('/')[0], '==', change.doc.ref)
+                                        break
+                                    case 4:
+                                        filteredCases = allCases.where(change.doc.ref.path.split('/')[0] + '_' + change.doc.ref.path.split('/')[2], '==', change.doc.ref)
+                                        break
+                                }
+
+                                stopFilteredCasesQuery()
+                                stopFilteredCasesQuery = filteredCases.onSnapshot(
+                                    snapshot => {
+                                        let prefix
+
+                                        foundCasesLinks.innerHTML = ''
+
+                                        if (snapshot.docs.length > 0) {
+                                            iconDialogDeleteAddress.classList.remove('mdi-help-circle-outline')
+                                            iconDialogDeleteAddress.classList.add('mdi-alert')
+
+                                            prefix = 'CANT_DELETE#THIS_'
+                                            textDialogDeleteAddress.classList.remove('mb-0')
+                                            textDialogDeleteAddress.classList.add('mb-2')
+
+                                            for (let i = 0; i < snapshot.docs.length; i++) {
+                                                const _case = snapshot.docs[i];
+
+                                                const link = document.createElement('a')
+                                                link.href = '#'
+                                                link.innerText = '#' + _case.id
+                                                link.id = _case.id
+                                                link.onclick = () => ipcRenderer.send('new-window', 'case', link.id)
+                                                foundCasesLinks.appendChild(link)
+
+                                                if (i < snapshot.docs.length - 1) {
+                                                    const comma = document.createElement('b')
+                                                    comma.innerText = ' , '
+                                                    foundCasesLinks.appendChild(comma)
+                                                }
+                                            }
+                                            dialogDeleteAddress.materialComponent.buttons[1].disabled = true
+                                        }
+                                        else {
+                                            iconDialogDeleteAddress.classList.add('mdi-help-circle-outline')
+                                            iconDialogDeleteAddress.classList.remove('mdi-alert')
+
+                                            prefix = 'ASK_DELETE#THIS_'
+                                            textDialogDeleteAddress.classList.add('mb-0')
+                                            textDialogDeleteAddress.classList.remove('mb-2')
+
+                                            dialogDeleteAddress.materialComponent.buttons[1].disabled = false
+                                        }
+
+                                        if (collection == 'address') {
+                                            textDialogDeleteAddress.innerText = translate(prefix + collection.toUpperCase())
+                                        }
+                                        else {
+                                            textDialogDeleteAddress.innerText = translate(prefix + collection.split('/')[2].toUpperCase())
+                                        }
+
+                                        dialogDeleteAddress.materialComponent.open()
+                                    },
+                                    error => {
+                                        console.error("Error getting filtered cases: " + error)
+                                    }
+                                )
+                            }
+                            buttonDelete.materialRipple = new MDCRipple(buttonDelete)
+                            buttonDelete.materialRipple.unbounded = true
+
+                            listItem.deleteButton = buttonDelete
+
+                            if (change.newIndex == list.children.length) {
+                                list.appendChild(listItem)
+                            }
+                            else {
+                                list.insertBefore(listItem, list.children[change.newIndex])
+                            }
+                            break
+                        case 'modified':
+                            list.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+
+                            if (change.newIndex == list.children.length) {
+                                list.appendChild(list.children[change.doc.ref.path])
+                            }
+                            else {
+                                const removedChild = list.removeChild(list.children[change.doc.ref.path])
+                                list.insertBefore(removedChild, list.children[change.newIndex])
+                            }
+                            break
+                        case 'removed':
+                            if (selectedAddress == list.children[change.doc.ref.path]) {
+                                selectedAddress = undefined
+                            }
+                            list.children[change.doc.ref.path].remove()
+                            break
+                    }
                 }
             )
-            if (collection == 'address') {
-                if (list.children[selectedAddressID]) {
-                    list.children[selectedAddressID].click()
-                }
-                else {
-                    selectedAddressID = list.children[0].id
-                    list.children[0].click()
+            if (!selectedAddress) {
+                if (collection == 'address') {
+                    if (list.children.length > 0) {
+                        selectedAddress = list.children[0]
+                        selectedAddress.click()
+                    }
                 }
             }
             moveInlineEditToAnchor()
@@ -195,7 +218,6 @@ function loadPermissions() {
     )
 }
 
-let selectedAddressID
 const inlineEdit = document.getElementById('inlineEdit')
 const inlineEditInput = inlineEdit.querySelector('input')
 let inlineEditPath, inlineEditAnchorID
@@ -234,16 +256,23 @@ saveButton.onclick = () => {
                     collection = db.collection(inlineEditPath)
                     break
                 case 'hotel':
-                    collection = db.collection(selectedAddressID + '/' + inlineEditPath)
+                    collection = db.collection(selectedAddress.id + '/' + inlineEditPath)
                     break
             }
 
-            collection.add({ name: inlineEditInput.value.trim() }).then(() => {
+            collection.add({ name: inlineEditInput.value.trim() }).then(snapshot => {
                 inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
                 saveButtonIcon.classList.add('mdi-check')
                 saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
                 inlineEdit.classList.remove('show')
+
+                if (inlineEditPath == 'address') {
+                    const newElement = document.getElementById(snapshot.path)
+                    if (newElement) {
+                        newElement.click()
+                    }
+                }
             }).catch(error => {
                 saveButtonIcon.classList.add('mdi-check')
                 saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
