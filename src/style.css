@@ -179,7 +179,7 @@ svg.restore path {
 }
 
 .table-responsive {
-  min-height: 7.3rem;
+  min-height: 6.1rem;
 }
 
 .panel-wide {
@@ -395,45 +395,55 @@ th>label {
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, .5));
 }
 
-#tableOverlay {
+.overlay {
   width: 100%;
-  height: calc(100% - 8.3rem);
-  bottom: 0;
+  height: calc(100% - 3.4rem);
+  min-height: 10rem;
+  top: 3.4rem;
   position: absolute;
   place-self: center;
   place-content: center;
-  border-radius: inherit;
   backdrop-filter: blur(10px) grayscale(1);
   background-color: #ffffffbf;
   color: var(--mdc-theme-text-disabled-on-background);
+  border-bottom-left-radius: var(--mdc-shape-medium);
+  border-bottom-right-radius: var(--mdc-shape-medium);
+  border: 1px solid rgba(0, 0, 0, .125);
   transition: var(--transition);
-  z-index: 1;
+  z-index: 2;
 }
 
-#tableOverlay.hide {
+.overlay.hide {
   user-select: none;
   pointer-events: none;
   opacity: 0;
 }
 
-#tableOverlay.show-headers {
-  height: calc(100% - 11rem);
+#tableOverlay {
+  height: calc(100% - 8.3rem);
+  top: 8.3rem;
+  min-height: 0;
 }
 
-#tableOverlay>* {
+#tableOverlay.show-headers {
+  height: calc(100% - 11rem);
+  top: 11rem;
+}
+
+.overlay>* {
   margin: 0 auto;
   user-select: none;
 }
 
-#tableOverlay>.mdi {
+.overlay>.mdi {
   font-size: 5rem !important;
 }
 
-#tableOverlay>.mdi-loading {
+.overlay>.mdi-loading {
   animation: rainbow 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-#tableOverlay>.mdi-loading::before {
+.overlay>.mdi-loading::before {
   transition: none;
 }
 
@@ -740,6 +750,7 @@ textarea::-webkit-scrollbar {
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-hover-opacity: .1;
   --mdc-typography-button-text-transform: normal;
+  --mdc-shape-medium: .5rem;
 }
 
 .mdi {

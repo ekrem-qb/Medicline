@@ -223,7 +223,7 @@ if (location.search != '') {
 
             if (snapshot.exists) {
                 formInstitution.querySelectorAll('input, textarea').forEach(input => {
-                    let itemValue = snapshot.get(input.id)
+                    const itemValue = snapshot.get(input.id)
 
                     if (itemValue != undefined) {
                         if (input.disabled) {
@@ -250,5 +250,9 @@ if (location.search != '') {
     }
     else {
         buttonSave.disabled = false
+        const inputName = formInstitution.querySelector('input#name')
+        if (inputName) {
+            inputName.focus()
+        }
     }
 }

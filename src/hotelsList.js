@@ -4,7 +4,13 @@ const buttonCreateHotel = document.querySelector('button#createHotel')
 buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
 
 const addressList = document.getElementById('addressList')
+addressList.overlay = document.getElementById('addressessListOverlay')
+addressList.overlay.icon = addressList.overlay.querySelector('.mdi')
+addressList.overlay.text = addressList.overlay.querySelector('h3')
 const hotelsList = document.getElementById('hotelsList')
+hotelsList.overlay = document.getElementById('hotelsListOverlay')
+hotelsList.overlay.icon = hotelsList.overlay.querySelector('.mdi')
+hotelsList.overlay.text = hotelsList.overlay.querySelector('h3')
 const listItemTemplate = document.getElementById('listItemTemplate')
 let selectedAddress
 let stopAddressQuery = () => { }
@@ -97,8 +103,7 @@ function listItems(collection, list) {
                                                 }
                                             }
                                             dialogDeleteAddress.materialComponent.buttons[1].disabled = true
-                                        }
-                                        else {
+                                        } else {
                                             iconDialogDeleteAddress.classList.add('mdi-help-circle-outline')
                                             iconDialogDeleteAddress.classList.remove('mdi-alert')
 
@@ -111,15 +116,14 @@ function listItems(collection, list) {
 
                                         if (collection == 'address') {
                                             textDialogDeleteAddress.innerText = translate(prefix + collection.toUpperCase())
-                                        }
-                                        else {
+                                        } else {
                                             textDialogDeleteAddress.innerText = translate(prefix + collection.split('/')[2].toUpperCase())
                                         }
 
                                         dialogDeleteAddress.materialComponent.open()
                                     },
                                     error => {
-                                        console.error("Error getting filtered cases: " + error)
+                                        console.error('Error getting filtered cases: ' + error)
                                     }
                                 )
                             }
@@ -130,8 +134,7 @@ function listItems(collection, list) {
 
                             if (change.newIndex == list.children.length) {
                                 list.appendChild(listItem)
-                            }
-                            else {
+                            } else {
                                 list.insertBefore(listItem, list.children[change.newIndex])
                             }
                             break
@@ -140,8 +143,7 @@ function listItems(collection, list) {
 
                             if (change.newIndex == list.children.length) {
                                 list.appendChild(list.children[change.doc.ref.path])
-                            }
-                            else {
+                            } else {
                                 const removedChild = list.removeChild(list.children[change.doc.ref.path])
                                 list.insertBefore(removedChild, list.children[change.newIndex])
                             }
@@ -155,8 +157,13 @@ function listItems(collection, list) {
                     }
                 }
             )
+            if (list.childElementCount > 0) {
+                setListOverlayState(list.overlay, 'hide')
+            } else {
+                setListOverlayState(list.overlay, 'empty')
+            }
             if (!selectedAddress) {
-                if (addressList.children.length > 0) {
+                if (addressList.childElementCount > 0) {
                     addressList.children[0].click()
                 }
             }
@@ -173,8 +180,7 @@ firebase.auth().onAuthStateChanged(user => {
         stopAddressQuery()
         stopAddressQuery = listItems('address', addressList)
         loadPermissions()
-    }
-    else {
+    } else {
         stopAddressQuery()
         stopHotelQuery()
         stopFilteredCasesQuery()
@@ -225,8 +231,7 @@ function showInlineEdit(anchor, path, oldValue) {
     if (oldValue) {
         inlineEditInput.value = oldValue
         inlineEditInput.oldValue = oldValue
-    }
-    else {
+    } else {
         inlineEditInput.value = ''
         inlineEditInput.oldValue = ''
     }
@@ -257,7 +262,9 @@ saveButton.onclick = () => {
                     break
             }
 
-            collection.add({ name: inlineEditInput.value.trim() }).then(snapshot => {
+            collection.add({
+                name: inlineEditInput.value.trim()
+            }).then(snapshot => {
                 inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
                 saveButtonIcon.classList.add('mdi-check')
@@ -273,11 +280,12 @@ saveButton.onclick = () => {
             }).catch(error => {
                 saveButtonIcon.classList.add('mdi-check')
                 saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
-                console.error("Error creating " + inlineEditPath + ": ", error)
+                console.error('Error creating ' + inlineEditPath + ': ', error)
             })
-        }
-        else {
-            db.doc(inlineEditPath).update({ name: inlineEditInput.value.trim() }).then(() => {
+        } else {
+            db.doc(inlineEditPath).update({
+                name: inlineEditInput.value.trim()
+            }).then(() => {
                 inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
                 saveButtonIcon.classList.add('mdi-check')
@@ -286,7 +294,7 @@ saveButton.onclick = () => {
             }).catch(error => {
                 saveButtonIcon.classList.add('mdi-check')
                 saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
-                console.error("Error updating " + inlineEditPath + ": ", error)
+                console.error('Error updating ' + inlineEditPath + ': ', error)
             })
         }
     }
@@ -295,8 +303,7 @@ saveButton.onclick = () => {
 inlineEditInput.oninput = () => {
     if (inlineEditInput.value.trim() != '' && inlineEditInput.value.trim() != inlineEditInput.oldValue) {
         saveButton.disabled = false
-    }
-    else {
+    } else {
         saveButton.disabled = true
     }
 }
@@ -332,32 +339,53 @@ function moveInlineEditToAnchor() {
             inlineEdit.style.height = anchor.offsetHeight + 'px'
             inlineEdit.style.width = anchor.offsetWidth + 'px'
             inlineEdit.style.zIndex = '15'
-        }
-        else {
+        } else {
             inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
             inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
             inlineEdit.style.height = (anchor.offsetHeight - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
             inlineEdit.style.width = (anchor.offsetWidth - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
             inlineEdit.style.zIndex = ''
         }
-    }
-    else {
+    } else {
         inlineEdit.classList.remove('show')
     }
 }
 
 let deleteAddressPath
-const dialogDeleteAddress = document.getElementById("dialogDeleteAddress")
-const iconDialogDeleteAddress = dialogDeleteAddress.querySelector(".mdi")
-const textDialogDeleteAddress = dialogDeleteAddress.querySelector("p")
-const foundCasesLinks = dialogDeleteAddress.querySelector("span")
+const dialogDeleteAddress = document.getElementById('dialogDeleteAddress')
+const iconDialogDeleteAddress = dialogDeleteAddress.querySelector('.mdi')
+const textDialogDeleteAddress = dialogDeleteAddress.querySelector('p')
+const foundCasesLinks = dialogDeleteAddress.querySelector('span')
 
 dialogDeleteAddress.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         db.doc(deleteAddressPath).delete().then(() => {
 
         }).catch(error => {
-            console.error("Error removing address: ", error)
+            console.error('Error removing address: ', error)
         })
     }
 })
+
+function setListOverlayState(overlay, state) {
+    switch (state) {
+        case 'loading':
+            overlay.classList.remove('hide')
+            overlay.classList.remove('show-headers')
+            overlay.icon.classList.add('mdi-loading', 'mdi-spin')
+            overlay.icon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
+            overlay.text.hidden = true
+            break
+        case 'empty':
+            overlay.classList.remove('hide')
+            overlay.classList.remove('show-headers')
+            overlay.icon.classList.add('mdi-emoticon-sad-outline')
+            overlay.icon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
+            overlay.text.hidden = false
+            overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
+            break
+        case 'hide':
+            overlay.classList.add('hide')
+            break
+    }
+}

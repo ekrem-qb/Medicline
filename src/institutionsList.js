@@ -276,7 +276,7 @@ function listInstitutions(snap) {
                 setTableOverlayState('hide')
                 noOneFound = false
 
-                let tr = document.createElement('tr')
+                const tr = document.createElement('tr')
                 tr.id = institutionSnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
