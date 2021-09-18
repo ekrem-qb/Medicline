@@ -108,6 +108,8 @@ else {
         inputPassword.materialComponent.valid = inputPassword.value.length >= 6
     }
 
+    inputUsername.focus()
+
     buttonSave.onclick = event => {
         event.preventDefault()
         event.stopPropagation()
@@ -121,9 +123,7 @@ else {
             data.username = inputUsername.value
         }
 
-        if (inputName.value != '') {
-            data.name = inputName.value
-        }
+        data.name = inputName.value
 
         if (inputPassword.value == '') {
             inputPassword.materialComponent.valid = false

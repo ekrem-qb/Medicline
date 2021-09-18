@@ -156,11 +156,8 @@ function listItems(collection, list) {
                 }
             )
             if (!selectedAddress) {
-                if (collection == 'address') {
-                    if (list.children.length > 0) {
-                        selectedAddress = list.children[0]
-                        selectedAddress.click()
-                    }
+                if (addressList.children.length > 0) {
+                    addressList.children[0].click()
                 }
             }
             moveInlineEditToAnchor()
