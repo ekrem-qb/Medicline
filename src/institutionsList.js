@@ -374,7 +374,7 @@ function orderInstitutions(orderBy, orderDirection) {
     let switching, i, shouldSwitch
     do {
         switching = false
-        for (i = 0; i < institutionsList.children.length - 1; i++) {
+        for (i = 0; i < institutionsList.childElementCount - 1; i++) {
             shouldSwitch = false
 
             const a = institutionsList.children[i].children[orderBy]

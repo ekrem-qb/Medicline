@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="dark.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <header id="titleBar" class="flex mdc-elevation--z6">
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="d-flex mdc-elevation--z6">
         <div class="mdc-select mdc-select--filled mdc-select--no-label" id="institutionType">
             <div class="mdc-select__anchor h-auto">
                 <span class="mdc-select__ripple"></span>
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="flex">
+        <div class="d-flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
                 <svg aria-hidden="true" width="10" height="10">
                     <path d="M 0,5 10,5 10,6 0,6 Z"></path>
@@ -55,8 +55,8 @@
         </div>
     </header>
 
-    <div class="flex h-100 justify-content-center align-items-center overflow-auto">
-        <form class="flex flex-column p-2" id="institution">
+    <div class="d-flex h-100 justify-content-center align-items-center overflow-auto">
+        <form class="d-flex flex-column p-2" id="institution">
             <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                 <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-office-building"></i>
                 <input type="text" class="mdc-text-field__input" id="name" required>
@@ -68,8 +68,8 @@
                     <div class="mdc-notched-outline__trailing"></div>
                 </div>
             </label>
-            <div class="flex">
-                <div class="flex flex-column me-2">
+            <div class="d-flex">
+                <div class="d-flex flex-column me-2">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                         <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
                         <input type="text" class="mdc-text-field__input" id="representative">
@@ -115,7 +115,7 @@
                         </div>
                     </label>
                 </div>
-                <div class="flex flex-column">
+                <div class="d-flex flex-column">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea h-100">
                         <span class="mdc-text-field__resizer">
                             <textarea class="mdc-text-field__input" cols="40" id="address"></textarea>

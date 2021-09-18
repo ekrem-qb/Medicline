@@ -13,15 +13,15 @@
     <link rel="stylesheet" href="dark.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <header id="titleBar" class="flex mdc-elevation--z6">
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="d-flex mdc-elevation--z6">
         <button class="mdc-button" disabled>
             <div class="mdc-button__ripple"></div>
             <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
             <b class="mdc-button__label" id="currentCaseID"></b>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="flex">
+        <div class="d-flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
                 <svg aria-hidden="true" width="10" height="10">
                     <path d="M 0,5 10,5 10,6 0,6 Z"></path>
@@ -111,7 +111,7 @@
                         <select class="form-control" id="provider" required></select>
                     </div>
                 </div>
-                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
                     <i class="mdi mdi-phone"></i>
                     <span class="small" id="provider_phone"></span>
                 </div>
@@ -125,7 +125,7 @@
                         <select class="form-control" id="provider2"></select>
                     </div>
                 </div>
-                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
                     <i class="mdi mdi-phone"></i>
                     <span class="small" id="provider2_phone"></span>
                 </div>
@@ -139,7 +139,7 @@
                         <select class="form-control" id="provider3"></select>
                     </div>
                 </div>
-                <div class="col-md-12 flex justify-content-end text-secondary helper-text hide pe-0">
+                <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
                     <i class="mdi mdi-phone"></i>
                     <span class="small" id="provider3_phone"></span>
                 </div>

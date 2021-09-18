@@ -431,7 +431,7 @@ function orderCases(orderBy, orderDirection) {
         let switching, i, shouldSwitch
         do {
             switching = false
-            for (i = 0; i < casesList.children.length - 1; i++) {
+            for (i = 0; i < casesList.childElementCount - 1; i++) {
                 shouldSwitch = false
 
                 const a = casesList.children[i].children[orderBy]

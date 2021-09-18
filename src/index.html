@@ -12,13 +12,13 @@
     <link rel="stylesheet" href="dark.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <header id="titleBar" class="flex mdc-elevation--z6">
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="d-flex mdc-elevation--z6">
         <div class="mdc-ripple-surface" id="buttonDrawer">
             <i class="mdi mdi-menu mdi-rotate-180"></i>
         </div>
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="flex">
+        <div class="d-flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
                 <svg aria-hidden="true" width="10" height="10">
                     <path d="M 0,5 10,5 10,6 0,6 Z"></path>
@@ -40,7 +40,7 @@
     <div class="h-100">
         <aside class="mdc-drawer mdc-drawer--modal">
             <div class="mdc-deprecated-list--dense">
-                <div class="mdc-drawer__header align-items-end flex justify-content-between">
+                <div class="mdc-drawer__header align-items-end d-flex justify-content-between">
                     <div>
                         <h3 class="mdc-drawer__title"></h3>
                         <h6 class="mdc-drawer__subtitle"></h6>

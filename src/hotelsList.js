@@ -132,7 +132,7 @@ function listItems(collection, list) {
 
                             listItem.deleteButton = buttonDelete
 
-                            if (change.newIndex == list.children.length) {
+                            if (change.newIndex == list.childElementCount) {
                                 list.appendChild(listItem)
                             } else {
                                 list.insertBefore(listItem, list.children[change.newIndex])
@@ -141,7 +141,7 @@ function listItems(collection, list) {
                         case 'modified':
                             list.children[change.doc.ref.path].label.textContent = change.doc.get('name')
 
-                            if (change.newIndex == list.children.length) {
+                            if (change.newIndex == list.childElementCount) {
                                 list.appendChild(list.children[change.doc.ref.path])
                             } else {
                                 const removedChild = list.removeChild(list.children[change.doc.ref.path])
@@ -334,8 +334,8 @@ function moveInlineEditToAnchor() {
 
     if (anchor != null) {
         if (anchor.localName == 'button') {
-            inlineEdit.style.top = (anchor.parentElement.offsetTop + 1) + 'px'
-            inlineEdit.style.left = (anchor.parentElement.offsetLeft + 1) + 'px'
+            inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
+            inlineEdit.style.left = (anchor.parentElement.parentElement.offsetLeft + 1) + 'px'
             inlineEdit.style.height = anchor.offsetHeight + 'px'
             inlineEdit.style.width = anchor.offsetWidth + 'px'
             inlineEdit.style.zIndex = '15'

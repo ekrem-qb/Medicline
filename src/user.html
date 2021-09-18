@@ -12,10 +12,10 @@
     <link rel="stylesheet" href="dark.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <header id="titleBar" class="flex mdc-elevation--z6">
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="d-flex mdc-elevation--z6">
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="flex">
+        <div class="d-flex">
             <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
                 <svg aria-hidden="true" width="10" height="10">
                     <path d="M 0,5 10,5 10,6 0,6 Z"></path>
@@ -35,10 +35,10 @@
         </div>
     </header>
 
-    <div class="flex h-100 justify-content-evenly align-items-center overflow-auto">
+    <div class="d-flex h-100 justify-content-evenly align-items-center overflow-auto">
         <i class="avatar big mdi mdi-account-circle" hidden>
         </i>
-        <form class="flex flex-column p-5" id="profile">
+        <form class="d-flex flex-column p-5" id="profile">
             <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
                 <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-key"></i>
                 <input type="text" class="mdc-text-field__input" id="username" disabled>

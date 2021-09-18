@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <div class="main flex py-3">
+<body class="mdc-typography d-flex flex-column">
+    <div class="main d-flex py-3">
         <div class="mx-2" id="toolsPanel">
             <div class="mdc-card mdc-elevation--z6">
                 <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
@@ -282,7 +282,7 @@
         </div>
         <div class="flex-grow-1 overflow-auto" id="casesPanel">
             <div class="mdc-card mdc-elevation--z6 mx-2">
-                <div class="flex flex-column overlay" id="tableOverlay">
+                <div class="overlay" id="tableOverlay">
                     <i class="mdi mdi-loading mdi-spin"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>
@@ -332,7 +332,7 @@
             </div>
         </div>
     </div>
-    <footer id="statusBar" class="flex flex-row">
+    <footer id="statusBar" class="d-flex flex-row">
         <div class="status mdc-ripple-surface" data-status="sentDocs">SENT DOCUMENTS</div>
         <div class="status mdc-ripple-surface" data-status="invoiced">INVOICED</div>
         <div class="status mdc-ripple-surface" data-status="dropped">DROPPED</div>

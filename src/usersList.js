@@ -2,6 +2,9 @@ const buttonCreate = document.querySelector('button#create')
 buttonCreate.onclick = () => ipcRenderer.send('new-window', 'user')
 
 const usersList = document.getElementById('usersList')
+usersList.overlay = document.getElementById('usersListOverlay')
+usersList.overlay.icon = usersList.overlay.querySelector('.mdi')
+usersList.overlay.text = usersList.overlay.querySelector('h3')
 const listItemTemplate = document.getElementById('listItemTemplate')
 let selectedUser, stopCurrentQuery = () => { }
 
@@ -183,7 +186,7 @@ function listUsers() {
                                     rippleElement.materialRipple.unbounded = true
                                 })
 
-                                if (change.newIndex == usersList.children.length) {
+                                if (change.newIndex == usersList.childElementCount) {
                                     usersList.appendChild(listItem)
                                 }
                                 else {
@@ -201,7 +204,7 @@ function listUsers() {
                                     usersList.children[change.doc.id].subLabel.hidden = true
                                 }
 
-                                if (change.newIndex == usersList.children.length) {
+                                if (change.newIndex == usersList.childElementCount) {
                                     usersList.appendChild(usersList.children[change.doc.id])
                                 }
                                 else {
@@ -219,10 +222,13 @@ function listUsers() {
                     }
                 }
             )
-            if (!selectedUser) {
-                if (usersList.children.length > 0) {
+            if (usersList.childElementCount > 0) {
+                if (!selectedUser) {
                     usersList.children[0].click()
                 }
+                setListOverlayState(usersList.overlay, 'hide')
+            } else {
+                setListOverlayState(usersList.overlay, 'empty')
             }
         },
         error => {
@@ -332,4 +338,27 @@ function loadSelectedUserPermissions() {
             console.error('Error getting permissions: ' + error)
         }
     )
+}
+
+function setListOverlayState(overlay, state) {
+    switch (state) {
+        case 'loading':
+            overlay.classList.remove('hide')
+            overlay.classList.remove('show-headers')
+            overlay.icon.classList.add('mdi-loading', 'mdi-spin')
+            overlay.icon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
+            overlay.text.hidden = true
+            break
+        case 'empty':
+            overlay.classList.remove('hide')
+            overlay.classList.remove('show-headers')
+            overlay.icon.classList.add('mdi-emoticon-sad-outline')
+            overlay.icon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
+            overlay.text.hidden = false
+            overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
+            break
+        case 'hide':
+            overlay.classList.add('hide')
+            break
+    }
 }

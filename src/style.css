@@ -169,10 +169,6 @@ svg.restore path {
   transition: var(--transition);
 }
 
-.flex {
-  display: flex;
-}
-
 .table {
   margin: 0;
   min-width: max-content;
@@ -396,13 +392,14 @@ th>label {
 }
 
 .overlay {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: calc(100% - 3.4rem);
   min-height: 10rem;
   top: 3.4rem;
   position: absolute;
-  place-self: center;
-  place-content: center;
+  justify-content: center;
   backdrop-filter: blur(10px) grayscale(1);
   background-color: #ffffffbf;
   color: var(--mdc-theme-text-disabled-on-background);
@@ -420,14 +417,14 @@ th>label {
 }
 
 #tableOverlay {
-  height: calc(100% - 8.3rem);
-  top: 8.3rem;
+  height: calc(100% - 8.5rem);
+  top: auto;
+  bottom: 0;
   min-height: 0;
 }
 
 #tableOverlay.show-headers {
   height: calc(100% - 11rem);
-  top: 11rem;
 }
 
 .overlay>* {

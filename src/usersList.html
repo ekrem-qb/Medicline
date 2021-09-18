@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="mdc-typography flex flex-column">
-    <div class="flex overflow-auto m-5">
-        <div class="flex flex-column w-75">
+<body class="mdc-typography d-flex flex-column">
+    <div class="d-flex overflow-auto m-5">
+        <div class="d-flex flex-column w-75 position-relative">
             <li class="modal-footer list-group-flush list-group-item sticky-top">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="create" disabled>
                     <div class="mdc-button__ripple"></div>
@@ -22,10 +22,14 @@
                 </button>
             </li>
             <ul id="usersList" class="list-group list-group-flush overflow-auto"></ul>
+            <div class="overlay" id="usersListOverlay">
+                <i class="mdi mdi-loading mdi-spin"></i>
+                <h3 class="my-2" hidden></h3>
+            </div>
             <template id="listItemTemplate">
-                <li class="list-group-item flex align-items-center mdc-ripple-surface px-2">
+                <li class="list-group-item d-flex align-items-center mdc-ripple-surface px-2">
                     <i class="avatar me-3 mdi mdi-account-circle"></i>
-                    <span class="flex flex-column overflow-auto me-auto">
+                    <span class="d-flex flex-column overflow-auto me-auto">
                         <b></b>
                         <small class="opacity-75"></small>
                     </span>
@@ -40,27 +44,27 @@
                 </li>
             </template>
         </div>
-        <div class="flex flex-column w-50">
+        <div class="d-flex flex-column w-50">
             <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center sticky-top px-3" id="permissionsHeader">
                 <h3 class="my-1-5px user-select-none" translate>PERMISSIONS</h3>
                 <i class="dropdown-icon mdi mdi-chevron-down"></i>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush overflow-auto">
                 <li class="list-group-item p-0" id="cases">
-                    <div class="flex mdc-ripple-surface align-items-center px-3 py-2">
+                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="me-3 mdi mdi-table-large"></i>
                         <b class="user-select-none me-auto" translate>CASES</b>
                         <i class="dropdown-icon mdi mdi-chevron-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="view">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="me-3 mdi mdi-eye"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="edit">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="me-3 mdi mdi-pencil"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
@@ -70,20 +74,20 @@
                     </ul>
                 </li>
                 <li class="list-group-item p-0" id="users">
-                    <div class="flex mdc-ripple-surface align-items-center px-3 py-2">
+                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="me-3 mdi mdi-account-group"></i>
                         <b class="user-select-none me-auto" translate>USERS</b>
                         <i class="dropdown-icon mdi mdi-chevron-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="view">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="me-3 mdi mdi-eye"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="edit">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="me-3 mdi mdi-pencil"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
@@ -93,20 +97,20 @@
                     </ul>
                 </li>
                 <li class="list-group-item p-0" id="hotels">
-                    <div class="flex mdc-ripple-surface align-items-center px-3 py-2">
+                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="me-3 mdi mdi-bed"></i>
                         <b class="user-select-none me-auto" translate>HOTELS</b>
                         <i class="dropdown-icon mdi mdi-chevron-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="view">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="me-3 mdi mdi-eye"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="edit">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="me-3 mdi mdi-pencil"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
@@ -116,20 +120,20 @@
                     </ul>
                 </li>
                 <li class="list-group-item p-0" id="institutions">
-                    <div class="flex mdc-ripple-surface align-items-center px-3 py-2">
+                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="me-3 mdi mdi-office-building"></i>
                         <b class="user-select-none me-auto" translate>INSTITUTIONS</b>
                         <i class="dropdown-icon mdi mdi-chevron-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="view">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="me-3 mdi mdi-eye"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
-                        <li class="list-group-item mdc-ripple-surface flex align-items-center p-2 ps-3 disabled" id="edit">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="me-3 mdi mdi-pencil"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
