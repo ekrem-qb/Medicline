@@ -581,35 +581,36 @@ for (const status of statusBar.children) {
 //#region Filter
 
 function hideEmptyFilters() {
-    let hide = true
-    for (let filter of formFilter.children) {
-        let collapsed = true
-        filter.querySelectorAll('input, textarea').forEach(inputFilter => {
-            inputFilter.onchange = () => {
-                inputFilter.value = String(inputFilter.value).trim()
-            }
-            if (String(inputFilter.value).trim() != '') {
-                collapsed = false
-                hide = false
-                return
-            }
-        })
-        filter.querySelectorAll('select').forEach(select => {
-            if (select.tomselect.getValue() != '') {
-                collapsed = false
-                hide = false
-                return
-            }
-        })
-        filter.classList.toggle("collapsed", collapsed && formFilter.classList.contains("collapsed"))
-    }
-    if (formFilter.classList.contains("collapsed")) {
-        formFilter.classList.toggle("hide", hide)
+    if (formFilter.classList.contains('collapsed')) {
+        let hide = true
+
+        for (const filter of formFilter.children) {
+            let collapsed = true
+            filter.querySelectorAll('input, textarea').forEach(inputFilter => {
+                inputFilter.onchange = () => {
+                    inputFilter.value = String(inputFilter.value).trim()
+                }
+                if (String(inputFilter.value).trim() != '') {
+                    collapsed = false
+                    hide = false
+                    return
+                }
+            })
+            filter.querySelectorAll('select').forEach(select => {
+                if (select.tomselect.getValue() != '') {
+                    collapsed = false
+                    hide = false
+                    return
+                }
+            })
+            filter.classList.toggle('collapsed', collapsed)
+        }
+
+        formFilter.classList.toggle('hide', hide)
     }
     else {
-        formFilter.classList.remove("hide")
+        formFilter.classList.remove('hide')
     }
-
 }
 
 function applyFilter() {
