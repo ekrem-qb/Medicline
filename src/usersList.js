@@ -313,14 +313,16 @@ function loadSelectedUserPermissions() {
     })
     stopSelectedUserPermissionsQuery = allUsers.doc(selectedUser.id).collection('permissions').onSnapshot(
         snapshot => {
-            console.log(snapshot)
-            snapshot.forEach(permission => {
-                const listItem = permissionsList.children[permission.id]
-                if (listItem != undefined) {
-                    for (const subListItem of listItem.subList.children) {
-                        const toggle = permission.data()[subListItem.id]
-                        if (toggle != undefined) {
-                            subListItem.toggle.checked = toggle
+            console.log(snapshot.docChanges())
+            snapshot.docChanges().forEach(change => {
+                if (change.type == 'added' || change.type == 'modified') {
+                    const listItem = permissionsList.children[change.doc.id]
+                    if (listItem != undefined) {
+                        for (const subListItem of listItem.subList.children) {
+                            const toggle = change.doc.data()[subListItem.id]
+                            if (toggle != undefined) {
+                                subListItem.toggle.checked = toggle
+                            }
                         }
                     }
                 }
