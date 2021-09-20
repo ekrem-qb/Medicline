@@ -21,6 +21,7 @@ const buttonDelete = actionButtonsPanel.querySelector("button#delete")
 const buttonSave = actionButtonsPanel.querySelector("button#save")
 
 let currentCase, caseExists = false
+let currentCaseStatus = 'active'
 let stopIDSearch = () => { }
 
 function checkCaseID() {
@@ -47,10 +48,10 @@ function validateInput(input) {
         }
     }
     else {
-        if (input.tomSelect) {
-            if (input.tomSelect.isRequired) {
-                input.tomSelect.wrapper.classList.toggle('is-invalid', input.tomSelect.items.length == 0)
-                return !input.tomSelect.wrapper.classList.contains('is-invalid')
+        if (input.tomselect) {
+            if (input.tomselect.isRequired) {
+                input.tomselect.wrapper.classList.toggle('is-invalid', input.tomselect.items.length == 0)
+                return !input.tomselect.wrapper.classList.contains('is-invalid')
             }
         }
         else {
@@ -142,6 +143,8 @@ if (location.hash != '') {
         checkCaseID()
 
         if (caseExists) {
+            currentCaseStatus = snapshot.get('status')
+
             formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
                 const itemValue = snapshot.get(inputEdit.id)
 
@@ -226,7 +229,7 @@ else {
 }
 
 function saveCase() {
-    let caseData = {}
+    let caseData = { status: currentCaseStatus }
     let valid = true
 
     formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
@@ -282,7 +285,6 @@ function saveCase() {
             caseData.createUser = allUsers.doc(firebase.auth().currentUser.uid)
             caseData.createDate = today[2] + '-' + today[1] + '-' + today[0]
             caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
-            caseData.status = "active"
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {

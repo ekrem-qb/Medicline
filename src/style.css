@@ -115,7 +115,8 @@ body {
   background-color: initial;
 }
 
-.ts-control.required:not(.focus, .full),
+.ts-wrapper.required:not(.focus, .full)>.ts-control,
+select:required:not(:valid, :focus),
 input:required:not(:valid, :focus, .mdc-text-field__input) {
   background-color: beige;
 }
