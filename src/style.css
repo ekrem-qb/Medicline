@@ -87,11 +87,6 @@ body {
   height: 100vh;
 }
 
-.main {
-  overflow-y: scroll;
-  height: -webkit-fill-available;
-}
-
 #titleBar {
   z-index: 100;
 }
@@ -102,6 +97,15 @@ body {
 
 .form-group {
   margin-bottom: 1rem;
+}
+
+.input-group .mdi {
+  font-size: 1rem;
+}
+
+.input-group .btn {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
 }
 
 .input-group .form-control.is-invalid,
@@ -168,6 +172,13 @@ svg.restore path {
 
 #buttonDrawer>.mdi {
   transition: var(--transition);
+}
+
+#buttonDrawer>.mdi,
+.mdc-text-field__icon,
+.list-group-item .mdi:not(.avatar, .mdc-button__icon),
+.mdc-deprecated-list-item__graphic {
+  font-size: 1.5rem;
 }
 
 .table {
@@ -418,14 +429,14 @@ th>label {
 }
 
 #tableOverlay {
-  height: calc(100% - 8.5rem);
+  height: calc(100% - 4.3rem);
   top: auto;
   bottom: 0;
   min-height: 0;
 }
 
 #tableOverlay.show-headers {
-  height: calc(100% - 11rem);
+  height: calc(100% - 6.8rem);
 }
 
 .overlay>* {
@@ -752,7 +763,6 @@ textarea::-webkit-scrollbar {
 }
 
 .mdi {
-  font-size: 1.5rem;
   line-height: 1;
   height: auto;
 }
@@ -768,10 +778,6 @@ textarea::-webkit-scrollbar {
 .mdc-tab__text-label {
   font-weight: bold;
   user-select: none;
-}
-
-.input-group-text .mdi {
-  font-size: 1rem;
 }
 
 .mdc-ripple-surface {
@@ -878,6 +884,7 @@ textarea::-webkit-scrollbar {
 }
 
 th .mdi {
+  font-size: 1.45rem;
   margin-left: .5rem;
   float: right;
 }
@@ -1119,11 +1126,6 @@ form .mdc-text-field {
 
 .mdc-text-field--focused+.mdc-text-field-helper-line .mdc-text-field-helper-text:not(.mdc-text-field-helper-text--persistent) {
   opacity: 1;
-}
-
-button#clearSearch:disabled>.mdi::before {
-  opacity: 0;
-  transform: rotate(180deg);
 }
 
 /*#endregion*/

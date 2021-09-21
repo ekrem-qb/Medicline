@@ -255,6 +255,7 @@ function loadInstitutions() {
         snapshot => {
             console.log(snapshot)
             currentInstitutionsSnap = snapshot
+            listInstitutions(snapshot)
             refreshSearch()
         },
         error => {

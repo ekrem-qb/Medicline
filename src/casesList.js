@@ -79,7 +79,7 @@ function loadColumns() {
 loadColumns()
 
 const inputSearch = document.querySelector("input#search")
-const buttonClearSearch = document.querySelector("button#clearSearch")
+const buttonClearSearch = inputSearch.parentElement.querySelector("button#clearSearch")
 
 const buttonCreate = document.querySelector("button#create")
 buttonCreate.onclick = () => ipcRenderer.send('new-window', 'case')
@@ -150,7 +150,7 @@ function loadPermissions() {
 
 function refreshSearch() {
     setTableOverlayState("loading")
-    searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
+    searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
@@ -217,7 +217,7 @@ inputSearch.oninput = refreshSearch
 
 function clearSearch() {
     buttonClearSearch.disabled = true
-    inputSearch.materialComponent.value = ''
+    inputSearch.value = ''
     searchQuery = undefined
     foundCases = undefined
     listCases(currentCasesSnap)
@@ -256,6 +256,7 @@ function loadCases() {
         snapshot => {
             console.log(snapshot)
             currentCasesSnap = snapshot
+            listCases(snapshot)
             refreshSearch()
         },
         error => {
