@@ -250,6 +250,10 @@ tbody>tr>td.found {
   font-weight: 500;
 }
 
+tbody.dimmed>tr:not(.not-dimmed)>td {
+  border-color: rgb(0 0 0 / 25%);
+}
+
 th {
   background-color: var(--bs-light) !important;
   cursor: pointer;
@@ -566,7 +570,7 @@ footer>.status {
   cursor: pointer;
 }
 
-tbody.dimmed tr:not(.not-dimmed),
+tbody.dimmed>tr:not(.not-dimmed),
 footer.dimmed>.status:not(:hover, .selected),
 footer:hover>.status:not(:hover, .selected) {
   filter: grayscale(1) opacity(.25);
@@ -1094,6 +1098,10 @@ form .mdc-text-field {
 .mdc-select--filled.mdc-select--disabled>.mdc-select__anchor,
 .mdc-select--disabled>.mdc-select__anchor {
   background-color: transparent;
+}
+
+.mdc-select .mdc-select__dropdown-icon {
+  font-size: 1.5rem;
 }
 
 .mdc-select.mdc-select--disabled .mdc-select__dropdown-icon {
