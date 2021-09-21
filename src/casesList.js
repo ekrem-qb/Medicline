@@ -154,7 +154,7 @@ function refreshSearch() {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        foundCases = new Array()
+        foundCases = []
         let casePromises = []
 
         currentCasesSnap.forEach(_case => {
@@ -255,8 +255,8 @@ function loadCases() {
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             console.log(snapshot)
-            listCases(snapshot)
             currentCasesSnap = snapshot
+            refreshSearch()
         },
         error => {
             console.error("Error getting cases: " + error)

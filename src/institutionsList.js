@@ -155,7 +155,7 @@ function refreshSearch() {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        foundInstitutions = new Array()
+        foundInstitutions = []
         let institutionPromises = []
 
         currentInstitutionsSnap.forEach(institution => {
@@ -254,8 +254,8 @@ function loadInstitutions() {
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             console.log(snapshot)
-            listInstitutions(snapshot)
             currentInstitutionsSnap = snapshot
+            refreshSearch()
         },
         error => {
             console.error("Error getting institutions: " + error)
