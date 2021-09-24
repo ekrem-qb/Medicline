@@ -677,9 +677,9 @@ function clearFilter() {
     })
     formFilter.querySelectorAll('select').forEach(select => {
         if (!select.id.includes('_')) {
-            if (select.tomselect.getValue() != '') {
-                select.tomselect.removeItem(select.tomselect.getValue())
-            }
+            select.tomselect.items.forEach(item => {
+                select.tomselect.removeItem(item)
+            })
         }
     })
     buttonClearFilter.disabled = true

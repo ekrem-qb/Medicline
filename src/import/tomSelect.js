@@ -8,21 +8,25 @@ function loadSelectMenus() {
         const selectID = select.id.replace(/[0-9]/g, '').replace('createUser', 'users').replace('updateUser', 'users')
 
         if (select.tomselect == undefined) {
-            selectMenus.push(
-                new TomSelect(select, {
-                    maxItems: 1,
-                    selectOnTab: true,
-                    sortField: "text",
-                    render: {
-                        option_create: function (data, escape) {
-                            return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
-                        },
-                        no_results: function (data, escape) {
-                            return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
-                        }
+            let settings = {
+                selectOnTab: true,
+                sortField: "text",
+                render: {
+                    option_create: function (data, escape) {
+                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
+                    },
+                    no_results: function (data, escape) {
+                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
                     }
-                })
-            )
+                }
+            }
+            if (selectID == 'diagnosis') {
+                settings.maxItems = 10
+            }
+            else {
+                settings.maxItems = 1
+            }
+            selectMenus.push(new TomSelect(select, settings))
             select.tomselect.selectID = selectID
         }
 
@@ -30,28 +34,7 @@ function loadSelectMenus() {
             selectMenuQueries.push(
                 db.collection(selectID).onSnapshot(
                     snapshot => {
-                        const oldValue = select.tomselect.getValue()
-
-                        select.tomselect.clear()
-                        select.tomselect.clearOptions()
-
-                        snapshot.forEach(item => {
-                            select.tomselect.addOption({
-                                value: item.ref.path,
-                                text: item.get('name')
-                            })
-                            select.tomselect.trigger('option_add', item.ref.path, {
-                                value: item.ref.path,
-                                text: item.get('name')
-                            })
-                        })
-                        if (select.tomselect.isOpen) {
-                            select.tomselect.refreshOptions()
-                        }
-
-                        if (oldValue) {
-                            select.tomselect.addItem(oldValue)
-                        }
+                        loadOptions(select, snapshot)
                     },
                     error => {
                         console.error(error)
@@ -85,38 +68,19 @@ function loadSelectMenus() {
                         subInput.value = ""
                     }
                 })
-                const subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select')
+                const subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select:not(#' + select.id + ')')
+                select.tomselect.subSelects = []
                 subSelects.forEach(subSelect => {
-                    if (subSelect != select && subSelect.id.split('_')[0] == select.id) {
+                    if (subSelect.id.split('_')[0] == select.id) {
+                        select.tomselect.subSelects.push(subSelect.tomselect)
+
                         subSelect.tomselect.upperSelect = select.tomselect
-                        select.tomselect.subSelect = subSelect.tomselect
                         subSelect.tomselect.enable()
 
                         selectMenuQueries.push(
                             db.doc(value).collection(subSelect.id.split('_')[1]).onSnapshot(
                                 snapshot => {
-                                    const oldValue = subSelect.tomselect.getValue()
-
-                                    subSelect.tomselect.clear()
-                                    subSelect.tomselect.clearOptions()
-
-                                    snapshot.forEach(item => {
-                                        subSelect.tomselect.addOption({
-                                            value: item.ref.path,
-                                            text: item.get('name')
-                                        })
-                                        subSelect.tomselect.trigger('option_add', item.ref.path, {
-                                            value: item.ref.path,
-                                            text: item.get('name')
-                                        })
-                                    })
-                                    if (subSelect.tomselect.isOpen) {
-                                        subSelect.tomselect.refreshOptions()
-                                    }
-
-                                    if (oldValue) {
-                                        subSelect.tomselect.addItem(oldValue)
-                                    }
+                                    loadOptions(subSelect, snapshot)
                                 },
                                 error => {
                                     console.error(error)
@@ -149,6 +113,31 @@ function loadSelectMenus() {
                 })
             })
         }
+    })
+}
+
+function loadOptions(select, snapshot) {
+    const oldItems = select.tomselect.items.slice(0)
+
+    select.tomselect.clear()
+    select.tomselect.clearOptions()
+
+    snapshot.forEach(item => {
+        select.tomselect.addOption({
+            value: item.ref.path,
+            text: item.get('name')
+        })
+        select.tomselect.trigger('option_add', item.ref.path, {
+            value: item.ref.path,
+            text: item.get('name')
+        })
+    })
+    if (select.tomselect.isOpen) {
+        select.tomselect.refreshOptions()
+    }
+
+    oldItems.forEach(item => {
+        select.tomselect.addItem(item)
     })
 }
 

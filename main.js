@@ -60,12 +60,7 @@ async function main() {
                 }
                 break
             case "exit":
-                if (event.sender.getOwnerBrowserWindow() == mainWindow) {
-                    app.exit()
-                }
-                else {
-                    event.sender.getOwnerBrowserWindow().close()
-                }
+                event.sender.getOwnerBrowserWindow().close()
                 break
             default:
                 break
@@ -136,13 +131,11 @@ async function main() {
     // notify the Renderer that Main is ready
     mainWindow.webContents.send("mainReady")
 
-    mainWindow.on("maximize", () => {
-        mainWindow.webContents.send('window-action', 'maximize')
-    })
+    mainWindow.on("maximize", () => mainWindow.webContents.send('window-action', 'maximize'))
 
-    mainWindow.on("unmaximize", () => {
-        mainWindow.webContents.send('window-action', 'unmaximize')
-    })
+    mainWindow.on("unmaximize", () => mainWindow.webContents.send('window-action', 'unmaximize'))
+
+    mainWindow.on("close", () => app.exit())
 
     const windows = {}
 
@@ -187,15 +180,11 @@ async function main() {
                 search: search
             })
 
-            window.once('ready-to-show', () => { window.show() })
+            window.once('ready-to-show', () => window.show())
 
-            window.on("maximize", () => {
-                window.webContents.send('window-action', 'maximize')
-            })
+            window.on("maximize", () => window.webContents.send('window-action', 'maximize'))
 
-            window.on("unmaximize", () => {
-                window.webContents.send('window-action', 'unmaximize')
-            })
+            window.on("unmaximize", () => window.webContents.send('window-action', 'unmaximize'))
 
             window.on("close", () => {
                 if (windows[window.webContents.getURL().split('#')[1]] != undefined) {

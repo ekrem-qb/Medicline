@@ -171,24 +171,34 @@ if (location.hash != '') {
 
             formEditCase.querySelectorAll('select').forEach(select => {
                 if (snapshot.get(select.id) != undefined) {
-                    const itemValue = snapshot.get(select.id).path
+                    const value = snapshot.get(select.id)
 
-                    if (itemValue != undefined) {
-                        if (!select.tomselect.upperSelect) {
+                    if (value != undefined) {
+                        if (Array.isArray(value)) {
                             select.tomselect.on("option_add", option => {
-                                if (option == itemValue) {
-                                    select.tomselect.addItem(itemValue)
+                                value.forEach(item => {
+                                    if (option == item.path) {
+                                        select.tomselect.addItem(item.path)
+                                        select.tomselect.on("option_add", () => { })
+                                    }
+                                })
+                            })
+                        }
+                        else {
+                            select.tomselect.on("option_add", option => {
+                                if (option == value.path) {
+                                    select.tomselect.addItem(value.path)
                                     select.tomselect.on("option_add", () => { })
                                 }
                             })
-                            if (select.disabled) {
-                                if (itemValue != '') {
-                                    select.parentElement.parentElement.hidden = false
-                                }
-                            }
-                            else {
+                        }
+                        if (select.disabled) {
+                            if (value != '') {
                                 select.parentElement.parentElement.hidden = false
                             }
+                        }
+                        else {
+                            select.parentElement.parentElement.hidden = false
                         }
                     }
                 }
@@ -259,8 +269,21 @@ function saveCase() {
                 valid = false
             }
 
-            if (select.tomselect.getValue() != '') {
-                caseData[select.id] = db.doc(select.tomselect.getValue())
+            const value = select.tomselect.getValue()
+
+            if (Array.isArray(value)) {
+                if (value.length > 0) {
+                    let arrayOfDocs = []
+                    value.forEach(item => {
+                        arrayOfDocs.push(db.doc(item))
+                    })
+                    caseData[select.id] = arrayOfDocs
+                }
+            }
+            else {
+                if (value != '') {
+                    caseData[select.id] = db.doc(value)
+                }
             }
         }
     })
