@@ -137,6 +137,7 @@ if (location.hash != '') {
     const stopQuery = currentCase.onSnapshot(snapshot => {
         stopQuery()
         console.timeLog()
+        console.log(snapshot.data())
 
         caseExists = snapshot.exists
         buttonDelete.disabled = !caseExists
@@ -175,20 +176,21 @@ if (location.hash != '') {
 
                     if (value != undefined) {
                         if (Array.isArray(value)) {
-                            select.tomselect.on("option_add", option => {
-                                value.forEach(item => {
-                                    if (option == item.path) {
-                                        select.tomselect.addItem(item.path)
-                                        select.tomselect.on("option_add", () => { })
-                                    }
-                                })
+                            value.forEach(item => {
+                                if (!select.tomselect.options[item]) {
+                                    select.tomselect.addOption({
+                                        value: item,
+                                        text: item
+                                    })
+                                }
+                                select.tomselect.addItem(item)
                             })
                         }
                         else {
-                            select.tomselect.on("option_add", option => {
+                            select.tomselect.on('option_add', option => {
                                 if (option == value.path) {
                                     select.tomselect.addItem(value.path)
-                                    select.tomselect.on("option_add", () => { })
+                                    select.tomselect.on('option_add', () => { })
                                 }
                             })
                         }
@@ -273,11 +275,7 @@ function saveCase() {
 
             if (Array.isArray(value)) {
                 if (value.length > 0) {
-                    let arrayOfDocs = []
-                    value.forEach(item => {
-                        arrayOfDocs.push(db.doc(item))
-                    })
-                    caseData[select.id] = arrayOfDocs
+                    caseData[select.id] = value
                 }
             }
             else {

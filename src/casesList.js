@@ -68,8 +68,8 @@ function loadColumns() {
             hiddenTableColumnsList.appendChild(newHeader(column))
         }
     }
-    if (tableColumnsList.children['createTime']) {
-        headerClick('createTime')
+    if (tableColumnsList.children['__name__']) {
+        headerClick('__name__')
     }
     else {
         headerClick(tableColumnsList.firstChild.id)

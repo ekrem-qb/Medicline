@@ -1,4 +1,5 @@
 const TomSelect = require('tom-select/dist/js/tom-select.base')
+const icd10Codes = require('./icd10_codes.json')
 let selectMenuQueries = []
 let selectMenus = []
 
@@ -10,7 +11,6 @@ function loadSelectMenus() {
         if (select.tomselect == undefined) {
             let settings = {
                 selectOnTab: true,
-                sortField: "text",
                 render: {
                     option_create: function (data, escape) {
                         return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
@@ -22,15 +22,25 @@ function loadSelectMenus() {
             }
             if (selectID == 'diagnosis') {
                 settings.maxItems = 10
+                settings.create = true
+                new TomSelect(select, settings)
+
+                for (const icd in icd10Codes) {
+                    select.tomselect.addOption({
+                        value: icd,
+                        text: icd10Codes[icd]
+                    })
+                }
             }
             else {
                 settings.maxItems = 1
+                settings.sortField = "text"
+                selectMenus.push(new TomSelect(select, settings))
             }
-            selectMenus.push(new TomSelect(select, settings))
             select.tomselect.selectID = selectID
         }
 
-        if (!selectID.includes('_')) {
+        if (!selectID.includes('_') && selectID != 'diagnosis') {
             selectMenuQueries.push(
                 db.collection(selectID).onSnapshot(
                     snapshot => {
