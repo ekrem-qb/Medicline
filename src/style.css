@@ -501,6 +501,10 @@ form#editCase {
   height: inherit;
 }
 
+label {
+  user-select: none;
+}
+
 #filter .col-md-12 {
   height: 4rem;
   transition: var(--transition);
@@ -758,7 +762,7 @@ textarea::-webkit-scrollbar {
 
 :root {
   --mdc-theme-primary: var(--bs-blue);
-  --mdc-theme-secondary: var(--bs-red);
+  --mdc-theme-secondary: var(--mdc-theme-primary);
   --mdc-ripple-color: currentColor;
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-hover-opacity: .1;
@@ -1134,6 +1138,10 @@ form .mdc-text-field {
 
 .mdc-text-field--focused+.mdc-text-field-helper-line .mdc-text-field-helper-text:not(.mdc-text-field-helper-text--persistent) {
   opacity: 1;
+}
+
+.mdc-checkbox+label {
+  cursor: pointer;
 }
 
 /*#endregion*/

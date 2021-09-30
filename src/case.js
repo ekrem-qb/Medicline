@@ -64,14 +64,28 @@ function validateInput(input) {
     return !input.classList.contains('is-invalid')
 }
 
+function toggleCheckboxRelatedInputs(checkbox) {
+    checkbox.relatedInputs.forEach(input => {
+        input.disabled = !checkbox.checked
+        input.parentElement.parentElement.hidden = !checkbox.checked
+    })
+}
+
 formEditCase.querySelectorAll('input, textarea').forEach(
     inputEdit => {
-        inputEdit.onchange = () => inputEdit.value = inputEdit.value.trim()
-        if (inputEdit.id.includes('_')) {
-            inputEdit.disabled = true
+        if (inputEdit.type != 'checkbox') {
+            inputEdit.onchange = () => inputEdit.value = inputEdit.value.trim()
+            if (inputEdit.id.includes('_')) {
+                inputEdit.disabled = true
+            }
+            else {
+                inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
+            }
         }
         else {
-            inputEdit.parentElement.parentElement.hidden = inputEdit.disabled
+            inputEdit.relatedInputs = inputEdit.parentElement.parentElement.parentElement.parentElement.querySelectorAll('input[type="text"')
+
+            inputEdit.onchange = () => toggleCheckboxRelatedInputs(inputEdit)
         }
     }
 )
@@ -159,13 +173,19 @@ if (location.hash != '') {
                         inputEdit.parentElement.parentElement.hidden = false
                     }
 
-                    if (!inputEdit.parentElement.parentElement.hidden) {
-                        if (inputEdit.getAttribute('mask') == 'date') {
-                            inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
+                    if (inputEdit.type != 'checkbox') {
+                        if (!inputEdit.parentElement.parentElement.hidden) {
+                            if (inputEdit.getAttribute('mask') == 'date') {
+                                inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
+                            }
+                            else {
+                                inputEdit.value = itemValue
+                            }
                         }
-                        else {
-                            inputEdit.value = itemValue
-                        }
+                    }
+                    else {
+                        inputEdit.checked = itemValue
+                        toggleCheckboxRelatedInputs(inputEdit)
                     }
                 }
             })
@@ -252,12 +272,17 @@ function saveCase() {
                 valid = false
             }
 
-            if (inputEdit.value != '' && !inputEdit.readOnly) {
+            if (inputEdit.value != '' && !inputEdit.readOnly && !inputEdit.parentElement.parentElement.hidden) {
                 if (inputEdit.mask != undefined) {
                     caseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
                 }
                 else {
-                    caseData[inputEdit.id] = inputEdit.value
+                    if (inputEdit.type != 'checkbox') {
+                        caseData[inputEdit.id] = inputEdit.value
+                    }
+                    else {
+                        caseData[inputEdit.id] = inputEdit.checked
+                    }
                 }
             }
         }

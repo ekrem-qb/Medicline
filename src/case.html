@@ -284,6 +284,108 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
+                    <div class="mdc-form-field">
+                        <div class="mdc-checkbox">
+                          <input type="checkbox"
+                                 class="mdc-checkbox__native-control"
+                                 id="outpatient"/>
+                          <div class="mdc-checkbox__background">
+                            <svg class="mdc-checkbox__checkmark"
+                                 viewBox="0 0 24 24">
+                              <path class="mdc-checkbox__checkmark-path"
+                                    fill="none"
+                                    d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                            </svg>
+                            <div class="mdc-checkbox__mixedmark"></div>
+                          </div>
+                          <div class="mdc-checkbox__ripple"></div>
+                        </div>
+                        <label for="outpatient">Outpatient</label>
+                      </div>
+                </div>
+                <div class="col-lg-7" hidden>
+                    <label class="form-label" translate>ADDMISSION_DATE</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <input mask="date" type="text" class="form-control" id="outpatientAddmissionDate" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-5" hidden>
+                    <label class="form-label" translate>ADDMISSION_TIME</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <input mask="time" type="text" class="form-control" id="outpatientAddmissionTime" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-7" hidden>
+                    <label class="form-label" translate>DISCHARGE_DATE</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <input mask="date" type="text" class="form-control" id="outpatientDischargeDate" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-5" hidden>
+                    <label class="form-label" translate>DISCHARGE_TIME</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <input mask="time" type="text" class="form-control" id="outpatientDischargeTime" disabled>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-2 mt-0 pe-0">
+                <div class="col-md-12 pe-0">
+                    <div class="mdc-form-field">
+                        <div class="mdc-checkbox">
+                          <input type="checkbox"
+                                 class="mdc-checkbox__native-control"
+                                 id="inpatient"/>
+                          <div class="mdc-checkbox__background">
+                            <svg class="mdc-checkbox__checkmark"
+                                 viewBox="0 0 24 24">
+                              <path class="mdc-checkbox__checkmark-path"
+                                    fill="none"
+                                    d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                            </svg>
+                            <div class="mdc-checkbox__mixedmark"></div>
+                          </div>
+                          <div class="mdc-checkbox__ripple"></div>
+                        </div>
+                        <label for="inpatient">Inpatient</label>
+                      </div>
+                </div>
+                <div class="col-lg-7" hidden>
+                    <label class="form-label" translate>ADDMISSION_DATE</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <input mask="date" type="text" class="form-control" id="inpatientAddmissionDate" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-5" hidden>
+                    <label class="form-label" translate>ADDMISSION_TIME</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <input mask="time" type="text" class="form-control" id="inpatientAddmissionTime" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-7" hidden>
+                    <label class="form-label" translate>DISCHARGE_DATE</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <input mask="date" type="text" class="form-control" id="inpatientDischargeDate" disabled>
+                    </div>
+                </div>
+                <div class="col-lg-5" hidden>
+                    <label class="form-label" translate>DISCHARGE_TIME</label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <input mask="time" type="text" class="form-control" id="inpatientDischargeTime" disabled>
+                    </div>
+                </div>
+            </div>
         </div>
     </form>
     <div class="mdc-dialog__actions hide" id="actionButtonsPanel">
