@@ -151,7 +151,7 @@ inputSearch.oninput = refreshSearch
 
 function refreshSearch() {
     setTableOverlayState('loading')
-    searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
+    searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
@@ -216,7 +216,7 @@ function refreshSearch() {
 
 function clearSearch() {
     buttonClearSearch.disabled = true
-    inputSearch.materialComponent.value = ''
+    inputSearch.value = ''
     searchQuery = undefined
     foundInstitutions = undefined
     listInstitutions(currentInstitutionsSnap)
