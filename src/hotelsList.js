@@ -87,7 +87,7 @@ function listItems(collection, list) {
                                             textDialogDeleteAddress.classList.add('mb-2')
 
                                             for (let i = 0; i < snapshot.docs.length; i++) {
-                                                const _case = snapshot.docs[i];
+                                                const _case = snapshot.docs[i]
 
                                                 const link = document.createElement('a')
                                                 link.href = '#'

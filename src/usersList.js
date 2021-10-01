@@ -168,13 +168,13 @@ function listUsers() {
                                                             dialogDeleteUser.materialComponent.open()
                                                         },
                                                         error => {
-                                                            console.error("Error getting filtered cases: " + error)
+                                                            console.error('Error getting filtered cases: ' + error)
                                                         }
                                                     )
                                                 )
                                             },
                                             error => {
-                                                console.error("Error getting filtered cases: " + error)
+                                                console.error('Error getting filtered cases: ' + error)
                                             }
                                         )
                                     )
@@ -243,20 +243,20 @@ function stopFilteredCasesQueries() {
     filteredCasesQueries = []
 }
 
-const dialogDeleteUser = document.getElementById("dialogDeleteUser")
+const dialogDeleteUser = document.getElementById('dialogDeleteUser')
 const iconDialogDeleteUser = dialogDeleteUser.querySelector('.mdi')
 const textDialogDeleteUser = dialogDeleteUser.querySelector('p')
 const foundCasesLinks = dialogDeleteUser.querySelector('span')
 
 dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         admin.auth().deleteUser(selectedUser.id).then(() => {
             allUsers.doc(selectedUser.id).delete().then(() => {
             }).catch(error => {
-                console.error("Error deleting user: ", error)
+                console.error('Error deleting user: ', error)
             })
         }).catch(error => {
-            console.error("Error deleting user: ", error)
+            console.error('Error deleting user: ', error)
         })
     }
 })
@@ -290,11 +290,11 @@ for (const listItem of permissionsList.children) {
                 if (error.code == 'not-found') {
                     allUsers.doc(selectedUser.id).collection('permissions').doc(listItem.id).set(data).then(() => {
                     }).catch(error => {
-                        console.error("Error toggle permission: ", error)
+                        console.error('Error toggle permission: ', error)
                     })
                 }
                 else {
-                    console.error("Error toggle permission: ", error)
+                    console.error('Error toggle permission: ', error)
                 }
             })
         }

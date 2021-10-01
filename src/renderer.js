@@ -36,12 +36,12 @@ document.onkeydown = (event => {
 
 //#region Update
 
-const dialogUpdate = document.getElementById("dialogUpdate")
+const dialogUpdate = document.getElementById('dialogUpdate')
 
 if (dialogUpdate) {
-  ipcRenderer.on("update-downloaded", (event, updateInfo, currentVersion) => {
-    dialogUpdate.querySelector("input#currentVersion").materialComponent.value = currentVersion
-    dialogUpdate.querySelector("input#newVersion").materialComponent.value = updateInfo.version
+  ipcRenderer.on('update-downloaded', (event, updateInfo, currentVersion) => {
+    dialogUpdate.querySelector('input#currentVersion').materialComponent.value = currentVersion
+    dialogUpdate.querySelector('input#newVersion').materialComponent.value = updateInfo.version
     dialogUpdate.materialComponent.open()
   })
 }
@@ -50,23 +50,23 @@ if (dialogUpdate) {
 
 //#region Window Maximize
 
-const maximizeIcon = document.querySelector(".window-action>svg.maximize")
-const dragAreas = document.querySelectorAll(".drag-area")
+const maximizeIcon = document.querySelector('.window-action>svg.maximize')
+const dragAreas = document.querySelectorAll('.drag-area')
 
-ipcRenderer.on("window-action", (event, action) => {
+ipcRenderer.on('window-action', (event, action) => {
   switch (action) {
-    case "maximize":
-      maximizeIcon.classList.remove("maximize")
-      maximizeIcon.classList.add("restore")
+    case 'maximize':
+      maximizeIcon.classList.remove('maximize')
+      maximizeIcon.classList.add('restore')
       dragAreas.forEach(dragArea => {
-        dragArea.classList.remove("ms-1", "mt-1")
+        dragArea.classList.remove('ms-1', 'mt-1')
       })
       break
-    case "unmaximize":
-      maximizeIcon.classList.add("maximize")
-      maximizeIcon.classList.remove("restore")
+    case 'unmaximize':
+      maximizeIcon.classList.add('maximize')
+      maximizeIcon.classList.remove('restore')
       dragAreas.forEach(dragArea => {
-        dragArea.classList.add("ms-1", "mt-1")
+        dragArea.classList.add('ms-1', 'mt-1')
       })
       break
   }

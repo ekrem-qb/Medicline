@@ -13,10 +13,10 @@ function loadSelectMenus() {
                 selectOnTab: true,
                 render: {
                     option_create: function (data, escape) {
-                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>';
+                        return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>'
                     },
                     no_results: function (data, escape) {
-                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>';
+                        return '<div class="no-results">' + '"' + escape(data.input) + '" ' + translate('NOT_FOUND') + '</div>'
                     }
                 }
             }
@@ -34,7 +34,7 @@ function loadSelectMenus() {
             }
             else {
                 settings.maxItems = 1
-                settings.sortField = "text"
+                settings.sortField = 'text'
                 selectMenus.push(new TomSelect(select, settings))
             }
             select.tomselect.selectID = selectID
@@ -51,7 +51,7 @@ function loadSelectMenus() {
                     }
                 )
             )
-            select.tomselect.on("item_add", value => {
+            select.tomselect.on('item_add', value => {
                 const helperText = select.parentElement.parentElement.parentElement.querySelector('.helper-text>span')
                 if (helperText) {
                     if (helperText.id.split('_')[0] == select.id) {
@@ -75,7 +75,7 @@ function loadSelectMenus() {
                 subInputs.forEach(subInput => {
                     if (subInput.id.split('_')[0] == select.id) {
                         subInput.disabled = false
-                        subInput.value = ""
+                        subInput.value = ''
                     }
                 })
                 const subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select:not(#' + select.id + ')')
@@ -100,7 +100,7 @@ function loadSelectMenus() {
                     }
                 })
             })
-            select.tomselect.on("item_remove", () => {
+            select.tomselect.on('item_remove', () => {
                 const helperText = select.parentElement.parentElement.parentElement.querySelector('.helper-text>span')
                 if (helperText) {
                     if (helperText.id.split('_')[0] == select.id) {
@@ -111,7 +111,7 @@ function loadSelectMenus() {
                 subInputs.forEach(subInput => {
                     if (subInput.id.split('_')[0] == select.id) {
                         subInput.disabled = true
-                        subInput.value = ""
+                        subInput.value = ''
                     }
                 })
                 const subSelects = select.parentElement.parentElement.parentElement.querySelectorAll('select')
@@ -156,7 +156,7 @@ function createOption(value, select) {
         db.doc(select.upperSelect.getValue()).collection(select.inputId.split('_')[1]).add({ name: value }).then(snapshot => {
             select.addItem(snapshot.path)
         }).catch(error => {
-            console.error("Error creating " + select.inputId.split('_')[1] + ": ", error)
+            console.error('Error creating ' + select.inputId.split('_')[1] + ': ', error)
         })
     }
     else {
@@ -166,10 +166,10 @@ function createOption(value, select) {
                 case 'insurance':
                 case 'provider':
                     ipcRenderer.send('new-window', 'institution', snapshot.id, select.selectID)
-                    break;
+                    break
             }
         }).catch(error => {
-            console.error("Error creating " + select.selectID + ": ", error)
+            console.error('Error creating ' + select.selectID + ': ', error)
         })
     }
 }

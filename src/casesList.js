@@ -1,15 +1,15 @@
-const tableOverlay = document.getElementById("tableOverlay")
-const tableOverlayIcon = tableOverlay.querySelector(".mdi")
-const tableOverlayText = tableOverlay.querySelector("h3")
+const tableOverlay = document.querySelector('.overlay')
+const tableOverlayIcon = tableOverlay.querySelector('.mdi')
+const tableOverlayText = tableOverlay.querySelector('h3')
 
-const casesTable = document.querySelector("table#cases")
-const casesList = casesTable.querySelector("tbody#casesList")
+const casesTable = document.querySelector('table#cases')
+const casesList = casesTable.querySelector('tbody#casesList')
 let currentOrder, currentOrderDirection
 
-const columnsJSON = require("./caseColumns.json")
-const tableColumnsList = casesTable.querySelector("#tableColumnsList")
-const hiddenTableColumnsList = document.getElementById("hiddenTableColumnsList")
-const headerTemplate = document.getElementById("headerTemplate")
+const columnsJSON = require('./caseColumns.json')
+const tableColumnsList = casesTable.querySelector('#tableColumnsList')
+const hiddenTableColumnsList = document.getElementById('hiddenTableColumnsList')
+const headerTemplate = document.getElementById('headerTemplate')
 
 function newHeader(headerID) {
     const th = headerTemplate.content.firstElementChild.cloneNode(true)
@@ -29,7 +29,7 @@ function newHeader(headerID) {
                 setTableOverlayState('hide')
             }
             else {
-                setTableOverlayState("empty")
+                setTableOverlayState('empty')
             }
         }
     }
@@ -48,14 +48,14 @@ function newHeader(headerID) {
 }
 
 function loadColumns() {
-    setTableOverlayState("loading")
+    setTableOverlayState('loading')
 
     let enabledColumns = []
-    if (localStorage.getItem("enabledColumns") != null) {
-        enabledColumns = localStorage.getItem("enabledColumns").split(',')
+    if (localStorage.getItem('enabledColumns') != null) {
+        enabledColumns = localStorage.getItem('enabledColumns').split(',')
     }
     else {
-        enabledColumns.push("insuranceRefNo", "insurance", "callDate", 'createTime', "createUser", "surnameName", "address", "phone", "status", "birthDate", "provider", "provider2")
+        enabledColumns.push('insuranceRefNo', 'insurance', 'callDate', 'createTime', 'createUser', 'surnameName', 'address', 'phone', 'status', 'birthDate', 'provider', 'provider2')
     }
     enabledColumns.forEach(
         column => {
@@ -78,19 +78,19 @@ function loadColumns() {
 
 loadColumns()
 
-const inputSearch = document.querySelector("input#search")
-const buttonClearSearch = inputSearch.parentElement.querySelector("button#clearSearch")
+const inputSearch = document.querySelector('input#search')
+const buttonClearSearch = inputSearch.parentElement.querySelector('button#clearSearch')
 
-const buttonCreate = document.querySelector("button#create")
+const buttonCreate = document.querySelector('button#create')
 buttonCreate.onclick = () => ipcRenderer.send('new-window', 'case')
 
-const formFilter = document.querySelector("form#filter")
-const buttonClearFilter = document.querySelector("button#clearFilter")
+const formFilter = document.querySelector('form#filter')
+const buttonClearFilter = document.querySelector('button#clearFilter')
 
-const statusBar = document.getElementById("statusBar")
+const statusBar = document.getElementById('statusBar')
 let selectedStatus
 
-let currentQuery = db.collection("cases")
+let currentQuery = db.collection('cases')
 let searchQuery
 let foundCases
 let currentCasesSnap
@@ -103,7 +103,7 @@ firebase.auth().onAuthStateChanged(user => {
     if (user) {
         loadPermissions()
         if (Object.entries(filters).length == 0) {
-            formFilter.querySelector("#createDate-min").value = new Date().toLocaleDateString('tr')
+            formFilter.querySelector('#createDate-min').value = new Date().toLocaleDateString('tr')
             applyFilter()
             hideEmptyFilters()
         }
@@ -149,7 +149,7 @@ function loadPermissions() {
 }
 
 function refreshSearch() {
-    setTableOverlayState("loading")
+    setTableOverlayState('loading')
     searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -162,18 +162,18 @@ function refreshSearch() {
                 let data = String(_case.id)
                 let valuePromises = []
                 Object.values(_case.data()).forEach(value => {
-                    if (typeof value === "object" && value !== null) {
+                    if (typeof value === 'object' && value !== null) {
                         valuePromises.push(value.get())
                     }
                     else {
-                        data += " -- " + value.toString().toLowerCase()
+                        data += ' -- ' + value.toString().toLowerCase()
                     }
                 })
                 if (valuePromises.length > 0) {
                     casePromises.push(
                         Promise.all(valuePromises).then(values => {
                             values.forEach(snaphot => {
-                                data += " -- " + snaphot.get('name').toString().toLowerCase()
+                                data += ' -- ' + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
                                 foundCases.push(_case.id)
@@ -195,7 +195,7 @@ function refreshSearch() {
                     listCases(currentCasesSnap)
                 }
                 else {
-                    setTableOverlayState("empty")
+                    setTableOverlayState('empty')
                 }
             })
         }
@@ -204,7 +204,7 @@ function refreshSearch() {
                 listCases(currentCasesSnap)
             }
             else {
-                setTableOverlayState("empty")
+                setTableOverlayState('empty')
             }
         }
     }
@@ -260,8 +260,8 @@ function loadCases() {
             refreshSearch()
         },
         error => {
-            console.error("Error getting cases: " + error)
-            setTableOverlayState("empty")
+            console.error('Error getting cases: ' + error)
+            setTableOverlayState('empty')
         }
     )
 }
@@ -285,12 +285,12 @@ function listCases(snap) {
 
                 Object.entries(filters).forEach(filter => {
                     switch (filter[0].split('-')[1]) {
-                        case "min":
+                        case 'min':
                             if (caseSnap.get(filter[0].split('-')[0]) < filter[1]) {
                                 doesntMatch = true
                             }
                             break
-                        case "max":
+                        case 'max':
                             if (caseSnap.get(filter[0].split('-')[0]) > filter[1]) {
                                 doesntMatch = true
                             }
@@ -299,7 +299,7 @@ function listCases(snap) {
                             let value = caseSnap.get(filter[0].split('-')[0])
 
                             if (value != undefined) {
-                                if (typeof value === "object" && value !== null) {
+                                if (typeof value === 'object' && value !== null) {
                                     if (value.path != filter[1].path) {
                                         doesntMatch = true
                                     }
@@ -363,24 +363,24 @@ function listCases(snap) {
                     casesList.appendChild(tr)
 
                     for (const column of tableColumnsList.children) {
-                        const td = document.createElement("td")
+                        const td = document.createElement('td')
                         td.id = column.id
                         tr.appendChild(td)
 
-                        if (td.id == "__name__") {
+                        if (td.id == '__name__') {
                             td.textContent = caseSnap.id
                         }
                         else {
                             const value = caseSnap.get(td.id)
                             if (value != undefined) {
-                                if (typeof value === "object" && value !== null) {
+                                if (typeof value === 'object' && value !== null) {
                                     currentRefQueries.push(
                                         value.onSnapshot(
                                             snapshot => {
                                                 td.textContent = snapshot.get('name')
 
-                                                if (searchQuery != undefined && searchQuery != "") {
-                                                    td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                                if (searchQuery != undefined && searchQuery != '') {
+                                                    td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
                                                 }
 
                                                 orderCases(currentOrder, currentOrderDirection)
@@ -393,11 +393,11 @@ function listCases(snap) {
                                 }
                                 else {
                                     switch (td.id) {
-                                        case "complaints":
+                                        case 'complaints':
                                             td.textContent = td.title = value
                                             break
                                         default:
-                                            if (td.id.includes("Date")) {
+                                            if (td.id.includes('Date')) {
                                                 td.textContent = new Date(value).toJSON().substr(0, 10)
                                             }
                                             else {
@@ -409,8 +409,8 @@ function listCases(snap) {
                             }
                         }
 
-                        if (searchQuery != undefined && searchQuery != "") {
-                            td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                        if (searchQuery != undefined && searchQuery != '') {
+                            td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
                         }
                     }
                 }
@@ -419,11 +419,11 @@ function listCases(snap) {
         orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setTableOverlayState("empty")
+            setTableOverlayState('empty')
         }
     }
     else {
-        setTableOverlayState("empty")
+        setTableOverlayState('empty')
     }
 }
 
@@ -473,31 +473,31 @@ function orderCases(orderBy, orderDirection) {
 
 function setTableOverlayState(state) {
     switch (state) {
-        case "loading":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.remove("show-headers")
-            tableOverlayIcon.classList.add("mdi-loading", "mdi-spin")
-            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline", "mdi-archive-arrow-up-outline")
+        case 'loading':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.remove('show-headers')
+            tableOverlayIcon.classList.add('mdi-loading', 'mdi-spin')
+            tableOverlayIcon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
             tableOverlayText.hidden = true
             break
-        case "empty":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.remove("show-headers")
-            tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
+        case 'empty':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.remove('show-headers')
+            tableOverlayIcon.classList.add('mdi-emoticon-sad-outline')
+            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("CASES") + " " + translate("NOT_FOUND")
+            tableOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
             break
-        case "drag":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.add("show-headers")
-            tableOverlayIcon.classList.add("mdi-archive-arrow-up-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
+        case 'drag':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.add('show-headers')
+            tableOverlayIcon.classList.add('mdi-archive-arrow-up-outline')
+            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-emoticon-sad-outline')
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("DRAG_AND_DROP")
+            tableOverlayText.innerText = translate('DRAG_AND_DROP')
             break
-        case "hide":
-            tableOverlay.classList.add("hide")
+        case 'hide':
+            tableOverlay.classList.add('hide')
             break
         default:
             break
@@ -512,29 +512,29 @@ function changeCaseStatus(newStatus) {
         updateDate: today[2] + '-' + today[1] + '-' + today[0],
         updateTime: new Date().toLocaleTimeString().substr(0, 5)
     }).catch(error => {
-        console.error("Error updating case: ", error)
+        console.error('Error updating case: ', error)
     })
 }
 
 function modalExpand(header) {
-    let currentModalBody = header.parentElement.querySelector(".modal-body")
-    let currentExpandIcon = currentModalBody.parentElement.querySelector(".dropdown-icon")
+    let currentModalBody = header.parentElement.querySelector('.modal-body')
+    let currentExpandIcon = currentModalBody.parentElement.querySelector('.dropdown-icon')
 
     let otherModalBody
-    header.parentElement.parentElement.querySelectorAll(".modal-body").forEach(modalBody => {
+    header.parentElement.parentElement.querySelectorAll('.modal-body').forEach(modalBody => {
         if (modalBody != currentModalBody) {
             otherModalBody = modalBody
         }
     })
-    let otherExpandIcon = otherModalBody.parentElement.querySelector(".dropdown-icon")
+    let otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
 
-    if (currentModalBody.classList.contains("collapsed")) {
-        otherModalBody.classList.add("collapsed")
-        otherExpandIcon.classList.remove("mdi-rotate-180")
+    if (currentModalBody.classList.contains('collapsed')) {
+        otherModalBody.classList.add('collapsed')
+        otherExpandIcon.classList.remove('mdi-rotate-180')
     }
 
-    currentExpandIcon.classList.toggle("mdi-rotate-180", currentModalBody.classList.contains("collapsed"))
-    currentModalBody.classList.toggle("collapsed", !currentModalBody.classList.contains("collapsed"))
+    currentExpandIcon.classList.toggle('mdi-rotate-180', currentModalBody.classList.contains('collapsed'))
+    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
     hideEmptyFilters()
 }
 
@@ -627,20 +627,20 @@ function applyFilter() {
             let value = inputFilter.value
 
             if (inputFilter.mask != undefined) {
-                value = inputFilter.mask.unmaskedvalue();
+                value = inputFilter.mask.unmaskedvalue()
             }
 
             if (inputFilter.id.split('-')[0] == 'createDate') {
-                setTableOverlayState("loading")
+                setTableOverlayState('loading')
                 switch (inputFilter.id.split('-')[1]) {
-                    case "min":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], ">=", value)
+                    case 'min':
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], '>=', value)
                         break
-                    case "max":
-                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], "<=", value)
+                    case 'max':
+                        currentQuery = currentQuery.where(inputFilter.id.split('-')[0], '<=', value)
                         break
                     default:
-                        currentQuery = currentQuery.where(inputFilter.id, "==", value)
+                        currentQuery = currentQuery.where(inputFilter.id, '==', value)
                         break
                 }
                 loadCases()
@@ -665,7 +665,7 @@ function applyFilter() {
         }
     }
     else {
-        alert(translate("EMPTY_FILTERS"))
+        alert(translate('EMPTY_FILTERS'))
     }
 }
 
@@ -686,7 +686,7 @@ function clearFilter() {
     hideEmptyFilters()
     currentQuery = allCases
     filters = {}
-    setTableOverlayState("loading")
+    setTableOverlayState('loading')
     loadCases()
 }
 
@@ -694,14 +694,14 @@ buttonClearFilter.onclick = clearFilter
 
 //#endregion
 
-const dialogDeleteCase = document.getElementById("dialogDeleteCase")
+const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         selectedCase.delete().then(() => {
             selectedCase = undefined
             selectedCaseID = undefined
         }).catch(error => {
-            console.error("Error removing case: ", error)
+            console.error('Error removing case: ', error)
         })
     }
 })

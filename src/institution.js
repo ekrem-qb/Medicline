@@ -19,17 +19,17 @@ let selectedInstitution
 
 let stopFilteredCasesQuery = () => { }
 
-const dialogDeleteInstitution = document.getElementById("dialogDeleteInstitution")
+const dialogDeleteInstitution = document.getElementById('dialogDeleteInstitution')
 const iconDialogDeleteInstitution = dialogDeleteInstitution.querySelector('.mdi')
 const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
 const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
 
 dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         selectedInstitution.delete().then(() => {
             ipcRenderer.send('window-action', 'exit')
         }).catch(error => {
-            console.error("Error removing institution: ", error)
+            console.error('Error removing institution: ', error)
         })
     }
 })
@@ -53,7 +53,7 @@ function deleteInstitution() {
                 textDialogDeleteInstitution.classList.add('mb-2')
 
                 for (let i = 0; i < snapshot.docs.length; i++) {
-                    const _case = snapshot.docs[i];
+                    const _case = snapshot.docs[i]
 
                     const link = document.createElement('a')
                     link.href = '#'
@@ -85,7 +85,7 @@ function deleteInstitution() {
             dialogDeleteInstitution.materialComponent.open()
         },
         error => {
-            console.error("Error getting filtered cases: " + error)
+            console.error('Error getting filtered cases: ' + error)
         }
     )
 }
@@ -121,23 +121,23 @@ function saveInstitution() {
             selectedInstitution.set(data).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error updating institution: ", error)
+                console.error('Error updating institution: ', error)
             })
         }
         else {
             currentQuery.add(data).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error creating institution: ", error)
+                console.error('Error creating institution: ', error)
             })
         }
     }
 }
 
 const actionButtonsPanel = document.getElementById('actionButtonsPanel')
-const buttonDelete = actionButtonsPanel.querySelector("button#delete")
+const buttonDelete = actionButtonsPanel.querySelector('button#delete')
 buttonDelete.onclick = deleteInstitution
-const buttonSave = actionButtonsPanel.querySelector("button#save")
+const buttonSave = actionButtonsPanel.querySelector('button#save')
 buttonSave.onclick = saveInstitution
 
 firebase.auth().onAuthStateChanged(user => {
@@ -236,7 +236,7 @@ if (location.search != '') {
                         }
 
                         if (!input.parentElement.parentElement.hidden) {
-                            if (input.getAttribute("mask") == "date") {
+                            if (input.getAttribute('mask') == 'date') {
                                 input.materialComponent.value = new Date(itemValue).toLocaleDateString('tr')
                             }
                             else {

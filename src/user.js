@@ -54,7 +54,7 @@ if (location.hash != '') {
             buttonSave.disabled = false
         },
         error => {
-            console.error("Error getting user: ", error)
+            console.error('Error getting user: ', error)
         }
     )
 
@@ -78,21 +78,21 @@ if (location.hash != '') {
                         firebase.auth().signInWithEmailAndPassword(firebase.auth().currentUser.email, inputPassword.value).then(() => {
                             ipcRenderer.send('window-action', 'exit')
                         }).catch(error => {
-                            console.error("Error sign in: ", error)
+                            console.error('Error sign in: ', error)
                         })
                     }
                     else {
                         ipcRenderer.send('window-action', 'exit')
                     }
                 }).catch(error => {
-                    console.error("Error updating user", error)
+                    console.error('Error updating user', error)
                 })
             }
             else {
                 ipcRenderer.send('window-action', 'exit')
             }
         }).catch(error => {
-            console.error("Error updating user", error)
+            console.error('Error updating user', error)
         })
     }
 }
@@ -137,7 +137,7 @@ else {
                 allUsers.doc(user.uid).set(data).then(() => {
                     ipcRenderer.send('window-action', 'exit')
                 }).catch(error => {
-                    console.error("Error creating user", error)
+                    console.error('Error creating user', error)
                 })
             }).catch(error => {
                 if (error.code == 'auth/email-already-exists') {
@@ -147,7 +147,7 @@ else {
                     iconSave.classList.remove('mdi-loading', 'mdi-spin')
                 }
                 else {
-                    console.error("Error creating user", error)
+                    console.error('Error creating user', error)
                 }
             })
         }

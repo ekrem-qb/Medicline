@@ -1,24 +1,24 @@
 const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == "delete") {
+    if (event.detail.action == 'delete') {
         currentCase.delete().then(() => {
             ipcRenderer.send('window-action', 'exit')
         }).catch(error => {
-            console.error("Error removing case: ", error)
+            console.error('Error removing case: ', error)
         })
     }
 })
-const formEditCase = document.querySelector("form#editCase")
+const formEditCase = document.querySelector('form#editCase')
 const currentCaseID = document.getElementById('currentCaseID')
-const currentCaseIDIcon = currentCaseID.parentElement.querySelector(".mdi")
+const currentCaseIDIcon = currentCaseID.parentElement.querySelector('.mdi')
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
     alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
 }
 
 const actionButtonsPanel = document.getElementById('actionButtonsPanel')
-const buttonDelete = actionButtonsPanel.querySelector("button#delete")
-const buttonSave = actionButtonsPanel.querySelector("button#save")
+const buttonDelete = actionButtonsPanel.querySelector('button#delete')
+const buttonSave = actionButtonsPanel.querySelector('button#save')
 
 let currentCase, caseExists = false
 let currentCaseStatus = 'active'
@@ -26,9 +26,9 @@ let stopIDSearch = () => { }
 
 function checkCaseID() {
     currentCaseID.parentElement.disabled = currentCase == undefined
-    currentCaseIDIcon.classList.toggle("mdi-pound", currentCase != undefined)
-    currentCaseIDIcon.classList.toggle("mdi-loading", currentCase == undefined)
-    currentCaseIDIcon.classList.toggle("mdi-spin", currentCase == undefined)
+    currentCaseIDIcon.classList.toggle('mdi-pound', currentCase != undefined)
+    currentCaseIDIcon.classList.toggle('mdi-loading', currentCase == undefined)
+    currentCaseIDIcon.classList.toggle('mdi-spin', currentCase == undefined)
     buttonSave.disabled = currentCase == undefined
 }
 
@@ -254,10 +254,10 @@ else {
             console.error(err)
         }
     )
-    formEditCase.querySelector("#callDate").value = new Date().toLocaleDateString('tr')
-    formEditCase.querySelector("#callTime").value = new Date().toLocaleTimeString().substr(0, 5)
-    formEditCase.querySelector("#appointmentDate").value = new Date().toLocaleDateString('tr')
-    formEditCase.querySelector("#appointmentTime").value = new Date().toLocaleTimeString().substr(0, 5)
+    formEditCase.querySelector('#callDate').value = new Date().toLocaleDateString('tr')
+    formEditCase.querySelector('#callTime').value = new Date().toLocaleTimeString().substr(0, 5)
+    formEditCase.querySelector('#appointmentDate').value = new Date().toLocaleDateString('tr')
+    formEditCase.querySelector('#appointmentTime').value = new Date().toLocaleTimeString().substr(0, 5)
 }
 
 function saveCase() {
@@ -324,7 +324,7 @@ function saveCase() {
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error updating case: ", error)
+                console.error('Error updating case: ', error)
             })
         }
         else {
@@ -334,7 +334,7 @@ function saveCase() {
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
-                console.error("Error creating case: ", error)
+                console.error('Error creating case: ', error)
             })
         }
     }

@@ -3,7 +3,7 @@
 async function main() {
     const { app, BrowserWindow, ipcMain, dialog } = require('electron')
     const log = require('electron-log')
-    const { autoUpdater } = require("electron-updater")
+    const { autoUpdater } = require('electron-updater')
 
     autoUpdater.autoInstallOnAppQuit = false
     autoUpdater.fullChangelog = true
@@ -20,9 +20,9 @@ async function main() {
         log.error('Error in auto-updater. ' + error)
     })
     autoUpdater.on('download-progress', (progressObj) => {
-        let log_message = "Download speed: " + progressObj.bytesPerSecond
+        let log_message = 'Download speed: ' + progressObj.bytesPerSecond
         log_message = log_message + ' - Downloaded ' + progressObj.percent + '%'
-        log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')'
+        log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')'
         log.info(log_message)
     })
     autoUpdater.on('update-downloaded', (updateInfo) => {
@@ -42,16 +42,16 @@ async function main() {
         }, 1000 * 60 * 15)
     }
 
-    ipcMain.on("install-update", () => {
+    ipcMain.on('install-update', () => {
         autoUpdater.quitAndInstall(false, true)
     })
 
-    ipcMain.on("window-action", (event, action) => {
+    ipcMain.on('window-action', (event, action) => {
         switch (action) {
-            case "minimize":
+            case 'minimize':
                 event.sender.getOwnerBrowserWindow().minimize()
                 break
-            case "maximize":
+            case 'maximize':
                 if (event.sender.getOwnerBrowserWindow().isMaximized()) {
                     event.sender.getOwnerBrowserWindow().unmaximize()
                 }
@@ -59,7 +59,7 @@ async function main() {
                     event.sender.getOwnerBrowserWindow().maximize()
                 }
                 break
-            case "exit":
+            case 'exit':
                 event.sender.getOwnerBrowserWindow().close()
                 break
             default:
@@ -129,13 +129,13 @@ async function main() {
     const mainWindow = await mainWindowPromise
 
     // notify the Renderer that Main is ready
-    mainWindow.webContents.send("mainReady")
+    mainWindow.webContents.send('mainReady')
 
-    mainWindow.on("maximize", () => mainWindow.webContents.send('window-action', 'maximize'))
+    mainWindow.on('maximize', () => mainWindow.webContents.send('window-action', 'maximize'))
 
-    mainWindow.on("unmaximize", () => mainWindow.webContents.send('window-action', 'unmaximize'))
+    mainWindow.on('unmaximize', () => mainWindow.webContents.send('window-action', 'unmaximize'))
 
-    mainWindow.on("close", () => app.exit())
+    mainWindow.on('close', () => app.exit())
 
     const windows = {}
 
@@ -182,11 +182,11 @@ async function main() {
 
             window.once('ready-to-show', () => window.show())
 
-            window.on("maximize", () => window.webContents.send('window-action', 'maximize'))
+            window.on('maximize', () => window.webContents.send('window-action', 'maximize'))
 
-            window.on("unmaximize", () => window.webContents.send('window-action', 'unmaximize'))
+            window.on('unmaximize', () => window.webContents.send('window-action', 'unmaximize'))
 
-            window.on("close", () => {
+            window.on('close', () => {
                 if (windows[window.webContents.getURL().split('#')[1]] != undefined) {
                     delete windows[window.webContents.getURL().split('#')[1]]
                 }

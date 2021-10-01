@@ -1,14 +1,14 @@
-const tableOverlay = document.getElementById("tableOverlay")
-const tableOverlayIcon = tableOverlay.querySelector(".mdi")
-const tableOverlayText = tableOverlay.querySelector("h3")
+const tableOverlay = document.querySelector('.overlay')
+const tableOverlayIcon = tableOverlay.querySelector('.mdi')
+const tableOverlayText = tableOverlay.querySelector('h3')
 
-const institutionsTable = document.querySelector("table#institutions")
-const institutionsList = institutionsTable.querySelector("tbody#institutionsList")
+const institutionsTable = document.querySelector('table#institutions')
+const institutionsList = institutionsTable.querySelector('tbody#institutionsList')
 let currentOrder, currentOrderDirection
 
-const columnsJSON = require("./institutionColumns.json")
-const tableColumnsList = institutionsTable.querySelector("#tableColumnsList")
-const headerTemplate = document.getElementById("headerTemplate")
+const columnsJSON = require('./institutionColumns.json')
+const tableColumnsList = institutionsTable.querySelector('#tableColumnsList')
+const headerTemplate = document.getElementById('headerTemplate')
 
 function newHeader(headerID) {
     const th = headerTemplate.content.firstElementChild.cloneNode(true)
@@ -28,7 +28,7 @@ function newHeader(headerID) {
                 setTableOverlayState('hide')
             }
             else {
-                setTableOverlayState("empty")
+                setTableOverlayState('empty')
             }
         }
     }
@@ -42,14 +42,14 @@ function newHeader(headerID) {
     return th
 }
 
-const Sortable = require("sortablejs")
+const Sortable = require('sortablejs')
 
 function loadColumns() {
-    setTableOverlayState("loading")
+    setTableOverlayState('loading')
 
     let columns = Object.keys(columnsJSON)
-    if (localStorage.getItem("institutionColumns") != null) {
-        columns = localStorage.getItem("institutionColumns").split(',')
+    if (localStorage.getItem('institutionColumns') != null) {
+        columns = localStorage.getItem('institutionColumns').split(',')
     }
     columns.forEach(headerID => tableColumnsList.appendChild(newHeader(headerID)))
 
@@ -63,14 +63,14 @@ function loadColumns() {
 
     Sortable.create(tableColumnsList, {
         animation: 150,
-        easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         onStart: () => setTableOverlayState('drag'),
         onEnd: () => {
             if (institutionsList.childElementCount > 0) {
                 setTableOverlayState('hide')
             }
             else {
-                setTableOverlayState("empty")
+                setTableOverlayState('empty')
             }
             listInstitutions(currentInstitutionsSnap)
             let institutionColumns = []
@@ -144,13 +144,13 @@ buttonCreate.onclick = () => {
 }
 const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
 
-const inputSearch = document.querySelector("input#search")
-const buttonClearSearch = document.querySelector("button#clearSearch")
+const inputSearch = document.querySelector('input#search')
+const buttonClearSearch = document.querySelector('button#clearSearch')
 
 inputSearch.oninput = refreshSearch
 
 function refreshSearch() {
-    setTableOverlayState("loading")
+    setTableOverlayState('loading')
     searchQuery = String(inputSearch.materialComponent.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -163,18 +163,18 @@ function refreshSearch() {
                 let data = String(institution.id)
                 let valuePromises = []
                 Object.values(institution.data()).forEach(value => {
-                    if (typeof value === "object" && value !== null) {
+                    if (typeof value === 'object' && value !== null) {
                         valuePromises.push(value.get())
                     }
                     else {
-                        data += " -- " + value.toString().toLowerCase()
+                        data += ' -- ' + value.toString().toLowerCase()
                     }
                 })
                 if (valuePromises.length > 0) {
                     institutionPromises.push(
                         Promise.all(valuePromises).then(values => {
                             values.forEach(snaphot => {
-                                data += " -- " + snaphot.get('name').toString().toLowerCase()
+                                data += ' -- ' + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
                                 foundInstitutions.push(institution.id)
@@ -196,7 +196,7 @@ function refreshSearch() {
                     listInstitutions(currentInstitutionsSnap)
                 }
                 else {
-                    setTableOverlayState("empty")
+                    setTableOverlayState('empty')
                 }
             })
         }
@@ -205,7 +205,7 @@ function refreshSearch() {
                 listInstitutions(currentInstitutionsSnap)
             }
             else {
-                setTableOverlayState("empty")
+                setTableOverlayState('empty')
             }
         }
     }
@@ -259,8 +259,8 @@ function loadInstitutions() {
             refreshSearch()
         },
         error => {
-            console.error("Error getting institutions: " + error)
-            setTableOverlayState("empty")
+            console.error('Error getting institutions: ' + error)
+            setTableOverlayState('empty')
         }
     )
 }
@@ -320,24 +320,24 @@ function listInstitutions(snap) {
                 institutionsList.appendChild(tr)
 
                 for (const column of tableColumnsList.children) {
-                    const td = document.createElement("td")
+                    const td = document.createElement('td')
                     td.id = column.id
                     tr.appendChild(td)
 
-                    if (td.id == "__name__") {
+                    if (td.id == '__name__') {
                         td.textContent = institutionSnap.id
                     }
                     else {
                         const value = institutionSnap.get(td.id)
                         if (value != undefined) {
-                            if (typeof value === "object" && value !== null) {
+                            if (typeof value === 'object' && value !== null) {
                                 currentRefQueries.push(
                                     value.onSnapshot(
                                         snapshot => {
                                             td.textContent = snapshot.get('name')
 
-                                            if (searchQuery != undefined && searchQuery != "") {
-                                                td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                                            if (searchQuery != undefined && searchQuery != '') {
+                                                td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
                                             }
 
                                             orderInstitutions(currentOrder, currentOrderDirection)
@@ -354,8 +354,8 @@ function listInstitutions(snap) {
                         }
                     }
 
-                    if (searchQuery != undefined && searchQuery != "") {
-                        td.classList.toggle("found", td.textContent.toLowerCase().includes(searchQuery))
+                    if (searchQuery != undefined && searchQuery != '') {
+                        td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
                     }
                 }
             }
@@ -363,11 +363,11 @@ function listInstitutions(snap) {
         orderInstitutions(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setTableOverlayState("empty")
+            setTableOverlayState('empty')
         }
     }
     else {
-        setTableOverlayState("empty")
+        setTableOverlayState('empty')
     }
 }
 
@@ -381,13 +381,13 @@ function orderInstitutions(orderBy, orderDirection) {
             const a = institutionsList.children[i].children[orderBy]
             const b = institutionsList.children[i + 1].children[orderBy]
 
-            if (orderDirection == "asc") {
+            if (orderDirection == 'asc') {
                 if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
                     shouldSwitch = true
                     break
                 }
             }
-            else if (orderDirection == "desc") {
+            else if (orderDirection == 'desc') {
                 if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
                     shouldSwitch = true
                     break
@@ -407,31 +407,31 @@ function orderInstitutions(orderBy, orderDirection) {
 
 function setTableOverlayState(state) {
     switch (state) {
-        case "loading":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.remove("show-headers")
-            tableOverlayIcon.classList.add("mdi-loading", "mdi-spin")
-            tableOverlayIcon.classList.remove("mdi-emoticon-sad-outline", "mdi-archive-arrow-up-outline")
+        case 'loading':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.remove('show-headers')
+            tableOverlayIcon.classList.add('mdi-loading', 'mdi-spin')
+            tableOverlayIcon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
             tableOverlayText.hidden = true
             break
-        case "empty":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.remove("show-headers")
-            tableOverlayIcon.classList.add("mdi-emoticon-sad-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-archive-arrow-up-outline")
+        case 'empty':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.remove('show-headers')
+            tableOverlayIcon.classList.add('mdi-emoticon-sad-outline')
+            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("INSTITUTIONS") + " " + translate("NOT_FOUND")
+            tableOverlayText.innerText = translate('INSTITUTIONS') + ' ' + translate('NOT_FOUND')
             break
-        case "drag":
-            tableOverlay.classList.remove("hide")
-            tableOverlay.classList.add("show-headers")
-            tableOverlayIcon.classList.add("mdi-archive-arrow-up-outline")
-            tableOverlayIcon.classList.remove("mdi-loading", "mdi-spin", "mdi-emoticon-sad-outline")
+        case 'drag':
+            tableOverlay.classList.remove('hide')
+            tableOverlay.classList.add('show-headers')
+            tableOverlayIcon.classList.add('mdi-archive-arrow-up-outline')
+            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-emoticon-sad-outline')
             tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate("DRAG_AND_DROP")
+            tableOverlayText.innerText = translate('DRAG_AND_DROP')
             break
-        case "hide":
-            tableOverlay.classList.add("hide")
+        case 'hide':
+            tableOverlay.classList.add('hide')
             break
         default:
             break
@@ -477,7 +477,7 @@ deleteOption.onclick = () => {
                 textDialogDeleteInstitution.classList.add('mb-2')
 
                 for (let i = 0; i < snapshot.docs.length; i++) {
-                    const _case = snapshot.docs[i];
+                    const _case = snapshot.docs[i]
 
                     const link = document.createElement('a')
                     link.href = '#'
@@ -509,7 +509,7 @@ deleteOption.onclick = () => {
             dialogDeleteInstitution.materialComponent.open()
         },
         error => {
-            console.error("Error getting filtered cases: " + error)
+            console.error('Error getting filtered cases: ' + error)
         }
     )
 }
