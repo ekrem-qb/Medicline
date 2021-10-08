@@ -14,27 +14,27 @@
 
 <body class="mdc-typography d-flex flex-column">
     <header id="titleBar" class="d-flex mdc-elevation--z6">
-        <div class="mdc-ripple-surface" id="buttonDrawer">
+        <button class="mdc-ripple-surface" id="buttonDrawer">
             <i class="mdi mdi-menu mdi-rotate-180"></i>
-        </div>
+        </button>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="d-flex">
-            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+            <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
                 <svg aria-hidden="true" width="10" height="10">
                     <path d="M 0,5 10,5 10,6 0,6 Z"></path>
                 </svg>
-            </div>
-            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
+            </button>
+            <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
                 <svg class="maximize" aria-hidden="true" width="10" height="10">
                     <path></path>
                 </svg>
-            </div>
-            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            </button>
+            <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
                 <svg aria-hidden="true" version="1.1" width="10" height="10">
                     <path d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
                     </path>
                 </svg>
-            </div>
+            </button>
         </div>
     </header>
     <div class="h-100">

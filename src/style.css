@@ -139,6 +139,8 @@ textarea {
   align-items: center;
   padding: 0.8rem 1.2rem;
   transition: var(--transition);
+  background: none;
+  border: 0;
 }
 
 .window-action--red:hover {
@@ -160,10 +162,13 @@ svg.restore path {
   d: path("m 2 0.00001 l 0 2 l -2 0 l 0 8 l 8 0 l 0 -2 l 2 0 l 0 -8 Z m 1 1 l 6 0 l 0 6 l -1 0 l 0 -5 l -5 0 Z m -2 2 l 6 0 l 0 6 l -6 0 Z");
 }
 
-#buttonDrawer {
+#buttonDrawer,
+#closeDocuments {
   padding: 0.25rem 0.75rem;
   display: flex;
   align-items: center;
+  background: none;
+  border: 0;
 }
 
 #buttonDrawer:active>.mdi {
@@ -175,10 +180,27 @@ svg.restore path {
 }
 
 #buttonDrawer>.mdi,
+#closeDocuments>.mdi,
 .mdc-text-field__icon,
 .list-group-item .mdi:not(.avatar, .mdc-button__icon),
 .mdc-deprecated-list-item__graphic {
   font-size: 1.5rem;
+}
+
+.hide {
+  padding: 0 !important;
+  margin: 0 !important;
+  opacity: 0 !important;
+  border: 0 !important;
+  user-select: none !important;
+  pointer-events: none !important;
+  overflow: hidden;
+}
+
+.hide:not(.overlay, .modal-body) {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  height: 0 !important;
 }
 
 .table {
@@ -282,12 +304,6 @@ th>label {
   height: 1rem;
   overflow: hidden;
   transition: var(--transition);
-}
-
-.helper-text.hide {
-  height: 0;
-  margin: 0;
-  opacity: 0;
 }
 
 .helper-text>.mdi {
@@ -426,12 +442,6 @@ th>label {
   z-index: 2;
 }
 
-.overlay.hide {
-  user-select: none;
-  pointer-events: none;
-  opacity: 0;
-}
-
 #tableOverlay {
   height: calc(100% - 4.3rem);
   top: auto;
@@ -519,8 +529,7 @@ label {
   pointer-events: none;
 }
 
-.modal-body.collapsed:not(#filter),
-form#filter.hide {
+.modal-body.collapsed:not(#filter) {
   max-height: 0vh;
   padding: 0 !important;
   opacity: 0;
@@ -528,6 +537,7 @@ form#filter.hide {
 
 .modal-header {
   z-index: 2;
+  transition: var(--transition);
 }
 
 .modal-header,
@@ -779,6 +789,16 @@ textarea::-webkit-scrollbar {
   max-height: 100%;
 }
 
+.mdc-tab-bar {
+  transition: var(--transition);
+  border-bottom: 1px solid var(--bs-gray-300);
+}
+
+.mdc-tab:not(:first-child),
+#closeDocuments {
+  border-left: 1px solid var(--bs-gray-300);
+}
+
 .mdc-tab--active {
   -webkit-app-region: drag;
 }
@@ -955,16 +975,6 @@ th .mdi.mdi-unfold-more-horizontal::before {
 .mdc-dialog__actions {
   overflow: hidden;
   transition: var(--transition);
-}
-
-.mdc-dialog__actions.hide {
-  user-select: none;
-  pointer-events: none;
-  height: 0;
-  min-height: 0;
-  padding: 0;
-  border: 0;
-  opacity: 0;
 }
 
 .mdc-dialog__button {

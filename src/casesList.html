@@ -16,21 +16,21 @@
     <div class="d-flex h-100 overflow-auto">
         <div class="px-2 py-3" id="toolsPanel">
             <div class="mdc-card mdc-elevation--z6">
-                <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
+                <header class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
                     <i class="mdi mdi-eye-off me-3"></i>
                     <h5 class="modal-title" translate>HIDDEN_COLUMNS</h5>
                     <i class="dropdown-icon mdi mdi-chevron-down"></i>
-                </div>
+                </header>
                 <div class="modal-body collapsed">
                     <table class="list-group list-group-flush mdc-elevation--z3" id="hiddenTableColumnsList"></table>
                 </div>
             </div>
             <div class="mdc-card mdc-elevation--z6">
-                <div class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
+                <header class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
                     <i class="mdi mdi-filter me-3"></i>
                     <h5 class="modal-title" translate>FILTER</h5>
                     <i class="dropdown-icon mdi mdi-chevron-down"></i>
-                </div>
+                </header>
                 <form class="modal-body collapsed hide row g-2 m-0 p-2" id="filter">
                     <div class="col-md-12 collapsed">
                         <label class="form-label" translate>SURNAME_NAME</label>
@@ -286,7 +286,7 @@
                     <i class="mdi mdi-loading mdi-spin"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>
-                <div class="modal-header">
+                <header class="modal-header">
                     <button class="mdc-button mdc-button--raised mdc-button--green w-25 me-1" id="create" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdi mdc-button__icon mdi-plus"></i>
@@ -299,7 +299,7 @@
                             <i class="mdi mdi-close"></i>
                         </button>
                     </div>
-                </div>
+                </header>
                 <div class="table-responsive">
                     <table class="table table-borderless" id="cases">
                         <thead>
@@ -336,6 +336,50 @@
         <div class="status mdc-ripple-surface" data-status="active">ACTIVE</div>
         <div class="status mdc-ripple-surface" data-status="receivedDocs">RECEIVED DOCUMENTS</div>
     </footer>
+    <div class="mdc-tab-bar hide" role="tablist">
+        <div class="mdc-tab-scroller">
+            <div class="mdc-tab-scroller__scroll-area">
+                <div class="mdc-tab-scroller__scroll-content">
+                    <button class="mdc-tab mdc-tab--active" role="tab" tabindex="0">
+                        <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Favorites</span>
+                        </span>
+                        <span class="mdc-tab-indicator mdc-tab-indicator--active">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                        <span class="mdc-tab__ripple"></span>
+                    </button>
+                    <button class="mdc-tab" role="tab" tabindex="0">
+                        <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Favorites</span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                        <span class="mdc-tab__ripple"></span>
+                    </button>
+                    <button class="mdc-tab" role="tab" tabindex="0">
+                        <span class="mdc-tab__content">
+                            <span class="mdc-tab__text-label">Favorites</span>
+                        </span>
+                        <span class="mdc-tab-indicator">
+                            <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
+                        </span>
+                        <span class="mdc-tab__ripple"></span>
+                    </button>
+                    <button class="mdc-ripple-surface" id="closeDocuments">
+                        <i class="mdi mdi-close"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <header class="modal-header mdc-ripple-surface justify-content-center align-items-center p-2" id="documents" onclick="modalExpand(this)">
+        <span>DOCUMENTS</span>
+        <i class="dropdown-icon ms-2 mdi mdi-chevron-up"></i>
+    </header>
+    <div class="modal-body collapsed h-75 p-0">
+    </div>
     <div class="mdc-menu mdc-menu-surface" id="contextMenu">
         <ul class="mdc-list">
             <li class="mdc-list-item" id="copy" hidden>
@@ -451,6 +495,7 @@
     <script src="import/material/menu.js"></script>
     <script src="import/material/list.js"></script>
     <script src="import/material/dialog.js"></script>
+    <script src="import/material/tabBar.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="import/sortable.js"></script>
     <script src="casesList.js"></script>

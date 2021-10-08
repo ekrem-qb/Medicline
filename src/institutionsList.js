@@ -225,7 +225,7 @@ function clearSearch() {
 function headerClick(headerID) {
     const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
     if (clickedHeader) {
-        document.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
+        tableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
                 otherHeaderIcon.classList.remove('mdi-rotate-180')

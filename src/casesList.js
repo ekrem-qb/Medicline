@@ -226,7 +226,14 @@ function clearSearch() {
 function headerClick(headerID) {
     const clickedHeader = tableColumnsList.children[headerID]
     if (clickedHeader) {
-        document.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
+        tableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
+            if (otherHeaderIcon.parentElement != clickedHeader) {
+                otherHeaderIcon.classList.remove('mdi-chevron-up')
+                otherHeaderIcon.classList.remove('mdi-rotate-180')
+                otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
+            }
+        })
+        hiddenTableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
                 otherHeaderIcon.classList.remove('mdi-rotate-180')
@@ -517,8 +524,8 @@ function changeCaseStatus(newStatus) {
 }
 
 function modalExpand(header) {
-    let currentModalBody = header.parentElement.querySelector('.modal-body')
-    let currentExpandIcon = currentModalBody.parentElement.querySelector('.dropdown-icon')
+    const currentModalBody = header.nextElementSibling
+    const currentExpandIcon = header.querySelector('.dropdown-icon')
 
     let otherModalBody
     header.parentElement.parentElement.querySelectorAll('.modal-body').forEach(modalBody => {
@@ -526,17 +533,31 @@ function modalExpand(header) {
             otherModalBody = modalBody
         }
     })
-    let otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
 
-    if (currentModalBody.classList.contains('collapsed')) {
-        otherModalBody.classList.add('collapsed')
-        otherExpandIcon.classList.remove('mdi-rotate-180')
+    if (header.id == 'documents') {
+        header.classList.toggle('hide')
+        header.previousElementSibling.classList.toggle('hide')
+    }
+
+    if (otherModalBody) {
+        const otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
+
+        if (currentModalBody.classList.contains('collapsed')) {
+            otherModalBody.classList.add('collapsed')
+            otherExpandIcon.classList.remove('mdi-rotate-180')
+        }
     }
 
     currentExpandIcon.classList.toggle('mdi-rotate-180', currentModalBody.classList.contains('collapsed'))
     currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
+    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
     hideEmptyFilters()
 }
+
+const headerDocuments = document.querySelector('header#documents')
+
+const buttonCloseDocuments = document.querySelector('button#closeDocuments')
+buttonCloseDocuments.onclick = () => modalExpand(headerDocuments)
 
 for (const status of statusBar.children) {
     status.onmouseover = () => {
