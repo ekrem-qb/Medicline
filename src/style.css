@@ -808,6 +808,19 @@ textarea::-webkit-scrollbar {
   user-select: none;
 }
 
+.tab-page {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  transition: var(--transition);
+}
+
+.tab-page:not(.show) {
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+}
+
 .mdc-ripple-surface {
   will-change: auto;
 }

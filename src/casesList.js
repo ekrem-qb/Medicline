@@ -523,42 +523,6 @@ function changeCaseStatus(newStatus) {
     })
 }
 
-function modalExpand(header) {
-    const currentModalBody = header.nextElementSibling
-    const currentExpandIcon = header.querySelector('.dropdown-icon')
-
-    let otherModalBody
-    header.parentElement.parentElement.querySelectorAll('.modal-body').forEach(modalBody => {
-        if (modalBody != currentModalBody) {
-            otherModalBody = modalBody
-        }
-    })
-
-    if (header.id == 'documents') {
-        header.classList.toggle('hide')
-        header.previousElementSibling.classList.toggle('hide')
-    }
-
-    if (otherModalBody) {
-        const otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
-
-        if (currentModalBody.classList.contains('collapsed')) {
-            otherModalBody.classList.add('collapsed')
-            otherExpandIcon.classList.remove('mdi-rotate-180')
-        }
-    }
-
-    currentExpandIcon.classList.toggle('mdi-rotate-180', currentModalBody.classList.contains('collapsed'))
-    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
-    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
-    hideEmptyFilters()
-}
-
-const headerDocuments = document.querySelector('header#documents')
-
-const buttonCloseDocuments = document.querySelector('button#closeDocuments')
-buttonCloseDocuments.onclick = () => modalExpand(headerDocuments)
-
 for (const status of statusBar.children) {
     status.onmouseover = () => {
         if (selectedStatus == undefined) {
@@ -599,6 +563,49 @@ for (const status of statusBar.children) {
         listCases(currentCasesSnap)
     }
 }
+
+function modalExpand(header) {
+    const currentModalBody = header.nextElementSibling
+    const currentExpandIcon = header.querySelector('.dropdown-icon')
+
+    let otherModalBody
+    header.parentElement.parentElement.querySelectorAll('.modal-body').forEach(modalBody => {
+        if (modalBody != currentModalBody) {
+            otherModalBody = modalBody
+        }
+    })
+
+    if (header.id == 'documents') {
+        header.classList.toggle('hide')
+        header.previousElementSibling.classList.toggle('hide')
+    }
+
+    if (otherModalBody) {
+        const otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
+
+        if (currentModalBody.classList.contains('collapsed')) {
+            otherModalBody.classList.add('collapsed')
+            otherExpandIcon.classList.remove('mdi-rotate-180')
+        }
+    }
+
+    currentExpandIcon.classList.toggle('mdi-rotate-180', currentModalBody.classList.contains('collapsed'))
+    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
+    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
+    hideEmptyFilters()
+}
+
+const headerDocuments = document.querySelector('header#documents')
+const tabBar = headerDocuments.previousElementSibling.materialComponent
+const documentsContent = headerDocuments.nextElementSibling
+
+tabBar.listen('MDCTabBar:activated', event => {
+    documentsContent.querySelector('.tab-page.show').classList.remove('show')
+    documentsContent.children[event.detail.index].classList.add('show')
+})
+
+const buttonCloseDocuments = document.querySelector('button#closeDocuments')
+buttonCloseDocuments.onclick = () => modalExpand(headerDocuments)
 
 //#region Filter
 
