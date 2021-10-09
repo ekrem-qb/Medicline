@@ -10,7 +10,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 })
 const formEditCase = document.querySelector('form#editCase')
 const currentCaseID = document.getElementById('currentCaseID')
-const currentCaseIDIcon = currentCaseID.parentElement.querySelector('.mdi')
+const currentCaseIDIcon = currentCaseID.parentElement.querySelector(".iconify")
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
     alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
@@ -25,10 +25,13 @@ let currentCaseStatus = 'active'
 let stopIDSearch = () => { }
 
 function checkCaseID() {
+    if (currentCase == undefined) {
+        currentCaseIDIcon.setAttribute('data-icon', 'eos-icons:loading')
+    }
+    else {
+        currentCaseIDIcon.setAttribute('data-icon', 'ic:round-numbers')
+    }
     currentCaseID.parentElement.disabled = currentCase == undefined
-    currentCaseIDIcon.classList.toggle('mdi-pound', currentCase != undefined)
-    currentCaseIDIcon.classList.toggle('mdi-loading', currentCase == undefined)
-    currentCaseIDIcon.classList.toggle('mdi-spin', currentCase == undefined)
     buttonSave.disabled = currentCase == undefined
 }
 

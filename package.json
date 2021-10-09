@@ -31,6 +31,7 @@
     "electron-builder": "^22.11.7"
   },
   "dependencies": {
+    "@iconify/iconify": "^2.0.4",
     "@mdi/font": "^5.9.55",
     "bootstrap": "^5.1.1",
     "electron-log": "^4.4.1",

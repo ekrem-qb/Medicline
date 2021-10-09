@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEW#CASE</title>
+    <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="../node_modules/tom-select/dist/css/tom-select.bootstrap5.min.css">
     <link rel="stylesheet" href="style.css">
@@ -17,7 +17,7 @@
     <header id="titleBar" class="d-flex mdc-elevation--z6">
         <button class="mdc-button" disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="mdi mdc-button__icon mdi-loading mdi-spin"></i>
+            <i class="iconify mdc-button__icon" data-icon="eos-icons:loading"></i>
             <b class="mdc-button__label" id="currentCaseID"></b>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
@@ -45,14 +45,14 @@
             <div class="col-lg-7">
                 <label class="form-label" translate>SURNAME_NAME</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-account"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-person"></i></span>
                     <input type="text" class="form-control" id="surnameName" required>
                 </div>
             </div>
             <div class="col-lg-5">
                 <label class="form-label" translate>BIRTH_DATE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                     <input mask="date" type="text" class="form-control" id="birthDate" required>
                 </div>
             </div>
@@ -60,7 +60,7 @@
             <div class="col-md-12">
                 <label class="form-label" translate>PHONE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-phone"></i></span>
                     <input mask="tel" class="form-control" id="phone">
                 </div>
             </div>
@@ -68,7 +68,7 @@
             <div class="col-md-12">
                 <label class="form-label" translate>PHONE2</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-phone"></i></span>
                     <input mask="tel" class="form-control" id="phone2">
                 </div>
             </div>
@@ -76,7 +76,7 @@
             <div class="col-md-12">
                 <label class="form-label" translate>PHONE3</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-phone"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-phone"></i></span>
                     <input mask="tel" class="form-control" id="phone3">
                 </div>
             </div>
@@ -114,12 +114,12 @@
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="mdi:hospital-building"></i></span>
                         <select class="form-control" id="provider" required></select>
                     </div>
                 </div>
                 <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
-                    <i class="mdi mdi-phone"></i>
+                    <i class="iconify" data-icon="ic:round-phone"></i>
                     <span class="small" id="provider_phone"></span>
                 </div>
             </div>
@@ -128,12 +128,12 @@
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER2</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="mdi:hospital-building"></i></span>
                         <select class="form-control" id="provider2"></select>
                     </div>
                 </div>
                 <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
-                    <i class="mdi mdi-phone"></i>
+                    <i class="iconify" data-icon="ic:round-phone"></i>
                     <span class="small" id="provider2_phone"></span>
                 </div>
             </div>
@@ -142,12 +142,12 @@
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>PROVIDER3</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-hospital-building"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="mdi:hospital-building"></i></span>
                         <select class="form-control" id="provider3"></select>
                     </div>
                 </div>
                 <div class="col-md-12 d-flex justify-content-end text-secondary helper-text hide pe-0">
-                    <i class="mdi mdi-phone"></i>
+                    <i class="iconify" data-icon="ic:round-phone"></i>
                     <span class="small" id="provider3_phone"></span>
                 </div>
             </div>
@@ -155,7 +155,7 @@
             <div class="col-md-12">
                 <label class="form-label" translate>INSURANCE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-hospital-box"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-local-hospital"></i></span>
                     <select class="form-control" id="insurance" required></select>
                 </div>
             </div>
@@ -177,21 +177,21 @@
             <div class="col-md-12" hidden>
                 <label class="form-label" translate>CREATE_USER</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-account-circle"></i></span>
                     <select class="form-control" id="createUser" disabled></select>
                 </div>
             </div>
             <div class="col-lg-7" hidden>
                 <label class="form-label" translate>CREATE_DATE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                     <input mask="date" type="text" class="form-control" id="createDate" disabled>
                 </div>
             </div>
             <div class="col-lg-5" hidden>
                 <label class="form-label" translate>CREATE_TIME</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                     <input mask="time" type="text" class="form-control" id="createTime" disabled>
                 </div>
             </div>
@@ -199,21 +199,21 @@
             <div class="col-md-12" hidden>
                 <label class="form-label" translate>UPDATE_USER</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-account-circle"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-account-circle"></i></span>
                     <select class="form-control" id="updateUser" disabled></select>
                 </div>
             </div>
             <div class="col-lg-7" hidden>
                 <label class="form-label" translate>UPDATE_DATE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                     <input mask="date" type="text" class="form-control" id="updateDate" disabled>
                 </div>
             </div>
             <div class="col-lg-5" hidden>
                 <label class="form-label" translate>UPDATE_TIME</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                     <input mask="time" type="text" class="form-control" id="updateTime" disabled>
                 </div>
             </div>
@@ -222,35 +222,35 @@
             <div class="col-md-12">
                 <label class="form-label" translate>CALLER</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-card-account-phone"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-contact-phone"></i></span>
                     <input type="text" class="form-control" id="caller">
                 </div>
             </div>
             <div class="col-lg-7">
                 <label class="form-label" translate>CALL_DATE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                     <input mask="date" type="text" class="form-control" id="callDate">
                 </div>
             </div>
             <div class="col-lg-5">
                 <label class="form-label" translate>CALL_TIME</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                     <input mask="time" type="text" class="form-control" id="callTime">
                 </div>
             </div>
             <div class="col-lg-7">
                 <label class="form-label" translate>APPOINTMENT_DATE</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                     <input mask="date" type="text" class="form-control" id="appointmentDate">
                 </div>
             </div>
             <div class="col-lg-5">
                 <label class="form-label" translate>APPOINTMENT_TIME</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                     <input mask="time" type="text" class="form-control" id="appointmentTime">
                 </div>
             </div>
@@ -259,21 +259,21 @@
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>ADDRESS</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-map-marker"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-place"></i></span>
                         <select class="form-control" id="address" required></select>
                     </div>
                 </div>
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>HOTEL</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-bed"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-hotel"></i></span>
                         <select class="form-control" id="address_hotel" disabled></select>
                     </div>
                 </div>
                 <div class="col-md-12 pe-0">
                     <label class="form-label" translate>ROOM_NO</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-counter"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-pin"></i></span>
                         <input class="form-control" id="address_roomNo" disabled></select>
                     </div>
                 </div>
@@ -289,99 +289,89 @@
                 <div class="col-md-12 pe-0">
                     <div class="mdc-form-field">
                         <div class="mdc-checkbox">
-                          <input type="checkbox"
-                                 class="mdc-checkbox__native-control"
-                                 id="outpatient"/>
-                          <div class="mdc-checkbox__background">
-                            <svg class="mdc-checkbox__checkmark"
-                                 viewBox="0 0 24 24">
-                              <path class="mdc-checkbox__checkmark-path"
-                                    fill="none"
-                                    d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                            </svg>
-                            <div class="mdc-checkbox__mixedmark"></div>
-                          </div>
-                          <div class="mdc-checkbox__ripple"></div>
+                            <input type="checkbox" class="mdc-checkbox__native-control" id="outpatient" />
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
                         </div>
                         <label for="outpatient">Outpatient</label>
-                      </div>
+                    </div>
                 </div>
                 <div class="col-lg-7" hidden>
                     <label class="form-label" translate>ADDMISSION_DATE</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                         <input mask="date" type="text" class="form-control" id="outpatientAddmissionDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>ADDMISSION_TIME</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                         <input mask="time" type="text" class="form-control" id="outpatientAddmissionTime" disabled>
                     </div>
                 </div>
                 <div class="col-lg-7" hidden>
                     <label class="form-label" translate>DISCHARGE_DATE</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                         <input mask="date" type="text" class="form-control" id="outpatientDischargeDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>DISCHARGE_TIME</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                         <input mask="time" type="text" class="form-control" id="outpatientDischargeTime" disabled>
                     </div>
                 </div>
             </div>
-            
+
             <div class="row g-2 mt-0 pe-0">
                 <div class="col-md-12 pe-0">
                     <div class="mdc-form-field">
                         <div class="mdc-checkbox">
-                          <input type="checkbox"
-                                 class="mdc-checkbox__native-control"
-                                 id="inpatient"/>
-                          <div class="mdc-checkbox__background">
-                            <svg class="mdc-checkbox__checkmark"
-                                 viewBox="0 0 24 24">
-                              <path class="mdc-checkbox__checkmark-path"
-                                    fill="none"
-                                    d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                            </svg>
-                            <div class="mdc-checkbox__mixedmark"></div>
-                          </div>
-                          <div class="mdc-checkbox__ripple"></div>
+                            <input type="checkbox" class="mdc-checkbox__native-control" id="inpatient" />
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
                         </div>
                         <label for="inpatient">Inpatient</label>
-                      </div>
+                    </div>
                 </div>
                 <div class="col-lg-7" hidden>
                     <label class="form-label" translate>ADDMISSION_DATE</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                         <input mask="date" type="text" class="form-control" id="inpatientAddmissionDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>ADDMISSION_TIME</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                         <input mask="time" type="text" class="form-control" id="inpatientAddmissionTime" disabled>
                     </div>
                 </div>
                 <div class="col-lg-7" hidden>
                     <label class="form-label" translate>DISCHARGE_DATE</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-calendar"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
                         <input mask="date" type="text" class="form-control" id="inpatientDischargeDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>DISCHARGE_TIME</label>
                     <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="mdi mdi-clock"></i></span>
+                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
                         <input mask="time" type="text" class="form-control" id="inpatientDischargeTime" disabled>
                     </div>
                 </div>
@@ -391,12 +381,12 @@
     <div class="mdc-dialog__actions hide" id="actionButtonsPanel">
         <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" id="delete" disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="mdi mdc-button__icon mdi-trash-can"></i>
+            <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
             <span class="mdc-button__label" translate>DELETE</span>
         </button>
         <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" id="save" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="mdi mdc-button__icon mdi-content-save"></i>
+            <i class="iconify mdc-button__icon" data-icon="ic:round-save"></i>
             <span class="mdc-button__label" translate>SAVE</span>
         </button>
     </div>
@@ -404,18 +394,18 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
-                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
                 </div>
                 <div class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>
