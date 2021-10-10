@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicline</title>
+    <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="dark.css">
@@ -15,25 +15,20 @@
 <body class="mdc-typography d-flex flex-column">
     <header id="titleBar" class="d-flex mdc-elevation--z6">
         <button class="mdc-ripple-surface" id="buttonDrawer">
-            <i class="mdi mdi-menu mdi-rotate-180"></i>
+            <span class="rot-180">
+                <i class="iconify" data-icon="ic:round-menu"></i>
+            </span>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
         <div class="d-flex">
             <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
-                <svg aria-hidden="true" width="10" height="10">
-                    <path d="M 0,5 10,5 10,6 0,6 Z"></path>
-                </svg>
+                <i class="iconify" data-icon="codicon:chrome-minimize"></i>
             </button>
-            <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
-                <svg class="maximize" aria-hidden="true" width="10" height="10">
-                    <path></path>
-                </svg>
+            <button class="window-action mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+                <i class="iconify" data-icon="codicon:chrome-maximize"></i>
             </button>
             <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
-                <svg aria-hidden="true" version="1.1" width="10" height="10">
-                    <path d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
-                    </path>
-                </svg>
+                <i class="iconify" data-icon="codicon:chrome-close"></i>
             </button>
         </div>
     </header>
@@ -45,16 +40,16 @@
                         <h3 class="mdc-drawer__title"></h3>
                         <h6 class="mdc-drawer__subtitle"></h6>
                     </div>
-                    <i class="avatar mb-1 mdi mdi-account-circle"></i>
+                    <i class="avatar mb-1 iconify" data-icon="ic:round-account-circle"></i>
                 </div>
                 <a class="mdc-deprecated-list-item mdc-ripple-surface" href="#" id="editProfile">
                     <span class="mdc-deprecated-list-item__ripple"></span>
-                    <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-pencil" aria-hidden="true"></i>
+                    <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="ic:round-edit" aria-hidden="true"></i>
                     <span class="mdc-deprecated-list-item__text" translate>EDIT_PROFILE</span>
                 </a>
                 <a class="mdc-deprecated-list-item mdc-ripple-surface" href="#" id="signOut">
                     <span class="mdc-deprecated-list-item__ripple"></span>
-                    <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-logout" aria-hidden="true"></i>
+                    <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="ic:round-logout" aria-hidden="true"></i>
                     <span class="mdc-deprecated-list-item__text" translate>SIGN_OUT</span>
                 </a>
             </div>
@@ -63,22 +58,22 @@
                 <nav class="mdc-deprecated-list mdc-deprecated-list--dense">
                     <a class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--activated" href="#" id="cases" aria-current="page" tabindex="0">
                         <span class="mdc-deprecated-list-item__ripple"></span>
-                        <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-table-large" aria-hidden="true"></i>
+                        <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="mdi:table-large" aria-hidden="true"></i>
                         <span class="mdc-deprecated-list-item__text" translate>CASES</span>
                     </a>
                     <a class="mdc-deprecated-list-item mdc-ripple-surface" href="#" id="users">
                         <span class="mdc-deprecated-list-item__ripple"></span>
-                        <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-account-group" aria-hidden="true"></i>
+                        <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="ic:round-groups" aria-hidden="true"></i>
                         <span class="mdc-deprecated-list-item__text" translate>USERS</span>
                     </a>
                     <a class="mdc-deprecated-list-item mdc-ripple-surface" href="#" id="hotels">
                         <span class="mdc-deprecated-list-item__ripple"></span>
-                        <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-bed" aria-hidden="true"></i>
+                        <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="ic:round-hotel" aria-hidden="true"></i>
                         <span class="mdc-deprecated-list-item__text" translate>HOTELS</span>
                     </a>
                     <a class="mdc-deprecated-list-item mdc-ripple-surface" href="#" id="institutions">
                         <span class="mdc-deprecated-list-item__ripple"></span>
-                        <i class="material-icons mdc-deprecated-list-item__graphic mdi mdi-office-building" aria-hidden="true"></i>
+                        <i class="material-icons mdc-deprecated-list-item__graphic iconify" data-icon="ic:round-apartment" aria-hidden="true"></i>
                         <span class="mdc-deprecated-list-item__text" translate>INSTITUTIONS</span>
                     </a>
                 </nav>
@@ -98,7 +93,7 @@
                 </div>
                 <div class="mdc-dialog__content flex-column align-items-stretch">
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mb-3">
-                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-account"></i>
+                        <i class="iconify mdc-text-field__icon mdc-text-field__icon--leading" data-icon="ic:round-person"></i>
                         <input class="mdc-text-field__input" id="username">
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -110,11 +105,11 @@
                     </label>
 
                     <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon">
-                        <i class="mdi mdc-text-field__icon mdc-text-field__icon--leading mdi-lock"></i>
+                        <i class="iconify mdc-text-field__icon mdc-text-field__icon--leading" data-icon="ic:round-lock"></i>
                         <input type="password" class="mdc-text-field__input" id="password">
                         <button class="mdc-icon-button" id="passwordVisibility" tabindex="-1">
                             <div class="mdc-icon-button__ripple"></div>
-                            <span class="mdi mdi-eye-off-outline"></span>
+                            <span class="iconify" data-icon="ic:outline-visibility-off"></span>
                         </button>
                         <div class="mdc-notched-outline">
                             <div class="mdc-notched-outline__leading"></div>
@@ -129,7 +124,7 @@
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" id="signIn" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label" translate>SIGN_IN</span>
-                        <i class="mdi mdc-button__icon mdi-arrow-right"></i>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-login"></i>
                     </button>
                 </div>
             </div>
@@ -140,7 +135,7 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__title">
-                    <i class="mdi mdi-alert-decagram me-3"></i>
+                    <i class="iconify me-3" data-icon="mdi:alert-decagram"></i>
                     <h5 class="mb-0" translate>UPDATE_AVAILABLE</h5>
                 </div>
                 <div class="mdc-dialog__content flex-row-reverse align-items-center">
@@ -154,7 +149,7 @@
                             <div class="mdc-notched-outline__trailing"></div>
                         </div>
                     </label>
-                    <i class="mdi mx-3 mdi-arrow-right"></i>
+                    <i class="iconify mx-3" data-icon="ic:round-arrow-forward"></i>
                     <label class="mdc-text-field mdc-text-field--outlined">
                         <input type="text" class="mdc-text-field__input" id="currentVersion" readonly />
                         <div class="mdc-notched-outline">
@@ -169,12 +164,12 @@
                 <div class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>LATER</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" onclick="ipcRenderer.send('install-update')" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-arrow-down-circle"></i>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-download"></i>
                         <span class="mdc-button__label" translate>INSTALL</span>
                     </button>
                 </div>

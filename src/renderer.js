@@ -50,21 +50,19 @@ if (dialogUpdate) {
 
 //#region Window Maximize
 
-const maximizeIcon = document.querySelector('.window-action>svg.maximize')
+const maximizeIcon = document.querySelector('.window-action#maximize').getElementsByClassName('iconify')
 const dragAreas = document.querySelectorAll('.drag-area')
 
 ipcRenderer.on('window-action', (event, action) => {
   switch (action) {
     case 'maximize':
-      maximizeIcon.classList.remove('maximize')
-      maximizeIcon.classList.add('restore')
+      maximizeIcon[0].setAttribute('data-icon', 'codicon:chrome-restore')
       dragAreas.forEach(dragArea => {
         dragArea.classList.remove('ms-1', 'mt-1')
       })
       break
     case 'unmaximize':
-      maximizeIcon.classList.add('maximize')
-      maximizeIcon.classList.remove('restore')
+      maximizeIcon[0].setAttribute('data-icon', 'codicon:chrome-maximize')
       dragAreas.forEach(dragArea => {
         dragArea.classList.add('ms-1', 'mt-1')
       })
