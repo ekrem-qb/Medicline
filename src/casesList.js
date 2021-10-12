@@ -1,5 +1,5 @@
 const tableOverlay = document.querySelector('.overlay')
-const tableOverlayIcon = tableOverlay.querySelector('.mdi')
+const tableOverlayIcon = tableOverlay.getElementsByClassName('iconify')
 const tableOverlayText = tableOverlay.querySelector('h3')
 
 const casesTable = document.querySelector('table#cases')
@@ -42,7 +42,7 @@ function newHeader(headerID) {
     const label = th.querySelector('label')
     label.textContent = translate(columnsJSON[headerID])
 
-    th.sortIcon = th.querySelector('i')
+    th.sortIcon = th.getElementsByClassName('iconify')
 
     return th
 }
@@ -120,16 +120,15 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
-    editOption.icon.classList.toggle('mdi-eye', !editIsAllowed)
-    editOption.icon.classList.toggle('mdi-pencil', editIsAllowed)
-
     contextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
         option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
     })
     if (editIsAllowed) {
+        editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
         editOption.label.textContent = translate('EDIT')
     }
     else {
+        editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
         editOption.label.textContent = translate('VIEW')
     }
 }
@@ -226,34 +225,31 @@ function clearSearch() {
 function headerClick(headerID) {
     const clickedHeader = tableColumnsList.children[headerID]
     if (clickedHeader) {
-        tableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
+        tableColumnsList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
-                otherHeaderIcon.classList.remove('mdi-chevron-up')
-                otherHeaderIcon.classList.remove('mdi-rotate-180')
-                otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
+                otherHeaderIcon.classList.remove('rot-180')
+                otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
             }
         })
-        hiddenTableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
+        hiddenTableColumnsList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
-                otherHeaderIcon.classList.remove('mdi-chevron-up')
-                otherHeaderIcon.classList.remove('mdi-rotate-180')
-                otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
+                otherHeaderIcon.classList.remove('rot-180')
+                otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
             }
         })
 
-        if (clickedHeader.sortIcon.classList.contains('mdi-unfold-more-horizontal')) {
-            clickedHeader.sortIcon.classList.remove('mdi-unfold-more-horizontal')
-            clickedHeader.sortIcon.classList.add('mdi-chevron-up')
+        if (clickedHeader.sortIcon[0].getAttribute('data-icon') == 'ic:round-unfold-more') {
+            clickedHeader.sortIcon[0].setAttribute('data-icon', 'ic:round-keyboard-arrow-up')
         }
 
-        if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
+        if (clickedHeader.sortIcon[0].classList.contains('rot-180')) {
             orderCases(headerID, 'asc')
         }
         else {
             orderCases(headerID, 'desc')
         }
 
-        clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
+        clickedHeader.sortIcon[0].classList.toggle('rot-180')
     }
 }
 
@@ -483,23 +479,20 @@ function setTableOverlayState(state) {
         case 'loading':
             tableOverlay.classList.remove('hide')
             tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon.classList.add('mdi-loading', 'mdi-spin')
-            tableOverlayIcon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
+            tableOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             tableOverlayText.hidden = true
             break
         case 'empty':
             tableOverlay.classList.remove('hide')
             tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon.classList.add('mdi-emoticon-sad-outline')
-            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
+            tableOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             tableOverlayText.hidden = false
             tableOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
             break
         case 'drag':
             tableOverlay.classList.remove('hide')
             tableOverlay.classList.add('show-headers')
-            tableOverlayIcon.classList.add('mdi-archive-arrow-up-outline')
-            tableOverlayIcon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-emoticon-sad-outline')
+            tableOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
             tableOverlayText.hidden = false
             tableOverlayText.innerText = translate('DRAG_AND_DROP')
             break
@@ -585,11 +578,11 @@ function modalExpand(header) {
 
         if (currentModalBody.classList.contains('collapsed')) {
             otherModalBody.classList.add('collapsed')
-            otherExpandIcon.classList.remove('mdi-rotate-180')
+            otherExpandIcon.classList.remove('rot-180')
         }
     }
 
-    currentExpandIcon.classList.toggle('mdi-rotate-180', currentModalBody.classList.contains('collapsed'))
+    currentExpandIcon.classList.toggle('rot-180', currentModalBody.classList.contains('collapsed'))
     currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
     header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
     hideEmptyFilters()
@@ -738,7 +731,7 @@ const contextMenu = document.getElementById('contextMenu')
 const copyOption = contextMenu.children[0].children['copy']
 copyOption.onclick = copySelectionToClipboard
 const editOption = contextMenu.children[0].children['edit']
-editOption.icon = editOption.querySelector('.mdi')
+editOption.icon = editOption.getElementsByClassName('iconify')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
 editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
 const deleteOption = contextMenu.children[0].children['delete']
@@ -767,6 +760,6 @@ function copySelectionToClipboard() {
     const selectedText = getSelectedText()
     if (selectedText != '') {
         navigator.clipboard.writeText(selectedText)
-        alert('"' + selectedText + '"' + translate("COPIED"))
+        alert('"' + selectedText + '"' + translate('COPIED'))
     }
 }

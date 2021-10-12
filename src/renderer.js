@@ -34,7 +34,7 @@ document.onkeydown = (event => {
       location.reload()
       break
     case 'F6':
-      if (webview) {
+      if (typeof webview !== 'undefined') {
         webview.openDevTools()
       }
       break

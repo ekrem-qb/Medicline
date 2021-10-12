@@ -464,9 +464,6 @@ th>label {
 
 .overlay>.iconify[data-icon="eos-icons:loading"] {
   animation: rainbow 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.overlay>.iconify[data-icon="eos-icons:loading"] {
   transition: none;
 }
 
@@ -841,10 +838,7 @@ textarea::-webkit-scrollbar {
 .mdc-button__ripple::before,
 .mdc-list-item__ripple::before,
 .mdc-fab__ripple::before,
-.mdi:not(.list-group-item .mdi):before,
-.mdc-dialog__content .mdi::before,
 .mdc-select__anchor .mdc-select__ripple::before,
-.dropdown-icon.mdi::before,
 .mdc-tab .mdc-tab__ripple::before,
 .mdc-tab__icon,
 .mdc-tab__text-label,
@@ -924,11 +918,42 @@ th .iconify {
   font-size: 1.45rem;
   margin-left: .5rem;
   float: right;
+  animation-duration: .15s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-iteration-count: 1;
+}
+
+@keyframes order-in {
+  from {
+    opacity: .5;
+    transform: scale(.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+}
+
+th .iconify[data-icon="ic:round-keyboard-arrow-up"] {
+  animation-name: order-in;
+}
+
+@keyframes order-out {
+  from {
+    opacity: 1;
+    transform: rotate(180deg);
+  }
+
+  to {
+    opacity: .5;
+    transform: scale(.75);
+  }
 }
 
 th .iconify[data-icon="ic:round-unfold-more"] {
-  opacity: .5;
-  transform: scale(.75);
+  animation-name: order-out;
+  animation-fill-mode: both;
 }
 
 .mdc-ripple-surface {
@@ -1092,7 +1117,7 @@ form .mdc-text-field {
 }
 
 .mdc-text-field--disabled .mdc-text-field__icon--trailing,
-:disabled .mdi,
+:disabled .iconify,
 .iconify[data-icon="ic:outline-visibility-off"] {
   color: #000;
   opacity: .3;

@@ -228,7 +228,7 @@ function headerClick(headerID) {
         tableColumnsList.querySelectorAll('.mdi-chevron-up').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('mdi-chevron-up')
-                otherHeaderIcon.classList.remove('mdi-rotate-180')
+                otherHeaderIcon.classList.remove('rot-180')
                 otherHeaderIcon.classList.add('mdi-unfold-more-horizontal')
             }
         })
@@ -238,14 +238,14 @@ function headerClick(headerID) {
             clickedHeader.sortIcon.classList.add('mdi-chevron-up')
         }
 
-        if (clickedHeader.sortIcon.classList.contains('mdi-rotate-180')) {
+        if (clickedHeader.sortIcon.classList.contains('rot-180')) {
             orderInstitutions(headerID, 'asc')
         }
         else {
             orderInstitutions(headerID, 'desc')
         }
 
-        clickedHeader.sortIcon.classList.toggle('mdi-rotate-180')
+        clickedHeader.sortIcon.classList.toggle('rot-180')
     }
 }
 
