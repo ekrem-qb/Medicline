@@ -17,28 +17,19 @@
     <header id="titleBar" class="d-flex mdc-elevation--z6">
         <button class="mdc-button" disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="iconify mdc-button__icon" data-icon="eos-icons:loading"></i>
+            <i class="mdc-button__icon iconify" data-icon="eos-icons:loading"></i>
             <b class="mdc-button__label" id="currentCaseID"></b>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="d-flex">
-            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
-                <svg aria-hidden="true" width="10" height="10">
-                    <path d="M 0,5 10,5 10,6 0,6 Z"></path>
-                </svg>
-            </div>
-            <div class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'maximize')">
-                <svg class="maximize" aria-hidden="true" width="10" height="10">
-                    <path></path>
-                </svg>
-            </div>
-            <div class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
-                <svg aria-hidden="true" version="1.1" width="10" height="10">
-                    <path d="M 0,0 0,0.7 4.3,5 0,9.3 0,10 0.7,10 5,5.7 9.3,10 10,10 10,9.3 5.7,5 10,0.7 10,0 9.3,0 5,4.3 0.7,0 Z">
-                    </path>
-                </svg>
-            </div>
-        </div>
+        <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+            <i class="iconify" data-icon="codicon:chrome-minimize"></i>
+        </button>
+        <button class="window-action mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+            <i class="iconify" data-icon="codicon:chrome-maximize"></i>
+        </button>
+        <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            <i class="iconify" data-icon="codicon:chrome-close"></i>
+        </button>
     </header>
     <form class="align-items-start row m-0 p-3 " id="editCase">
         <div class="col-md-4 row g-2 m-0">
@@ -381,12 +372,12 @@
     <div class="mdc-dialog__actions hide" id="actionButtonsPanel">
         <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" id="delete" disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
+            <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
             <span class="mdc-button__label" translate>DELETE</span>
         </button>
         <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" id="save" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
             <div class="mdc-button__ripple"></div>
-            <i class="iconify mdc-button__icon" data-icon="ic:round-save"></i>
+            <i class="mdc-button__icon iconify" data-icon="ic:round-save"></i>
             <span class="mdc-button__label" translate>SAVE</span>
         </button>
     </div>
@@ -394,18 +385,18 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
-                    <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
+                    <i class="me-3 iconify" data-icon="ic:round-help-outline"></i>
                     <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
                 </div>
                 <div class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
-                        <i class="iconify mdc-button__icon" data-icon="ic:round-close"></i>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
-                        <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
+                        <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>

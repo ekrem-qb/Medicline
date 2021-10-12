@@ -854,6 +854,7 @@ textarea::-webkit-scrollbar {
 
 .mdc-icon-button {
   display: flex;
+  align-self: center;
   height: auto;
   padding-top: 0;
   padding-bottom: 0;

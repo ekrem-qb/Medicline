@@ -20,17 +20,15 @@
             </span>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
-        <div class="d-flex">
-            <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
-                <i class="iconify" data-icon="codicon:chrome-minimize"></i>
-            </button>
-            <button class="window-action mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
-                <i class="iconify" data-icon="codicon:chrome-maximize"></i>
-            </button>
-            <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
-                <i class="iconify" data-icon="codicon:chrome-close"></i>
-            </button>
-        </div>
+        <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+            <i class="iconify" data-icon="codicon:chrome-minimize"></i>
+        </button>
+        <button class="window-action mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+            <i class="iconify" data-icon="codicon:chrome-maximize"></i>
+        </button>
+        <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            <i class="iconify" data-icon="codicon:chrome-close"></i>
+        </button>
     </header>
     <div class="h-100">
         <aside class="mdc-drawer mdc-drawer--modal">

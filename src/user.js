@@ -2,20 +2,18 @@ const inputUsername = document.querySelector('input#username')
 const inputName = document.querySelector('input#name')
 const inputPassword = document.querySelector('input#password')
 const buttonPasswordVisibility = document.querySelector('button#passwordVisibility')
-const iconPasswordVisibility = buttonPasswordVisibility.querySelector('.mdi')
+const iconPasswordVisibility = buttonPasswordVisibility.getElementsByClassName('iconify')
 const buttonSave = document.querySelector('button#save')
-const iconSave = buttonSave.querySelector('.mdi')
+const iconSave = buttonSave.getElementsByClassName('iconify')
 
 buttonPasswordVisibility.onclick = () => {
     if (inputPassword.type == 'password') {
         inputPassword.type = 'text'
-        iconPasswordVisibility.classList.add('mdi-eye-outline')
-        iconPasswordVisibility.classList.remove('mdi-eye-off-outline')
+        iconPasswordVisibility[0].setAttribute('data-icon', 'ic:outline-visibility')
     }
     else {
         inputPassword.type = 'password'
-        iconPasswordVisibility.classList.remove('mdi-eye-outline')
-        iconPasswordVisibility.classList.add('mdi-eye-off-outline')
+        iconPasswordVisibility[0].setAttribute('data-icon', 'ic:outline-visibility-off')
     }
 }
 
@@ -62,8 +60,7 @@ if (location.hash != '') {
         event.preventDefault()
         event.stopPropagation()
 
-        iconSave.classList.remove('mdi-content-save')
-        iconSave.classList.add('mdi-loading', 'mdi-spin')
+        iconSave[0].setAttribute('data-icon', 'eos-icons:loading')
 
         allUsers.doc(selectedUserID).set({
             username: inputUsername.value,
@@ -130,8 +127,7 @@ else {
         }
 
         if ((inputUsername.value + emailSuffix) != '' && inputPassword.value != '') {
-            iconSave.classList.remove('mdi-content-save')
-            iconSave.classList.add('mdi-loading', 'mdi-spin')
+            iconSave[0].setAttribute('data-icon', 'eos-icons:loading')
 
             admin.auth().createUser({ email: (inputUsername.value + emailSuffix), password: inputPassword.value }).then(user => {
                 allUsers.doc(user.uid).set(data).then(() => {
@@ -143,8 +139,7 @@ else {
                 if (error.code == 'auth/email-already-exists') {
                     alert(translate('USER_EXISTS'))
                     inputUsername.materialComponent.valid = false
-                    iconSave.classList.add('mdi-content-save')
-                    iconSave.classList.remove('mdi-loading', 'mdi-spin')
+                    iconSave[0].setAttribute('data-icon', 'ic:round-save')
                 }
                 else {
                     console.error('Error creating user', error)
