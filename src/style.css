@@ -191,7 +191,7 @@ svg.restore path {
   padding: 0 !important;
   margin: 0 !important;
   opacity: 0 !important;
-  border: 0 !important;
+  border: 0;
   user-select: none !important;
   pointer-events: none !important;
   overflow: hidden;
@@ -372,6 +372,10 @@ th>label {
 .list-group-item.active {
   cursor: default;
   pointer-events: none;
+}
+
+.list-group-item+.list-group-item.active {
+  margin-top: auto;
 }
 
 .list-group-item.active>*:enabled {

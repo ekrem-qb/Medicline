@@ -5,11 +5,11 @@ buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
 
 const addressList = document.getElementById('addressList')
 addressList.overlay = document.getElementById('addressessListOverlay')
-addressList.overlay.icon = addressList.overlay.querySelector('.mdi')
+addressList.overlay.icon = addressList.overlay.getElementsByClassName('iconify')
 addressList.overlay.text = addressList.overlay.querySelector('h3')
 const hotelsList = document.getElementById('hotelsList')
 hotelsList.overlay = document.getElementById('hotelsListOverlay')
-hotelsList.overlay.icon = hotelsList.overlay.querySelector('.mdi')
+hotelsList.overlay.icon = hotelsList.overlay.getElementsByClassName('iconify')
 hotelsList.overlay.text = hotelsList.overlay.querySelector('h3')
 const listItemTemplate = document.getElementById('listItemTemplate')
 let selectedAddress
@@ -79,8 +79,7 @@ function listItems(collection, list) {
                                         foundCasesLinks.innerHTML = ''
 
                                         if (snapshot.docs.length > 0) {
-                                            iconDialogDeleteAddress.classList.remove('mdi-help-circle-outline')
-                                            iconDialogDeleteAddress.classList.add('mdi-alert')
+                                            iconDialogDeleteAddress[0].setAttribute('data-icon', 'ic:round-warning')
 
                                             prefix = 'CANT_DELETE#THIS_'
                                             textDialogDeleteAddress.classList.remove('mb-0')
@@ -104,8 +103,7 @@ function listItems(collection, list) {
                                             }
                                             dialogDeleteAddress.materialComponent.buttons[1].disabled = true
                                         } else {
-                                            iconDialogDeleteAddress.classList.add('mdi-help-circle-outline')
-                                            iconDialogDeleteAddress.classList.remove('mdi-alert')
+                                            iconDialogDeleteAddress[0].setAttribute('data-icon', 'ic:round-help-outline')
 
                                             prefix = 'ASK_DELETE#THIS_'
                                             textDialogDeleteAddress.classList.add('mb-0')
@@ -225,7 +223,7 @@ const inlineEdit = document.getElementById('inlineEdit')
 const inlineEditInput = inlineEdit.querySelector('input')
 let inlineEditPath, inlineEditAnchorID
 const saveButton = inlineEdit.querySelector('button#save')
-const saveButtonIcon = saveButton.querySelector('.mdi')
+const saveButtonIcon = saveButton.getElementsByClassName('iconify')
 
 function showInlineEdit(anchor, path, oldValue) {
     if (oldValue) {
@@ -247,8 +245,7 @@ function showInlineEdit(anchor, path, oldValue) {
 
 saveButton.onclick = () => {
     if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
-        saveButtonIcon.classList.remove('mdi-check')
-        saveButtonIcon.classList.add('mdi-loading', 'mdi-spin')
+        saveButtonIcon[0].setAttribute('data-icon', 'eos-icons:loading')
 
         if (inlineEditPath == 'address' || inlineEditPath == 'hotel') {
             let collection
@@ -267,8 +264,7 @@ saveButton.onclick = () => {
             }).then(snapshot => {
                 inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
-                saveButtonIcon.classList.add('mdi-check')
-                saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
+                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 inlineEdit.classList.remove('show')
 
                 if (inlineEditPath == 'address') {
@@ -278,8 +274,7 @@ saveButton.onclick = () => {
                     }
                 }
             }).catch(error => {
-                saveButtonIcon.classList.add('mdi-check')
-                saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
+                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 console.error('Error creating ' + inlineEditPath + ': ', error)
             })
         } else {
@@ -288,12 +283,10 @@ saveButton.onclick = () => {
             }).then(() => {
                 inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
-                saveButtonIcon.classList.add('mdi-check')
-                saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
+                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 inlineEdit.classList.remove('show')
             }).catch(error => {
-                saveButtonIcon.classList.add('mdi-check')
-                saveButtonIcon.classList.remove('mdi-loading', 'mdi-spin')
+                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 console.error('Error updating ' + inlineEditPath + ': ', error)
             })
         }
@@ -353,7 +346,7 @@ function moveInlineEditToAnchor() {
 
 let deleteAddressPath
 const dialogDeleteAddress = document.getElementById('dialogDeleteAddress')
-const iconDialogDeleteAddress = dialogDeleteAddress.querySelector('.mdi')
+const iconDialogDeleteAddress = dialogDeleteAddress.getElementsByClassName('iconify')
 const textDialogDeleteAddress = dialogDeleteAddress.querySelector('p')
 const foundCasesLinks = dialogDeleteAddress.querySelector('span')
 
@@ -372,15 +365,13 @@ function setListOverlayState(overlay, state) {
         case 'loading':
             overlay.classList.remove('hide')
             overlay.classList.remove('show-headers')
-            overlay.icon.classList.add('mdi-loading', 'mdi-spin')
-            overlay.icon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
+            overlay.icon[0].setAttribute('data-icon', 'eos-icons:loading')
             overlay.text.hidden = true
             break
         case 'empty':
             overlay.classList.remove('hide')
             overlay.classList.remove('show-headers')
-            overlay.icon.classList.add('mdi-emoticon-sad-outline')
-            overlay.icon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
+            overlay.icon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             overlay.text.hidden = false
             overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
             break
