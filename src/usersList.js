@@ -3,7 +3,7 @@ buttonCreate.onclick = () => ipcRenderer.send('new-window', 'user')
 
 const usersList = document.getElementById('usersList')
 usersList.overlay = document.getElementById('usersListOverlay')
-usersList.overlay.icon = usersList.overlay.querySelector('.mdi')
+usersList.overlay.icon = usersList.overlay.getElementsByClassName('iconify')
 usersList.overlay.text = usersList.overlay.querySelector('h3')
 const listItemTemplate = document.getElementById('listItemTemplate')
 let selectedUser, stopCurrentQuery = () => { }
@@ -130,8 +130,7 @@ function listUsers() {
                                                             foundCasesLinks.innerHTML = ''
 
                                                             if (foundCases.length > 0) {
-                                                                iconDialogDeleteUser.classList.remove('mdi-help-circle-outline')
-                                                                iconDialogDeleteUser.classList.add('mdi-alert')
+                                                                iconDialogDeleteUser[0].setAttribute('data-icon', 'ic:round-warning')
 
                                                                 prefix = 'CANT_DELETE#THIS_'
                                                                 textDialogDeleteUser.classList.remove('mb-0')
@@ -154,8 +153,7 @@ function listUsers() {
                                                                 dialogDeleteUser.materialComponent.buttons[1].disabled = true
                                                             }
                                                             else {
-                                                                iconDialogDeleteUser.classList.add('mdi-help-circle-outline')
-                                                                iconDialogDeleteUser.classList.remove('mdi-alert')
+                                                                iconDialogDeleteUser[0].setAttribute('data-icon', 'ic:round-help-outline')
 
                                                                 prefix = 'ASK_DELETE#THIS_'
                                                                 textDialogDeleteUser.classList.add('mb-0')
@@ -244,7 +242,7 @@ function stopFilteredCasesQueries() {
 }
 
 const dialogDeleteUser = document.getElementById('dialogDeleteUser')
-const iconDialogDeleteUser = dialogDeleteUser.querySelector('.mdi')
+const iconDialogDeleteUser = dialogDeleteUser.getElementsByClassName('iconify')
 const textDialogDeleteUser = dialogDeleteUser.querySelector('p')
 const foundCasesLinks = dialogDeleteUser.querySelector('span')
 
@@ -266,17 +264,17 @@ for (const listItem of permissionsList.children) {
     listItem.expandIcon = listItem.querySelector('.dropdown-icon')
     listItem.subList = listItem.children[1]
     listItem.children[0].onclick = () => {
-        listItem.expandIcon.classList.toggle('mdi-rotate-180')
+        listItem.expandIcon.classList.toggle('rot-180')
         listItem.subList.classList.toggle('collapsed')
 
-        const collapsedListIcon = permissionsList.querySelector('.dropdown-icon:not(.mdi-rotate-180)')
+        const collapsedListIcon = permissionsList.querySelector('.dropdown-icon:not(.rot-180)')
         if (!collapsedListIcon) {
-            permissionsHeader.expandIcon.classList.add('mdi-rotate-180')
+            permissionsHeader.expandIcon.classList.add('rot-180')
         }
 
-        const notCollapsedListIcon = permissionsList.querySelector('.dropdown-icon.mdi-rotate-180')
+        const notCollapsedListIcon = permissionsList.querySelector('.dropdown-icon.rot-180')
         if (!notCollapsedListIcon) {
-            permissionsHeader.expandIcon.classList.remove('mdi-rotate-180')
+            permissionsHeader.expandIcon.classList.remove('rot-180')
         }
     }
     for (const subListItem of listItem.subList.children) {
@@ -304,10 +302,10 @@ const permissionsHeader = document.getElementById('permissionsHeader')
 permissionsHeader.expandIcon = permissionsHeader.querySelector('.dropdown-icon')
 permissionsHeader.onclick = () => {
     for (const listItem of permissionsList.children) {
-        listItem.expandIcon.classList.toggle('mdi-rotate-180', !permissionsHeader.expandIcon.classList.contains('mdi-rotate-180'))
-        listItem.subList.classList.toggle('collapsed', permissionsHeader.expandIcon.classList.contains('mdi-rotate-180'))
+        listItem.expandIcon.classList.toggle('rot-180', !permissionsHeader.expandIcon.classList.contains('rot-180'))
+        listItem.subList.classList.toggle('collapsed', permissionsHeader.expandIcon.classList.contains('rot-180'))
     }
-    permissionsHeader.expandIcon.classList.toggle('mdi-rotate-180')
+    permissionsHeader.expandIcon.classList.toggle('rot-180')
 }
 
 let stopSelectedUserPermissionsQuery = () => { }
@@ -345,15 +343,13 @@ function setListOverlayState(overlay, state) {
         case 'loading':
             overlay.classList.remove('hide')
             overlay.classList.remove('show-headers')
-            overlay.icon.classList.add('mdi-loading', 'mdi-spin')
-            overlay.icon.classList.remove('mdi-emoticon-sad-outline', 'mdi-archive-arrow-up-outline')
+            overlay.icon[0].setAttribute('data-icon', 'eos-icons:loading')
             overlay.text.hidden = true
             break
         case 'empty':
             overlay.classList.remove('hide')
             overlay.classList.remove('show-headers')
-            overlay.icon.classList.add('mdi-emoticon-sad-outline')
-            overlay.icon.classList.remove('mdi-loading', 'mdi-spin', 'mdi-archive-arrow-up-outline')
+            overlay.icon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             overlay.text.hidden = false
             overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
             break

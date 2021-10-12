@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicline</title>
+    <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -17,29 +17,29 @@
             <li class="modal-footer list-group-flush list-group-item sticky-top">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="create" disabled>
                     <div class="mdc-button__ripple"></div>
-                    <i class="mdi mdc-button__icon mdi-plus"></i>
+                    <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                     <span class="mdc-button__label" translate>NEW#USER</span>
                 </button>
             </li>
             <ul id="usersList" class="list-group list-group-flush overflow-auto"></ul>
             <div class="overlay" id="usersListOverlay">
-                <i class="mdi mdi-loading mdi-spin"></i>
+                <i class="iconify" data-icon="eos-icons:loading"></i>
                 <h3 class="my-2" hidden></h3>
             </div>
             <template id="listItemTemplate">
                 <li class="list-group-item d-flex align-items-center mdc-ripple-surface px-2">
-                    <i class="avatar me-3 mdi mdi-account-circle"></i>
+                    <i class="avatar me-3 iconify" data-icon="ic:round-account-circle"></i>
                     <span class="d-flex flex-column overflow-auto me-auto">
                         <b></b>
                         <small class="opacity-75"></small>
                     </span>
                     <button class="mdc-icon-button" id="edit" disabled>
                         <div class="mdc-icon-button__ripple"></div>
-                        <i class="mdi mdi-pencil"></i>
+                        <i class="iconify" data-icon="ic:round-edit"></i>
                     </button>
                     <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete" disabled>
                         <div class="mdc-icon-button__ripple"></div>
-                        <i class="mdi mdi-trash-can"></i>
+                        <i class="iconify" data-icon="mdi:trash-can"></i>
                     </button>
                 </li>
             </template>
@@ -47,25 +47,25 @@
         <div class="d-flex flex-column w-50">
             <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center sticky-top px-3" id="permissionsHeader">
                 <h3 class="my-1-5px user-select-none" translate>PERMISSIONS</h3>
-                <i class="dropdown-icon mdi mdi-chevron-down"></i>
+                <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush overflow-auto">
                 <li class="list-group-item p-0" id="cases">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
-                        <i class="me-3 mdi mdi-table-large"></i>
+                        <i class="me-3 iconify" data-icon="mdi:table-large"></i>
                         <b class="user-select-none me-auto" translate>CASES</b>
-                        <i class="dropdown-icon mdi mdi-chevron-down"></i>
+                        <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
-                            <i class="me-3 mdi mdi-eye"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-visibility"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
-                            <i class="me-3 mdi mdi-pencil"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-edit"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
@@ -75,20 +75,20 @@
                 </li>
                 <li class="list-group-item p-0" id="users">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
-                        <i class="me-3 mdi mdi-account-group"></i>
+                        <i class="me-3 iconify" data-icon="ic:round-groups"></i>
                         <b class="user-select-none me-auto" translate>USERS</b>
-                        <i class="dropdown-icon mdi mdi-chevron-down"></i>
+                        <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
-                            <i class="me-3 mdi mdi-eye"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-visibility"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
-                            <i class="me-3 mdi mdi-pencil"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-edit"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
@@ -98,20 +98,20 @@
                 </li>
                 <li class="list-group-item p-0" id="hotels">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
-                        <i class="me-3 mdi mdi-bed"></i>
+                        <i class="me-3 iconify" data-icon="ic:round-hotel"></i>
                         <b class="user-select-none me-auto" translate>HOTELS</b>
-                        <i class="dropdown-icon mdi mdi-chevron-down"></i>
+                        <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
-                            <i class="me-3 mdi mdi-eye"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-visibility"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
-                            <i class="me-3 mdi mdi-pencil"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-edit"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
@@ -121,20 +121,20 @@
                 </li>
                 <li class="list-group-item p-0" id="institutions">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
-                        <i class="me-3 mdi mdi-office-building"></i>
+                        <i class="me-3 iconify" data-icon="ic:round-apartment"></i>
                         <b class="user-select-none me-auto" translate>INSTITUTIONS</b>
-                        <i class="dropdown-icon mdi mdi-chevron-down"></i>
+                        <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
-                            <i class="me-3 mdi mdi-eye"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-visibility"></i>
                             <b class="user-select-none me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
-                            <i class="me-3 mdi mdi-pencil"></i>
+                            <i class="me-3 iconify" data-icon="ic:round-edit"></i>
                             <b class="user-select-none me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
@@ -149,7 +149,7 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
-                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <i class="me-3 iconify" data-icon="ic:round-help-outline"></i>
                     <div>
                         <p class="mb-0"></p>
                         <span id="foundCasesLinks"></span>
@@ -158,12 +158,12 @@
                 <div class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>

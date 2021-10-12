@@ -780,10 +780,6 @@ textarea::-webkit-scrollbar {
   --mdc-shape-medium: .5rem;
 }
 
-.iconify {
-  height: auto;
-}
-
 .mdc-card {
   max-height: 100%;
 }
@@ -857,6 +853,7 @@ textarea::-webkit-scrollbar {
 }
 
 .mdc-icon-button {
+  display: flex;
   height: auto;
   padding-top: 0;
   padding-bottom: 0;
@@ -997,10 +994,6 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 }
 
 .mdc-dialog .mdc-dialog__content>.iconify {
-  font-size: 0;
-}
-
-.mdc-dialog--open .mdc-dialog__content>.iconify {
   font-size: 2rem;
 }
 
@@ -1170,6 +1163,11 @@ form .mdc-text-field {
 }
 
 /*#endregion*/
+
+.iconify {
+  height: auto;
+  transition: transform var(--transition);
+}
 
 .avatar {
   display: flex;
