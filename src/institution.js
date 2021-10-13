@@ -20,7 +20,7 @@ let selectedInstitution
 let stopFilteredCasesQuery = () => { }
 
 const dialogDeleteInstitution = document.getElementById('dialogDeleteInstitution')
-const iconDialogDeleteInstitution = dialogDeleteInstitution.querySelector('.mdi')
+const iconDialogDeleteInstitution = dialogDeleteInstitution.getElementsByClassName('iconify')
 const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
 const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
 
@@ -45,8 +45,7 @@ function deleteInstitution() {
             foundCasesLinks.innerHTML = ''
 
             if (snapshot.docs.length > 0) {
-                iconDialogDeleteInstitution.classList.remove('mdi-help-circle-outline')
-                iconDialogDeleteInstitution.classList.add('mdi-alert')
+                iconDialogDeleteInstitution[0].setAttribute('data-icon', 'ic:round-warning')
 
                 prefix = 'CANT_DELETE#THIS_'
                 textDialogDeleteInstitution.classList.remove('mb-0')
@@ -71,8 +70,7 @@ function deleteInstitution() {
                 dialogDeleteInstitution.materialComponent.buttons[1].disabled = true
             }
             else {
-                iconDialogDeleteInstitution.classList.add('mdi-help-circle-outline')
-                iconDialogDeleteInstitution.classList.remove('mdi-alert')
+                iconDialogDeleteInstitution[0].setAttribute('data-icon', 'ic:round-help-outline')
 
                 prefix = 'ASK_DELETE#THIS_'
                 textDialogDeleteInstitution.classList.add('mb-0')
