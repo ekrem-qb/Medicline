@@ -352,9 +352,9 @@ function listCases(snap) {
                             contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
                                 option.hidden = hasSelection
                             })
-                            contextMenu.style.left = (mouseEvent.clientX + 2) + 'px'
-                            contextMenu.style.top = (mouseEvent.clientY + 2) + 'px'
-                            contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX + 2), (mouseEvent.clientY + 2))
+                            contextMenu.style.left = (mouseEvent.clientX) + 'px'
+                            contextMenu.style.top = (mouseEvent.clientY) + 'px'
+                            contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
                             contextMenu.materialComponent.open = true
                         }
                     }

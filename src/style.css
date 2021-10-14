@@ -1172,7 +1172,7 @@ form .mdc-text-field {
   color: var(--mdc-theme-primary, #6200ee);
 }
 
-.mdc-select--activated .mdc-select__dropdown-icon::before {
+.mdc-select--activated .mdc-select__dropdown-icon {
   transform: rotate(180deg);
 }
 

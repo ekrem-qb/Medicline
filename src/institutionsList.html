@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicline</title>
+    <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../node_modules/@mdi/font/css/materialdesignicons.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,7 +14,7 @@
 <body class="mdc-typography d-flex flex-column p-3">
     <div class="mdc-card mdc-elevation--z6 ">
         <div class="overlay" id="tableOverlay">
-            <i class="mdi mdi-loading mdi-spin"></i>
+            <i class="iconify" data-icon="eos-icons:loading"></i>
             <h3 class="my-2" hidden></h3>
         </div>
         <header class="modal-header">
@@ -27,8 +27,7 @@
                     <span class="mdc-select__selected-text-container">
                         <span class="mdc-select__selected-text"></span>
                     </span>
-                    <span class="mdc-select__dropdown-icon mdi mdi-chevron-down">
-                    </span>
+                    <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                 </div>
                 <div class="mdc-select__menu mdc-menu mdc-menu-surface">
                     <ul class="mdc-deprecated-list">
@@ -43,14 +42,14 @@
             </div>
             <button class="mdc-button mdc-button--raised mdc-button--green w-50 mx-2" id="create" disabled>
                 <div class="mdc-button__ripple"></div>
-                <i class="mdi mdc-button__icon mdi-plus"></i>
+                <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                 <span class="mdc-button__label" translate>NEW#INSURANCE</span>
             </button>
             <div class="input-group input-group-sm w-50">
-                <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
+                <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                 <input type="text" class="form-control" id="search" placeholder="SEARCH">
                 <button class="btn" id="clearSearch" onclick="clearSearch()" disabled>
-                    <i class="mdi mdi-close"></i>
+                    <i class="iconify" data-icon="ic:round-close"></i>
                 </button>
             </div>
         </header>
@@ -61,7 +60,7 @@
                     <template id="headerTemplate">
                         <th class="mdc-ripple-surface">
                             <label></label>
-                            <i class="mdi mdi-unfold-more-horizontal"></i>
+                            <i class="iconify" data-icon="ic:round-unfold-more"></i>
                         </th>
                     </template>
                 </thead>
@@ -71,7 +70,7 @@
         <div class="modal-footer flex-column">
             <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
                 <div class="mdc-button__ripple"></div>
-                <i class="mdi mdc-button__icon mdi-microsoft-excel"></i>
+                <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
                 <span class="mdc-button__label" translate>EXPORT</span>
             </button>
         </div>
@@ -79,18 +78,18 @@
     <div class="mdc-menu mdc-menu-surface" id="contextMenu">
         <ul class="mdc-list">
             <li class="mdc-list-item" id="copy" hidden>
-                <i class="mdi mdi-content-copy"></i>
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-content-copy"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>COPY</span>
             </li>
             <li class="mdc-list-item" id="edit">
-                <i class="mdi mdi-pencil"></i>
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-edit"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>EDIT</span>
             </li>
             <li class="mdc-list-divider">
             <li class="mdc-list-item" id="delete" disabled>
-                <i class="mdi mdi-trash-can"></i>
+                <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>DELETE</span>
             </li>
@@ -100,7 +99,7 @@
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
-                    <i class="mdi mdi-help-circle-outline me-3"></i>
+                    <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <div>
                         <p class="mb-0"></p>
                         <span id="foundCasesLinks"></span>
@@ -109,12 +108,12 @@
                 <div class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-close"></i>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
                         <div class="mdc-button__ripple"></div>
-                        <i class="mdi mdc-button__icon mdi-trash-can"></i>
+                        <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
                 </div>
