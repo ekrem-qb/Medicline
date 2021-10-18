@@ -10,10 +10,10 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 })
 const formEditCase = document.querySelector('form#editCase')
 const currentCaseID = document.getElementById('currentCaseID')
-const currentCaseIDIcon = currentCaseID.parentElement.querySelector(".iconify")
+const currentCaseIDIcon = currentCaseID.parentElement.getElementsByClassName('iconify')
 currentCaseID.parentElement.onclick = () => {
     navigator.clipboard.writeText(currentCaseID.innerText)
-    alert('"' + currentCaseID.innerText + '"' + translate("COPIED"))
+    alert('"' + currentCaseID.innerText + '"' + translate('COPIED'))
 }
 
 const actionButtonsPanel = document.getElementById('actionButtonsPanel')
@@ -26,10 +26,10 @@ let stopIDSearch = () => { }
 
 function checkCaseID() {
     if (currentCase == undefined) {
-        currentCaseIDIcon.setAttribute('data-icon', 'eos-icons:loading')
+        currentCaseIDIcon[0].setAttribute('data-icon', 'eos-icons:loading')
     }
     else {
-        currentCaseIDIcon.setAttribute('data-icon', 'ic:round-numbers')
+        currentCaseIDIcon[0].setAttribute('data-icon', 'ic:round-numbers')
     }
     currentCaseID.parentElement.disabled = currentCase == undefined
     buttonSave.disabled = currentCase == undefined

@@ -285,7 +285,7 @@ function listInstitutions(snap) {
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
                         if (mouseEvent.button == 2) {
-                            contextMenu.materialComponent.open = false
+                            tableRowContextMenu.materialComponent.open = false
                         }
                         if (selectedInstitutionRow) {
                             selectedInstitutionRow.classList.remove('selected')
@@ -301,13 +301,13 @@ function listInstitutions(snap) {
 
                     if (hasSelection || mouseEvent.button == 2) {
                         copyOption.hidden = !hasSelection
-                        contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+                        tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
                             option.hidden = hasSelection
                         })
-                        contextMenu.style.left = (mouseEvent.clientX) + 'px'
-                        contextMenu.style.top = (mouseEvent.clientY) + 'px'
-                        contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                        contextMenu.materialComponent.open = true
+                        tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
+                        tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
+                        tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                        tableRowContextMenu.materialComponent.open = true
                     }
                 }
                 if (tr.id == selectedInstitutionID) {
@@ -445,14 +445,14 @@ ipcRenderer.on('file-save', (event, filePath) => {
 
 let stopFilteredCasesQuery = () => { }
 
-const contextMenu = document.getElementById('contextMenu')
-const copyOption = contextMenu.children[0].children['copy']
+const tableRowContextMenu = document.getElementById('tableRowContextMenu')
+const copyOption = tableRowContextMenu.children[0].children['copy']
 copyOption.onclick = copySelectionToClipboard
-const editOption = contextMenu.children[0].children['edit']
+const editOption = tableRowContextMenu.children[0].children['edit']
 editOption.icon = editOption.getElementsByClassName('iconify')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
 editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
-const deleteOption = contextMenu.children[0].children['delete']
+const deleteOption = tableRowContextMenu.children[0].children['delete']
 deleteOption.onclick = () => {
     const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))
 
@@ -536,6 +536,6 @@ function copySelectionToClipboard() {
     const selectedText = getSelectedText()
     if (selectedText != '') {
         navigator.clipboard.writeText(selectedText)
-        alert('"' + selectedText + '"' + translate("COPIED"))
+        alert('"' + selectedText + '"' + translate('COPIED'))
     }
 }

@@ -375,7 +375,7 @@
         <div class="tab-page bg-warning">
         </div>
     </div>
-    <div class="mdc-menu mdc-menu-surface" id="contextMenu">
+    <div class="mdc-menu mdc-menu-surface" id="tableRowContextMenu">
         <ul class="mdc-list">
             <li class="mdc-list-item" id="copy" hidden>
                 <i class="mdc-list-item__graphic iconify" data-icon="ic:round-content-copy"></i>
@@ -443,6 +443,15 @@
                 <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+            </li>
+        </ul>
+    </div>
+    <div class="mdc-menu mdc-menu-surface" id="tableHeaderContextMenu">
+        <ul class="mdc-list">
+            <li class="mdc-list-item" id="hide">
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-close"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>HIDE_COLUMN</span>
             </li>
         </ul>
     </div>

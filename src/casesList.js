@@ -10,6 +10,7 @@ const columnsJSON = require('./caseColumns.json')
 const tableColumnsList = casesTable.querySelector('#tableColumnsList')
 const hiddenTableColumnsList = document.getElementById('hiddenTableColumnsList')
 const headerTemplate = document.getElementById('headerTemplate')
+let selectedHeader
 
 function newHeader(headerID) {
     const th = headerTemplate.content.firstElementChild.cloneNode(true)
@@ -17,19 +18,33 @@ function newHeader(headerID) {
     th.id = headerID
 
     th.onmousedown = mouseEvent => {
-        if (mouseEvent.button == 0) {
-            if (th.parentElement != tableColumnsList) {
+        if (th.parentElement != tableColumnsList) {
+            if (mouseEvent.button == 0) {
                 setTableOverlayState('drag')
             }
         }
+        else {
+            if (mouseEvent.button == 2) {
+                tableHeaderContextMenu.materialComponent.open = false
+                selectedHeader = th
+            }
+        }
     }
-    th.onmouseup = () => {
+    th.onmouseup = mouseEvent => {
         if (th.parentElement != tableColumnsList) {
             if (casesList.childElementCount > 0) {
                 setTableOverlayState('hide')
             }
             else {
                 setTableOverlayState('empty')
+            }
+        }
+        else {
+            if (mouseEvent.button == 2) {
+                tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
+                tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
+                tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                tableHeaderContextMenu.materialComponent.open = true
             }
         }
     }
@@ -120,7 +135,7 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
-    contextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
+    tableRowContextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
         option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
     })
     if (editIsAllowed) {
@@ -333,7 +348,7 @@ function listCases(snap) {
                     tr.onmousedown = mouseEvent => {
                         if (mouseEvent.button != 1) {
                             if (mouseEvent.button == 2) {
-                                contextMenu.materialComponent.open = false
+                                tableRowContextMenu.materialComponent.open = false
                             }
                             if (selectedCaseRow) {
                                 selectedCaseRow.classList.remove('selected')
@@ -349,13 +364,13 @@ function listCases(snap) {
 
                         if (hasSelection || mouseEvent.button == 2) {
                             copyOption.hidden = !hasSelection
-                            contextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+                            tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
                                 option.hidden = hasSelection
                             })
-                            contextMenu.style.left = (mouseEvent.clientX) + 'px'
-                            contextMenu.style.top = (mouseEvent.clientY) + 'px'
-                            contextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                            contextMenu.materialComponent.open = true
+                            tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
+                            tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
+                            tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                            tableRowContextMenu.materialComponent.open = true
                         }
                     }
                     if (tr.id == selectedCaseID) {
@@ -727,14 +742,14 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     }
 })
 
-const contextMenu = document.getElementById('contextMenu')
-const copyOption = contextMenu.children[0].children['copy']
+const tableRowContextMenu = document.getElementById('tableRowContextMenu')
+const copyOption = tableRowContextMenu.children[0].children['copy']
 copyOption.onclick = copySelectionToClipboard
-const editOption = contextMenu.children[0].children['edit']
+const editOption = tableRowContextMenu.children[0].children['edit']
 editOption.icon = editOption.getElementsByClassName('iconify')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
 editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
-const deleteOption = contextMenu.children[0].children['delete']
+const deleteOption = tableRowContextMenu.children[0].children['delete']
 deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 
 const { writeFile, utils } = require('xlsx')
@@ -761,5 +776,22 @@ function copySelectionToClipboard() {
     if (selectedText != '') {
         navigator.clipboard.writeText(selectedText)
         alert('"' + selectedText + '"' + translate('COPIED'))
+    }
+}
+
+const tableHeaderContextMenu = document.getElementById('tableHeaderContextMenu')
+const hideOption = tableHeaderContextMenu.children[0].children['hide']
+hideOption.onclick = () => {
+    if (selectedHeader) {
+        tableColumnsList.removeChild(selectedHeader)
+        hiddenTableColumnsList.insertBefore(selectedHeader, hiddenTableColumnsList.children[0])
+        selectedHeader = undefined
+
+        listCases(currentCasesSnap)
+        let enabledColumns = []
+        for (let column of tableColumnsList.children) {
+            enabledColumns.push(column.id)
+        }
+        localStorage.setItem('enabledColumns', enabledColumns)
     }
 }

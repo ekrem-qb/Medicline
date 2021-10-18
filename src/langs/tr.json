@@ -88,5 +88,6 @@
     "ADD": "Ekle",
     "PERMISSIONS": "İzinler",
     "CAN_EDIT": "Düzenleme",
-    "CAN_VIEW": "Görüntüleme"
+    "CAN_VIEW": "Görüntüleme",
+    "HIDE_COLUMN": "Sütünü Gizle"
 }
