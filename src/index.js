@@ -69,13 +69,11 @@ const buttonSignIn = dialogLogin.querySelector('button#signIn')
 const iconSignIn = buttonSignIn.getElementsByClassName('iconify')
 
 function signIn() {
-    const signInIconClass = iconSignIn.classList.item(iconSignIn.classList.length - 1)
-    iconSignIn.classList.remove(signInIconClass)
     iconSignIn[0].setAttribute('data-icon', 'eos-icons:loading')
 
     firebase.auth().signInWithEmailAndPassword(inputUsername.materialComponent.value + emailSuffix, inputPassword.materialComponent.value)
         .then(() => {
-            iconSignIn.classList.add(signInIconClass)
+            iconSignIn[0].setAttribute('data-icon', 'ic:round-login')
             inputUsername.materialComponent.value = ''
             inputPassword.materialComponent.value = ''
             if (inputPassword.type != 'password') {
@@ -83,7 +81,7 @@ function signIn() {
             }
         }).catch(error => {
             if (error != null) {
-                iconSignIn.classList.add(signInIconClass)
+                iconSignIn[0].setAttribute('data-icon', 'ic:round-login')
                 alert(error.message)
                 return
             }
