@@ -6,9 +6,64 @@ const casesTable = document.querySelector('table#cases')
 const casesList = casesTable.querySelector('tbody#casesList')
 let currentOrder, currentOrderDirection
 
+const tableHeaderContextMenu = document.getElementById('tableHeaderContextMenu')
+const addOption = tableHeaderContextMenu.children[0].children['add']
+addOption.onclick = () => {
+    hiddenHeadersMenu.style.left = (tableHeaderContextMenu.offsetLeft) + 'px'
+    hiddenHeadersMenu.style.top = (tableHeaderContextMenu.offsetTop) + 'px'
+    hiddenHeadersMenu.materialComponent.setAbsolutePosition(tableHeaderContextMenu.offsetLeft, tableHeaderContextMenu.offsetTop)
+    hiddenHeadersMenu.materialComponent.open = true
+}
+const hideOption = tableHeaderContextMenu.children[0].children['hide']
+hideOption.onclick = () => {
+    if (selectedHeader) {
+        addHiddenHeaderOption(selectedHeader.id)
+
+        tableHeadersList.removeChild(selectedHeader)
+        selectedHeader = undefined
+
+        listCases(currentCasesSnap)
+        let enabledColumns = []
+        for (const header of tableHeadersList.children) {
+            enabledColumns.push(header.id)
+        }
+        localStorage.setItem('enabledColumns', enabledColumns)
+    }
+}
+
+const hiddenHeadersMenu = document.getElementById('hiddenHeadersMenu')
+const hiddenHeadersList = hiddenHeadersMenu.children[0]
+const hiddenHeaderOptionTemplate = hiddenHeadersMenu.children['hiddenHeaderOptionTemplate']
+
+function addHiddenHeaderOption(headerID) {
+    const option = hiddenHeaderOptionTemplate.content.firstElementChild.cloneNode(true)
+    new MDCRipple(option.children[0])
+    option.id = headerID
+
+    option.onclick = () => {
+        if (selectedHeader) {
+            option.remove()
+            tableHeadersList.insertBefore(newHeader(headerID), selectedHeader)
+        }
+
+        listCases(currentCasesSnap)
+        let enabledColumns = []
+        for (const header of tableHeadersList.children) {
+            enabledColumns.push(header.id)
+        }
+        localStorage.setItem('enabledColumns', enabledColumns)
+
+        hiddenHeadersMenu.materialComponent.open = false
+    }
+
+    const label = option.children[1]
+    label.textContent = translate(columnsJSON[headerID])
+
+    hiddenHeadersList.appendChild(option)
+}
+
 const columnsJSON = require('./caseColumns.json')
-const tableColumnsList = casesTable.querySelector('#tableColumnsList')
-const hiddenTableColumnsList = document.getElementById('hiddenTableColumnsList')
+const tableHeadersList = casesTable.querySelector('#tableHeadersList')
 const headerTemplate = document.getElementById('headerTemplate')
 let selectedHeader
 
@@ -18,41 +73,24 @@ function newHeader(headerID) {
     th.id = headerID
 
     th.onmousedown = mouseEvent => {
-        if (th.parentElement != tableColumnsList) {
-            if (mouseEvent.button == 0) {
-                setTableOverlayState('drag')
-            }
-        }
-        else {
-            if (mouseEvent.button == 2) {
-                tableHeaderContextMenu.materialComponent.open = false
-                selectedHeader = th
-            }
+        if (mouseEvent.button == 2) {
+            tableHeaderContextMenu.materialComponent.open = false
+            tableRowContextMenu.materialComponent.open = false
+            hiddenHeadersMenu.materialComponent.open = false
+            selectedHeader = th
+            addOption.classList.toggle('mdc-list-item--disabled', hiddenHeadersList.childElementCount == 0)
+            hideOption.classList.toggle('mdc-list-item--disabled', tableHeadersList.childElementCount < 2)
         }
     }
     th.onmouseup = mouseEvent => {
-        if (th.parentElement != tableColumnsList) {
-            if (casesList.childElementCount > 0) {
-                setTableOverlayState('hide')
-            }
-            else {
-                setTableOverlayState('empty')
-            }
-        }
-        else {
-            if (mouseEvent.button == 2) {
-                tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                tableHeaderContextMenu.materialComponent.open = true
-            }
+        if (mouseEvent.button == 2) {
+            tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
+            tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
+            tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+            tableHeaderContextMenu.materialComponent.open = true
         }
     }
-    th.onclick = () => {
-        if (th.parentElement != hiddenTableColumnsList) {
-            headerClick(headerID)
-        }
-    }
+    th.onclick = () => headerClick(headerID)
 
     const label = th.querySelector('label')
     label.textContent = translate(columnsJSON[headerID])
@@ -75,19 +113,19 @@ function loadColumns() {
     enabledColumns.forEach(
         column => {
             if (columnsJSON.hasOwnProperty(column)) {
-                tableColumnsList.appendChild(newHeader(column))
+                tableHeadersList.appendChild(newHeader(column))
             }
         })
-    for (let column in columnsJSON) {
+    for (const column in columnsJSON) {
         if (!enabledColumns.includes(column)) {
-            hiddenTableColumnsList.appendChild(newHeader(column))
+            addHiddenHeaderOption(column)
         }
     }
-    if (tableColumnsList.children['__name__']) {
+    if (tableHeadersList.children['__name__']) {
         headerClick('__name__')
     }
     else {
-        headerClick(tableColumnsList.firstChild.id)
+        headerClick(tableHeadersList.firstChild.id)
     }
 }
 
@@ -238,15 +276,9 @@ function clearSearch() {
 }
 
 function headerClick(headerID) {
-    const clickedHeader = tableColumnsList.children[headerID]
+    const clickedHeader = tableHeadersList.children[headerID]
     if (clickedHeader) {
-        tableColumnsList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
-            if (otherHeaderIcon.parentElement != clickedHeader) {
-                otherHeaderIcon.classList.remove('rot-180')
-                otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
-            }
-        })
-        hiddenTableColumnsList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
+        tableHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('rot-180')
                 otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
@@ -348,7 +380,9 @@ function listCases(snap) {
                     tr.onmousedown = mouseEvent => {
                         if (mouseEvent.button != 1) {
                             if (mouseEvent.button == 2) {
+                                tableHeaderContextMenu.materialComponent.open = false
                                 tableRowContextMenu.materialComponent.open = false
+                                hiddenHeadersMenu.materialComponent.open = false
                             }
                             if (selectedCaseRow) {
                                 selectedCaseRow.classList.remove('selected')
@@ -380,7 +414,7 @@ function listCases(snap) {
                     }
                     casesList.appendChild(tr)
 
-                    for (const column of tableColumnsList.children) {
+                    for (const column of tableHeadersList.children) {
                         const td = document.createElement('td')
                         td.id = column.id
                         tr.appendChild(td)
@@ -446,7 +480,7 @@ function listCases(snap) {
 }
 
 function orderCases(orderBy, orderDirection) {
-    if (tableColumnsList.children[orderBy]) {
+    if (tableHeadersList.children[orderBy]) {
         let switching, i, shouldSwitch
         do {
             switching = false
@@ -480,11 +514,11 @@ function orderCases(orderBy, orderDirection) {
         currentOrderDirection = orderDirection
     }
     else {
-        if (tableColumnsList.children['createTime']) {
-            headerClick('createTime')
+        if (tableHeadersList.children['__name__']) {
+            headerClick('__name__')
         }
         else {
-            headerClick(tableColumnsList.firstChild.id)
+            headerClick(tableHeadersList.firstChild.id)
         }
     }
 }
@@ -576,31 +610,17 @@ function modalExpand(header) {
     const currentModalBody = header.nextElementSibling
     const currentExpandIcon = header.querySelector('.dropdown-icon')
 
-    let otherModalBody
-    header.parentElement.parentElement.querySelectorAll('.modal-body').forEach(modalBody => {
-        if (modalBody != currentModalBody) {
-            otherModalBody = modalBody
-        }
-    })
+    currentExpandIcon.classList.toggle('rot-180', currentModalBody.classList.contains('collapsed'))
+    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
+    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
 
     if (header.id == 'documents') {
         header.classList.toggle('hide')
         header.previousElementSibling.classList.toggle('hide')
     }
-
-    if (otherModalBody) {
-        const otherExpandIcon = otherModalBody.parentElement.querySelector('.dropdown-icon')
-
-        if (currentModalBody.classList.contains('collapsed')) {
-            otherModalBody.classList.add('collapsed')
-            otherExpandIcon.classList.remove('rot-180')
-        }
+    else {
+        hideEmptyFilters()
     }
-
-    currentExpandIcon.classList.toggle('rot-180', currentModalBody.classList.contains('collapsed'))
-    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
-    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
-    hideEmptyFilters()
 }
 
 const headerDocuments = document.querySelector('header#documents')
@@ -776,22 +796,5 @@ function copySelectionToClipboard() {
     if (selectedText != '') {
         navigator.clipboard.writeText(selectedText)
         alert('"' + selectedText + '"' + translate('COPIED'))
-    }
-}
-
-const tableHeaderContextMenu = document.getElementById('tableHeaderContextMenu')
-const hideOption = tableHeaderContextMenu.children[0].children['hide']
-hideOption.onclick = () => {
-    if (selectedHeader) {
-        tableColumnsList.removeChild(selectedHeader)
-        hiddenTableColumnsList.insertBefore(selectedHeader, hiddenTableColumnsList.children[0])
-        selectedHeader = undefined
-
-        listCases(currentCasesSnap)
-        let enabledColumns = []
-        for (let column of tableColumnsList.children) {
-            enabledColumns.push(column.id)
-        }
-        localStorage.setItem('enabledColumns', enabledColumns)
     }
 }

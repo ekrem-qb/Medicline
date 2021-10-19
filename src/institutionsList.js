@@ -7,7 +7,7 @@ const institutionsList = institutionsTable.querySelector('tbody#institutionsList
 let currentOrder, currentOrderDirection
 
 const columnsJSON = require('./institutionColumns.json')
-const tableColumnsList = institutionsTable.querySelector('#tableColumnsList')
+const tableHeadersList = institutionsTable.querySelector('#tableHeadersList')
 const headerTemplate = document.getElementById('headerTemplate')
 
 function newHeader(headerID) {
@@ -17,13 +17,13 @@ function newHeader(headerID) {
 
     th.onmousedown = mouseEvent => {
         if (mouseEvent.button == 0) {
-            if (th.parentElement != tableColumnsList) {
+            if (th.parentElement != tableHeadersList) {
                 setTableOverlayState('drag')
             }
         }
     }
     th.onmouseup = () => {
-        if (th.parentElement != tableColumnsList) {
+        if (th.parentElement != tableHeadersList) {
             if (institutionsList.childElementCount > 0) {
                 setTableOverlayState('hide')
             }
@@ -51,17 +51,17 @@ function loadColumns() {
     if (localStorage.getItem('institutionColumns') != null) {
         columns = localStorage.getItem('institutionColumns').split(',')
     }
-    columns.forEach(headerID => tableColumnsList.appendChild(newHeader(headerID)))
+    columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
 
-    if (tableColumnsList.children['name']) {
+    if (tableHeadersList.children['name']) {
         headerClick('name')
         headerClick('name')
     }
     else {
-        headerClick(tableColumnsList.firstChild.id)
+        headerClick(tableHeadersList.firstChild.id)
     }
 
-    Sortable.create(tableColumnsList, {
+    Sortable.create(tableHeadersList, {
         animation: 150,
         easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         onStart: () => setTableOverlayState('drag'),
@@ -74,8 +74,8 @@ function loadColumns() {
             }
             listInstitutions(currentInstitutionsSnap)
             let institutionColumns = []
-            for (let column of tableColumnsList.children) {
-                institutionColumns.push(column.id)
+            for (const header of tableHeadersList.children) {
+                institutionColumns.push(header.id)
             }
             localStorage.setItem('institutionColumns', institutionColumns)
         }
@@ -223,9 +223,9 @@ function clearSearch() {
 }
 
 function headerClick(headerID) {
-    const clickedHeader = tableColumnsList.querySelector('th#' + headerID)
+    const clickedHeader = tableHeadersList.querySelector('th#' + headerID)
     if (clickedHeader) {
-        tableColumnsList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
+        tableHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
             if (otherHeaderIcon.parentElement != clickedHeader) {
                 otherHeaderIcon.classList.remove('rot-180')
                 otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
@@ -317,7 +317,7 @@ function listInstitutions(snap) {
                 }
                 institutionsList.appendChild(tr)
 
-                for (const column of tableColumnsList.children) {
+                for (const column of tableHeadersList.children) {
                     const td = document.createElement('td')
                     td.id = column.id
                     tr.appendChild(td)

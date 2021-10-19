@@ -1,6 +1,6 @@
 const Sortable = require('sortablejs')
 
-const properties = {
+Sortable.create(tableHeadersList, {
     group: 'TableColumns',
     animation: 150,
     easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -12,17 +12,13 @@ const properties = {
         else {
             setTableOverlayState('empty')
         }
+    },
+    onSort: () => {
+        listCases(currentCasesSnap)
+        let enabledColumns = []
+        for (const header of tableHeadersList.children) {
+            enabledColumns.push(header.id)
+        }
+        localStorage.setItem('enabledColumns', enabledColumns)
     }
-}
-
-Sortable.create(hiddenTableColumnsList, properties)
-
-properties.onSort = () => {
-    listCases(currentCasesSnap)
-    let enabledColumns = []
-    for (let column of tableColumnsList.children) {
-        enabledColumns.push(column.id)
-    }
-    localStorage.setItem('enabledColumns', enabledColumns)
-}
-Sortable.create(tableColumnsList, properties)
+})

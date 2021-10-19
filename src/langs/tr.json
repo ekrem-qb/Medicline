@@ -14,7 +14,6 @@
     "SEARCH": "Arama",
     "CREATE": "YENİ",
     "EXPORT": "Excel'e Aktar",
-    "HIDDEN_COLUMNS": "Gizli Sütunlar",
     "FILTER": "Filtre",
     "APPLY": "Uygula",
     "CLEAR": "Temizle",
@@ -89,5 +88,6 @@
     "PERMISSIONS": "İzinler",
     "CAN_EDIT": "Düzenleme",
     "CAN_VIEW": "Görüntüleme",
+    "ADD_COLUMN": "Sütün Ekle",
     "HIDE_COLUMN": "Sütünü Gizle"
 }

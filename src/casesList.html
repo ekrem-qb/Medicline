@@ -17,16 +17,6 @@
         <div class="px-2 py-3" id="toolsPanel">
             <div class="mdc-card mdc-elevation--z6">
                 <header class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
-                    <i class="iconify me-3" data-icon="ic:round-visibility-off"></i>
-                    <h5 class="modal-title" translate>HIDDEN_COLUMNS</h5>
-                    <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
-                </header>
-                <div class="modal-body collapsed">
-                    <table class="list-group list-group-flush mdc-elevation--z3" id="hiddenTableColumnsList"></table>
-                </div>
-            </div>
-            <div class="mdc-card mdc-elevation--z6">
-                <header class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
                     <i class="iconify me-3" data-icon="ic:round-filter-alt"></i>
                     <h5 class="modal-title" translate>FILTER</h5>
                     <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -303,7 +293,7 @@
                 <div class="table-responsive">
                     <table class="table table-borderless" id="cases">
                         <thead>
-                            <tr id="tableColumnsList"></tr>
+                            <tr id="tableHeadersList"></tr>
                             <template id="headerTemplate">
                                 <th class="mdc-ripple-surface">
                                     <label></label>
@@ -448,12 +438,28 @@
     </div>
     <div class="mdc-menu mdc-menu-surface" id="tableHeaderContextMenu">
         <ul class="mdc-list">
+            <li class="mdc-list-item" id="add">
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-plus"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>ADD_COLUMN</span>
+            </li>
+            <li class="mdc-list-divider">
             <li class="mdc-list-item" id="hide">
                 <i class="mdc-list-item__graphic iconify" data-icon="ic:round-close"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>HIDE_COLUMN</span>
             </li>
         </ul>
+    </div>
+    <div class="mdc-menu mdc-menu-surface" id="hiddenHeadersMenu">
+        <ul class="mdc-list">
+        </ul>
+        <template id="hiddenHeaderOptionTemplate">
+            <li class="mdc-list-item">
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2"></span>
+            </li>
+        </template>
     </div>
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteCase">
         <div class="mdc-dialog__container">

@@ -13,7 +13,6 @@
     "PASSWORD_VALID": "Password must be at least 6 characters",
     "SEARCH": "Search",
     "EXPORT": "Export to Excel",
-    "HIDDEN_COLUMNS": "Hidden Columns",
     "FILTER": "Filter",
     "APPLY": "Apply",
     "CLEAR": "Clear",
@@ -88,5 +87,6 @@
     "PERMISSIONS": "Permissions",
     "CAN_EDIT": "Edit",
     "CAN_VIEW": "View",
+    "ADD_COLUMN": "Add Column",
     "HIDE_COLUMN": "Hide Column"
 }

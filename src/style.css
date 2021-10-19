@@ -423,7 +423,7 @@ th>label {
   min-height: auto;
 }
 
-#tableColumnsList {
+#tableHeadersList {
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, .5));
 }
 
@@ -471,10 +471,6 @@ th>label {
   transition: none;
 }
 
-#toolsPanel>.mdc-card:first-child {
-  margin-bottom: 1rem;
-}
-
 .mdc-list-item>.iconify,
 .modal-header>.iconify {
   font-size: 1.25rem;
@@ -489,7 +485,6 @@ th>label {
 }
 
 .modal-body {
-  max-height: 60vh;
   overflow: auto;
   transition: var(--transition);
   will-change: contents;
@@ -1051,7 +1046,6 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 }
 
 .mdc-menu-surface {
-  transition: var(--transition);
   width: max-content;
 }
 
@@ -1075,7 +1069,12 @@ th .iconify[data-icon="ic:round-unfold-more"] {
   cursor: pointer;
 }
 
-.mdc-list-item>.iconify[data-icon="mdi:trash-can"] {
+.mdc-list-item>.iconify[data-icon="ic:round-plus"] {
+  color: var(--bs-green);
+}
+
+.mdc-list-item>.iconify[data-icon="mdi:trash-can"],
+.mdc-list-item>.iconify[data-icon="ic:round-close"] {
   color: var(--bs-red);
 }
 
