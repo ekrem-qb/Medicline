@@ -74,9 +74,6 @@ function newHeader(headerID) {
 
     th.onmousedown = mouseEvent => {
         if (mouseEvent.button == 2) {
-            tableHeaderContextMenu.materialComponent.open = false
-            tableRowContextMenu.materialComponent.open = false
-            hiddenHeadersMenu.materialComponent.open = false
             selectedHeader = th
             addOption.classList.toggle('mdc-list-item--disabled', hiddenHeadersList.childElementCount == 0)
             hideOption.classList.toggle('mdc-list-item--disabled', tableHeadersList.childElementCount < 2)
@@ -379,11 +376,6 @@ function listCases(snap) {
                     }
                     tr.onmousedown = mouseEvent => {
                         if (mouseEvent.button != 1) {
-                            if (mouseEvent.button == 2) {
-                                tableHeaderContextMenu.materialComponent.open = false
-                                tableRowContextMenu.materialComponent.open = false
-                                hiddenHeadersMenu.materialComponent.open = false
-                            }
                             if (selectedCaseRow) {
                                 selectedCaseRow.classList.remove('selected')
                             }

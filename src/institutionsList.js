@@ -284,9 +284,6 @@ function listInstitutions(snap) {
                 }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (mouseEvent.button == 2) {
-                            tableRowContextMenu.materialComponent.open = false
-                        }
                         if (selectedInstitutionRow) {
                             selectedInstitutionRow.classList.remove('selected')
                         }

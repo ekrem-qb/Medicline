@@ -526,8 +526,7 @@ label {
 }
 
 .modal-body.collapsed:not(#filter) {
-  max-height: 0vh;
-  padding: 0 !important;
+  height: 0 !important;
   opacity: 0;
 }
 
