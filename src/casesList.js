@@ -20,14 +20,9 @@ hideOption.onclick = () => {
         addHiddenHeaderOption(selectedHeader.id)
 
         tableHeadersList.removeChild(selectedHeader)
-        selectedHeader = undefined
+        refreshAndSaveColumns()
 
-        listCases(currentCasesSnap)
-        let enabledColumns = []
-        for (const header of tableHeadersList.children) {
-            enabledColumns.push(header.id)
-        }
-        localStorage.setItem('enabledColumns', enabledColumns)
+        selectedHeader = undefined
     }
 }
 
@@ -45,13 +40,7 @@ function addHiddenHeaderOption(headerID) {
             option.remove()
             tableHeadersList.insertBefore(newHeader(headerID), selectedHeader)
         }
-
-        listCases(currentCasesSnap)
-        let enabledColumns = []
-        for (const header of tableHeadersList.children) {
-            enabledColumns.push(header.id)
-        }
-        localStorage.setItem('enabledColumns', enabledColumns)
+        refreshAndSaveColumns()
 
         hiddenHeadersMenu.materialComponent.open = false
     }
@@ -369,7 +358,7 @@ function listCases(snap) {
                     setTableOverlayState('hide')
                     noOneFound = false
 
-                    let tr = document.createElement('tr')
+                    const tr = document.createElement('tr')
                     tr.id = caseSnap.id
                     tr.dataset.status = caseSnap.get('status')
                     tr.ondblclick = () => {
@@ -792,4 +781,13 @@ function copySelectionToClipboard() {
         navigator.clipboard.writeText(selectedText)
         alert('"' + selectedText + '"' + translate('COPIED'))
     }
+}
+
+function refreshAndSaveColumns() {
+    listCases(currentCasesSnap)
+    let enabledColumns = []
+    for (const header of tableHeadersList.children) {
+        enabledColumns.push(header.id)
+    }
+    localStorage.setItem('enabledColumns', enabledColumns)
 }

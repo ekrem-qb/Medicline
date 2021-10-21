@@ -42,8 +42,6 @@ function newHeader(headerID) {
     return th
 }
 
-const Sortable = require('sortablejs')
-
 function loadColumns() {
     setTableOverlayState('loading')
 
@@ -60,26 +58,6 @@ function loadColumns() {
     else {
         headerClick(tableHeadersList.firstChild.id)
     }
-
-    Sortable.create(tableHeadersList, {
-        animation: 150,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        onStart: () => setTableOverlayState('drag'),
-        onEnd: () => {
-            if (institutionsList.childElementCount > 0) {
-                setTableOverlayState('hide')
-            }
-            else {
-                setTableOverlayState('empty')
-            }
-            listInstitutions(currentInstitutionsSnap)
-            let institutionColumns = []
-            for (const header of tableHeadersList.children) {
-                institutionColumns.push(header.id)
-            }
-            localStorage.setItem('institutionColumns', institutionColumns)
-        }
-    })
 }
 
 loadColumns()
@@ -538,4 +516,13 @@ function copySelectionToClipboard() {
         navigator.clipboard.writeText(selectedText)
         alert('"' + selectedText + '"' + translate('COPIED'))
     }
+}
+
+function refreshAndSaveColumns() {
+    listInstitutions(currentInstitutionsSnap)
+    let institutionColumns = []
+    for (const header of tableHeadersList.children) {
+        institutionColumns.push(header.id)
+    }
+    localStorage.setItem('institutionColumns', institutionColumns)
 }

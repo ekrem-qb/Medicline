@@ -6,19 +6,9 @@ Sortable.create(tableHeadersList, {
     easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
     onStart: () => setTableOverlayState('drag'),
     onEnd: () => {
-        if (casesList.childElementCount > 0) {
-            setTableOverlayState('hide')
-        }
-        else {
-            setTableOverlayState('empty')
-        }
+        setTableOverlayState('hide')
     },
     onSort: () => {
-        listCases(currentCasesSnap)
-        let enabledColumns = []
-        for (const header of tableHeadersList.children) {
-            enabledColumns.push(header.id)
-        }
-        localStorage.setItem('enabledColumns', enabledColumns)
+        refreshAndSaveColumns()
     }
 })
