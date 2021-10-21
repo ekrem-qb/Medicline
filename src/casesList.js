@@ -211,18 +211,21 @@ function refreshSearch() {
                 let data = String(_case.id)
                 let valuePromises = []
                 Object.values(_case.data()).forEach(value => {
-                    if (typeof value === 'object' && value !== null) {
+                    if (Array.isArray(value)) {
+                        data += ',' + value.toString().toLowerCase()
+                    }
+                    else if (typeof value === 'object' && value !== null) {
                         valuePromises.push(value.get())
                     }
                     else {
-                        data += ' -- ' + value.toString().toLowerCase()
+                        data += ',' + value.toString().toLowerCase()
                     }
                 })
                 if (valuePromises.length > 0) {
                     casePromises.push(
                         Promise.all(valuePromises).then(values => {
                             values.forEach(snaphot => {
-                                data += ' -- ' + snaphot.get('name').toString().toLowerCase()
+                                data += ',' + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
                                 foundCases.push(_case.id)
