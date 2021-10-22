@@ -220,10 +220,6 @@ th .iconify {
   min-height: 6.1rem;
 }
 
-.panel-wide {
-  max-width: 74vw;
-}
-
 tbody>tr {
   text-shadow: 0 0;
   transition: filter var(--transition);
@@ -388,16 +384,18 @@ th>label {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  user-select: none;
 }
 
 #addressList>.list-group-item b,
-#hotelsList>.list-group-item b {
+#hotelsList>.list-group-item b,
+#countriesList>.list-group-item b {
   cursor: text;
-  pointer-events: auto;
 }
 
 #addressList>.list-group-item b.disabled,
-#hotelsList>.list-group-item b.disabled {
+#hotelsList>.list-group-item b.disabled,
+#countriesList>.list-group-item b.disabled {
   pointer-events: none;
   user-select: text;
 }
@@ -741,8 +739,13 @@ textarea::-webkit-scrollbar {
 
 #country,
 #country+.ts-wrapper>.ts-control .item,
-#country-ts-dropdown .option {
+#country-ts-dropdown .option,
+#countriesList>.list-group-item span {
   font-family: TwemojiMozilla, var(--mdc-typography-font-family, Roboto, sans-serif);
+}
+
+#countriesList>.list-group-item span {
+  text-shadow: 0 0;
 }
 
 /*#endregion*/

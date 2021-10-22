@@ -46,27 +46,27 @@
         </div>
         <div class="d-flex flex-column w-50">
             <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center sticky-top px-3" id="permissionsHeader">
-                <h3 class="my-1-5px user-select-none" translate>PERMISSIONS</h3>
+                <h3 class="my-1-5px" translate>PERMISSIONS</h3>
                 <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush overflow-auto">
                 <li class="list-group-item p-0" id="cases">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="iconify me-3" data-icon="mdi:table-large"></i>
-                        <b class="user-select-none me-auto" translate>CASES</b>
+                        <b class="me-auto" translate>CASES</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
-                            <b class="user-select-none me-auto" translate>CAN_VIEW</b>
+                            <b class="me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="iconify me-3" data-icon="ic:round-edit"></i>
-                            <b class="user-select-none me-auto" translate>CAN_EDIT</b>
+                            <b class="me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
@@ -76,20 +76,20 @@
                 <li class="list-group-item p-0" id="users">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="iconify me-3" data-icon="ic:round-groups"></i>
-                        <b class="user-select-none me-auto" translate>USERS</b>
+                        <b class="me-auto" translate>USERS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
-                            <b class="user-select-none me-auto" translate>CAN_VIEW</b>
+                            <b class="me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="iconify me-3" data-icon="ic:round-edit"></i>
-                            <b class="user-select-none me-auto" translate>CAN_EDIT</b>
+                            <b class="me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
@@ -99,20 +99,43 @@
                 <li class="list-group-item p-0" id="hotels">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="iconify me-3" data-icon="ic:round-hotel"></i>
-                        <b class="user-select-none me-auto" translate>HOTELS</b>
+                        <b class="me-auto" translate>HOTELS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
-                            <b class="user-select-none me-auto" translate>CAN_VIEW</b>
+                            <b class="me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="iconify me-3" data-icon="ic:round-edit"></i>
-                            <b class="user-select-none me-auto" translate>CAN_EDIT</b>
+                            <b class="me-auto" translate>CAN_EDIT</b>
+                            <div class="form-switch">
+                                <input class="form-check-input" type="checkbox" disabled>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="list-group-item p-0" id="countries">
+                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                        <i class="iconify me-3" data-icon="ic:round-public"></i>
+                        <b class="me-auto" translate>COUNTRIES</b>
+                        <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
+                    </div>
+                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
+                            <i class="iconify me-3" data-icon="ic:round-visibility"></i>
+                            <b class="me-auto" translate>CAN_VIEW</b>
+                            <div class="form-switch">
+                                <input class="form-check-input" type="checkbox" disabled>
+                            </div>
+                        </li>
+                        <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
+                            <i class="iconify me-3" data-icon="ic:round-edit"></i>
+                            <b class="me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
@@ -122,20 +145,20 @@
                 <li class="list-group-item p-0" id="institutions">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="iconify me-3" data-icon="ic:round-apartment"></i>
-                        <b class="user-select-none me-auto" translate>INSTITUTIONS</b>
+                        <b class="me-auto" translate>INSTITUTIONS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
                     <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
-                            <b class="user-select-none me-auto" translate>CAN_VIEW</b>
+                            <b class="me-auto" translate>CAN_VIEW</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
                         </li>
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="edit">
                             <i class="iconify me-3" data-icon="ic:round-edit"></i>
-                            <b class="user-select-none me-auto" translate>CAN_EDIT</b>
+                            <b class="me-auto" translate>CAN_EDIT</b>
                             <div class="form-switch">
                                 <input class="form-check-input" type="checkbox" disabled>
                             </div>
