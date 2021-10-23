@@ -138,13 +138,17 @@ let currentRefQueries = []
 let selectedCase, selectedCaseRow, selectedCaseID
 let filters = {}
 
+formFilter.querySelector('#createDate-min').value = new Date().toLocaleDateString('tr')
+
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
         loadPermissions()
-        if (Object.entries(filters).length == 0) {
-            formFilter.querySelector('#createDate-min').value = new Date().toLocaleDateString('tr')
+        if (Object.entries(filters).length == 0 && formFilter.querySelector('#createDate-min').value == new Date().toLocaleDateString('tr')) {
             applyFilter()
             hideEmptyFilters()
+        }
+        else {
+            listCases(currentCasesSnap)
         }
     }
     else {

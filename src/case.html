@@ -21,13 +21,13 @@
             <b class="mdc-button__label" id="currentCaseID"></b>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
-        <button class="window-action mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+        <button class="button-rectangle mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
             <i class="iconify" data-icon="codicon:chrome-minimize"></i>
         </button>
-        <button class="window-action mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+        <button class="button-rectangle mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
             <i class="iconify" data-icon="codicon:chrome-maximize"></i>
         </button>
-        <button class="window-action mdc-ripple-surface window-action--red" onclick="ipcRenderer.send('window-action', 'exit')">
+        <button class="button-rectangle mdc-ripple-surface button-rectangle--red" onclick="ipcRenderer.send('window-action', 'exit')">
             <i class="iconify" data-icon="codicon:chrome-close"></i>
         </button>
     </header>

@@ -57,7 +57,7 @@ if (dialogUpdate) {
 
 //#region Window Maximize
 
-const maximizeButton = document.querySelector('.window-action#maximize')
+const maximizeButton = document.querySelector('.button-rectangle#maximize')
 if (maximizeButton) {
   const maximizeIcon = maximizeButton.getElementsByClassName('iconify')
   const dragAreas = document.querySelectorAll('.drag-area')

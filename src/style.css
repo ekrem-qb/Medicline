@@ -143,45 +143,27 @@ textarea {
   -webkit-app-region: drag;
 }
 
-.window-action {
+.button-rectangle {
   display: flex;
   align-items: center;
   padding: 0.6rem 1rem;
-  transition: var(--transition);
   background: none;
   border: 0;
 }
 
-.window-action--red:hover {
+.button-rectangle--red,
+#buttonDrawer>span {
+  transition: var(--transition);
+}
+
+.button-rectangle--red:hover {
   background-color: var(--mdc-theme-error);
   color: var(--mdc-theme-on-error);
-}
-
-.window-action svg {
-  fill: currentColor;
-}
-
-svg.maximize {
-  border: 1px solid currentColor;
-  width: 10px;
-  height: 10px;
-}
-
-svg.restore path {
-  d: path("m 2 0.00001 l 0 2 l -2 0 l 0 8 l 8 0 l 0 -2 l 2 0 l 0 -8 Z m 1 1 l 6 0 l 0 6 l -1 0 l 0 -5 l -5 0 Z m -2 2 l 6 0 l 0 6 l -6 0 Z");
 }
 
 #buttonDrawer,
 #closeDocuments {
   padding: 0.25rem 0.75rem;
-  display: flex;
-  align-items: center;
-  background: none;
-  border: 0;
-}
-
-#buttonDrawer>span {
-  transition: var(--transition);
 }
 
 #buttonDrawer .iconify,
