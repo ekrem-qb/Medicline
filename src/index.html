@@ -15,9 +15,7 @@
 <body class="mdc-typography d-flex flex-column">
     <header id="titleBar" class="d-flex mdc-elevation--z6">
         <button class="button-rectangle mdc-ripple-surface" id="buttonDrawer">
-            <span class="rot-180">
-                <i class="iconify" data-icon="ic:round-menu"></i>
-            </span>
+            <i class="iconify" data-icon="ic:round-menu"></i>
         </button>
         <div class="drag-area ms-1 mt-1"></div>
         <button class="button-rectangle mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">

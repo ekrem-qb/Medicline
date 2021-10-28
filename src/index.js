@@ -8,7 +8,6 @@ buttonDrawer.onclick = () => {
     else {
         buttonDrawerIcon[0].setAttribute('data-icon', 'ic:round-arrow-back')
     }
-    buttonDrawerIcon[0].parentElement.classList.toggle('rot-180')
     drawer.materialComponent.open = !drawer.materialComponent.open
 }
 
@@ -16,11 +15,9 @@ const drawer = document.querySelector('.mdc-drawer')
 
 drawer.materialComponent.listen('MDCDrawer:closed', () => {
     buttonDrawerIcon[0].setAttribute('data-icon', 'ic:round-menu')
-    buttonDrawerIcon[0].parentElement.classList.add('rot-180')
 })
 drawer.materialComponent.listen('MDCDrawer:opened', () => {
     buttonDrawerIcon[0].setAttribute('data-icon', 'ic:round-arrow-back')
-    buttonDrawerIcon[0].parentElement.classList.remove('rot-180')
 
     drawer.materialComponent.list.listElements[drawer.materialComponent.list.selectedIndex].focus()
 })

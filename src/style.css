@@ -151,14 +151,35 @@ textarea {
   border: 0;
 }
 
-.button-rectangle--red,
-#buttonDrawer>span {
+.button-rectangle--red {
   transition: var(--transition);
 }
 
 .button-rectangle--red:hover {
   background-color: var(--mdc-theme-error);
   color: var(--mdc-theme-on-error);
+}
+
+@keyframes rotate-in {
+  from {
+    transform: rotate(180deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+#buttonDrawer .iconify {
+  animation: rotate-in .15s cubic-bezier(0.4, 0, 0.2, 1) 1 both;
+}
+
+#buttonDrawer .iconify[data-icon="ic:round-menu"] {
+  animation-direction: reverse;
+}
+
+#buttonDrawer .iconify[data-icon="ic:round-arrow-back"] {
+  animation-direction: normal;
 }
 
 #buttonDrawer,
