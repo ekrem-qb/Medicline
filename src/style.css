@@ -424,6 +424,7 @@ th>label {
 #addressList>.list-group-item b,
 #hotelsList>.list-group-item b,
 #countriesList>.list-group-item b {
+  pointer-events: auto;
   cursor: text;
 }
 
