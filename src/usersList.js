@@ -17,6 +17,7 @@ firebase.auth().onAuthStateChanged(user => {
         stopPermissionsQuery()
         stopCurrentQuery()
         stopSelectedUserPermissionsQuery()
+        selectedUser = undefined
         stopFilteredCasesQueries()
     }
 })

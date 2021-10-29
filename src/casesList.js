@@ -595,12 +595,12 @@ for (const status of statusBar.children) {
 }
 
 function modalExpand(header) {
-    const currentModalBody = header.nextElementSibling
-    const currentExpandIcon = header.querySelector('.dropdown-icon')
+    const modalBody = header.nextElementSibling
+    const expandIcon = header.querySelector('.dropdown-icon')
 
-    currentExpandIcon.classList.toggle('rot-180', currentModalBody.classList.contains('collapsed'))
-    currentModalBody.classList.toggle('collapsed', !currentModalBody.classList.contains('collapsed'))
-    header.classList.toggle('align-items-center', currentModalBody.classList.contains('collapsed'))
+    expandIcon.classList.toggle('rot-180', modalBody.classList.contains('collapsed'))
+    modalBody.classList.toggle('collapsed', !modalBody.classList.contains('collapsed'))
+    header.classList.toggle('align-items-center', modalBody.classList.contains('collapsed'))
 
     if (header.id == 'documents') {
         header.classList.toggle('hide')

@@ -181,6 +181,7 @@ firebase.auth().onAuthStateChanged(user => {
     } else {
         stopAddressQuery()
         stopHotelQuery()
+        selectedAddress = undefined
         stopFilteredCasesQuery()
         stopPermissionsQuery()
     }

@@ -6,7 +6,6 @@ countriesList.overlay = document.getElementById('countriesListOverlay')
 countriesList.overlay.icon = countriesList.overlay.getElementsByClassName('iconify')
 countriesList.overlay.text = countriesList.overlay.querySelector('h3')
 const listItemTemplate = document.getElementById('listItemTemplate')
-let selectedCountry
 let stopCountryQuery = () => { }
 let stopFilteredCasesQuery = () => { }
 
@@ -123,9 +122,6 @@ function listItems(collection, list) {
                             }
                             break
                         case 'removed':
-                            if (selectedCountry == list.children[change.doc.ref.path]) {
-                                selectedCountry = undefined
-                            }
                             list.children[change.doc.ref.path].remove()
                             break
                     }
@@ -135,11 +131,6 @@ function listItems(collection, list) {
                 setListOverlayState(list.overlay, 'hide')
             } else {
                 setListOverlayState(list.overlay, 'empty')
-            }
-            if (!selectedCountry) {
-                if (countriesList.childElementCount > 0) {
-                    countriesList.children[0].click()
-                }
             }
             moveInlineEditToAnchor()
         },
