@@ -12,31 +12,31 @@
 </head>
 
 <body class="mdc-typography d-flex flex-column">
-    <div class="d-flex overflow-auto h-100 m-5">
-        <div class="d-flex flex-column w-50 position-relative">
-            <li class="list-group-flush list-group-item sticky-top p-2">
+    <div class="d-flex overflow-auto h-100 p-5">
+        <div class="d-flex flex-column w-50 me-2 position-relative">
+            <li class="list-group-flush list-group-item mdc-elevation--z6 sticky-top p-2">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createAddress" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                     <span class="mdc-button__label" translate>NEW#ADDRESS</span>
                 </button>
             </li>
-            <ul id="addressList" class="list-group list-group-flush overflow-auto"></ul>
-            <div class="overlay" id="addressessListOverlay">
+            <ul id="addressList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto"></ul>
+            <div class="overlay mdc-elevation--z6" id="addressessListOverlay">
                 <i class="iconify" data-icon="eos-icons:loading"></i>
                 <h3 class="my-2" hidden></h3>
             </div>
         </div>
-        <div class="d-flex flex-column w-50 position-relative">
-            <li class="list-group-flush list-group-item sticky-top p-2">
+        <div class="d-flex flex-column w-50 ms-2 position-relative">
+            <li class="list-group-flush list-group-item mdc-elevation--z6 sticky-top p-2">
                 <button class="mdc-button mdc-button--outlined mdc-button--green w-100" id="createHotel" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                     <span class="mdc-button__label" translate>NEW#HOTEL</span>
                 </button>
             </li>
-            <ul id="hotelsList" class="list-group list-group-flush overflow-auto"></ul>
-            <div class="overlay" id="hotelsListOverlay">
+            <ul id="hotelsList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto"></ul>
+            <div class="overlay mdc-elevation--z6" id="hotelsListOverlay">
                 <i class="iconify" data-icon="eos-icons:loading"></i>
                 <h3 class="my-2" hidden></h3>
             </div>

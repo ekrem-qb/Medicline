@@ -13,15 +13,15 @@
 
 <body class="mdc-typography overflow-auto p-5">
     <div class="d-flex flex-column h-100 position-relative">
-        <li class="list-group-flush list-group-item sticky-top p-2">
+        <li class="list-group-flush list-group-item mdc-elevation--z6 sticky-top p-2">
             <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createCountry" disabled>
                 <div class="mdc-button__ripple"></div>
                 <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                 <span class="mdc-button__label" translate>NEW#COUNTRY</span>
             </button>
         </li>
-        <ul id="countriesList" class="list-group list-group-flush overflow-auto"></ul>
-        <div class="overlay" id="countriesListOverlay">
+        <ul id="countriesList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto"></ul>
+        <div class="overlay mdc-elevation--z6" id="countriesListOverlay">
             <i class="iconify" data-icon="eos-icons:loading"></i>
             <h3 class="my-2" hidden></h3>
         </div>

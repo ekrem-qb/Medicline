@@ -12,17 +12,17 @@
 </head>
 
 <body class="mdc-typography d-flex flex-column">
-    <div class="d-flex overflow-auto m-5">
-        <div class="d-flex flex-column w-75 position-relative">
-            <li class="modal-footer list-group-flush list-group-item sticky-top">
+    <div class="d-flex overflow-auto p-5">
+        <div class="d-flex flex-column w-75 me-2 position-relative">
+            <li class="modal-footer list-group-flush list-group-item mdc-elevation--z6 sticky-top">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="create" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                     <span class="mdc-button__label" translate>NEW#USER</span>
                 </button>
             </li>
-            <ul id="usersList" class="list-group list-group-flush overflow-auto"></ul>
-            <div class="overlay" id="usersListOverlay">
+            <ul id="usersList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto"></ul>
+            <div class="overlay mdc-elevation--z6" id="usersListOverlay">
                 <i class="iconify" data-icon="eos-icons:loading"></i>
                 <h3 class="my-2" hidden></h3>
             </div>
@@ -44,19 +44,19 @@
                 </li>
             </template>
         </div>
-        <div class="d-flex flex-column w-50">
-            <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center sticky-top px-3" id="permissionsHeader">
+        <div class="d-flex flex-column w-50 ms-2">
+            <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center mdc-elevation--z6 sticky-top px-3" id="permissionsHeader">
                 <h3 class="my-1-5px" translate>PERMISSIONS</h3>
                 <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
             </li>
-            <ul id="permissionsList" class="list-group list-group-flush overflow-auto">
+            <ul id="permissionsList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto">
                 <li class="list-group-item p-0" id="cases">
                     <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
                         <i class="iconify me-3" data-icon="mdi:table-large"></i>
                         <b class="me-auto" translate>CASES</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
-                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                    <ul class="list-group sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
                             <b class="me-auto" translate>CAN_VIEW</b>
@@ -79,7 +79,7 @@
                         <b class="me-auto" translate>USERS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
-                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                    <ul class="list-group sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
                             <b class="me-auto" translate>CAN_VIEW</b>
@@ -102,7 +102,7 @@
                         <b class="me-auto" translate>HOTELS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
-                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                    <ul class="list-group sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
                             <b class="me-auto" translate>CAN_VIEW</b>
@@ -125,7 +125,7 @@
                         <b class="me-auto" translate>COUNTRIES</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
-                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                    <ul class="list-group sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
                             <b class="me-auto" translate>CAN_VIEW</b>
@@ -148,7 +148,7 @@
                         <b class="me-auto" translate>INSTITUTIONS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                     </div>
-                    <ul class="list-group list-group-flush sub-list-group my-3 mx-auto collapsed">
+                    <ul class="list-group sub-list-group my-3 mx-auto collapsed">
                         <li class="list-group-item mdc-ripple-surface d-flex align-items-center p-2 ps-3 disabled" id="view">
                             <i class="iconify me-3" data-icon="ic:round-visibility"></i>
                             <b class="me-auto" translate>CAN_VIEW</b>

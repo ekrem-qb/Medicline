@@ -28,7 +28,7 @@ function loadSelectMenus() {
                 for (const icd in icd10Codes) {
                     select.tomselect.addOption({
                         value: icd,
-                        text: icd10Codes[icd]
+                        text: icd + ' - ' + icd10Codes[icd]
                     })
                 }
             }

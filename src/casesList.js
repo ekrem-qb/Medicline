@@ -556,26 +556,17 @@ function changeCaseStatus(newStatus) {
 for (const status of statusBar.children) {
     status.onmouseover = () => {
         if (selectedStatus == undefined) {
-            casesList.classList.add('dimmed')
-            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-                tr.classList.add('not-dimmed')
-            })
+            casesList.setAttribute('data-dim-status', status.dataset.status)
         }
     }
     status.onmouseleave = () => {
         if (selectedStatus == undefined) {
-            casesList.classList.remove('dimmed')
-            casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-                tr.classList.remove('not-dimmed')
-            })
+            casesList.removeAttribute('data-dim-status')
         }
     }
 
     status.onclick = () => {
-        casesList.classList.remove('dimmed')
-        casesList.querySelectorAll('tr[data-status="' + status.dataset.status + '"]').forEach(tr => {
-            tr.classList.remove('not-dimmed')
-        })
+        casesList.removeAttribute('data-dim-status')
 
         if (selectedStatus) {
             selectedStatus.classList.remove('selected')
@@ -586,6 +577,7 @@ for (const status of statusBar.children) {
 
         if (status == selectedStatus) {
             selectedStatus = undefined
+            casesList.setAttribute('data-dim-status', status.dataset.status)
         }
         else {
             selectedStatus = status
