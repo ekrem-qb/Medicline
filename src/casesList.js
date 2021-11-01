@@ -90,7 +90,7 @@ function loadColumns() {
     setTableOverlayState('loading')
 
     let enabledColumns = []
-    if (localStorage.getItem('enabledColumns') != null) {
+    if (localStorage.getItem('enabledColumns')) {
         enabledColumns = localStorage.getItem('enabledColumns').split(',')
     }
     else {
@@ -597,6 +597,12 @@ function modalExpand(header) {
     if (header.id == 'documents') {
         header.classList.toggle('hide')
         header.previousElementSibling.classList.toggle('hide')
+        if (header.classList.contains('hide')) {
+            localStorage.setItem('isDocumentsPanelOpen', 1)
+        }
+        else {
+            localStorage.removeItem('isDocumentsPanelOpen')
+        }
     }
     else {
         hideEmptyFilters()
@@ -604,6 +610,11 @@ function modalExpand(header) {
 }
 
 const headerDocuments = document.querySelector('header#documents')
+
+if (localStorage.getItem('isDocumentsPanelOpen')) {
+    headerDocuments.click()
+}
+
 const tabBar = headerDocuments.previousElementSibling.materialComponent
 const documentsContent = headerDocuments.nextElementSibling
 

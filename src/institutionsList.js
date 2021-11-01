@@ -46,7 +46,7 @@ function loadColumns() {
     setTableOverlayState('loading')
 
     let columns = Object.keys(columnsJSON)
-    if (localStorage.getItem('institutionColumns') != null) {
+    if (localStorage.getItem('institutionColumns')) {
         columns = localStorage.getItem('institutionColumns').split(',')
     }
     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
