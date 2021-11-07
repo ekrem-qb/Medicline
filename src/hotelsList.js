@@ -36,14 +36,16 @@ function listItems(collection, list) {
                                 new MDCRipple(listItem)
                                 listItem.onclick = event => {
                                     if (event.target == listItem) {
-                                        const activeItem = list.querySelector('.list-group-item.active')
-                                        if (activeItem) {
-                                            activeItem.classList.remove('active')
+                                        if (selectedAddress != listItem) {
+                                            const activeItem = list.querySelector('.list-group-item.active')
+                                            if (activeItem) {
+                                                activeItem.classList.remove('active')
+                                            }
+                                            selectedAddress = listItem
+                                            listItem.classList.add('active')
+                                            stopHotelQuery()
+                                            stopHotelQuery = listItems(change.doc.ref.path + '/hotel', hotelsList)
                                         }
-                                        selectedAddress = listItem
-                                        listItem.classList.add('active')
-                                        stopHotelQuery()
-                                        stopHotelQuery = listItems(change.doc.ref.path + '/hotel', hotelsList)
                                     }
                                 }
                             }

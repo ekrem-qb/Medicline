@@ -265,13 +265,15 @@ function listInstitutions(snap) {
                 }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (selectedInstitutionRow) {
-                            selectedInstitutionRow.classList.remove('selected')
+                        if (selectedInstitutionID != institutionSnap.id) {
+                            if (selectedInstitutionRow) {
+                                selectedInstitutionRow.classList.remove('selected')
+                            }
+                            selectedInstitution = currentQuery.doc(institutionSnap.id)
+                            selectedInstitutionID = institutionSnap.id
+                            selectedInstitutionRow = tr
+                            selectedInstitutionRow.classList.add('selected')
                         }
-                        selectedInstitution = currentQuery.doc(institutionSnap.id)
-                        selectedInstitutionID = institutionSnap.id
-                        selectedInstitutionRow = tr
-                        selectedInstitutionRow.classList.add('selected')
                     }
                 }
                 tr.onmouseup = mouseEvent => {

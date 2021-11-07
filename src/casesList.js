@@ -237,11 +237,13 @@ function refreshSearch() {
 
         if (casePromises.length > 0) {
             Promise.all(casePromises).then(cases => {
-                if (foundCases.length > 0) {
-                    listCases(currentCasesSnap)
-                }
-                else {
-                    setTableOverlayState('empty')
+                if (foundCases) {
+                    if (foundCases.length > 0) {
+                        listCases(currentCasesSnap)
+                    }
+                    else {
+                        setTableOverlayState('empty')
+                    }
                 }
             })
         }
@@ -373,16 +375,18 @@ function listCases(snap) {
                     }
                     tr.onmousedown = mouseEvent => {
                         if (mouseEvent.button != 1) {
-                            if (selectedCaseRow) {
-                                selectedCaseRow.classList.remove('selected')
-                            }
-                            selectedCase = allCases.doc(caseSnap.id)
-                            selectedCaseID = caseSnap.id
-                            selectedCaseRow = tr
-                            selectedCaseRow.classList.add('selected')
-                            if (headerDocuments.classList.contains('hide')) {
-                                stopFilesQuery()
-                                listFiles()
+                            if (selectedCaseID != caseSnap.id) {
+                                if (selectedCaseRow) {
+                                    selectedCaseRow.classList.remove('selected')
+                                }
+                                selectedCase = allCases.doc(caseSnap.id)
+                                selectedCaseID = caseSnap.id
+                                selectedCaseRow = tr
+                                selectedCaseRow.classList.add('selected')
+                                if (headerDocuments.classList.contains('hide')) {
+                                    stopFilesQuery()
+                                    listFiles()
+                                }
                             }
                         }
                     }

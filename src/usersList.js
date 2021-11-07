@@ -68,13 +68,15 @@ function listUsers() {
                                 listItem.id = change.doc.id
                                 listItem.onclick = event => {
                                     if (event.target.parentElement != buttonEdit && event.target.parentElement != buttonDelete) {
-                                        const activeItem = usersList.querySelector('.list-group-item.active')
-                                        if (activeItem) {
-                                            activeItem.classList.remove('active')
+                                        if (selectedUser != listItem) {
+                                            const activeItem = usersList.querySelector('.list-group-item.active')
+                                            if (activeItem) {
+                                                activeItem.classList.remove('active')
+                                            }
+                                            selectedUser = listItem
+                                            listItem.classList.add('active')
+                                            loadSelectedUserPermissions()
                                         }
-                                        selectedUser = listItem
-                                        listItem.classList.add('active')
-                                        loadSelectedUserPermissions()
                                     }
                                 }
                                 new MDCRipple(listItem)
