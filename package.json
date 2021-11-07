@@ -35,12 +35,12 @@
     "bootstrap": "^5.1.1",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.3.9",
-    "firebase": "^9.2.0",
+    "firebase": "^9.3.0",
     "firebase-admin": "^10.0.0",
     "inputmask": "^5.0.6",
     "material-components-web": "^13.0.0",
     "sortablejs": "^1.14.0",
-    "tom-select": "^2.0.0-rc.3",
+    "tom-select": "^2.0.0-rc.5",
     "xlsx": "^0.17.3"
   },
   "build": {

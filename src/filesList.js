@@ -54,7 +54,6 @@ function listFiles() {
                                     listItem.date.title = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleTimeString()
                                 }
                                 else {
-                                    console.log(change.doc.get('createDate'))
                                     listItem.date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleDateString()
                                     listItem.date.title = new Date(change.doc.get('createDate').seconds * 1000).toLocaleTimeString()
                                 }
@@ -163,13 +162,11 @@ function setListOverlayState(overlay, state) {
     switch (state) {
         case 'loading':
             overlay.classList.remove('hide')
-            overlay.classList.remove('show-headers')
             overlay.icon[0].setAttribute('data-icon', 'eos-icons:loading')
             overlay.text.hidden = true
             break
         case 'empty':
             overlay.classList.remove('hide')
-            overlay.classList.remove('show-headers')
             overlay.icon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             overlay.text.hidden = false
             overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')

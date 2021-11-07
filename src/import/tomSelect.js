@@ -10,7 +10,6 @@ function loadSelectMenus() {
 
         if (select.tomselect == undefined) {
             let settings = {
-                selectOnTab: true,
                 render: {
                     option_create: function (data, escape) {
                         return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>'
@@ -198,6 +197,9 @@ function toggleCreateOptions(allowedPermissions) {
 
         if (select.inputId.includes('address')) {
             isAllowed = allowedPermissions.includes('hotels')
+        }
+        if (select.inputId.includes('country')) {
+            isAllowed = allowedPermissions.includes('countries')
         }
         if (select.inputId.includes('provider') || select.inputId.includes('insurance')) {
             isAllowed = allowedPermissions.includes('institutions')
