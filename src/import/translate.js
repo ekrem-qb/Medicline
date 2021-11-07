@@ -28,13 +28,13 @@ function translate(textToTranslate) {
         return translateStrings[textToTranslate]
     }
     else if (textToTranslate.includes('#')) {
-        return translateStrings[textToTranslate.split('#')[0]].replace('#', translateStrings[textToTranslate.split('#')[1]])
+        return translate(textToTranslate.split('#')[0]).replace('#', translate(textToTranslate.split('#')[1]))
     }
     else if (textToTranslate.includes('-')) {
-        return translateStrings[textToTranslate.split('-')[1]] + ' ' + translateStrings[textToTranslate.split('-')[0]]
+        return translate(textToTranslate.split('-')[1]) + ' ' + translate(textToTranslate.split('-')[0])
     }
     else if (!Number.isNaN(parseInt(textToTranslate.slice(-1)))) {
-        return translateStrings[textToTranslate.slice(0, -1)] + ' ' + textToTranslate.slice(-1)
+        return translate(textToTranslate.slice(0, -1)) + ' ' + textToTranslate.slice(-1)
     }
     else {
         return textToTranslate

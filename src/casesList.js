@@ -163,6 +163,7 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
+    buttonCreateFile.disabled = !editIsAllowed
     tableRowContextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
         option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
     })
@@ -379,6 +380,10 @@ function listCases(snap) {
                             selectedCaseID = caseSnap.id
                             selectedCaseRow = tr
                             selectedCaseRow.classList.add('selected')
+                            if (headerDocuments.classList.contains('hide')) {
+                                stopFilesQuery()
+                                listFiles()
+                            }
                         }
                     }
                     tr.onmouseup = mouseEvent => {

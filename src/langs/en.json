@@ -88,5 +88,7 @@
     "CAN_EDIT": "Edit",
     "CAN_VIEW": "View",
     "ADD_COLUMN": "Add Column",
-    "HIDE_COLUMN": "Hide Column"
+    "HIDE_COLUMN": "Hide Column",
+    "FILE": "File",
+    "FILES": "Files"
 }

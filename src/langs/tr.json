@@ -89,5 +89,7 @@
     "CAN_EDIT": "Düzenleme",
     "CAN_VIEW": "Görüntüleme",
     "ADD_COLUMN": "Sütün Ekle",
-    "HIDE_COLUMN": "Sütünü Gizle"
+    "HIDE_COLUMN": "Sütünü Gizle",
+    "FILE": "Dosya",
+    "FILES": "Dosyalar"
 }

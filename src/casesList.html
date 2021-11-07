@@ -359,7 +359,65 @@
         <i class="dropdown-icon iconify ms-2" data-icon="ic:round-keyboard-arrow-up"></i>
     </header>
     <div class="modal-body collapsed h-75 p-0">
-        <div class="tab-page bg-success show">
+        <div class="tab-page show">
+            <div class="d-flex flex-column h-100 position-relative">
+                <li class="list-group-flush list-group-item mdc-elevation--z6 sticky-top p-2">
+                    <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createFile" disabled>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
+                        <span class="mdc-button__label" translate>NEW#FILE</span>
+                    </button>
+                </li>
+                <ul id="filesList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto"></ul>
+                <div class="overlay mdc-elevation--z6" id="filesListOverlay">
+                    <i class="iconify" data-icon="eos-icons:loading"></i>
+                    <h3 class="my-2" hidden></h3>
+                </div>
+            </div>
+            <template id="filesListItemTemplate">
+                <li class="list-group-item d-flex align-items-center px-2">
+                    <span class="d-flex flex-column overflow-auto ms-2 me-auto">
+                        <b id="label"></b>
+                        <small class="helper-text">
+                            <i class="iconify" data-icon="ic:round-account-circle"></i>
+                            <span id="user"></span>
+                            <i class="ms-2 iconify" data-icon="ic:round-event"></i>
+                            <span id="date"></span>
+                        </small>
+                    </span>
+                    <button class="mdc-icon-button" id="edit" disabled>
+                        <div class="mdc-icon-button__ripple"></div>
+                        <i class="iconify" data-icon="ic:round-edit"></i>
+                    </button>
+                    <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete" disabled>
+                        <div class="mdc-icon-button__ripple"></div>
+                        <i class="iconify" data-icon="mdi:trash-can"></i>
+                    </button>
+                </li>
+            </template>
+            <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteFile">
+                <div class="mdc-dialog__container">
+                    <div class="mdc-dialog__surface">
+                        <div class="mdc-dialog__content">
+                            <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
+                            <p class="mb-0" translate>ASK_DELETE#THIS_FILE</p>
+                        </div>
+                        <div class="mdc-dialog__actions">
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
+                                <span class="mdc-button__label" translate>CANCEL</span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
+                                <span class="mdc-button__label" translate>DELETE</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
+            </div>
         </div>
         <div class="tab-page bg-danger">
         </div>
@@ -495,8 +553,10 @@
     <script src="../node_modules/firebase/firebase-app-compat.js"></script>
     <script src="../node_modules/firebase/firebase-auth-compat.js"></script>
     <script src="../node_modules/firebase/firebase-firestore-compat.js"></script>
+    <script src="../node_modules/firebase/firebase-storage-compat.js"></script>
     <script src="import/firebase/auth.js"></script>
     <script src="import/firebase/firestore.js"></script>
+    <script src="import/firebase/storage.js"></script>
     <script src="import/tomSelect.js"></script>
     <script src="import/inputMask.js"></script>
     <script src="import/material/ripple.js"></script>
@@ -508,6 +568,7 @@
     <script src="import/material/snackbar.js"></script>
     <script src="import/sortable.js"></script>
     <script src="casesList.js"></script>
+    <script src="filesList.js"></script>
 </body>
 
 </html>
