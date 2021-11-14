@@ -91,5 +91,6 @@
     "ADD_COLUMN": "Add Column",
     "HIDE_COLUMN": "Hide Column",
     "FILE": "File",
-    "FILES": "Files"
+    "FILES": "Files",
+    "FILE_NAME": "File Name"
 }

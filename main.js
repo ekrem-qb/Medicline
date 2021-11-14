@@ -160,9 +160,13 @@ async function main() {
                     nodeIntegration: true,
                 }
             }
-            if (type == 'user' || type == 'institution') {
-                options.width = 800
-                options.height = 600
+            switch (type) {
+                case 'user':
+                case 'institution':
+                case 'file':
+                    options.width = 800
+                    options.height = 600
+                    break
             }
             const window = new BrowserWindow(options)
 

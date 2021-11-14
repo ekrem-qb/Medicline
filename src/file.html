@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEW#FILE</title>
+    <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark.css">
+</head>
+
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="mdc-elevation--z6">
+        <div class="drag-area ms-1 mt-1"></div>
+        <button class="button-rectangle mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+            <i class="iconify" data-icon="codicon:chrome-minimize"></i>
+        </button>
+        <button class="button-rectangle mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+            <i class="iconify" data-icon="codicon:chrome-maximize"></i>
+        </button>
+        <button class="button-rectangle mdc-ripple-surface button-rectangle--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            <i class="iconify" data-icon="codicon:chrome-close"></i>
+        </button>
+    </header>
+
+    <div class="d-flex h-100 justify-content-evenly align-items-center overflow-auto">
+        <form class="d-flex flex-column p-5" id="file">
+            <label class="mdc-text-field mdc-text-field--outlined">
+                <input type="text" class="mdc-text-field__input" id="name" required disabled>
+                <div class="mdc-notched-outline">
+                    <div class="mdc-notched-outline__leading"></div>
+                    <div class="mdc-notched-outline__notch">
+                        <span class="mdc-floating-label" translate>FILE_NAME</span>
+                    </div>
+                    <div class="mdc-notched-outline__trailing"></div>
+                </div>
+            </label>
+            <div class="hide" id="createField">
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-person"></i>
+                    <input type="text" class="mdc-text-field__input" id="createUser" disabled>
+                    <div class="mdc-notched-outline">
+                        <div class="mdc-notched-outline__leading"></div>
+                        <div class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" translate>CREATE_USER</span>
+                        </div>
+                        <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                </label>
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-event"></i>
+                    <input type="text" class="mdc-text-field__input" id="createDate" disabled>
+                    <div class="mdc-notched-outline">
+                        <div class="mdc-notched-outline__leading"></div>
+                        <div class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" translate>CREATE_DATE</span>
+                        </div>
+                        <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                </label>
+            </div>
+            <div class="hide" id="updateField">
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-person"></i>
+                    <input type="text" class="mdc-text-field__input" id="updateUser" disabled>
+                    <div class="mdc-notched-outline">
+                        <div class="mdc-notched-outline__leading"></div>
+                        <div class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" translate>UPDATE_USER</span>
+                        </div>
+                        <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                </label>
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
+                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-event"></i>
+                    <input type="text" class="mdc-text-field__input" id="updateDate" disabled>
+                    <div class="mdc-notched-outline">
+                        <div class="mdc-notched-outline__leading"></div>
+                        <div class="mdc-notched-outline__notch">
+                            <span class="mdc-floating-label" translate>UPDATE_DATE</span>
+                        </div>
+                        <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                </label>
+            </div>
+        </form>
+    </div>
+    <div class="mdc-dialog__actions">
+        <button class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" form="file" id="save" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
+            <div class="mdc-button__ripple"></div>
+            <i class="mdc-button__icon iconify" data-icon="ic:round-save"></i>
+            <span class="mdc-button__label" translate>SAVE</span>
+        </button>
+    </div>
+
+    <div class="mdc-snackbar" id="snackbar">
+        <div class="mdc-snackbar__surface">
+            <div class="mdc-snackbar__label">
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script src="import/translate.js"></script>
+    <script src="../node_modules/firebase/firebase-app-compat.js"></script>
+    <script src="../node_modules/firebase/firebase-auth-compat.js"></script>
+    <script src="../node_modules/firebase/firebase-firestore-compat.js"></script>
+    <script src="import/firebase/auth.js"></script>
+    <script src="import/firebase/firestore.js"></script>
+    <script src="import/firebase/admin.js"></script>
+    <script src="import/material/ripple.js"></script>
+    <script src="import/material/textField.js"></script>
+    <script src="import/material/snackbar.js"></script>
+    <script src="file.js"></script>
+</body>
+
+</html>

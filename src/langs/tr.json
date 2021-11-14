@@ -92,5 +92,6 @@
     "ADD_COLUMN": "Sütün Ekle",
     "HIDE_COLUMN": "Sütünü Gizle",
     "FILE": "Dosya",
-    "FILES": "Dosyalar"
+    "FILES": "Dosyalar",
+    "FILE_NAME": "Dosya Adı"
 }

@@ -92,10 +92,6 @@ body {
   z-index: 100;
 }
 
-.sticky-top {
-  z-index: 8;
-}
-
 .form-group {
   margin-bottom: 1rem;
 }
@@ -191,8 +187,8 @@ textarea {
 .list-group-item .iconify:not(.avatar, .mdc-button__icon, .helper-text>.iconify),
 .mdc-text-field__icon,
 th .iconify {
-  width: 1.5rem;
-  height: 1.5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   height: auto;
 }
 
@@ -403,7 +399,6 @@ th>label {
   border-top-left-radius: var(--mdc-shape-medium, .5rem);
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
-  border: 0;
 }
 
 .list-group-flush.list-group-item+.list-group {

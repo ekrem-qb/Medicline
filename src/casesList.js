@@ -160,6 +160,7 @@ firebase.auth().onAuthStateChanged(user => {
 })
 
 let stopPermissionsQuery = () => { }
+let haveEditPermission = false
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
@@ -175,6 +176,10 @@ function toggleEditMode(editIsAllowed) {
         editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
         editOption.label.textContent = translate('VIEW')
     }
+    for (const iconButton of filesList.getElementsByClassName('mdc-icon-button')) {
+        iconButton.disabled = !editIsAllowed
+    }
+    haveEditPermission = editIsAllowed
 }
 
 function loadPermissions() {

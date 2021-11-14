@@ -1,4 +1,5 @@
 const buttonCreateFile = document.querySelector('button#createFile')
+buttonCreateFile.onclick = () => ipcRenderer.send('new-window', 'file', undefined, selectedCaseID)
 
 const filesList = document.getElementById('filesList')
 filesList.overlay = document.getElementById('filesListOverlay')
@@ -50,19 +51,24 @@ function listFiles() {
 
                                 listItem.date = listItem.querySelector('#date')
                                 if (change.doc.get('updateDate')) {
-                                    listItem.date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleDateString()
-                                    listItem.date.title = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleTimeString()
+                                    listItem.date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleString()
                                 }
                                 else {
-                                    listItem.date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleDateString()
-                                    listItem.date.title = new Date(change.doc.get('createDate').seconds * 1000).toLocaleTimeString()
+                                    listItem.date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleString()
                                 }
+
+                                const buttonEdit = listItem.children['edit']
+                                buttonEdit.onclick = () => ipcRenderer.send('new-window', 'file', change.doc.id, selectedCaseID)
+                                buttonEdit.disabled = !haveEditPermission
+                                buttonEdit.materialRipple = new MDCRipple(buttonEdit)
+                                buttonEdit.materialRipple.unbounded = true
 
                                 const buttonDelete = listItem.children['delete']
                                 buttonDelete.onclick = () => {
                                     deleteFilePath = listItem.id
                                     dialogDeleteFile.materialComponent.open()
                                 }
+                                buttonDelete.disabled = !haveEditPermission
                                 buttonDelete.materialRipple = new MDCRipple(buttonDelete)
                                 buttonDelete.materialRipple.unbounded = true
 
@@ -101,12 +107,10 @@ function listFiles() {
 
                                 filesList.children[change.doc.ref.path].date = filesList.children[change.doc.ref.path].querySelector('#date')
                                 if (change.doc.get('updateDate')) {
-                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleDateString()
-                                    filesList.children[change.doc.ref.path].date.title = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleTimeString()
+                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleString()
                                 }
                                 else {
-                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleDateString()
-                                    filesList.children[change.doc.ref.path].date.title = new Date(change.doc.get('createDate').seconds * 1000).toLocaleTimeString()
+                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleString()
                                 }
 
                                 if (change.newIndex == filesList.childElementCount) {
