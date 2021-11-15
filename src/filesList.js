@@ -1,182 +1,351 @@
+// const filesOverlay = document.getElementById('filesOverlay')
+// const filesOverlayIcon = filesOverlay.getElementsByClassName('iconify')
+// const filesOverlayText = filesOverlay.querySelector('h3')
+
+// const filesTable = document.querySelector('table#files')
+// const filesList = filesTable.querySelector('tbody#filesList')
+// let currentOrder, currentOrderDirection
+
+// const columnsJSON = require('./fileColumns.json')
+// const tableHeadersList = filesTable.querySelector('#tableHeadersList')
+// const headerTemplate = document.getElementById('headerTemplate')
+
+// function newHeader(headerID) {
+//     const th = headerTemplate.content.firstElementChild.cloneNode(true)
+//     new MDCRipple(th)
+//     th.id = headerID
+
+//     th.onmousedown = mouseEvent => {
+//         if (mouseEvent.button == 0) {
+//             if (th.parentElement != tableHeadersList) {
+//                 setOverlayState('drag')
+//             }
+//         }
+//     }
+//     th.onmouseup = () => {
+//         if (th.parentElement != tableHeadersList) {
+//             if (filesList.childElementCount > 0) {
+//                 setOverlayState('hide')
+//             }
+//             else {
+//                 setOverlayState('empty')
+//             }
+//         }
+//     }
+//     th.onclick = () => headerClick(headerID)
+
+//     const label = th.querySelector('label')
+//     label.textContent = translate(columnsJSON[headerID])
+
+//     th.sortIcon = th.getElementsByClassName('iconify')
+
+//     return th
+// }
+
+// function loadColumns() {
+//     setOverlayState('loading')
+
+//     let columns = Object.keys(columnsJSON)
+//     if (localStorage.getItem('fileColumns')) {
+//         columns = localStorage.getItem('fileColumns').split(',')
+//     }
+//     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
+
+//     if (tableHeadersList.children['name']) {
+//         headerClick('name')
+//         headerClick('name')
+//     }
+//     else {
+//         headerClick(tableHeadersList.firstChild.id)
+//     }
+// }
+
+// loadColumns()
+
+// let currentQuery = db.collection('insurance')
+// let currentFilesSnap
+// let stopCurrentQuery = () => { }
+// let currentRefQueries = []
+// let selectedFile, selectedFileRow, selectedFileID
+
+// firebase.auth().onAuthStateChanged(user => {
+//     if (user) {
+//         loadFiles()
+//         loadPermissions()
+//     }
+//     else {
+//         stopPermissionsQuery()
+//         stopCurrentQuery()
+//         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+//     }
+// })
+
+// let stopPermissionsQuery = () => { }
+
+// function toggleEditMode(editIsAllowed) {
+//     buttonCreateFile.disabled = !editIsAllowed
+//     deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+//     if (editIsAllowed) {
+//         editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
+//         editOption.label.textContent = translate('EDIT')
+//     }
+//     else {
+//         editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
+//         editOption.label.textContent = translate('VIEW')
+//     }
+// }
+
+// function loadPermissions() {
+//     toggleEditMode(false)
+
+//     stopPermissionsQuery()
+//     stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('files').onSnapshot(
+//         snapshot => {
+//             toggleEditMode(snapshot.get('edit'))
+//         },
+//         error => {
+//             console.error('Error getting permissions: ' + error)
+//         }
+//     )
+// }
 const buttonCreateFile = document.querySelector('button#createFile')
-buttonCreateFile.onclick = () => ipcRenderer.send('new-window', 'file', undefined, selectedCaseID)
 
-const filesList = document.getElementById('filesList')
-filesList.overlay = document.getElementById('filesListOverlay')
-filesList.overlay.icon = filesList.overlay.getElementsByClassName('iconify')
-filesList.overlay.text = filesList.overlay.querySelector('h3')
-const filesListItemTemplate = document.getElementById('filesListItemTemplate')
-let stopFilesQuery = () => { }
-let fileOwnersQueries = []
+// function headerClick(headerID) {
+//     const clickedHeader = tableHeadersList.querySelector('th#' + headerID)
+//     if (clickedHeader) {
+//         tableHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
+//             if (otherHeaderIcon.parentElement != clickedHeader) {
+//                 otherHeaderIcon.classList.remove('rot-180')
+//                 otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
+//             }
+//         })
 
-function listFiles() {
-    fileOwnersQueries.forEach(fileOwnerQuery => fileOwnerQuery())
-    fileOwnersQueries = []
-    if (selectedCase) {
-        filesList.innerHTML = ''
-        stopFilesQuery = selectedCase.collection('files').orderBy('name', 'asc').onSnapshot(
-            snapshot => {
-                console.log(snapshot.docChanges())
-                snapshot.docChanges().forEach(
-                    change => {
-                        switch (change.type) {
-                            case 'added':
-                                const listItem = filesListItemTemplate.content.firstElementChild.cloneNode(true)
-                                listItem.id = change.doc.ref.path
+//         if (clickedHeader.sortIcon[0].getAttribute('data-icon') == 'ic:round-unfold-more') {
+//             clickedHeader.sortIcon[0].setAttribute('data-icon', 'ic:round-keyboard-arrow-up')
+//         }
 
-                                listItem.label = listItem.querySelector('#label')
-                                listItem.label.textContent = change.doc.get('name')
+//         if (clickedHeader.sortIcon[0].classList.contains('rot-180')) {
+//             orderFiles(headerID, 'asc')
+//         }
+//         else {
+//             orderFiles(headerID, 'desc')
+//         }
 
-                                listItem.user = listItem.querySelector('#user')
+//         clickedHeader.sortIcon[0].classList.toggle('rot-180')
+//     }
+// }
 
-                                listItem.userPath = change.doc.get('createUser')
-                                if (change.doc.get('updateUser')) {
-                                    listItem.userPath = change.doc.get('updateUser')
-                                }
-                                fileOwnersQueries.push(
-                                    listItem.stopUserQuery = listItem.userPath.onSnapshot(
-                                        snapshot => {
-                                            if (snapshot.get('name')) {
-                                                listItem.user.textContent = snapshot.get('name')
-                                            }
-                                            else {
-                                                listItem.user.textContent = snapshot.get('username')
-                                            }
-                                        },
-                                        error => {
-                                            console.error('Error getting user profile: ' + error)
-                                        }
-                                    )
-                                )
+// function loadFiles() {
+//     stopCurrentQuery()
+//     stopCurrentQuery = currentQuery.onSnapshot(
+//         snapshot => {
+//             console.log(snapshot)
+//             currentFilesSnap = snapshot
+//             listFiles(snapshot)
+//         },
+//         error => {
+//             console.error('Error getting files: ' + error)
+//             setOverlayState('empty')
+//         }
+//     )
+// }
 
-                                listItem.date = listItem.querySelector('#date')
-                                if (change.doc.get('updateDate')) {
-                                    listItem.date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleString()
-                                }
-                                else {
-                                    listItem.date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleString()
-                                }
+// function listFiles(snap) {
+//     if (snap.docs.length > 0) {
+//         filesList.innerHTML = ''
+//         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+//         currentRefQueries = []
+//         snap.forEach(fileSnap => {
+//             setOverlayState('hide')
 
-                                const buttonEdit = listItem.children['edit']
-                                buttonEdit.onclick = () => ipcRenderer.send('new-window', 'file', change.doc.id, selectedCaseID)
-                                buttonEdit.disabled = !haveEditPermission
-                                buttonEdit.materialRipple = new MDCRipple(buttonEdit)
-                                buttonEdit.materialRipple.unbounded = true
+//             const tr = document.createElement('tr')
+//             tr.id = fileSnap.id
+//             tr.ondblclick = () => {
+//                 if (getSelectedText() == '') {
+//                     ipcRenderer.send('new-window', 'file', selectedFileID, selectFileType.value)
+//                 }
+//             }
+//             tr.onmousedown = mouseEvent => {
+//                 if (mouseEvent.button != 1) {
+//                     if (selectedFileID != fileSnap.id) {
+//                         if (selectedFileRow) {
+//                             selectedFileRow.classList.remove('selected')
+//                         }
+//                         selectedFile = currentQuery.doc(fileSnap.id)
+//                         selectedFileID = fileSnap.id
+//                         selectedFileRow = tr
+//                         selectedFileRow.classList.add('selected')
+//                     }
+//                 }
+//             }
+//             tr.onmouseup = mouseEvent => {
+//                 const hasSelection = getSelectedText() != ''
 
-                                const buttonDelete = listItem.children['delete']
-                                buttonDelete.onclick = () => {
-                                    deleteFilePath = listItem.id
-                                    dialogDeleteFile.materialComponent.open()
-                                }
-                                buttonDelete.disabled = !haveEditPermission
-                                buttonDelete.materialRipple = new MDCRipple(buttonDelete)
-                                buttonDelete.materialRipple.unbounded = true
+//                 if (hasSelection || mouseEvent.button == 2) {
+//                     copyOption.hidden = !hasSelection
+//                     tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+//                         option.hidden = hasSelection
+//                     })
+//                     tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
+//                     tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
+//                     tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+//                     tableRowContextMenu.materialComponent.open = true
+//                 }
+//             }
+//             if (tr.id == selectedFileID) {
+//                 selectedFile = currentQuery.doc(selectedFileID)
+//                 selectedFileRow = tr
+//                 selectedFileRow.classList.add('selected')
+//             }
+//             filesList.appendChild(tr)
 
-                                listItem.deleteButton = buttonDelete
+//             for (const column of tableHeadersList.children) {
+//                 const td = document.createElement('td')
+//                 td.id = column.id
+//                 tr.appendChild(td)
 
-                                if (change.newIndex == filesList.childElementCount) {
-                                    filesList.appendChild(listItem)
-                                } else {
-                                    filesList.insertBefore(listItem, filesList.children[change.newIndex])
-                                }
-                                break
-                            case 'modified':
-                                filesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+//                 if (td.id == '__name__') {
+//                     td.textContent = fileSnap.id
+//                 }
+//                 else {
+//                     const value = fileSnap.get(td.id)
+//                     if (value != undefined) {
+//                         if (typeof value === 'object' && value !== null) {
+//                             currentRefQueries.push(
+//                                 value.onSnapshot(
+//                                     snapshot => {
+//                                         td.textContent = snapshot.get('name')
+//                                         orderFiles(currentOrder, currentOrderDirection)
+//                                     },
+//                                     error => {
+//                                         console.error(error)
+//                                     }
+//                                 )
+//                             )
+//                         }
+//                         else {
+//                             td.textContent = value
+//                         }
+//                     }
+//                 }
+//             }
+//         })
+//         orderFiles(currentOrder, currentOrderDirection)
+//     }
+//     else {
+//         setOverlayState('empty')
+//     }
+// }
 
-                                filesList.children[change.doc.ref.path].stopUserQuery()
-                                delete fileOwnersQueries[fileOwnersQueries.indexOf(filesList.children[change.doc.ref.path].stopUserQuery)]
-                                filesList.children[change.doc.ref.path].userPath = change.doc.get('createUser')
-                                if (change.doc.get('updateUser')) {
-                                    filesList.children[change.doc.ref.path].userPath = change.doc.get('updateUser')
-                                }
-                                fileOwnersQueries.push(
-                                    filesList.children[change.doc.ref.path].stopUserQuery = filesList.children[change.doc.ref.path].userPath.onSnapshot(
-                                        snapshot => {
-                                            if (snapshot.get('name')) {
-                                                filesList.children[change.doc.ref.path].user.textContent = snapshot.get('name')
-                                            }
-                                            else {
-                                                filesList.children[change.doc.ref.path].user.textContent = snapshot.get('username')
-                                            }
-                                        },
-                                        error => {
-                                            console.error('Error getting user profile: ' + error)
-                                        }
-                                    )
-                                )
+// function orderFiles(orderBy, orderDirection) {
+//     let switching, i, shouldSwitch
+//     do {
+//         switching = false
+//         for (i = 0; i < filesList.childElementCount - 1; i++) {
+//             shouldSwitch = false
 
-                                filesList.children[change.doc.ref.path].date = filesList.children[change.doc.ref.path].querySelector('#date')
-                                if (change.doc.get('updateDate')) {
-                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('updateDate').seconds * 1000).toLocaleString()
-                                }
-                                else {
-                                    filesList.children[change.doc.ref.path].date.textContent = new Date(change.doc.get('createDate').seconds * 1000).toLocaleString()
-                                }
+//             const a = filesList.children[i].children[orderBy]
+//             const b = filesList.children[i + 1].children[orderBy]
 
-                                if (change.newIndex == filesList.childElementCount) {
-                                    filesList.appendChild(filesList.children[change.doc.ref.path])
-                                } else {
-                                    const removedChild = filesList.removeChild(filesList.children[change.doc.ref.path])
-                                    filesList.insertBefore(removedChild, filesList.children[change.newIndex])
-                                }
-                                break
-                            case 'removed':
-                                filesList.children[change.doc.ref.path].remove()
-                                break
-                        }
-                    }
-                )
-                if (filesList.childElementCount > 0) {
-                    setListOverlayState(filesList.overlay, 'hide')
-                } else {
-                    setListOverlayState(filesList.overlay, 'empty')
-                }
-            },
-            error => {
-                console.error('Error getting ' + collection + ': ' + error)
-            }
-        )
-    }
-    else {
-        setListOverlayState(filesList.overlay, 'empty')
-    }
-}
+//             if (orderDirection == 'asc') {
+//                 if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+//                     shouldSwitch = true
+//                     break
+//                 }
+//             }
+//             else if (orderDirection == 'desc') {
+//                 if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+//                     shouldSwitch = true
+//                     break
+//                 }
+//             }
+//         }
+//         if (shouldSwitch) {
+//             filesList.children[i].parentElement.insertBefore(filesList.children[i + 1], filesList.children[i])
+//             switching = true
+//         }
+//     }
+//     while (switching)
 
-firebase.auth().onAuthStateChanged(user => {
-    stopFilesQuery()
-    if (user) {
-        listFiles()
-    }
-})
+//     currentOrder = orderBy
+//     currentOrderDirection = orderDirection
+// }
 
-let deleteFilePath
-const dialogDeleteFile = document.getElementById('dialogDeleteFile')
+// function setOverlayState(state) {
+//     switch (state) {
+//         case 'loading':
+//             filesOverlay.classList.remove('hide')
+//             filesOverlay.classList.remove('show-headers')
+//             filesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
+//             filesOverlayText.hidden = true
+//             break
+//         case 'empty':
+//             filesOverlay.classList.remove('hide')
+//             filesOverlay.classList.remove('show-headers')
+//             filesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
+//             filesOverlayText.hidden = false
+//             filesOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
+//             break
+//         case 'drag':
+//             filesOverlay.classList.remove('hide')
+//             filesOverlay.classList.add('show-headers')
+//             filesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
+//             filesOverlayText.hidden = false
+//             filesOverlayText.innerText = translate('DRAG_AND_DROP')
+//             break
+//         case 'hide':
+//             filesOverlay.classList.add('hide')
+//             break
+//         default:
+//             break
+//     }
+// }
 
-dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
-    if (event.detail.action == 'delete') {
-        db.doc(deleteFilePath).delete().then(() => {
+// const tableRowContextMenu = document.getElementById('tableRowContextMenu')
+// const copyOption = tableRowContextMenu.children[0].children['copy']
+// copyOption.onclick = copySelectionToClipboard
+// const editOption = tableRowContextMenu.children[0].children['edit']
+// editOption.icon = editOption.getElementsByClassName('iconify')
+// editOption.label = editOption.querySelector('.mdc-list-item__text')
+// editOption.onclick = () => ipcRenderer.send('new-window', 'file', selectedFileID, selectFileType.value)
+// const deleteOption = tableRowContextMenu.children[0].children['delete']
+// deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 
-        }).catch(error => {
-            console.error('Error removing file: ', error)
-        })
-    }
-})
+// const dialogDeleteFile = document.querySelector('#dialogDeleteFile')
 
-function setListOverlayState(overlay, state) {
-    switch (state) {
-        case 'loading':
-            overlay.classList.remove('hide')
-            overlay.icon[0].setAttribute('data-icon', 'eos-icons:loading')
-            overlay.text.hidden = true
-            break
-        case 'empty':
-            overlay.classList.remove('hide')
-            overlay.icon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
-            overlay.text.hidden = false
-            overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
-            break
-        case 'hide':
-            overlay.classList.add('hide')
-            break
-    }
-}
+// dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
+//     if (event.detail.action == 'delete') {
+//         selectedFile.delete().then(() => {
+//             selectedFile = undefined
+//             selectedFileID = undefined
+//         }).catch(error => {
+//             console.error('Error removing file: ', error)
+//         })
+//     }
+// })
+
+// function getSelectedText() {
+//     if (getSelection().toString().replaceAll('\n', '').replaceAll('\t', '').trim() != '') {
+//         return getSelection().toString()
+//     }
+//     else {
+//         return ''
+//     }
+// }
+
+// function copySelectionToClipboard() {
+//     const selectedText = getSelectedText()
+//     if (selectedText != '') {
+//         navigator.clipboard.writeText(selectedText)
+//         alert('"' + selectedText + '"' + translate('COPIED'))
+//     }
+// }
+
+// function refreshAndSaveColumns() {
+//     listFiles(currentFilesSnap)
+//     let fileColumns = []
+//     for (const header of tableHeadersList.children) {
+//         fileColumns.push(header.id)
+//     }
+//     localStorage.setItem('fileColumns', fileColumns)
+// }

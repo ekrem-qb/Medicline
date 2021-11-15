@@ -1,6 +1,6 @@
-const tableOverlay = document.querySelector('.overlay')
-const tableOverlayIcon = tableOverlay.getElementsByClassName('iconify')
-const tableOverlayText = tableOverlay.querySelector('h3')
+const institutionsOverlay = document.getElementById('institutionsOverlay')
+const institutionsOverlayIcon = institutionsOverlay.getElementsByClassName('iconify')
+const institutionsOverlayText = institutionsOverlay.querySelector('h3')
 
 const institutionsTable = document.querySelector('table#institutions')
 const institutionsList = institutionsTable.querySelector('tbody#institutionsList')
@@ -18,17 +18,17 @@ function newHeader(headerID) {
     th.onmousedown = mouseEvent => {
         if (mouseEvent.button == 0) {
             if (th.parentElement != tableHeadersList) {
-                setTableOverlayState('drag')
+                setOverlayState('drag')
             }
         }
     }
     th.onmouseup = () => {
         if (th.parentElement != tableHeadersList) {
             if (institutionsList.childElementCount > 0) {
-                setTableOverlayState('hide')
+                setOverlayState('hide')
             }
             else {
-                setTableOverlayState('empty')
+                setOverlayState('empty')
             }
         }
     }
@@ -43,7 +43,7 @@ function newHeader(headerID) {
 }
 
 function loadColumns() {
-    setTableOverlayState('loading')
+    setOverlayState('loading')
 
     let columns = Object.keys(columnsJSON)
     if (localStorage.getItem('institutionColumns')) {
@@ -128,7 +128,7 @@ const buttonClearSearch = document.querySelector('button#clearSearch')
 inputSearch.oninput = refreshSearch
 
 function refreshSearch() {
-    setTableOverlayState('loading')
+    setOverlayState('loading')
     searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -177,7 +177,7 @@ function refreshSearch() {
                     listInstitutions(currentInstitutionsSnap)
                 }
                 else {
-                    setTableOverlayState('empty')
+                    setOverlayState('empty')
                 }
             })
         }
@@ -186,7 +186,7 @@ function refreshSearch() {
                 listInstitutions(currentInstitutionsSnap)
             }
             else {
-                setTableOverlayState('empty')
+                setOverlayState('empty')
             }
         }
     }
@@ -239,7 +239,7 @@ function loadInstitutions() {
         },
         error => {
             console.error('Error getting institutions: ' + error)
-            setTableOverlayState('empty')
+            setOverlayState('empty')
         }
     )
 }
@@ -253,7 +253,7 @@ function listInstitutions(snap) {
         currentRefQueries = []
         snap.forEach(institutionSnap => {
             if (foundInstitutions == undefined || foundInstitutions.includes(institutionSnap.id)) {
-                setTableOverlayState('hide')
+                setOverlayState('hide')
                 noOneFound = false
 
                 const tr = document.createElement('tr')
@@ -341,11 +341,11 @@ function listInstitutions(snap) {
         orderInstitutions(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setTableOverlayState('empty')
+            setOverlayState('empty')
         }
     }
     else {
-        setTableOverlayState('empty')
+        setOverlayState('empty')
     }
 }
 
@@ -383,30 +383,30 @@ function orderInstitutions(orderBy, orderDirection) {
     currentOrderDirection = orderDirection
 }
 
-function setTableOverlayState(state) {
+function setOverlayState(state) {
     switch (state) {
         case 'loading':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
-            tableOverlayText.hidden = true
+            institutionsOverlay.classList.remove('hide')
+            institutionsOverlay.classList.remove('show-headers')
+            institutionsOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
+            institutionsOverlayText.hidden = true
             break
         case 'empty':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
-            tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
+            institutionsOverlay.classList.remove('hide')
+            institutionsOverlay.classList.remove('show-headers')
+            institutionsOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
+            institutionsOverlayText.hidden = false
+            institutionsOverlayText.innerText = translate('INSTITUTIONS') + ' ' + translate('NOT_FOUND')
             break
         case 'drag':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.add('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate('DRAG_AND_DROP')
+            institutionsOverlay.classList.remove('hide')
+            institutionsOverlay.classList.add('show-headers')
+            institutionsOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
+            institutionsOverlayText.hidden = false
+            institutionsOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
-            tableOverlay.classList.add('hide')
+            institutionsOverlay.classList.add('hide')
             break
         default:
             break

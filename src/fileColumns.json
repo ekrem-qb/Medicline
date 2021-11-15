@@ -1,0 +1,8 @@
+{
+    "__name__": "ID",
+    "name": "FILE_NAME",
+    "createUser": "CREATE_USER",
+    "createDate": "CREATE_DATE_TIME",
+    "updateUser": "UPDATE_USER",
+    "updateDate": "UPDATE_DATE_TIME"
+}

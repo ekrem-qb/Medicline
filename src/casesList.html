@@ -272,7 +272,7 @@
         </div>
         <div class="overflow-auto w-100 px-2 py-3" id="casesPanel">
             <div class="mdc-card mdc-elevation--z6">
-                <div class="overlay" id="tableOverlay">
+                <div class="overlay table-overlay" id="casesOverlay">
                     <i class="iconify" data-icon="eos-icons:loading"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>
@@ -368,8 +368,21 @@
                         <span class="mdc-button__label" translate>NEW#FILE</span>
                     </button>
                 </li>
-                <ul id="filesList" class="list-group list-group-flush overflow-auto border-bottom"></ul>
-                <div class="overlay" id="filesListOverlay">
+                <div class="table-responsive">
+                    <table class="table table-borderless" id="files">
+                        <thead>
+                            <tr id="filesHeadersList"></tr>
+                            <template id="filesHeaderTemplate">
+                                <th class="mdc-ripple-surface">
+                                    <label></label>
+                                    <i class="iconify" data-icon="ic:round-unfold-more"></i>
+                                </th>
+                            </template>
+                        </thead>
+                        <tbody id="filesList"></tbody>
+                    </table>
+                </div>
+                <div class="overlay table-overlay" id="filesOverlay">
                     <i class="iconify" data-icon="eos-icons:loading"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>

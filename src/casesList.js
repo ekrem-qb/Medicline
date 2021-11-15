@@ -1,6 +1,6 @@
-const tableOverlay = document.querySelector('.overlay')
-const tableOverlayIcon = tableOverlay.getElementsByClassName('iconify')
-const tableOverlayText = tableOverlay.querySelector('h3')
+const casesOverlay = document.getElementById('casesOverlay')
+const casesOverlayIcon = casesOverlay.getElementsByClassName('iconify')
+const casesOverlayText = casesOverlay.querySelector('h3')
 
 const casesTable = document.querySelector('table#cases')
 const casesList = casesTable.querySelector('tbody#casesList')
@@ -87,7 +87,7 @@ function newHeader(headerID) {
 }
 
 function loadColumns() {
-    setTableOverlayState('loading')
+    setOverlayState('loading')
 
     let enabledColumns = []
     if (localStorage.getItem('enabledColumns')) {
@@ -197,7 +197,7 @@ function loadPermissions() {
 }
 
 function refreshSearch() {
-    setTableOverlayState('loading')
+    setOverlayState('loading')
     searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -247,7 +247,7 @@ function refreshSearch() {
                         listCases(currentCasesSnap)
                     }
                     else {
-                        setTableOverlayState('empty')
+                        setOverlayState('empty')
                     }
                 }
             })
@@ -257,7 +257,7 @@ function refreshSearch() {
                 listCases(currentCasesSnap)
             }
             else {
-                setTableOverlayState('empty')
+                setOverlayState('empty')
             }
         }
     }
@@ -312,7 +312,7 @@ function loadCases() {
         },
         error => {
             console.error('Error getting cases: ' + error)
-            setTableOverlayState('empty')
+            setOverlayState('empty')
         }
     )
 }
@@ -367,7 +367,7 @@ function listCases(snap) {
                 })
 
                 if (!doesntMatch) {
-                    setTableOverlayState('hide')
+                    setOverlayState('hide')
                     noOneFound = false
 
                     const tr = document.createElement('tr')
@@ -389,8 +389,8 @@ function listCases(snap) {
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
                                 if (headerDocuments.classList.contains('hide')) {
-                                    stopFilesQuery()
-                                    listFiles()
+                                    // stopFilesQuery()
+                                    // listFiles()
                                 }
                             }
                         }
@@ -473,11 +473,11 @@ function listCases(snap) {
         orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setTableOverlayState('empty')
+            setOverlayState('empty')
         }
     }
     else {
-        setTableOverlayState('empty')
+        setOverlayState('empty')
     }
 }
 
@@ -525,30 +525,30 @@ function orderCases(orderBy, orderDirection) {
     }
 }
 
-function setTableOverlayState(state) {
+function setOverlayState(state) {
     switch (state) {
         case 'loading':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
-            tableOverlayText.hidden = true
+            casesOverlay.classList.remove('hide')
+            casesOverlay.classList.remove('show-headers')
+            casesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
+            casesOverlayText.hidden = true
             break
         case 'empty':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.remove('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
-            tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
+            casesOverlay.classList.remove('hide')
+            casesOverlay.classList.remove('show-headers')
+            casesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
+            casesOverlayText.hidden = false
+            casesOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
             break
         case 'drag':
-            tableOverlay.classList.remove('hide')
-            tableOverlay.classList.add('show-headers')
-            tableOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            tableOverlayText.hidden = false
-            tableOverlayText.innerText = translate('DRAG_AND_DROP')
+            casesOverlay.classList.remove('hide')
+            casesOverlay.classList.add('show-headers')
+            casesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
+            casesOverlayText.hidden = false
+            casesOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
-            tableOverlay.classList.add('hide')
+            casesOverlay.classList.add('hide')
             break
         default:
             break
@@ -692,7 +692,7 @@ function applyFilter() {
             }
 
             if (inputFilter.id.split('-')[0] == 'createDate') {
-                setTableOverlayState('loading')
+                setOverlayState('loading')
                 switch (inputFilter.id.split('-')[1]) {
                     case 'min':
                         currentQuery = currentQuery.where(inputFilter.id.split('-')[0], '>=', value)
@@ -747,7 +747,7 @@ function clearFilter() {
     hideEmptyFilters()
     currentQuery = allCases
     filters = {}
-    setTableOverlayState('loading')
+    setOverlayState('loading')
     loadCases()
 }
 

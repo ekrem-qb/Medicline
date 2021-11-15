@@ -454,14 +454,14 @@ th>label {
   z-index: 2;
 }
 
-#tableOverlay {
+.table-overlay {
   height: calc(100% - 4.3rem);
   top: auto;
   bottom: 0;
   min-height: 0;
 }
 
-#tableOverlay.show-headers {
+.table-overlay.show-headers {
   height: calc(100% - 6.8rem);
 }
 
