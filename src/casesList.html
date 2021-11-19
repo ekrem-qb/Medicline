@@ -387,27 +387,26 @@
                     <h3 class="my-2" hidden></h3>
                 </div>
             </div>
-            <template id="filesListItemTemplate">
-                <li class="list-group-item d-flex align-items-center px-2">
-                    <span class="d-flex flex-column overflow-auto ms-2 me-auto">
-                        <b id="label"></b>
-                        <small class="helper-text">
-                            <i class="iconify" data-icon="ic:round-account-circle"></i>
-                            <span id="user"></span>
-                            <i class="ms-2 iconify" data-icon="ic:round-event"></i>
-                            <span id="date"></span>
-                        </small>
-                    </span>
-                    <button class="mdc-icon-button" id="edit" disabled>
-                        <div class="mdc-icon-button__ripple"></div>
-                        <i class="iconify" data-icon="ic:round-edit"></i>
-                    </button>
-                    <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="delete" disabled>
-                        <div class="mdc-icon-button__ripple"></div>
-                        <i class="iconify" data-icon="mdi:trash-can"></i>
-                    </button>
-                </li>
-            </template>
+            <div class="mdc-menu mdc-menu-surface" id="filesContextMenu">
+                <ul class="mdc-list">
+                    <li class="mdc-list-item" id="copy" hidden>
+                        <i class="mdc-list-item__graphic iconify" data-icon="ic:round-content-copy"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>COPY</span>
+                    </li>
+                    <li class="mdc-list-item" id="edit">
+                        <i class="mdc-list-item__graphic iconify" data-icon="ic:round-edit"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>EDIT</span>
+                    </li>
+                    <li class="mdc-list-divider">
+                    <li class="mdc-list-item mdc-list-item--disabled" id="delete">
+                        <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+                    </li>
+                </ul>
+            </div>
             <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteFile">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
@@ -437,11 +436,6 @@
     </div>
     <div class="mdc-menu mdc-menu-surface" id="tableRowContextMenu">
         <ul class="mdc-list">
-            <li class="mdc-list-item" id="copy" hidden>
-                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-content-copy"></i>
-                <span class="mdc-list-item__ripple"></span>
-                <span class="mdc-list-item__text mx-2" translate>COPY</span>
-            </li>
             <li class="mdc-list-item" id="edit">
                 <i class="mdc-list-item__graphic iconify" data-icon="ic:round-edit"></i>
                 <span class="mdc-list-item__ripple"></span>
@@ -503,6 +497,15 @@
                 <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
                 <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+            </li>
+        </ul>
+    </div>
+    <div class="mdc-menu mdc-menu-surface" id="textContextMenu">
+        <ul class="mdc-list">
+            <li class="mdc-list-item" id="copy">
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-content-copy"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>COPY</span>
             </li>
         </ul>
     </div>

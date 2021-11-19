@@ -165,9 +165,11 @@ let haveEditPermission = false
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
     buttonCreateFile.disabled = !editIsAllowed
-    tableRowContextMenu.children[0].querySelectorAll('.mdc-list-item:not(#copy, #edit)').forEach(option => {
-        option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
-    })
+    for (const option of tableRowContextMenu.children[0].children) {
+        if (option != editOption && !option.classList.contains('mdc-list-divider')) {
+            option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+        }
+    }
     if (editIsAllowed) {
         editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
         editOption.label.textContent = translate('EDIT')
@@ -396,13 +398,13 @@ function listCases(snap) {
                         }
                     }
                     tr.onmouseup = mouseEvent => {
-                        const hasSelection = getSelectedText() != ''
-
-                        if (hasSelection || mouseEvent.button == 2) {
-                            copyOption.hidden = !hasSelection
-                            tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
-                                option.hidden = hasSelection
-                            })
+                        if (getSelectedText() != '') {
+                            textContextMenu.style.left = (mouseEvent.clientX) + 'px'
+                            textContextMenu.style.top = (mouseEvent.clientY) + 'px'
+                            textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                            textContextMenu.materialComponent.open = true
+                        }
+                        else if (mouseEvent.button == 2) {
                             tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
                             tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
                             tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
@@ -768,14 +770,15 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
-const copyOption = tableRowContextMenu.children[0].children['copy']
-copyOption.onclick = copySelectionToClipboard
 const editOption = tableRowContextMenu.children[0].children['edit']
 editOption.icon = editOption.getElementsByClassName('iconify')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
 editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
 const deleteOption = tableRowContextMenu.children[0].children['delete']
 deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
+const textContextMenu = document.getElementById('textContextMenu')
+const copyOption = textContextMenu.children[0].children['copy']
+copyOption.onclick = copySelectionToClipboard
 
 const { writeFile, utils } = require('xlsx')
 

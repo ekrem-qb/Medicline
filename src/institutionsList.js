@@ -277,13 +277,13 @@ function listInstitutions(snap) {
                     }
                 }
                 tr.onmouseup = mouseEvent => {
-                    const hasSelection = getSelectedText() != ''
-
-                    if (hasSelection || mouseEvent.button == 2) {
-                        copyOption.hidden = !hasSelection
-                        tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
-                            option.hidden = hasSelection
-                        })
+                    if (getSelectedText() != '') {
+                        textContextMenu.style.left = (mouseEvent.clientX) + 'px'
+                        textContextMenu.style.top = (mouseEvent.clientY) + 'px'
+                        textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                        textContextMenu.materialComponent.open = true
+                    }
+                    else if (mouseEvent.button == 2) {
                         tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
                         tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
                         tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
@@ -426,8 +426,6 @@ ipcRenderer.on('file-save', (event, filePath) => {
 let stopFilteredCasesQuery = () => { }
 
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
-const copyOption = tableRowContextMenu.children[0].children['copy']
-copyOption.onclick = copySelectionToClipboard
 const editOption = tableRowContextMenu.children[0].children['edit']
 editOption.icon = editOption.getElementsByClassName('iconify')
 editOption.label = editOption.querySelector('.mdc-list-item__text')
@@ -486,6 +484,9 @@ deleteOption.onclick = () => {
         }
     )
 }
+const textContextMenu = document.getElementById('textContextMenu')
+const copyOption = textContextMenu.children[0].children['copy']
+copyOption.onclick = copySelectionToClipboard
 
 const dialogDeleteInstitution = document.querySelector('#dialogDeleteInstitution')
 const iconDialogDeleteInstitution = dialogDeleteInstitution.getElementsByClassName('iconify')

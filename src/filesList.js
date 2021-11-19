@@ -4,26 +4,26 @@
 
 // const filesTable = document.querySelector('table#files')
 // const filesList = filesTable.querySelector('tbody#filesList')
-// let currentOrder, currentOrderDirection
+// let filesCurrentOrder, filesCurrentOrderDirection
 
-// const columnsJSON = require('./fileColumns.json')
-// const tableHeadersList = filesTable.querySelector('#tableHeadersList')
-// const headerTemplate = document.getElementById('headerTemplate')
+// const fileColumnsJSON = require('./fileColumns.json')
+// const filesHeadersList = filesTable.querySelector('#filesHeadersList')
+// const filesHeaderTemplate = document.getElementById('filesHeaderTemplate')
 
 // function newHeader(headerID) {
-//     const th = headerTemplate.content.firstElementChild.cloneNode(true)
+//     const th = filesHeaderTemplate.content.firstElementChild.cloneNode(true)
 //     new MDCRipple(th)
 //     th.id = headerID
 
 //     th.onmousedown = mouseEvent => {
 //         if (mouseEvent.button == 0) {
-//             if (th.parentElement != tableHeadersList) {
+//             if (th.parentElement != filesHeadersList) {
 //                 setOverlayState('drag')
 //             }
 //         }
 //     }
 //     th.onmouseup = () => {
-//         if (th.parentElement != tableHeadersList) {
+//         if (th.parentElement != filesHeadersList) {
 //             if (filesList.childElementCount > 0) {
 //                 setOverlayState('hide')
 //             }
@@ -35,7 +35,7 @@
 //     th.onclick = () => headerClick(headerID)
 
 //     const label = th.querySelector('label')
-//     label.textContent = translate(columnsJSON[headerID])
+//     label.textContent = translate(fileColumnsJSON[headerID])
 
 //     th.sortIcon = th.getElementsByClassName('iconify')
 
@@ -45,44 +45,44 @@
 // function loadColumns() {
 //     setOverlayState('loading')
 
-//     let columns = Object.keys(columnsJSON)
+//     let columns = Object.keys(fileColumnsJSON)
 //     if (localStorage.getItem('fileColumns')) {
 //         columns = localStorage.getItem('fileColumns').split(',')
 //     }
-//     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
+//     columns.forEach(headerID => filesHeadersList.appendChild(newHeader(headerID)))
 
-//     if (tableHeadersList.children['name']) {
+//     if (filesHeadersList.children['name']) {
 //         headerClick('name')
 //         headerClick('name')
 //     }
 //     else {
-//         headerClick(tableHeadersList.firstChild.id)
+//         headerClick(filesHeadersList.firstChild.id)
 //     }
 // }
 
 // loadColumns()
 
-// let currentQuery = db.collection('insurance')
-// let currentFilesSnap
-// let stopCurrentQuery = () => { }
-// let currentRefQueries = []
+// let filesCurrentQuery = db.collection('insurance')
+// let filesCurrentFilesSnap
+// let stopFilesCurrentQuery = () => { }
+// let currentFilesRefQueries = []
 // let selectedFile, selectedFileRow, selectedFileID
 
 // firebase.auth().onAuthStateChanged(user => {
 //     if (user) {
 //         loadFiles()
-//         loadPermissions()
+//         loadFilesPermissions()
 //     }
 //     else {
-//         stopPermissionsQuery()
-//         stopCurrentQuery()
-//         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+//         stopFilesPermissionsQuery()
+//         stopFilesCurrentQuery()
+//         currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
 //     }
 // })
 
-// let stopPermissionsQuery = () => { }
+// let stopFilesPermissionsQuery = () => { }
 
-// function toggleEditMode(editIsAllowed) {
+// function toggleFilesEditMode(editIsAllowed) {
 //     buttonCreateFile.disabled = !editIsAllowed
 //     deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
 //     if (editIsAllowed) {
@@ -95,13 +95,13 @@
 //     }
 // }
 
-// function loadPermissions() {
-//     toggleEditMode(false)
+// function loadFilesPermissions() {
+//     toggleFilesEditMode(false)
 
-//     stopPermissionsQuery()
-//     stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('files').onSnapshot(
+//     stopFilesPermissionsQuery()
+//     stopFilesPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('files').onSnapshot(
 //         snapshot => {
-//             toggleEditMode(snapshot.get('edit'))
+//             toggleFilesEditMode(snapshot.get('edit'))
 //         },
 //         error => {
 //             console.error('Error getting permissions: ' + error)
@@ -111,9 +111,9 @@
 const buttonCreateFile = document.querySelector('button#createFile')
 
 // function headerClick(headerID) {
-//     const clickedHeader = tableHeadersList.querySelector('th#' + headerID)
+//     const clickedHeader = filesHeadersList.querySelector('th#' + headerID)
 //     if (clickedHeader) {
-//         tableHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
+//         filesHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
 //             if (otherHeaderIcon.parentElement != clickedHeader) {
 //                 otherHeaderIcon.classList.remove('rot-180')
 //                 otherHeaderIcon.setAttribute('data-icon', 'ic:round-unfold-more')
@@ -136,11 +136,11 @@ const buttonCreateFile = document.querySelector('button#createFile')
 // }
 
 // function loadFiles() {
-//     stopCurrentQuery()
-//     stopCurrentQuery = currentQuery.onSnapshot(
+//     stopFilesCurrentQuery()
+//     stopFilesCurrentQuery = filesCurrentQuery.onSnapshot(
 //         snapshot => {
 //             console.log(snapshot)
-//             currentFilesSnap = snapshot
+//             filesCurrentFilesSnap = snapshot
 //             listFiles(snapshot)
 //         },
 //         error => {
@@ -153,8 +153,8 @@ const buttonCreateFile = document.querySelector('button#createFile')
 // function listFiles(snap) {
 //     if (snap.docs.length > 0) {
 //         filesList.innerHTML = ''
-//         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
-//         currentRefQueries = []
+//         currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
+//         currentFilesRefQueries = []
 //         snap.forEach(fileSnap => {
 //             setOverlayState('hide')
 
@@ -171,7 +171,7 @@ const buttonCreateFile = document.querySelector('button#createFile')
 //                         if (selectedFileRow) {
 //                             selectedFileRow.classList.remove('selected')
 //                         }
-//                         selectedFile = currentQuery.doc(fileSnap.id)
+//                         selectedFile = filesCurrentQuery.doc(fileSnap.id)
 //                         selectedFileID = fileSnap.id
 //                         selectedFileRow = tr
 //                         selectedFileRow.classList.add('selected')
@@ -183,23 +183,23 @@ const buttonCreateFile = document.querySelector('button#createFile')
 
 //                 if (hasSelection || mouseEvent.button == 2) {
 //                     copyOption.hidden = !hasSelection
-//                     tableRowContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
+//                     filesContextMenu.querySelectorAll('li.mdc-list-item:not(#copy)').forEach(option => {
 //                         option.hidden = hasSelection
 //                     })
-//                     tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
-//                     tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
-//                     tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-//                     tableRowContextMenu.materialComponent.open = true
+//                     filesContextMenu.style.left = (mouseEvent.clientX) + 'px'
+//                     filesContextMenu.style.top = (mouseEvent.clientY) + 'px'
+//                     filesContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+//                     filesContextMenu.materialComponent.open = true
 //                 }
 //             }
 //             if (tr.id == selectedFileID) {
-//                 selectedFile = currentQuery.doc(selectedFileID)
+//                 selectedFile = filesCurrentQuery.doc(selectedFileID)
 //                 selectedFileRow = tr
 //                 selectedFileRow.classList.add('selected')
 //             }
 //             filesList.appendChild(tr)
 
-//             for (const column of tableHeadersList.children) {
+//             for (const column of filesHeadersList.children) {
 //                 const td = document.createElement('td')
 //                 td.id = column.id
 //                 tr.appendChild(td)
@@ -211,11 +211,11 @@ const buttonCreateFile = document.querySelector('button#createFile')
 //                     const value = fileSnap.get(td.id)
 //                     if (value != undefined) {
 //                         if (typeof value === 'object' && value !== null) {
-//                             currentRefQueries.push(
+//                             currentFilesRefQueries.push(
 //                                 value.onSnapshot(
 //                                     snapshot => {
 //                                         td.textContent = snapshot.get('name')
-//                                         orderFiles(currentOrder, currentOrderDirection)
+//                                         orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
 //                                     },
 //                                     error => {
 //                                         console.error(error)
@@ -230,7 +230,7 @@ const buttonCreateFile = document.querySelector('button#createFile')
 //                 }
 //             }
 //         })
-//         orderFiles(currentOrder, currentOrderDirection)
+//         orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
 //     }
 //     else {
 //         setOverlayState('empty')
@@ -267,8 +267,8 @@ const buttonCreateFile = document.querySelector('button#createFile')
 //     }
 //     while (switching)
 
-//     currentOrder = orderBy
-//     currentOrderDirection = orderDirection
+//     filesCurrentOrder = orderBy
+//     filesCurrentOrderDirection = orderDirection
 // }
 
 // function setOverlayState(state) {
@@ -301,14 +301,14 @@ const buttonCreateFile = document.querySelector('button#createFile')
 //     }
 // }
 
-// const tableRowContextMenu = document.getElementById('tableRowContextMenu')
-// const copyOption = tableRowContextMenu.children[0].children['copy']
+// const filesContextMenu = document.getElementById('tableRowContextMenu')
+// const copyOption = filesContextMenu.children[0].children['copy']
 // copyOption.onclick = copySelectionToClipboard
-// const editOption = tableRowContextMenu.children[0].children['edit']
+// const editOption = filesContextMenu.children[0].children['edit']
 // editOption.icon = editOption.getElementsByClassName('iconify')
 // editOption.label = editOption.querySelector('.mdc-list-item__text')
 // editOption.onclick = () => ipcRenderer.send('new-window', 'file', selectedFileID, selectFileType.value)
-// const deleteOption = tableRowContextMenu.children[0].children['delete']
+// const deleteOption = filesContextMenu.children[0].children['delete']
 // deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 
 // const dialogDeleteFile = document.querySelector('#dialogDeleteFile')
@@ -342,9 +342,9 @@ const buttonCreateFile = document.querySelector('button#createFile')
 // }
 
 // function refreshAndSaveColumns() {
-//     listFiles(currentFilesSnap)
+//     listFiles(filesCurrentFilesSnap)
 //     let fileColumns = []
-//     for (const header of tableHeadersList.children) {
+//     for (const header of filesHeadersList.children) {
 //         fileColumns.push(header.id)
 //     }
 //     localStorage.setItem('fileColumns', fileColumns)
