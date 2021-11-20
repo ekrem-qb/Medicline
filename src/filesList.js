@@ -79,6 +79,38 @@ firebase.auth().onAuthStateChanged(user => {
 })
 
 const buttonCreateFile = document.querySelector('button#createFile')
+buttonCreateFile.onclick = () => {
+    if (filesCurrentQuery) {
+        inputFile.click()
+    }
+}
+const inputFile = document.querySelector('input#file')
+inputFile.onchange = () => {
+    if (inputFile.value != '') {
+        const file = inputFile.files[0]
+
+        filesCurrentQuery.add({
+            name: file.name,
+            createUser: allUsers.doc(firebase.auth().currentUser.uid),
+            createDate: firebase.firestore.Timestamp.now()
+        }).then(snapshot => {
+            storage.child(selectedCaseID + '/' + snapshot.id + '.' + file.name.split('.')[1]).put(file, { name: file.name }).on('state_changed',
+                (snapshot) => {
+                    console.log('Upload is ' + (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '% done')
+                    console.log(snapshot.state)
+                },
+                (error) => {
+                    console.error('Error uploading file: ', error)
+                },
+                () => {
+
+                }
+            )
+        }).catch(error => {
+            console.error('Error creating file: ', error)
+        })
+    }
+}
 
 function headerClick(headerID) {
     const clickedHeader = filesHeadersList.querySelector('th#' + headerID)
@@ -293,12 +325,18 @@ const dialogDeleteFile = document.querySelector('#dialogDeleteFile')
 
 dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        selectedFile.delete().then(() => {
-            selectedFile = undefined
-            selectedFileID = undefined
-        }).catch(error => {
-            console.error('Error removing file: ', error)
-        })
+        if (selectedCaseID && selectedFileRow) {
+            storage.child(selectedCaseID + '/' + selectedFileID + '.' + selectedFileRow.children['name'].textContent.split('.')[1]).delete().then(() => {
+                selectedFile.delete().then(() => {
+                    selectedFile = undefined
+                    selectedFileID = undefined
+                }).catch(error => {
+                    console.error('Error removing file from firestore: ', error)
+                })
+            }).catch(error => {
+                console.error('Error removing file from storage: ', error)
+            })
+        }
     }
 })
 

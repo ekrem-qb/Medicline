@@ -1,1 +1,1 @@
-const storage = firebase.storage()
+const storage = firebase.storage().ref()
