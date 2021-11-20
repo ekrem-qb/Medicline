@@ -264,7 +264,7 @@ function setFilesOverlayState(state) {
             filesOverlay.classList.remove('show-headers')
             filesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             filesOverlayText.hidden = false
-            filesOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
+            filesOverlayText.innerText = translate('FILES') + ' ' + translate('NOT_FOUND')
             break
         case 'drag':
             filesOverlay.classList.remove('hide')
