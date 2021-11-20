@@ -87,7 +87,7 @@ function newHeader(headerID) {
 }
 
 function loadColumns() {
-    setOverlayState('loading')
+    setCasesOverlayState('loading')
 
     let enabledColumns = []
     if (localStorage.getItem('enabledColumns')) {
@@ -166,20 +166,26 @@ function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
     buttonCreateFile.disabled = !editIsAllowed
     for (const option of tableRowContextMenu.children[0].children) {
-        if (option != editOption && !option.classList.contains('mdc-list-divider')) {
+        if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
+            option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+        }
+    }
+    for (const option of filesContextMenu.children[0].children) {
+        if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
         }
     }
     if (editIsAllowed) {
-        editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
-        editOption.label.textContent = translate('EDIT')
+        tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
+        tableRowContextMenu.editOption.label.textContent = translate('EDIT')
+        filesContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
+        filesContextMenu.editOption.label.textContent = translate('EDIT')
     }
     else {
-        editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
-        editOption.label.textContent = translate('VIEW')
-    }
-    for (const iconButton of filesList.getElementsByClassName('mdc-icon-button')) {
-        iconButton.disabled = !editIsAllowed
+        tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
+        tableRowContextMenu.editOption.label.textContent = translate('VIEW')
+        filesContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
+        filesContextMenu.editOption.label.textContent = translate('VIEW')
     }
     haveEditPermission = editIsAllowed
 }
@@ -199,7 +205,7 @@ function loadPermissions() {
 }
 
 function refreshSearch() {
-    setOverlayState('loading')
+    setCasesOverlayState('loading')
     searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -249,7 +255,7 @@ function refreshSearch() {
                         listCases(currentCasesSnap)
                     }
                     else {
-                        setOverlayState('empty')
+                        setCasesOverlayState('empty')
                     }
                 }
             })
@@ -259,7 +265,7 @@ function refreshSearch() {
                 listCases(currentCasesSnap)
             }
             else {
-                setOverlayState('empty')
+                setCasesOverlayState('empty')
             }
         }
     }
@@ -314,7 +320,7 @@ function loadCases() {
         },
         error => {
             console.error('Error getting cases: ' + error)
-            setOverlayState('empty')
+            setCasesOverlayState('empty')
         }
     )
 }
@@ -369,7 +375,7 @@ function listCases(snap) {
                 })
 
                 if (!doesntMatch) {
-                    setOverlayState('hide')
+                    setCasesOverlayState('hide')
                     noOneFound = false
 
                     const tr = document.createElement('tr')
@@ -391,8 +397,9 @@ function listCases(snap) {
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
                                 if (headerDocuments.classList.contains('hide')) {
-                                    // stopFilesQuery()
-                                    // listFiles()
+                                    stopFilesCurrentQuery()
+                                    currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
+                                    loadFiles()
                                 }
                             }
                         }
@@ -475,11 +482,11 @@ function listCases(snap) {
         orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setOverlayState('empty')
+            setCasesOverlayState('empty')
         }
     }
     else {
-        setOverlayState('empty')
+        setCasesOverlayState('empty')
     }
 }
 
@@ -527,7 +534,7 @@ function orderCases(orderBy, orderDirection) {
     }
 }
 
-function setOverlayState(state) {
+function setCasesOverlayState(state) {
     switch (state) {
         case 'loading':
             casesOverlay.classList.remove('hide')
@@ -694,7 +701,7 @@ function applyFilter() {
             }
 
             if (inputFilter.id.split('-')[0] == 'createDate') {
-                setOverlayState('loading')
+                setCasesOverlayState('loading')
                 switch (inputFilter.id.split('-')[1]) {
                     case 'min':
                         currentQuery = currentQuery.where(inputFilter.id.split('-')[0], '>=', value)
@@ -749,7 +756,7 @@ function clearFilter() {
     hideEmptyFilters()
     currentQuery = allCases
     filters = {}
-    setOverlayState('loading')
+    setCasesOverlayState('loading')
     loadCases()
 }
 
@@ -770,15 +777,15 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
-const editOption = tableRowContextMenu.children[0].children['edit']
-editOption.icon = editOption.getElementsByClassName('iconify')
-editOption.label = editOption.querySelector('.mdc-list-item__text')
-editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
-const deleteOption = tableRowContextMenu.children[0].children['delete']
-deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
+tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
+tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
+tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
+tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
+tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
+tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 const textContextMenu = document.getElementById('textContextMenu')
-const copyOption = textContextMenu.children[0].children['copy']
-copyOption.onclick = copySelectionToClipboard
+textContextMenu.copyOption = textContextMenu.children[0].children['copy']
+textContextMenu.copyOption.onclick = copySelectionToClipboard
 
 const { writeFile, utils } = require('xlsx')
 

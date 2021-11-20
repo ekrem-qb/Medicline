@@ -86,14 +86,14 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
-    deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+    tableRowContextMenu.deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
     if (editIsAllowed) {
-        editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
-        editOption.label.textContent = translate('EDIT')
+        tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
+        tableRowContextMenu.editOption.label.textContent = translate('EDIT')
     }
     else {
-        editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
-        editOption.label.textContent = translate('VIEW')
+        tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
+        tableRowContextMenu.editOption.label.textContent = translate('VIEW')
     }
 }
 
@@ -426,12 +426,12 @@ ipcRenderer.on('file-save', (event, filePath) => {
 let stopFilteredCasesQuery = () => { }
 
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
-const editOption = tableRowContextMenu.children[0].children['edit']
-editOption.icon = editOption.getElementsByClassName('iconify')
-editOption.label = editOption.querySelector('.mdc-list-item__text')
-editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
-const deleteOption = tableRowContextMenu.children[0].children['delete']
-deleteOption.onclick = () => {
+tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
+tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
+tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
+tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
+tableRowContextMenu.deleteOption.onclick = () => {
     const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))
 
     stopFilteredCasesQuery()
@@ -485,8 +485,8 @@ deleteOption.onclick = () => {
     )
 }
 const textContextMenu = document.getElementById('textContextMenu')
-const copyOption = textContextMenu.children[0].children['copy']
-copyOption.onclick = copySelectionToClipboard
+textContextMenu.copyOption = textContextMenu.children[0].children['copy']
+textContextMenu.copyOption.onclick = copySelectionToClipboard
 
 const dialogDeleteInstitution = document.querySelector('#dialogDeleteInstitution')
 const iconDialogDeleteInstitution = dialogDeleteInstitution.getElementsByClassName('iconify')
