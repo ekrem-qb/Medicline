@@ -78,10 +78,10 @@ firebase.auth().onAuthStateChanged(user => {
     }
 })
 
-const inputFile = document.querySelector('input#file')
-inputFile.onchange = () => {
-    if (inputFile.value != '') {
-        const fileName = inputFile.files[0].name.split('.')
+const inputNewFile = document.querySelector('input#newFile')
+inputNewFile.onchange = () => {
+    if (inputNewFile.value != '') {
+        const fileName = inputNewFile.files[0].name.split('.')
         if (fileName.length > 1) {
             inputFileName.value = fileName[0]
             inputFileName.fileType = fileName[1]
@@ -94,7 +94,7 @@ inputFile.onchange = () => {
 const buttonUploadFile = document.querySelector('button#uploadFile')
 buttonUploadFile.onclick = () => {
     if (filesCurrentQuery) {
-        inputFile.click()
+        inputNewFile.click()
     }
 }
 const inlineEdit = document.getElementById('inlineEdit')
@@ -104,24 +104,25 @@ inputFileName.oninput = () => {
 }
 const buttonDoneFile = inlineEdit.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
-    if (filesCurrentQuery && inputFile.value != '' && inputFileName.value != '') {
+    if (filesCurrentQuery && inputNewFile.value != '' && inputFileName.value != '') {
         filesCurrentQuery.add({
             name: inputFileName.value + '.' + inputFileName.fileType,
             createUser: allUsers.doc(firebase.auth().currentUser.uid),
             createDate: firebase.firestore.Timestamp.now()
         }).then(snapshot => {
-            storage.child(selectedCaseID + '/' + snapshot.id + '.' + inputFileName.fileType).put(inputFile.files[0], { name: inputFileName.value + '.' + inputFileName.fileType }).on('state_changed',
+            storage.child(snapshot.parent.parent.id + '/' + snapshot.id + '.' + inputFileName.fileType).put(inputNewFile.files[0], { name: inputFileName.value + '.' + inputFileName.fileType }).on('state_changed',
                 (snapshot) => {
-                    console.log('Upload is ' + (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '% done')
-                    console.log(snapshot.state)
+                    const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + percent + '% done')
+
+                    if (percent == 100) {
+                        inputNewFile.value = ''
+                        inlineEdit.classList.remove('show')
+                        buttonUploadFile.classList.remove('hide')
+                    }
                 },
                 (error) => {
                     console.error('Error uploading file: ', error)
-                },
-                () => {
-                    inputFile.value = ''
-                    inlineEdit.classList.remove('show')
-                    buttonUploadFile.classList.remove('hide')
                 }
             )
         }).catch(error => {
@@ -131,7 +132,7 @@ buttonDoneFile.onclick = () => {
 }
 const buttonCancelFile = inlineEdit.querySelector('button#cancelFile')
 buttonCancelFile.onclick = () => {
-    inputFile.value = ''
+    inputNewFile.value = ''
     inlineEdit.classList.remove('show')
     buttonUploadFile.classList.remove('hide')
 }
@@ -193,11 +194,6 @@ function listFiles(snap) {
 
             const tr = document.createElement('tr')
             tr.id = fileSnap.id
-            tr.ondblclick = () => {
-                if (getSelectedText() == '') {
-                    ipcRenderer.send('new-window', 'file', selectedFileID, selectFileType.value)
-                }
-            }
             tr.onmousedown = mouseEvent => {
                 if (mouseEvent.button != 1) {
                     if (selectedFileID != fileSnap.id) {
@@ -337,12 +333,52 @@ function setFilesOverlayState(state) {
     }
 }
 
+const inputReplaceFile = document.querySelector('input#replaceFile')
+inputReplaceFile.onchange = () => {
+    if (inputReplaceFile.value != '') {
+        const fileName = inputReplaceFile.files[0].name.split('.')
+        if (fileName.length > 1 && selectedCaseID && selectedFileID) {
+            if ('.' + fileName[1] == inputReplaceFile.accept) {
+                storage.child(selectedCaseID + '/' + selectedFileID + '.' + fileName[1]).put(inputReplaceFile.files[0], { name: selectedCaseID + '/' + selectedFileID + '.' + fileName[1] }).on('state_changed',
+                    (snapshot) => {
+                        const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                        console.log('Upload is ' + percent + '% done')
+
+                        if (percent == 100) {
+                            inputReplaceFile.value = ''
+                            inputReplaceFile.accept = ''
+
+                            const fullpath = snapshot.metadata.fullPath.split('.')[0].split('/')
+
+                            allCases.doc(fullpath[0] + '/files/' + fullpath[1]).update({
+                                updateUser: allUsers.doc(firebase.auth().currentUser.uid),
+                                updateDate: firebase.firestore.Timestamp.now()
+                            }).then(() => {
+
+                            }).catch(error => {
+                                console.error('Error updating file: ', error)
+                            })
+                        }
+                    },
+                    (error) => {
+                        console.error('Error replacing file: ', error)
+                    }
+                )
+            }
+            else {
+                alert(translate('NOT_SAME_FILE_TYPE'))
+            }
+        }
+    }
+}
+
 const filesContextMenu = document.getElementById('filesContextMenu')
 filesContextMenu.downloadOption = filesContextMenu.children[0].children['download']
 filesContextMenu.downloadOption.onclick = () => {
     if (selectedCaseID && selectedFileRow) {
-        storage.child(selectedCaseID + '/' + selectedFileID + '.' + selectedFileRow.children['name'].textContent.split('.')[1]).getDownloadURL().then(url => {
-            ipcRenderer.send('download', url, selectedFileRow.children['name'].textContent)
+        const fileName = selectedFileRow.children['name'].textContent
+        storage.child(selectedCaseID + '/' + selectedFileID + '.' + fileName.split('.')[1]).getDownloadURL().then(url => {
+            ipcRenderer.send('download', url, fileName)
         }).catch(error => {
             console.error('Error downloading file: ', error)
         })
@@ -350,6 +386,13 @@ filesContextMenu.downloadOption.onclick = () => {
 }
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => { }
+filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
+filesContextMenu.replaceOption.onclick = () => {
+    if (filesCurrentQuery) {
+        inputReplaceFile.accept = '.' + selectedFileRow.children['name'].textContent.split('.')[1]
+        inputReplaceFile.click()
+    }
+}
 filesContextMenu.deleteOption = filesContextMenu.children[0].children['delete']
 filesContextMenu.deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 
@@ -365,7 +408,17 @@ dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
                     console.error('Error removing file from firestore: ', error)
                 })
             }).catch(error => {
-                console.error('Error removing file from storage: ', error)
+                if (error.code == 'storage/object-not-found') {
+                    selectedFile.delete().then(() => {
+                        selectedFile = undefined
+                        selectedFileID = undefined
+                    }).catch(error => {
+                        console.error('Error removing file from firestore: ', error)
+                    })
+                }
+                else {
+                    console.error('Error removing file from storage: ', error)
+                }
             })
         }
     }
