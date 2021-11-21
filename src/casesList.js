@@ -160,11 +160,10 @@ firebase.auth().onAuthStateChanged(user => {
 })
 
 let stopPermissionsQuery = () => { }
-let haveEditPermission = false
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
-    buttonCreateFile.disabled = !editIsAllowed
+    buttonUploadFile.disabled = !editIsAllowed
     for (const option of tableRowContextMenu.children[0].children) {
         if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
@@ -183,7 +182,6 @@ function toggleEditMode(editIsAllowed) {
         tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
         tableRowContextMenu.editOption.label.textContent = translate('VIEW')
     }
-    haveEditPermission = editIsAllowed
 }
 
 function loadPermissions() {

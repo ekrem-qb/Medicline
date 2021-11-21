@@ -78,23 +78,39 @@ firebase.auth().onAuthStateChanged(user => {
     }
 })
 
-const buttonCreateFile = document.querySelector('button#createFile')
-buttonCreateFile.onclick = () => {
+const inputFile = document.querySelector('input#file')
+inputFile.onchange = () => {
+    if (inputFile.value != '') {
+        const fileName = inputFile.files[0].name.split('.')
+        if (fileName.length > 1) {
+            inputFileName.value = fileName[0]
+            inputFileName.fileType = fileName[1]
+            inputFileName.focus()
+            inlineEdit.classList.add('show')
+            buttonUploadFile.classList.add('hide')
+        }
+    }
+}
+const buttonUploadFile = document.querySelector('button#uploadFile')
+buttonUploadFile.onclick = () => {
     if (filesCurrentQuery) {
         inputFile.click()
     }
 }
-const inputFile = document.querySelector('input#file')
-inputFile.onchange = () => {
-    if (inputFile.value != '') {
-        const file = inputFile.files[0]
-
+const inlineEdit = document.getElementById('inlineEdit')
+const inputFileName = inlineEdit.querySelector('input#fileName')
+inputFileName.oninput = () => {
+    inputFileName.materialComponent.valid = inputFileName.value != ''
+}
+const buttonDoneFile = inlineEdit.querySelector('button#doneFile')
+buttonDoneFile.onclick = () => {
+    if (filesCurrentQuery && inputFile.value != '' && inputFileName.value != '') {
         filesCurrentQuery.add({
-            name: file.name,
+            name: inputFileName.value + '.' + inputFileName.fileType,
             createUser: allUsers.doc(firebase.auth().currentUser.uid),
             createDate: firebase.firestore.Timestamp.now()
         }).then(snapshot => {
-            storage.child(selectedCaseID + '/' + snapshot.id + '.' + file.name.split('.')[1]).put(file, { name: file.name }).on('state_changed',
+            storage.child(selectedCaseID + '/' + snapshot.id + '.' + inputFileName.fileType).put(inputFile.files[0], { name: inputFileName.value + '.' + inputFileName.fileType }).on('state_changed',
                 (snapshot) => {
                     console.log('Upload is ' + (snapshot.bytesTransferred / snapshot.totalBytes) * 100 + '% done')
                     console.log(snapshot.state)
@@ -103,13 +119,21 @@ inputFile.onchange = () => {
                     console.error('Error uploading file: ', error)
                 },
                 () => {
-
+                    inputFile.value = ''
+                    inlineEdit.classList.remove('show')
+                    buttonUploadFile.classList.remove('hide')
                 }
             )
         }).catch(error => {
             console.error('Error creating file: ', error)
         })
     }
+}
+const buttonCancelFile = inlineEdit.querySelector('button#cancelFile')
+buttonCancelFile.onclick = () => {
+    inputFile.value = ''
+    inlineEdit.classList.remove('show')
+    buttonUploadFile.classList.remove('hide')
 }
 
 function filesHeaderClick(headerID) {
@@ -330,7 +354,6 @@ filesContextMenu.deleteOption = filesContextMenu.children[0].children['delete']
 filesContextMenu.deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 
 const dialogDeleteFile = document.querySelector('#dialogDeleteFile')
-
 dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         if (selectedCaseID && selectedFileRow) {
