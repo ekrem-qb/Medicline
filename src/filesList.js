@@ -32,7 +32,7 @@ function newFileHeader(headerID) {
             }
         }
     }
-    th.onclick = () => headerClick(headerID)
+    th.onclick = () => filesHeaderClick(headerID)
 
     const label = th.querySelector('label')
     label.textContent = translate(fileColumnsJSON[headerID])
@@ -52,11 +52,11 @@ function loadFileColumns() {
     columns.forEach(headerID => filesHeadersList.appendChild(newFileHeader(headerID)))
 
     if (filesHeadersList.children['name']) {
-        headerClick('name')
-        headerClick('name')
+        filesHeaderClick('name')
+        filesHeaderClick('name')
     }
     else {
-        headerClick(filesHeadersList.firstChild.id)
+        filesHeaderClick(filesHeadersList.firstChild.id)
     }
 }
 
@@ -112,7 +112,7 @@ inputFile.onchange = () => {
     }
 }
 
-function headerClick(headerID) {
+function filesHeaderClick(headerID) {
     const clickedHeader = filesHeadersList.querySelector('th#' + headerID)
     if (clickedHeader) {
         filesHeadersList.querySelectorAll('[data-icon="ic:round-keyboard-arrow-up"]').forEach(otherHeaderIcon => {
@@ -314,10 +314,18 @@ function setFilesOverlayState(state) {
 }
 
 const filesContextMenu = document.getElementById('filesContextMenu')
-filesContextMenu.editOption = filesContextMenu.children[0].children['edit']
-filesContextMenu.editOption.icon = filesContextMenu.editOption.getElementsByClassName('iconify')
-filesContextMenu.editOption.label = filesContextMenu.editOption.querySelector('.mdc-list-item__text')
-filesContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'file', selectedFileID, selectFileType.value)
+filesContextMenu.downloadOption = filesContextMenu.children[0].children['download']
+filesContextMenu.downloadOption.onclick = () => {
+    if (selectedCaseID && selectedFileRow) {
+        storage.child(selectedCaseID + '/' + selectedFileID + '.' + selectedFileRow.children['name'].textContent.split('.')[1]).getDownloadURL().then(url => {
+            ipcRenderer.send('download', url, selectedFileRow.children['name'].textContent)
+        }).catch(error => {
+            console.error('Error downloading file: ', error)
+        })
+    }
+}
+filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
+filesContextMenu.renameOption.onclick = () => { }
 filesContextMenu.deleteOption = filesContextMenu.children[0].children['delete']
 filesContextMenu.deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 

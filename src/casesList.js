@@ -87,7 +87,7 @@ function newHeader(headerID) {
 }
 
 function loadColumns() {
-    setCasesOverlayState('loading')
+    setOverlayState('loading')
 
     let enabledColumns = []
     if (localStorage.getItem('enabledColumns')) {
@@ -178,14 +178,10 @@ function toggleEditMode(editIsAllowed) {
     if (editIsAllowed) {
         tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
         tableRowContextMenu.editOption.label.textContent = translate('EDIT')
-        filesContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
-        filesContextMenu.editOption.label.textContent = translate('EDIT')
     }
     else {
         tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
         tableRowContextMenu.editOption.label.textContent = translate('VIEW')
-        filesContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
-        filesContextMenu.editOption.label.textContent = translate('VIEW')
     }
     haveEditPermission = editIsAllowed
 }
@@ -205,7 +201,7 @@ function loadPermissions() {
 }
 
 function refreshSearch() {
-    setCasesOverlayState('loading')
+    setOverlayState('loading')
     searchQuery = String(inputSearch.value).trim().toLowerCase()
 
     if (searchQuery != '') {
@@ -255,7 +251,7 @@ function refreshSearch() {
                         listCases(currentCasesSnap)
                     }
                     else {
-                        setCasesOverlayState('empty')
+                        setOverlayState('empty')
                     }
                 }
             })
@@ -265,7 +261,7 @@ function refreshSearch() {
                 listCases(currentCasesSnap)
             }
             else {
-                setCasesOverlayState('empty')
+                setOverlayState('empty')
             }
         }
     }
@@ -320,7 +316,7 @@ function loadCases() {
         },
         error => {
             console.error('Error getting cases: ' + error)
-            setCasesOverlayState('empty')
+            setOverlayState('empty')
         }
     )
 }
@@ -375,7 +371,7 @@ function listCases(snap) {
                 })
 
                 if (!doesntMatch) {
-                    setCasesOverlayState('hide')
+                    setOverlayState('hide')
                     noOneFound = false
 
                     const tr = document.createElement('tr')
@@ -482,11 +478,11 @@ function listCases(snap) {
         orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
-            setCasesOverlayState('empty')
+            setOverlayState('empty')
         }
     }
     else {
-        setCasesOverlayState('empty')
+        setOverlayState('empty')
     }
 }
 
@@ -534,7 +530,7 @@ function orderCases(orderBy, orderDirection) {
     }
 }
 
-function setCasesOverlayState(state) {
+function setOverlayState(state) {
     switch (state) {
         case 'loading':
             casesOverlay.classList.remove('hide')
@@ -701,7 +697,7 @@ function applyFilter() {
             }
 
             if (inputFilter.id.split('-')[0] == 'createDate') {
-                setCasesOverlayState('loading')
+                setOverlayState('loading')
                 switch (inputFilter.id.split('-')[1]) {
                     case 'min':
                         currentQuery = currentQuery.where(inputFilter.id.split('-')[0], '>=', value)
@@ -756,7 +752,7 @@ function clearFilter() {
     hideEmptyFilters()
     currentQuery = allCases
     filters = {}
-    setCasesOverlayState('loading')
+    setOverlayState('loading')
     loadCases()
 }
 

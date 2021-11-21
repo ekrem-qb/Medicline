@@ -4,6 +4,11 @@ async function main() {
     const { app, BrowserWindow, ipcMain, dialog } = require('electron')
     const log = require('electron-log')
     const { autoUpdater } = require('electron-updater')
+    const { download } = require('electron-dl')
+
+    ipcMain.on('download', async (event, url, name) => {
+        console.log(await download(event.sender.getOwnerBrowserWindow(), url, { saveAs: true, filename: name, openFolderWhenDone: true }))
+    })
 
     autoUpdater.autoInstallOnAppQuit = false
     autoUpdater.fullChangelog = true
