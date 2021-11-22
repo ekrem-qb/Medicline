@@ -195,14 +195,15 @@ th .iconify {
 .hide {
   padding: 0 !important;
   margin: 0 !important;
-  opacity: 0 !important;
   border: 0;
+  opacity: 0 !important;
+  transition: var(--transition);
   user-select: none !important;
   pointer-events: none !important;
   overflow: hidden;
 }
 
-.hide:not(.overlay, .modal-body) {
+.hide:not(.overlay, .modal-body, .position-absolute, .w-100) {
   max-height: 0 !important;
   min-height: 0 !important;
   height: 0 !important;
@@ -635,7 +636,12 @@ label {
   height: inherit;
   background-color: #fff;
   border-radius: var(--mdc-shape-small, 4px);
+}
+
+#inlineEdit .mdc-text-field,
+.mdc-text-field.h-100 {
   padding-left: max(8px, calc(var(--mdc-shape-small, 4px) + 4px));
+  padding-right: max(8px, calc(var(--mdc-shape-small, 4px) + 4px));
 }
 
 #inlineEdit .mdc-text-field input {
@@ -1221,4 +1227,8 @@ form .mdc-text-field {
   height: 17.5rem;
   width: 17.5rem;
   font-size: 17.5rem;
+}
+
+.inset-0 {
+  inset: 0;
 }

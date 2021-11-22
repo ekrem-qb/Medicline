@@ -86,7 +86,7 @@ inputNewFile.onchange = () => {
             inputFileName.value = fileName[0]
             inputFileName.fileType = fileName[1]
             inputFileName.focus()
-            inlineEdit.classList.add('show')
+            inputFileName.parentElement.parentElement.classList.remove('hide')
             buttonUploadFile.classList.add('hide')
         }
     }
@@ -97,12 +97,11 @@ buttonUploadFile.onclick = () => {
         inputNewFile.click()
     }
 }
-const inlineEdit = document.getElementById('inlineEdit')
-const inputFileName = inlineEdit.querySelector('input#fileName')
+const inputFileName = document.querySelector('input#fileName')
 inputFileName.oninput = () => {
     inputFileName.materialComponent.valid = inputFileName.value != ''
 }
-const buttonDoneFile = inlineEdit.querySelector('button#doneFile')
+const buttonDoneFile = document.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
     if (filesCurrentQuery && inputNewFile.value != '' && inputFileName.value != '') {
         filesCurrentQuery.add({
@@ -117,7 +116,7 @@ buttonDoneFile.onclick = () => {
 
                     if (percent == 100) {
                         inputNewFile.value = ''
-                        inlineEdit.classList.remove('show')
+                        inputFileName.parentElement.parentElement.classList.add('hide')
                         buttonUploadFile.classList.remove('hide')
                     }
                 },
@@ -130,10 +129,10 @@ buttonDoneFile.onclick = () => {
         })
     }
 }
-const buttonCancelFile = inlineEdit.querySelector('button#cancelFile')
+const buttonCancelFile = document.querySelector('button#cancelFile')
 buttonCancelFile.onclick = () => {
     inputNewFile.value = ''
-    inlineEdit.classList.remove('show')
+    inputFileName.parentElement.parentElement.classList.add('hide')
     buttonUploadFile.classList.remove('hide')
 }
 
@@ -385,7 +384,9 @@ filesContextMenu.downloadOption.onclick = () => {
     }
 }
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
-filesContextMenu.renameOption.onclick = () => { }
+filesContextMenu.renameOption.onclick = () => {
+
+}
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
 filesContextMenu.replaceOption.onclick = () => {
     if (filesCurrentQuery) {
