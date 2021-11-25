@@ -265,7 +265,6 @@ saveButton.onclick = () => {
             collection.add({
                 name: inlineEditInput.value.trim()
             }).then(snapshot => {
-                inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
                 saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 inlineEdit.classList.remove('show')
@@ -284,7 +283,6 @@ saveButton.onclick = () => {
             db.doc(inlineEditPath).update({
                 name: inlineEditInput.value.trim()
             }).then(() => {
-                inlineEditInput.value = inlineEditInput.oldValue
                 saveButton.disabled = true
                 saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 inlineEdit.classList.remove('show')

@@ -3,6 +3,7 @@ const filesOverlayIcon = filesOverlay.getElementsByClassName('iconify')
 const filesOverlayText = filesOverlay.querySelector('h3')
 
 const filesTable = document.querySelector('table#files')
+filesTable.parentElement.onscroll = () => moveInlineEditToAnchor()
 const filesList = filesTable.querySelector('tbody#filesList')
 let filesCurrentOrder, filesCurrentOrderDirection
 
@@ -80,7 +81,7 @@ firebase.auth().onAuthStateChanged(user => {
 
 const inputNewFile = document.querySelector('input#newFile')
 inputNewFile.onchange = () => {
-    if (inputNewFile.value != '') {
+    if (inputNewFile.value.trim() != '') {
         const fileName = inputNewFile.files[0].name.split('.')
         if (fileName.length > 1) {
             inputFileName.value = fileName[0]
@@ -99,11 +100,11 @@ buttonUploadFile.onclick = () => {
 }
 const inputFileName = document.querySelector('input#fileName')
 inputFileName.oninput = () => {
-    inputFileName.materialComponent.valid = inputFileName.value != ''
+    inputFileName.materialComponent.valid = inputFileName.value.trim() != ''
 }
 const buttonDoneFile = document.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
-    if (filesCurrentQuery && inputNewFile.value != '' && inputFileName.value != '') {
+    if (filesCurrentQuery && inputNewFile.value.trim() != '' && inputFileName.value.trim() != '') {
         filesCurrentQuery.add({
             name: inputFileName.value + '.' + inputFileName.fileType,
             createUser: allUsers.doc(firebase.auth().currentUser.uid),
@@ -259,6 +260,9 @@ function listFiles(snap) {
                         }
                     }
                 }
+                if (td.id == 'name') {
+                    td.onclick = () => showInlineEdit(td, fileSnap.ref.path, td.textContent.split('.')[0], td.textContent.split('.')[1])
+                }
             }
         })
         orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
@@ -385,7 +389,7 @@ filesContextMenu.downloadOption.onclick = () => {
 }
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => {
-
+    showInlineEdit(selectedFileRow.children['name'], selectedFile.path, selectedFileRow.children['name'].textContent.split('.')[0], selectedFileRow.children['name'].textContent.split('.')[1])
 }
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
 filesContextMenu.replaceOption.onclick = () => {
@@ -432,4 +436,97 @@ function refreshAndSaveFileColumns() {
         fileColumns.push(header.id)
     }
     localStorage.setItem('fileColumns', fileColumns)
+}
+
+const inlineEdit = document.getElementById('inlineEdit')
+const inlineEditInput = inlineEdit.querySelector('input')
+let inlineEditPath, inlineEditAnchorSelector
+const saveButton = inlineEdit.querySelector('button#save')
+const saveButtonIcon = saveButton.getElementsByClassName('iconify')
+
+function showInlineEdit(anchor, path, oldValue, fileType) {
+    if (oldValue) {
+        inlineEditInput.value = oldValue
+        inlineEditInput.oldValue = oldValue
+    } else {
+        inlineEditInput.value = ''
+        inlineEditInput.oldValue = ''
+    }
+    inlineEditInput.fileType = fileType
+    saveButton.disabled = true
+
+    inlineEditAnchorSelector = '#' + anchor.parentElement.id + '>' + anchor.tagName.toLocaleLowerCase() + '#' + anchor.id
+    moveInlineEditToAnchor()
+
+    inlineEditPath = path
+    inlineEdit.classList.add('show')
+    inlineEditInput.focus()
+}
+
+saveButton.onclick = () => {
+    if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
+        saveButtonIcon[0].setAttribute('data-icon', 'eos-icons:loading')
+
+        db.doc(inlineEditPath).update({
+            name: inlineEditInput.value.trim() + '.' + inlineEditInput.fileType
+        }).then(() => {
+            saveButton.disabled = true
+            saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
+            inlineEdit.classList.remove('show')
+        }).catch(error => {
+            saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
+            console.error('Error updating file name: ', error)
+        })
+    }
+}
+
+inlineEditInput.oninput = () => {
+    if (inlineEditInput.value.trim() != '' && inlineEditInput.value.trim() != inlineEditInput.oldValue) {
+        saveButton.disabled = false
+    } else {
+        saveButton.disabled = true
+    }
+}
+inlineEditInput.onchange = () => inlineEditInput.value = inlineEditInput.value.trim()
+
+inlineEditInput.onblur = event => {
+    if (event.relatedTarget != null) {
+        if (event.relatedTarget.parentElement == inlineEdit) {
+            return
+        }
+    }
+    inlineEdit.classList.remove('show')
+}
+
+inlineEditInput.onkeydown = event => {
+    switch (event.key) {
+        case 'Enter':
+            saveButton.click()
+            break
+        case 'Escape':
+            inlineEdit.classList.remove('show')
+            break
+    }
+}
+
+function moveInlineEditToAnchor() {
+    let anchor = document.querySelector(inlineEditAnchorSelector)
+
+    if (anchor != null) {
+        if (anchor.localName == 'button') {
+            inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
+            inlineEdit.style.left = (anchor.parentElement.parentElement.offsetLeft + 1) + 'px'
+            inlineEdit.style.height = anchor.offsetHeight + 'px'
+            inlineEdit.style.width = anchor.offsetWidth + 'px'
+            inlineEdit.style.zIndex = '15'
+        } else {
+            inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
+            inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
+            inlineEdit.style.height = anchor.offsetHeight + 'px'
+            inlineEdit.style.width = anchor.offsetWidth + 'px'
+            inlineEdit.style.zIndex = ''
+        }
+    } else {
+        inlineEdit.classList.remove('show')
+    }
 }

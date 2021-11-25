@@ -619,16 +619,13 @@ label {
 
 #inlineEdit {
   position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
   transition: opacity var(--transition);
   z-index: 2;
 }
 
-#inlineEdit.show {
-  pointer-events: auto;
-  opacity: 1;
+#inlineEdit:not(.show) {
+  pointer-events: none;
+  opacity: 0;
 }
 
 #inlineEdit .mdc-text-field {
@@ -638,9 +635,13 @@ label {
   border-radius: var(--mdc-shape-small, 4px);
 }
 
-#inlineEdit .mdc-text-field,
-.mdc-text-field.h-100 {
+#inlineEdit .mdc-text-field:not(.mdc-text-field--with-leading-icon),
+.mdc-text-field.h-100:not(.mdc-text-field--with-leading-icon) {
   padding-left: max(8px, calc(var(--mdc-shape-small, 4px) + 4px));
+}
+
+#inlineEdit .mdc-text-field:not(.mdc-text-field--with-trailing-icon),
+.mdc-text-field.h-100:not(.mdc-text-field--with-trailing-icon) {
   padding-right: max(8px, calc(var(--mdc-shape-small, 4px) + 4px));
 }
 
