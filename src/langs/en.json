@@ -35,9 +35,11 @@
     "CREATE_USER": "Operator Created",
     "CREATE_DATE": "Date of Creation",
     "CREATE_TIME": "Time of Creation",
+    "CREATE_DATE_TIME": "Date and Time of Creation",
     "UPDATE_USER": "Operator Last Updated",
     "UPDATE_DATE": "Date of Last Update",
     "UPDATE_TIME": "Time of Last Update",
+    "UPDATE_DATE_TIME": "Date and Time of Last Update",
     "INSURANCE": "Insurance Company",
     "INSURANCES": "Insurance Companies",
     "POLICY_NO": "Policy №",
@@ -70,6 +72,7 @@
     "THIS_COUNTRY": "country",
     "THIS_INSURANCE": "insurance company",
     "THIS_PROVIDER": "provider",
+    "THIS_FILE": "file",
     "DELETE": "Delete",
     "SAVE": "Save",
     "CANCEL": "Cancel",
@@ -92,5 +95,10 @@
     "HIDE_COLUMN": "Hide Column",
     "FILE": "File",
     "FILES": "Files",
-    "FILE_NAME": "File Name"
+    "FILE_NAME": "File Name",
+    "UPLOAD_FILE": "Upload File",
+    "DOWNLOAD": "Download",
+    "RENAME": "Rename",
+    "REPLACE": "Replace",
+    "DONE": "Done"
 }

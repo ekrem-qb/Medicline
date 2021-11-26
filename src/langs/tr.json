@@ -36,9 +36,11 @@
     "CREATE_USER": "Oluşturan Operatör",
     "CREATE_DATE": "Oluşturma Tarihi",
     "CREATE_TIME": "Oluşturma Saatı",
+    "CREATE_DATE_TIME": "Oluşturma Tarihi ve Saatı",
     "UPDATE_USER": "Son güncelleyen Operatör",
     "UPDATE_DATE": "Son güncelleme Tarihi",
     "UPDATE_TIME": "Son güncelleme Saatı",
+    "UPDATE_DATE_TIME": "Son güncelleme Tarihi ve Saatı",
     "INSURANCE": "Sigorta Şirketi",
     "INSURANCES": "Sigorta Şirketleri",
     "POLICY_NO": "Poliçe №",
@@ -71,6 +73,7 @@
     "THIS_COUNTRY": "ülkeyi",
     "THIS_INSURANCE": "sigorta şirketini",
     "THIS_PROVIDER": "provider'ı",
+    "THIS_FILE": "dosyayı",
     "DELETE": "Sil",
     "SAVE": "Kaydet",
     "CANCEL": "İptal",
@@ -93,5 +96,10 @@
     "HIDE_COLUMN": "Sütünü Gizle",
     "FILE": "Dosya",
     "FILES": "Dosyalar",
-    "FILE_NAME": "Dosya Adı"
+    "FILE_NAME": "Dosya Adı",
+    "UPLOAD_FILE": "Dosyayı yükle",
+    "DOWNLOAD": "İndir",
+    "RENAME": "Yeniden adlandır",
+    "REPLACE": "Değiştir",
+    "DONE": "Tamam"
 }

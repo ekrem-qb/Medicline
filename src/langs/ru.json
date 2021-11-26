@@ -38,9 +38,11 @@
     "CREATE_USER": "Оператор создавший",
     "CREATE_DATE": "Дата создания",
     "CREATE_TIME": "Время создания",
+    "CREATE_DATE_TIME": "Дата и Время создания",
     "UPDATE_USER": "Оператор обновивший",
     "UPDATE_DATE": "Дата обновления",
     "UPDATE_TIME": "Время обновления",
+    "UPDATE_DATE_TIME": "Дата и Время обновления",
     "INSURANCE": "Страховая компания",
     "INSURANCES": "Страховые компании",
     "POLICY_NO": "Номер Полиса",
@@ -77,6 +79,7 @@
     "THIS_COUNTRY": "эта страна",
     "THIS_INSURANCE": "эта страховая компания",
     "THIS_PROVIDER": "этот провайдер",
+    "THIS_FILE": "этот файл",
     "DELETE": "Удалить",
     "SAVE": "Сохранить",
     "CANCEL": "Отмена",
@@ -99,5 +102,10 @@
     "HIDE_COLUMN": "Скрыть столбец",
     "FILE": "Файл",
     "FILES": "Файлы",
-    "FILE_NAME": "Имя файла"
+    "FILE_NAME": "Имя файла",
+    "UPLOAD_FILE": "Загрузить файл",
+    "DOWNLOAD": "Скачать",
+    "RENAME": "Переименовать",
+    "REPLACE": "Заменить",
+    "DONE": "Готово"
 }
