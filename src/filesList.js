@@ -5,7 +5,9 @@ const filesOverlayText = filesOverlay.querySelector('h3')
 const filesTabPage = filesOverlay.parentElement
 filesTabPage.stopLoadingContent = () => {
     stopFilesCurrentQuery()
+    stopFilesCurrentQuery = () => { }
     currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
+    currentFilesRefQueries = []
 }
 filesTabPage.loadContent = () => {
     filesTabPage.stopLoadingContent()
@@ -81,11 +83,12 @@ let selectedFile, selectedFileRow, selectedFileID
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
-        loadFiles()
+        if (filesTabPage.classList.contains('show')) {
+            filesTabPage.loadContent()
+        }
     }
     else {
-        stopFilesCurrentQuery()
-        currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
+        filesTabPage.stopLoadingContent()
     }
 })
 

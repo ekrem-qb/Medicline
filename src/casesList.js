@@ -392,18 +392,10 @@ function listCases(snap) {
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
                                 if (headerDocuments.classList.contains('hide')) {
-                                    const activeTab = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-                                    const prevTab = documentsContent.querySelector('.tab-page.show')
-                                    if (activeTab != prevTab) {
-                                        if (prevTab.stopLoadingContent) {
-                                            prevTab.stopLoadingContent()
-                                        }
-                                        prevTab.classList.remove('show')
+                                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+                                    if (activePage.loadContent) {
+                                        activePage.loadContent()
                                     }
-                                    if (activeTab.loadContent) {
-                                        activeTab.loadContent()
-                                    }
-                                    activeTab.classList.add('show')
                                 }
                             }
                         }
@@ -613,6 +605,30 @@ for (const status of statusBar.children) {
     }
 }
 
+const headerDocuments = document.querySelector('header#documents')
+
+const tabBar = headerDocuments.previousElementSibling.materialComponent
+const documentsContent = headerDocuments.nextElementSibling
+
+if (localStorage.getItem('isDocumentsPanelOpen')) {
+    headerDocuments.click()
+}
+
+tabBar.listen('MDCTabBar:activated', event => {
+    const activePage = documentsContent.children[event.detail.index]
+    const prevPage = documentsContent.querySelector('.tab-page.show')
+    if (activePage != prevPage) {
+        if (prevPage.stopLoadingContent) {
+            prevPage.stopLoadingContent()
+        }
+        prevPage.classList.remove('show')
+    }
+    if (activePage.loadContent) {
+        activePage.loadContent()
+    }
+    activePage.classList.add('show')
+})
+
 function modalExpand(header) {
     const modalBody = header.nextElementSibling
     const expandIcon = header.querySelector('.dropdown-icon')
@@ -624,53 +640,24 @@ function modalExpand(header) {
     if (header.id == 'documents') {
         header.classList.toggle('hide')
         header.previousElementSibling.classList.toggle('hide')
+        const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
         if (header.classList.contains('hide')) {
             localStorage.setItem('isDocumentsPanelOpen', 1)
+            if (activePage.loadContent) {
+                activePage.loadContent()
+            }
         }
         else {
             localStorage.removeItem('isDocumentsPanelOpen')
-        }
-        const activeTab = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-        const prevTab = documentsContent.querySelector('.tab-page.show')
-        if (activeTab != prevTab) {
-            if (prevTab.stopLoadingContent) {
-                prevTab.stopLoadingContent()
+            if (activePage.stopLoadingContent) {
+                activePage.stopLoadingContent()
             }
-            prevTab.classList.remove('show')
         }
-        if (activeTab.loadContent) {
-            activeTab.loadContent()
-        }
-        activeTab.classList.add('show')
     }
     else {
         hideEmptyFilters()
     }
 }
-
-const headerDocuments = document.querySelector('header#documents')
-
-if (localStorage.getItem('isDocumentsPanelOpen')) {
-    headerDocuments.click()
-}
-
-const tabBar = headerDocuments.previousElementSibling.materialComponent
-const documentsContent = headerDocuments.nextElementSibling
-
-tabBar.listen('MDCTabBar:activated', event => {
-    const activeTab = documentsContent.children[event.detail.index]
-    const prevTab = documentsContent.querySelector('.tab-page.show')
-    if (activeTab != prevTab) {
-        if (prevTab.stopLoadingContent) {
-            prevTab.stopLoadingContent()
-        }
-        prevTab.classList.remove('show')
-    }
-    if (activeTab.loadContent) {
-        activeTab.loadContent()
-    }
-    activeTab.classList.add('show')
-})
 
 const buttonCloseDocuments = document.querySelector('button#closeDocuments')
 buttonCloseDocuments.onclick = () => modalExpand(headerDocuments)
