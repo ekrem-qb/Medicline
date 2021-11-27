@@ -2,7 +2,17 @@ const filesOverlay = document.getElementById('filesOverlay')
 const filesOverlayIcon = filesOverlay.getElementsByClassName('iconify')
 const filesOverlayText = filesOverlay.querySelector('h3')
 
-const filesTable = document.querySelector('table#files')
+const filesTabPage = filesOverlay.parentElement
+filesTabPage.stopLoadingContent = () => {
+    stopFilesCurrentQuery()
+    currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
+}
+filesTabPage.loadContent = () => {
+    filesTabPage.stopLoadingContent()
+    loadFiles()
+}
+
+const filesTable = filesTabPage.querySelector('table#files')
 filesTable.parentElement.onscroll = () => moveInlineEditToAnchor()
 const filesList = filesTable.querySelector('tbody#filesList')
 let filesCurrentOrder, filesCurrentOrderDirection
@@ -79,7 +89,7 @@ firebase.auth().onAuthStateChanged(user => {
     }
 })
 
-const inputNewFile = document.querySelector('input#newFile')
+const inputNewFile = filesTabPage.querySelector('input#newFile')
 inputNewFile.onchange = () => {
     if (inputNewFile.value.trim() != '') {
         const fileName = inputNewFile.files[0].name.split('.')
@@ -92,17 +102,17 @@ inputNewFile.onchange = () => {
         }
     }
 }
-const buttonUploadFile = document.querySelector('button#uploadFile')
+const buttonUploadFile = filesTabPage.querySelector('button#uploadFile')
 buttonUploadFile.onclick = () => {
     if (filesCurrentQuery) {
         inputNewFile.click()
     }
 }
-const inputFileName = document.querySelector('input#fileName')
+const inputFileName = filesTabPage.querySelector('input#fileName')
 inputFileName.oninput = () => {
     inputFileName.materialComponent.valid = inputFileName.value.trim() != ''
 }
-const buttonDoneFile = document.querySelector('button#doneFile')
+const buttonDoneFile = filesTabPage.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
     if (filesCurrentQuery && inputNewFile.value.trim() != '' && inputFileName.value.trim() != '') {
         filesCurrentQuery.add({
@@ -130,7 +140,7 @@ buttonDoneFile.onclick = () => {
         })
     }
 }
-const buttonCancelFile = document.querySelector('button#cancelFile')
+const buttonCancelFile = filesTabPage.querySelector('button#cancelFile')
 buttonCancelFile.onclick = () => {
     inputNewFile.value = ''
     inputFileName.parentElement.parentElement.classList.add('hide')
@@ -163,7 +173,6 @@ function filesHeaderClick(headerID) {
 }
 
 function loadFiles() {
-    stopFilesCurrentQuery()
     if (selectedCase) {
         filesCurrentQuery = selectedCase.collection('files')
         stopFilesCurrentQuery = filesCurrentQuery.onSnapshot(
@@ -336,7 +345,7 @@ function setFilesOverlayState(state) {
     }
 }
 
-const inputReplaceFile = document.querySelector('input#replaceFile')
+const inputReplaceFile = filesTabPage.querySelector('input#replaceFile')
 inputReplaceFile.onchange = () => {
     if (inputReplaceFile.value != '') {
         const fileName = inputReplaceFile.files[0].name.split('.')
@@ -401,7 +410,7 @@ filesContextMenu.replaceOption.onclick = () => {
 filesContextMenu.deleteOption = filesContextMenu.children[0].children['delete']
 filesContextMenu.deleteOption.onclick = () => dialogDeleteFile.materialComponent.open()
 
-const dialogDeleteFile = document.querySelector('#dialogDeleteFile')
+const dialogDeleteFile = filesTabPage.querySelector('#dialogDeleteFile')
 dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         if (selectedCaseID && selectedFileRow) {
@@ -510,7 +519,7 @@ inlineEditInput.onkeydown = event => {
 }
 
 function moveInlineEditToAnchor() {
-    let anchor = document.querySelector(inlineEditAnchorSelector)
+    let anchor = filesTabPage.querySelector(inlineEditAnchorSelector)
 
     if (anchor != null) {
         if (anchor.localName == 'button') {

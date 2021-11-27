@@ -164,13 +164,14 @@ let stopPermissionsQuery = () => { }
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
     buttonUploadFile.disabled = !editIsAllowed
+    buttonDoneFile.disabled = !editIsAllowed
     for (const option of tableRowContextMenu.children[0].children) {
         if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
         }
     }
     for (const option of filesContextMenu.children[0].children) {
-        if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
+        if (option != filesContextMenu.downloadOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
         }
     }
@@ -391,9 +392,18 @@ function listCases(snap) {
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
                                 if (headerDocuments.classList.contains('hide')) {
-                                    stopFilesCurrentQuery()
-                                    currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
-                                    loadFiles()
+                                    const activeTab = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+                                    const prevTab = documentsContent.querySelector('.tab-page.show')
+                                    if (activeTab != prevTab) {
+                                        if (prevTab.stopLoadingContent) {
+                                            prevTab.stopLoadingContent()
+                                        }
+                                        prevTab.classList.remove('show')
+                                    }
+                                    if (activeTab.loadContent) {
+                                        activeTab.loadContent()
+                                    }
+                                    activeTab.classList.add('show')
                                 }
                             }
                         }
@@ -620,6 +630,18 @@ function modalExpand(header) {
         else {
             localStorage.removeItem('isDocumentsPanelOpen')
         }
+        const activeTab = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+        const prevTab = documentsContent.querySelector('.tab-page.show')
+        if (activeTab != prevTab) {
+            if (prevTab.stopLoadingContent) {
+                prevTab.stopLoadingContent()
+            }
+            prevTab.classList.remove('show')
+        }
+        if (activeTab.loadContent) {
+            activeTab.loadContent()
+        }
+        activeTab.classList.add('show')
     }
     else {
         hideEmptyFilters()
@@ -636,8 +658,18 @@ const tabBar = headerDocuments.previousElementSibling.materialComponent
 const documentsContent = headerDocuments.nextElementSibling
 
 tabBar.listen('MDCTabBar:activated', event => {
-    documentsContent.querySelector('.tab-page.show').classList.remove('show')
-    documentsContent.children[event.detail.index].classList.add('show')
+    const activeTab = documentsContent.children[event.detail.index]
+    const prevTab = documentsContent.querySelector('.tab-page.show')
+    if (activeTab != prevTab) {
+        if (prevTab.stopLoadingContent) {
+            prevTab.stopLoadingContent()
+        }
+        prevTab.classList.remove('show')
+    }
+    if (activeTab.loadContent) {
+        activeTab.loadContent()
+    }
+    activeTab.classList.add('show')
 })
 
 const buttonCloseDocuments = document.querySelector('button#closeDocuments')
