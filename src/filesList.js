@@ -6,6 +6,7 @@ const filesTabPage = filesOverlay.parentElement
 filesTabPage.stopLoadingContent = () => {
     stopFilesCurrentQuery()
     stopFilesCurrentQuery = () => { }
+    filesCurrentQuery = undefined
     currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
     currentFilesRefQueries = []
 }
@@ -191,7 +192,9 @@ function loadFiles() {
         )
     }
     else {
+        stopFilesCurrentQuery()
         stopFilesCurrentQuery = () => { }
+        filesCurrentQuery = undefined
         setFilesOverlayState('empty')
     }
 }

@@ -446,8 +446,7 @@ thead>tr {
   top: 3.4rem;
   position: absolute;
   justify-content: center;
-  backdrop-filter: blur(10px) grayscale(1);
-  background-color: #ffffffbf;
+  background-color: #fff;
   color: var(--mdc-theme-text-disabled-on-background);
   border-bottom-left-radius: var(--mdc-shape-medium);
   border-bottom-right-radius: var(--mdc-shape-medium);

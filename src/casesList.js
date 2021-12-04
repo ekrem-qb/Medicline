@@ -780,9 +780,38 @@ buttonClearFilter.onclick = clearFilter
 const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        selectedCase.delete().then(() => {
-            selectedCase = undefined
-            selectedCaseID = undefined
+        const caseID = selectedCaseID
+        allCases.doc(caseID).collection('files').get().then(files => {
+            files.forEach(file => {
+                file.ref.delete().then(() => {
+                }).catch(error => {
+                    console.error('Error removing file from firestore: ', error)
+                })
+            })
+        }).catch(error => {
+            console.error('Error getting files from firestore: ', error)
+        })
+        storage.child(caseID).listAll().then(folder => {
+            folder.items.forEach(file => {
+                storage.child(file.fullPath).delete().then(() => {
+                }).catch(error => {
+                    console.error('Error removing file from storage: ', error)
+                })
+            })
+        }).catch(error => {
+            console.error('Error listing files from storage: ', error)
+        })
+        allCases.doc(caseID).delete().then(() => {
+            if (caseID == selectedCaseID) {
+                selectedCase = undefined
+                selectedCaseID = undefined
+                if (headerDocuments.classList.contains('hide')) {
+                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+                    if (activePage.loadContent) {
+                        activePage.loadContent()
+                    }
+                }
+            }
         }).catch(error => {
             console.error('Error removing case: ', error)
         })
