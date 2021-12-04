@@ -79,6 +79,7 @@ firebase.auth().onAuthStateChanged(user => {
         stopPermissionsQuery()
         stopCurrentQuery()
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
+        currentRefQueries = []
     }
 })
 
