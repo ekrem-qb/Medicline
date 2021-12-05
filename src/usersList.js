@@ -68,15 +68,13 @@ function listUsers() {
                                 listItem.id = change.doc.id
                                 listItem.onclick = event => {
                                     if (event.target.parentElement != buttonEdit && event.target.parentElement != buttonDelete) {
-                                        if (selectedUser != listItem) {
-                                            const activeItem = usersList.querySelector('.list-group-item.active')
-                                            if (activeItem) {
-                                                activeItem.classList.remove('active')
-                                            }
-                                            selectedUser = listItem
-                                            listItem.classList.add('active')
-                                            loadSelectedUserPermissions()
+                                        const activeItem = usersList.querySelector('.list-group-item.active')
+                                        if (activeItem) {
+                                            activeItem.classList.remove('active')
                                         }
+                                        selectedUser = listItem
+                                        listItem.classList.add('active')
+                                        loadSelectedUserPermissions()
                                     }
                                 }
                                 new MDCRipple(listItem)
@@ -251,13 +249,22 @@ const foundCasesLinks = dialogDeleteUser.querySelector('span')
 
 dialogDeleteUser.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        admin.auth().deleteUser(selectedUser.id).then(() => {
-            allUsers.doc(selectedUser.id).delete().then(() => {
+        const UID = selectedUser.id
+        admin.auth().deleteUser(UID).then(() => {
+            allUsers.doc(UID).delete().then(() => {
             }).catch(error => {
-                console.error('Error deleting user: ', error)
+                console.error('Error deleting user from firestore: ', error)
+            })
+            allUsers.doc(UID).collection('permissions').get().then(permissions => {
+                permissions.forEach(permission => {
+                    permission.ref.delete().then(() => {
+                    }).catch(error => {
+                        console.error('Error removing permission: ', error)
+                    })
+                })
             })
         }).catch(error => {
-            console.error('Error deleting user: ', error)
+            console.error('Error deleting user from auth: ', error)
         })
     }
 })
