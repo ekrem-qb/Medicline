@@ -285,6 +285,8 @@ function listInstitutions(snap) {
                         textContextMenu.materialComponent.open = true
                     }
                     else if (mouseEvent.button == 2) {
+                        tableRowContextMenuactivitiesOption.hidden = selectInstitutionType.value != "insurance"
+
                         tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
                         tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
                         tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
@@ -431,6 +433,8 @@ tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit'
 tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
 tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
 tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+tableRowContextMenuactivitiesOption = tableRowContextMenu.children[0].children['activities']
+tableRowContextMenuactivitiesOption.onclick = () => { }
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => {
     const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))

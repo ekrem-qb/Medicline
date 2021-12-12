@@ -100,5 +100,6 @@
     "DOWNLOAD": "Download",
     "RENAME": "Rename",
     "REPLACE": "Replace",
-    "DONE": "Done"
+    "DONE": "Done",
+    "ACTIVITIES": "Billable Activities"
 }

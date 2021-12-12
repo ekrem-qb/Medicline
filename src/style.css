@@ -1093,7 +1093,8 @@ th .iconify[data-icon="ic:round-unfold-more"] {
   cursor: pointer;
 }
 
-.mdc-list-item>.iconify[data-icon="ic:round-plus"] {
+.mdc-list-item>.iconify[data-icon="ic:round-plus"],
+.mdc-list-item>.iconify[data-icon="ic:round-attach-money"] {
   color: var(--bs-green);
 }
 
