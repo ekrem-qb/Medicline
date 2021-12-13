@@ -1076,6 +1076,7 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 .mdc-list {
   padding-top: 0;
   padding-bottom: 0;
+  font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, system-ui));
 }
 
 .mdc-list>.mdc-list-item {

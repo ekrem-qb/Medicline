@@ -4,75 +4,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicline</title>
+    <title>ACTIVITIES</title>
     <script src="../node_modules/@iconify/iconify/dist/iconify.min.js"></script>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../node_modules/material-components-web/dist/material-components-web.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="dark.css">
 </head>
 
-<body class="mdc-typography d-flex flex-column p-3">
-    <div class="mdc-card mdc-elevation--z6 ">
-        <div class="overlay" id="institutionsOverlay">
-            <i class="iconify" data-icon="eos-icons:loading"></i>
-            <h3 class="my-2" hidden></h3>
-        </div>
-        <header class="modal-header">
-            <div class="mdc-select mdc-select--outlined mdc-select--no-label w-25" id="institutionType">
-                <div class="mdc-select__anchor h-auto">
-                    <span class="mdc-notched-outline mdc-notched-outline--no-label">
-                        <span class="mdc-notched-outline__leading"></span>
-                        <span class="mdc-notched-outline__trailing"></span>
-                    </span>
-                    <span class="mdc-select__selected-text-container">
-                        <span class="mdc-select__selected-text"></span>
-                    </span>
-                    <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
-                </div>
-                <div class="mdc-select__menu mdc-menu mdc-menu-surface">
-                    <ul class="mdc-deprecated-list">
-                        <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="insurance" aria-selected="true">
-                            <span class="mdc-deprecated-list-item__text" translate>INSURANCE</span>
-                        </li>
-                        <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="provider">
-                            <span class="mdc-deprecated-list-item__text" translate>PROVIDER</span>
-                        </li>
-                    </ul>
-                </div>
+<body class="mdc-typography d-flex flex-column">
+    <header id="titleBar" class="mdc-elevation--z6">
+        <div class="drag-area ms-1 mt-1"></div>
+        <button class="button-rectangle mdc-ripple-surface" onclick="ipcRenderer.send('window-action', 'minimize')">
+            <i class="iconify" data-icon="codicon:chrome-minimize"></i>
+        </button>
+        <button class="button-rectangle mdc-ripple-surface" id="maximize" onclick="ipcRenderer.send('window-action', 'maximize')">
+            <i class="iconify" data-icon="codicon:chrome-maximize"></i>
+        </button>
+        <button class="button-rectangle mdc-ripple-surface button-rectangle--red" onclick="ipcRenderer.send('window-action', 'exit')">
+            <i class="iconify" data-icon="codicon:chrome-close"></i>
+        </button>
+    </header>
+    <div class="h-100 overflow-auto p-3">
+        <div class="mdc-card mdc-elevation--z6">
+            <div class="overlay" id="pricesOverlay">
+                <i class="iconify" data-icon="eos-icons:loading"></i>
+                <h3 class="my-2" hidden></h3>
             </div>
-            <button class="mdc-button mdc-button--raised mdc-button--green w-50 mx-2" id="create" disabled>
-                <div class="mdc-button__ripple"></div>
-                <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
-                <span class="mdc-button__label" translate>NEW#INSURANCE</span>
-            </button>
-            <div class="input-group input-group-sm w-50">
-                <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
-                <input type="text" class="form-control" id="search" placeholder="SEARCH">
-                <button class="btn" id="clearSearch" onclick="clearSearch()" disabled>
-                    <i class="iconify" data-icon="ic:round-close"></i>
+            <header class="modal-header">
+                <button class="mdc-button mdc-button--raised mdc-button--green w-50 mx-2" id="create" disabled>
+                    <div class="mdc-button__ripple"></div>
+                    <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
+                    <span class="mdc-button__label" translate>NEW#INSURANCE</span>
+                </button>
+                <div class="input-group input-group-sm w-50">
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
+                    <input type="text" class="form-control" id="search" placeholder="SEARCH">
+                    <button class="btn" id="clearSearch" onclick="clearSearch()" disabled>
+                        <i class="iconify" data-icon="ic:round-close"></i>
+                    </button>
+                </div>
+            </header>
+            <div class="table-responsive">
+                <table class="table table-borderless" id="prices">
+                    <thead>
+                        <tr id="tableHeadersList"></tr>
+                        <template id="headerTemplate">
+                            <th class="mdc-ripple-surface">
+                                <label></label>
+                                <i class="iconify" data-icon="ic:round-unfold-more"></i>
+                            </th>
+                        </template>
+                    </thead>
+                    <tbody id="priceList"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer flex-column">
+                <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
+                    <div class="mdc-button__ripple"></div>
+                    <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
+                    <span class="mdc-button__label" translate>EXPORT</span>
                 </button>
             </div>
-        </header>
-        <div class="table-responsive">
-            <table class="table table-borderless" id="institutions">
-                <thead>
-                    <tr id="tableHeadersList"></tr>
-                    <template id="headerTemplate">
-                        <th class="mdc-ripple-surface">
-                            <label></label>
-                            <i class="iconify" data-icon="ic:round-unfold-more"></i>
-                        </th>
-                    </template>
-                </thead>
-                <tbody id="institutionsList"></tbody>
-            </table>
-        </div>
-        <div class="modal-footer flex-column">
-            <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
-                <div class="mdc-button__ripple"></div>
-                <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
-                <span class="mdc-button__label" translate>EXPORT</span>
-            </button>
         </div>
     </div>
     <div class="mdc-menu mdc-menu-surface" id="tableRowContextMenu">
@@ -105,7 +98,7 @@
             </li>
         </ul>
     </div>
-    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteInstitution">
+    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeletePrice">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
                 <div class="mdc-dialog__content">
@@ -149,11 +142,10 @@
     <script src="import/material/menu.js"></script>
     <script src="import/material/list.js"></script>
     <script src="import/material/dialog.js"></script>
-    <script src="import/material/select.js"></script>
     <script src="import/material/snackbar.js"></script>
     <script src="import/sortable.js"></script>
     <script src="import/textMenu.js"></script>
-    <script src="institutionsList.js"></script>
+    <script src="priceList.js"></script>
 </body>
 
 </html>

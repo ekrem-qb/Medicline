@@ -1,13 +1,17 @@
-const institutionsOverlay = document.getElementById('institutionsOverlay')
-const institutionsOverlayIcon = institutionsOverlay.getElementsByClassName('iconify')
-const institutionsOverlayText = institutionsOverlay.querySelector('h3')
+const pricesOverlay = document.getElementById('pricesOverlay')
+const pricesOverlayIcon = pricesOverlay.getElementsByClassName('iconify')
+const pricesOverlayText = pricesOverlay.querySelector('h3')
 
-const institutionsTable = document.querySelector('table#institutions')
-const institutionsList = institutionsTable.querySelector('tbody#institutionsList')
+const pricesTable = document.querySelector('table#prices')
+const priceList = pricesTable.querySelector('tbody#priceList')
 let currentOrder, currentOrderDirection
 
-const columnsJSON = require('./institutionColumns.json')
-const tableHeadersList = institutionsTable.querySelector('#tableHeadersList')
+const columnsJSON = {
+    "__name__": "ID",
+    "name": "NAME",
+    "price": "PRICE",
+}
+const tableHeadersList = pricesTable.querySelector('#tableHeadersList')
 const headerTemplate = document.getElementById('headerTemplate')
 
 function newHeader(headerID) {
@@ -24,7 +28,7 @@ function newHeader(headerID) {
     }
     th.onmouseup = () => {
         if (th.parentElement != tableHeadersList) {
-            if (institutionsList.childElementCount > 0) {
+            if (priceList.childElementCount > 0) {
                 setOverlayState('hide')
             }
             else {
@@ -46,8 +50,8 @@ function loadColumns() {
     setOverlayState('loading')
 
     let columns = Object.keys(columnsJSON)
-    if (localStorage.getItem('institutionColumns')) {
-        columns = localStorage.getItem('institutionColumns').split(',')
+    if (localStorage.getItem('priceColumns')) {
+        columns = localStorage.getItem('priceColumns').split(',')
     }
     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
 
@@ -62,17 +66,17 @@ function loadColumns() {
 
 loadColumns()
 
-let currentQuery = db.collection('insurance')
+let currentQuery = db.collection('insurance').doc(location.hash.replace('#', '')).collection('prices')
 let searchQuery
-let foundInstitutions
-let currentInstitutionsSnap
+let foundPrices
+let currentPricesSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
-let selectedInstitution, selectedInstitutionRow, selectedInstitutionID
+let selectedPrice, selectedPriceRow, selectedPriceID
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
-        loadInstitutions()
+        loadPrices()
         loadPermissions()
     }
     else {
@@ -102,7 +106,7 @@ function loadPermissions() {
     toggleEditMode(false)
 
     stopPermissionsQuery()
-    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('institutions').onSnapshot(
+    stopPermissionsQuery = allUsers.doc(firebase.auth().currentUser.uid).collection('permissions').doc('prices').onSnapshot(
         snapshot => {
             toggleEditMode(snapshot.get('edit'))
         },
@@ -111,18 +115,10 @@ function loadPermissions() {
         }
     )
 }
-const selectInstitutionType = document.getElementById('institutionType').materialComponent
-selectInstitutionType.listen('MDCSelect:change', () => {
-    currentQuery = db.collection(selectInstitutionType.value)
-    loadInstitutions()
-    labelButtonCreate.textContent = translate('NEW#' + selectInstitutionType.value.toUpperCase())
-})
 const buttonCreate = document.querySelector('button#create')
 buttonCreate.onclick = () => {
-    ipcRenderer.send('new-window', 'institution', undefined, selectInstitutionType.value)
+    ipcRenderer.send('new-window', 'price', undefined, selectPriceType.value)
 }
-const labelButtonCreate = buttonCreate.querySelector('.mdc-button__label')
-
 const inputSearch = document.querySelector('input#search')
 const buttonClearSearch = document.querySelector('button#clearSearch')
 
@@ -134,14 +130,14 @@ function refreshSearch() {
 
     if (searchQuery != '') {
         buttonClearSearch.disabled = false
-        foundInstitutions = []
-        let institutionPromises = []
+        foundPrices = []
+        let pricePromises = []
 
-        currentInstitutionsSnap.forEach(institution => {
-            if (!foundInstitutions.includes(institution.id)) {
-                let data = String(institution.id)
+        currentPricesSnap.forEach(price => {
+            if (!foundPrices.includes(price.id)) {
+                let data = String(price.id)
                 let valuePromises = []
-                Object.values(institution.data()).forEach(value => {
+                Object.values(price.data()).forEach(value => {
                     if (Array.isArray(value)) {
                         data += ',' + value.toString().toLowerCase()
                     }
@@ -153,29 +149,29 @@ function refreshSearch() {
                     }
                 })
                 if (valuePromises.length > 0) {
-                    institutionPromises.push(
+                    pricePromises.push(
                         Promise.all(valuePromises).then(values => {
                             values.forEach(snaphot => {
                                 data += ',' + snaphot.get('name').toString().toLowerCase()
                             })
                             if (data.includes(searchQuery)) {
-                                foundInstitutions.push(institution.id)
+                                foundPrices.push(price.id)
                             }
                         })
                     )
                 }
                 else {
                     if (data.includes(searchQuery)) {
-                        foundInstitutions.push(institution.id)
+                        foundPrices.push(price.id)
                     }
                 }
             }
         })
 
-        if (institutionPromises.length > 0) {
-            Promise.all(institutionPromises).then(institutions => {
-                if (foundInstitutions.length > 0) {
-                    listInstitutions(currentInstitutionsSnap)
+        if (pricePromises.length > 0) {
+            Promise.all(pricePromises).then(prices => {
+                if (foundPrices.length > 0) {
+                    listPrices(currentPricesSnap)
                 }
                 else {
                     setOverlayState('empty')
@@ -183,8 +179,8 @@ function refreshSearch() {
             })
         }
         else {
-            if (foundInstitutions.length > 0) {
-                listInstitutions(currentInstitutionsSnap)
+            if (foundPrices.length > 0) {
+                listPrices(currentPricesSnap)
             }
             else {
                 setOverlayState('empty')
@@ -200,8 +196,8 @@ function clearSearch() {
     buttonClearSearch.disabled = true
     inputSearch.value = ''
     searchQuery = undefined
-    foundInstitutions = undefined
-    listInstitutions(currentInstitutionsSnap)
+    foundPrices = undefined
+    listPrices(currentPricesSnap)
 }
 
 function headerClick(headerID) {
@@ -219,61 +215,61 @@ function headerClick(headerID) {
         }
 
         if (clickedHeader.sortIcon[0].classList.contains('rot-180')) {
-            orderInstitutions(headerID, 'asc')
+            orderPrices(headerID, 'asc')
         }
         else {
-            orderInstitutions(headerID, 'desc')
+            orderPrices(headerID, 'desc')
         }
 
         clickedHeader.sortIcon[0].classList.toggle('rot-180')
     }
 }
 
-function loadInstitutions() {
+function loadPrices() {
     stopCurrentQuery()
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             console.log(snapshot)
-            currentInstitutionsSnap = snapshot
-            listInstitutions(snapshot)
+            currentPricesSnap = snapshot
+            listPrices(snapshot)
             refreshSearch()
         },
         error => {
-            console.error('Error getting institutions: ' + error)
+            console.error('Error getting prices: ' + error)
             setOverlayState('empty')
         }
     )
 }
 
-function listInstitutions(snap) {
+function listPrices(snap) {
     if (snap.docs.length > 0) {
         let noOneFound = true
 
-        institutionsList.innerHTML = ''
+        priceList.innerHTML = ''
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentRefQueries = []
-        snap.forEach(institutionSnap => {
-            if (foundInstitutions == undefined || foundInstitutions.includes(institutionSnap.id)) {
+        snap.forEach(Pricesnap => {
+            if (foundPrices == undefined || foundPrices.includes(Pricesnap.id)) {
                 setOverlayState('hide')
                 noOneFound = false
 
                 const tr = document.createElement('tr')
-                tr.id = institutionSnap.id
+                tr.id = Pricesnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
-                        ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+                        ipcRenderer.send('new-window', 'price', selectedPriceID, selectPriceType.value)
                     }
                 }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (selectedInstitutionID != institutionSnap.id) {
-                            if (selectedInstitutionRow) {
-                                selectedInstitutionRow.classList.remove('selected')
+                        if (selectedPriceID != Pricesnap.id) {
+                            if (selectedPriceRow) {
+                                selectedPriceRow.classList.remove('selected')
                             }
-                            selectedInstitution = currentQuery.doc(institutionSnap.id)
-                            selectedInstitutionID = institutionSnap.id
-                            selectedInstitutionRow = tr
-                            selectedInstitutionRow.classList.add('selected')
+                            selectedPrice = currentQuery.doc(Pricesnap.id)
+                            selectedPriceID = Pricesnap.id
+                            selectedPriceRow = tr
+                            selectedPriceRow.classList.add('selected')
                         }
                     }
                 }
@@ -285,7 +281,7 @@ function listInstitutions(snap) {
                         textContextMenu.materialComponent.open = true
                     }
                     else if (mouseEvent.button == 2) {
-                        tableRowContextMenu.pricesOption.hidden = selectInstitutionType.value != "insurance"
+                        tableRowContextMenu.pricesOption.hidden = selectPriceType.value != "insurance"
 
                         tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
                         tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
@@ -293,12 +289,12 @@ function listInstitutions(snap) {
                         tableRowContextMenu.materialComponent.open = true
                     }
                 }
-                if (tr.id == selectedInstitutionID) {
-                    selectedInstitution = currentQuery.doc(selectedInstitutionID)
-                    selectedInstitutionRow = tr
-                    selectedInstitutionRow.classList.add('selected')
+                if (tr.id == selectedPriceID) {
+                    selectedPrice = currentQuery.doc(selectedPriceID)
+                    selectedPriceRow = tr
+                    selectedPriceRow.classList.add('selected')
                 }
-                institutionsList.appendChild(tr)
+                priceList.appendChild(tr)
 
                 for (const column of tableHeadersList.children) {
                     const td = document.createElement('td')
@@ -306,10 +302,10 @@ function listInstitutions(snap) {
                     tr.appendChild(td)
 
                     if (td.id == '__name__') {
-                        td.textContent = institutionSnap.id
+                        td.textContent = Pricesnap.id
                     }
                     else {
-                        const value = institutionSnap.get(td.id)
+                        const value = Pricesnap.get(td.id)
                         if (value != undefined) {
                             if (typeof value === 'object' && value !== null) {
                                 currentRefQueries.push(
@@ -321,7 +317,7 @@ function listInstitutions(snap) {
                                                 td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
                                             }
 
-                                            orderInstitutions(currentOrder, currentOrderDirection)
+                                            orderPrices(currentOrder, currentOrderDirection)
                                         },
                                         error => {
                                             console.error(error)
@@ -341,7 +337,7 @@ function listInstitutions(snap) {
                 }
             }
         })
-        orderInstitutions(currentOrder, currentOrderDirection)
+        orderPrices(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
             setOverlayState('empty')
@@ -352,15 +348,15 @@ function listInstitutions(snap) {
     }
 }
 
-function orderInstitutions(orderBy, orderDirection) {
+function orderPrices(orderBy, orderDirection) {
     let switching, i, shouldSwitch
     do {
         switching = false
-        for (i = 0; i < institutionsList.childElementCount - 1; i++) {
+        for (i = 0; i < priceList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            const a = institutionsList.children[i].children[orderBy]
-            const b = institutionsList.children[i + 1].children[orderBy]
+            const a = priceList.children[i].children[orderBy]
+            const b = priceList.children[i + 1].children[orderBy]
 
             if (orderDirection == 'asc') {
                 if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
@@ -376,7 +372,7 @@ function orderInstitutions(orderBy, orderDirection) {
             }
         }
         if (shouldSwitch) {
-            institutionsList.children[i].parentElement.insertBefore(institutionsList.children[i + 1], institutionsList.children[i])
+            priceList.children[i].parentElement.insertBefore(priceList.children[i + 1], priceList.children[i])
             switching = true
         }
     }
@@ -389,27 +385,27 @@ function orderInstitutions(orderBy, orderDirection) {
 function setOverlayState(state) {
     switch (state) {
         case 'loading':
-            institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.remove('show-headers')
-            institutionsOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
-            institutionsOverlayText.hidden = true
+            pricesOverlay.classList.remove('hide')
+            pricesOverlay.classList.remove('show-headers')
+            pricesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
+            pricesOverlayText.hidden = true
             break
         case 'empty':
-            institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.remove('show-headers')
-            institutionsOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
-            institutionsOverlayText.hidden = false
-            institutionsOverlayText.innerText = translate('INSTITUTIONS') + ' ' + translate('NOT_FOUND')
+            pricesOverlay.classList.remove('hide')
+            pricesOverlay.classList.remove('show-headers')
+            pricesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
+            pricesOverlayText.hidden = false
+            pricesOverlayText.innerText = translate('ACTIVITIES') + ' ' + translate('NOT_FOUND')
             break
         case 'drag':
-            institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.add('show-headers')
-            institutionsOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            institutionsOverlayText.hidden = false
-            institutionsOverlayText.innerText = translate('DRAG_AND_DROP')
+            pricesOverlay.classList.remove('hide')
+            pricesOverlay.classList.add('show-headers')
+            pricesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
+            pricesOverlayText.hidden = false
+            pricesOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
-            institutionsOverlay.classList.add('hide')
+            pricesOverlay.classList.add('hide')
             break
         default:
             break
@@ -419,11 +415,11 @@ function setOverlayState(state) {
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate((selectPriceType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(institutionsTable), filePath)
+    writeFile(utils.table_to_book(pricesTable), filePath)
 })
 
 let stopFilteredCasesQuery = () => { }
@@ -432,12 +428,12 @@ const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
 tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
 tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
-tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'price', selectedPriceID, selectPriceType.value)
 tableRowContextMenu.pricesOption = tableRowContextMenu.children[0].children['prices']
-tableRowContextMenu.pricesOption.onclick = () => { ipcRenderer.send('new-window', 'priceList', selectedInstitutionID) }
+tableRowContextMenu.pricesOption.onclick = () => { }
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => {
-    const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitutionID))
+    const filteredCases = allCases.where(selectPriceType.value, '==', db.doc(selectPriceType.value + '/' + selectedPrice.id))
 
     stopFilteredCasesQuery()
     stopFilteredCasesQuery = filteredCases.onSnapshot(
@@ -447,11 +443,11 @@ tableRowContextMenu.deleteOption.onclick = () => {
             foundCasesLinks.innerHTML = ''
 
             if (snapshot.docs.length > 0) {
-                iconDialogDeleteInstitution[0].setAttribute('data-icon', 'ic:round-warning')
+                iconDialogDeletePrice[0].setAttribute('data-icon', 'ic:round-warning')
 
                 prefix = 'CANT_DELETE#THIS_'
-                textDialogDeleteInstitution.classList.remove('mb-0')
-                textDialogDeleteInstitution.classList.add('mb-2')
+                textDialogDeletePrice.classList.remove('mb-0')
+                textDialogDeletePrice.classList.add('mb-2')
 
                 for (let i = 0; i < snapshot.docs.length; i++) {
                     const _case = snapshot.docs[i]
@@ -469,47 +465,47 @@ tableRowContextMenu.deleteOption.onclick = () => {
                         foundCasesLinks.appendChild(comma)
                     }
                 }
-                dialogDeleteInstitution.materialComponent.buttons[1].disabled = true
+                dialogDeletePrice.materialComponent.buttons[1].disabled = true
             }
             else {
-                iconDialogDeleteInstitution[0].setAttribute('data-icon', 'ic:round-help-outline')
+                iconDialogDeletePrice[0].setAttribute('data-icon', 'ic:round-help-outline')
 
                 prefix = 'ASK_DELETE#THIS_'
-                textDialogDeleteInstitution.classList.add('mb-0')
-                textDialogDeleteInstitution.classList.remove('mb-2')
+                textDialogDeletePrice.classList.add('mb-0')
+                textDialogDeletePrice.classList.remove('mb-2')
 
-                dialogDeleteInstitution.materialComponent.buttons[1].disabled = false
+                dialogDeletePrice.materialComponent.buttons[1].disabled = false
             }
-            textDialogDeleteInstitution.innerText = translate(prefix + selectInstitutionType.value.toUpperCase())
+            textDialogDeletePrice.innerText = translate(prefix + selectPriceType.value.toUpperCase())
 
-            dialogDeleteInstitution.materialComponent.open()
+            dialogDeletePrice.materialComponent.open()
         },
         error => {
             console.error('Error getting filtered cases: ' + error)
         }
     )
 }
-const dialogDeleteInstitution = document.querySelector('#dialogDeleteInstitution')
-const iconDialogDeleteInstitution = dialogDeleteInstitution.getElementsByClassName('iconify')
-const textDialogDeleteInstitution = dialogDeleteInstitution.querySelector('p')
-const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
+const dialogDeletePrice = document.querySelector('#dialogDeletePrice')
+const iconDialogDeletePrice = dialogDeletePrice.getElementsByClassName('iconify')
+const textDialogDeletePrice = dialogDeletePrice.querySelector('p')
+const foundCasesLinks = dialogDeletePrice.querySelector('span')
 
-dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
+dialogDeletePrice.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        selectedInstitution.delete().then(() => {
-            selectedInstitution = undefined
-            selectedInstitutionID = undefined
+        selectedPrice.delete().then(() => {
+            selectedPrice = undefined
+            selectedPriceID = undefined
         }).catch(error => {
-            console.error('Error removing institution: ', error)
+            console.error('Error removing price: ', error)
         })
     }
 })
 
 function refreshAndSaveColumns() {
-    listInstitutions(currentInstitutionsSnap)
-    let institutionColumns = []
+    listPrices(currentPricesSnap)
+    let priceColumns = []
     for (const header of tableHeadersList.children) {
-        institutionColumns.push(header.id)
+        priceColumns.push(header.id)
     }
-    localStorage.setItem('institutionColumns', institutionColumns)
+    localStorage.setItem('priceColumns', priceColumns)
 }
