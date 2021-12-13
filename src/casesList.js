@@ -825,10 +825,6 @@ tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelec
 tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
-const textContextMenu = document.getElementById('textContextMenu')
-textContextMenu.copyOption = textContextMenu.children[0].children['copy']
-textContextMenu.copyOption.onclick = copySelectionToClipboard
-
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
@@ -838,23 +834,6 @@ function exportToExcel() {
 ipcRenderer.on('file-save', (event, filePath) => {
     writeFile(utils.table_to_book(casesTable), filePath)
 })
-
-function getSelectedText() {
-    if (getSelection().toString().replaceAll('\n', '').replaceAll('\t', '').trim() != '') {
-        return getSelection().toString()
-    }
-    else {
-        return ''
-    }
-}
-
-function copySelectionToClipboard() {
-    const selectedText = getSelectedText()
-    if (selectedText != '') {
-        navigator.clipboard.writeText(selectedText)
-        alert('"' + selectedText + '"' + translate('COPIED'))
-    }
-}
 
 function refreshAndSaveColumns() {
     listCases(currentCasesSnap)
