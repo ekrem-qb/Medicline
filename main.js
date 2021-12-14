@@ -145,11 +145,11 @@ async function main() {
     const windows = {}
 
     ipcMain.on('new-window', (event, type, hash, search) => {
-        if (windows[hash] != undefined) {
-            windows[hash].focus()
+        if (windows[type + hash] != undefined) {
+            windows[type + hash].focus()
         }
-        else if (windows[search + hash] != undefined) {
-            windows[search + hash].focus()
+        else if (windows[type + hash + search] != undefined) {
+            windows[type + hash + search].focus()
         }
         else {
             const options = {
@@ -177,10 +177,10 @@ async function main() {
 
             if (hash != undefined) {
                 if (search != undefined) {
-                    windows[search + hash] = window
+                    windows[type + hash + search] = window
                 }
                 else {
-                    windows[hash] = window
+                    windows[type + hash] = window
                 }
             }
 
@@ -196,14 +196,7 @@ async function main() {
             window.on('unmaximize', () => window.webContents.send('window-action', 'unmaximize'))
 
             window.on('close', () => {
-                if (windows[window.webContents.getURL().split('#')[1]] != undefined) {
-                    delete windows[window.webContents.getURL().split('#')[1]]
-                }
-                else if (window.webContents.getURL().split('?')[1] != undefined) {
-                    if (windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]] != undefined) {
-                        delete windows[window.webContents.getURL().split('?')[1].split('#')[0] + window.webContents.getURL().split('#')[1]]
-                    }
-                }
+                delete windows[Object.keys(windows)[Object.values(windows).findIndex(win => win == window)]]
             })
         }
     })
