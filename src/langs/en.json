@@ -101,5 +101,6 @@
     "RENAME": "Rename",
     "REPLACE": "Replace",
     "DONE": "Done",
+    "ACTIVITY": "Billable Activity",
     "ACTIVITIES": "Billable Activities"
 }

@@ -21,6 +21,10 @@ document.querySelectorAll('input[mask]').forEach(input => {
             options.placeholder = ''
             options.onUnMask = (maskedValue) => { return maskedValue }
             break
+        case 'price':
+            options.alias = 'currency'
+            options.showMaskOnFocus = false
+            break
     }
     input.mask = new Inputmask(options).mask(input)
 })
