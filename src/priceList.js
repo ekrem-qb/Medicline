@@ -458,22 +458,17 @@ function setOverlayState(state) {
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate(PRICES) + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {
     writeFile(utils.table_to_book(pricesTable), filePath)
 })
 
-let stopFilteredCasesQuery = () => { }
-
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.materialComponent.open()
 const dialogDeletePrice = document.querySelector('#dialogDeletePrice')
-const iconDialogDeletePrice = dialogDeletePrice.getElementsByClassName('iconify')
-const textDialogDeletePrice = dialogDeletePrice.querySelector('p')
-const foundCasesLinks = dialogDeletePrice.querySelector('span')
 
 dialogDeletePrice.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
