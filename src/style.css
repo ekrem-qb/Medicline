@@ -454,17 +454,6 @@ thead>tr {
   z-index: 2;
 }
 
-.table-overlay {
-  height: calc(100% - 4.3rem);
-  top: auto;
-  bottom: 0;
-  min-height: 0;
-}
-
-.table-overlay.show-headers {
-  height: calc(100% - 6.8rem);
-}
-
 .overlay>* {
   margin: 0 auto;
   user-select: none;

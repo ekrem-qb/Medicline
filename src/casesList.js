@@ -89,21 +89,13 @@ function newHeader(headerID) {
 function loadColumns() {
     setOverlayState('loading')
 
-    let enabledColumns = []
+    let columns = ['insuranceRefNo', 'insurance', 'callDate', 'createTime', 'createUser', 'surnameName', 'address', 'phone', 'status', 'birthDate', 'provider', 'provider2']
     if (localStorage.getItem('enabledColumns')) {
-        enabledColumns = localStorage.getItem('enabledColumns').split(',')
+        columns = localStorage.getItem('enabledColumns').split(',')
     }
-    else {
-        enabledColumns.push('insuranceRefNo', 'insurance', 'callDate', 'createTime', 'createUser', 'surnameName', 'address', 'phone', 'status', 'birthDate', 'provider', 'provider2')
-    }
-    enabledColumns.forEach(
-        column => {
-            if (columnsJSON.hasOwnProperty(column)) {
-                tableHeadersList.appendChild(newHeader(column))
-            }
-        })
+    columns.forEach(column => tableHeadersList.appendChild(newHeader(column)))
     for (const column in columnsJSON) {
-        if (!enabledColumns.includes(column)) {
+        if (!columns.includes(column)) {
             addHiddenHeaderOption(column)
         }
     }
@@ -544,13 +536,6 @@ function setOverlayState(state) {
             casesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             casesOverlayText.hidden = false
             casesOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
-            break
-        case 'drag':
-            casesOverlay.classList.remove('hide')
-            casesOverlay.classList.add('show-headers')
-            casesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            casesOverlayText.hidden = false
-            casesOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
             casesOverlay.classList.add('hide')

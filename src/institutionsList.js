@@ -6,9 +6,55 @@ const institutionsTable = document.querySelector('table#institutions')
 const institutionsList = institutionsTable.querySelector('tbody#institutionsList')
 let currentOrder, currentOrderDirection
 
+const tableHeaderContextMenu = document.getElementById('tableHeaderContextMenu')
+const addOption = tableHeaderContextMenu.children[0].children['add']
+addOption.onclick = () => {
+    hiddenHeadersMenu.style.left = (tableHeaderContextMenu.offsetLeft) + 'px'
+    hiddenHeadersMenu.style.top = (tableHeaderContextMenu.offsetTop) + 'px'
+    hiddenHeadersMenu.materialComponent.setAbsolutePosition(tableHeaderContextMenu.offsetLeft, tableHeaderContextMenu.offsetTop)
+    hiddenHeadersMenu.materialComponent.open = true
+}
+const hideOption = tableHeaderContextMenu.children[0].children['hide']
+hideOption.onclick = () => {
+    if (selectedHeader) {
+        addHiddenHeaderOption(selectedHeader.id)
+
+        tableHeadersList.removeChild(selectedHeader)
+        refreshAndSaveColumns()
+
+        selectedHeader = undefined
+    }
+}
+
+const hiddenHeadersMenu = document.getElementById('hiddenHeadersMenu')
+const hiddenHeadersList = hiddenHeadersMenu.children[0]
+const hiddenHeaderOptionTemplate = hiddenHeadersMenu.children['hiddenHeaderOptionTemplate']
+
+function addHiddenHeaderOption(headerID) {
+    const option = hiddenHeaderOptionTemplate.content.firstElementChild.cloneNode(true)
+    new MDCRipple(option.children[0])
+    option.id = headerID
+
+    option.onclick = () => {
+        if (selectedHeader) {
+            option.remove()
+            tableHeadersList.insertBefore(newHeader(headerID), selectedHeader)
+        }
+        refreshAndSaveColumns()
+
+        hiddenHeadersMenu.materialComponent.open = false
+    }
+
+    const label = option.children[1]
+    label.textContent = translate(columnsJSON[headerID])
+
+    hiddenHeadersList.appendChild(option)
+}
+
 const columnsJSON = require('./institutionColumns.json')
 const tableHeadersList = institutionsTable.querySelector('#tableHeadersList')
 const headerTemplate = document.getElementById('headerTemplate')
+let selectedHeader
 
 function newHeader(headerID) {
     const th = headerTemplate.content.firstElementChild.cloneNode(true)
@@ -16,20 +62,18 @@ function newHeader(headerID) {
     th.id = headerID
 
     th.onmousedown = mouseEvent => {
-        if (mouseEvent.button == 0) {
-            if (th.parentElement != tableHeadersList) {
-                setOverlayState('drag')
-            }
+        if (mouseEvent.button == 2) {
+            selectedHeader = th
+            addOption.classList.toggle('mdc-list-item--disabled', hiddenHeadersList.childElementCount == 0)
+            hideOption.classList.toggle('mdc-list-item--disabled', tableHeadersList.childElementCount < 2)
         }
     }
-    th.onmouseup = () => {
-        if (th.parentElement != tableHeadersList) {
-            if (institutionsList.childElementCount > 0) {
-                setOverlayState('hide')
-            }
-            else {
-                setOverlayState('empty')
-            }
+    th.onmouseup = mouseEvent => {
+        if (mouseEvent.button == 2) {
+            tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
+            tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
+            tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+            tableHeaderContextMenu.materialComponent.open = true
         }
     }
     th.onclick = () => headerClick(headerID)
@@ -50,7 +94,11 @@ function loadColumns() {
         columns = localStorage.getItem('institutionColumns').split(',')
     }
     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
-
+    for (const column in columnsJSON) {
+        if (!columns.includes(column)) {
+            addHiddenHeaderOption(column)
+        }
+    }
     if (tableHeadersList.children['name']) {
         headerClick('name')
         headerClick('name')
@@ -400,13 +448,6 @@ function setOverlayState(state) {
             institutionsOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             institutionsOverlayText.hidden = false
             institutionsOverlayText.innerText = translate('INSTITUTIONS') + ' ' + translate('NOT_FOUND')
-            break
-        case 'drag':
-            institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.add('show-headers')
-            institutionsOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            institutionsOverlayText.hidden = false
-            institutionsOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
             institutionsOverlay.classList.add('hide')

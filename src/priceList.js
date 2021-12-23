@@ -6,6 +6,51 @@ const pricesTable = document.querySelector('table#prices')
 const priceList = pricesTable.querySelector('tbody#priceList')
 let currentOrder, currentOrderDirection
 
+const tableHeaderContextMenu = document.getElementById('tableHeaderContextMenu')
+const addOption = tableHeaderContextMenu.children[0].children['add']
+addOption.onclick = () => {
+    hiddenHeadersMenu.style.left = (tableHeaderContextMenu.offsetLeft) + 'px'
+    hiddenHeadersMenu.style.top = (tableHeaderContextMenu.offsetTop) + 'px'
+    hiddenHeadersMenu.materialComponent.setAbsolutePosition(tableHeaderContextMenu.offsetLeft, tableHeaderContextMenu.offsetTop)
+    hiddenHeadersMenu.materialComponent.open = true
+}
+const hideOption = tableHeaderContextMenu.children[0].children['hide']
+hideOption.onclick = () => {
+    if (selectedHeader) {
+        addHiddenHeaderOption(selectedHeader.id)
+
+        tableHeadersList.removeChild(selectedHeader)
+        refreshAndSaveColumns()
+
+        selectedHeader = undefined
+    }
+}
+
+const hiddenHeadersMenu = document.getElementById('hiddenHeadersMenu')
+const hiddenHeadersList = hiddenHeadersMenu.children[0]
+const hiddenHeaderOptionTemplate = hiddenHeadersMenu.children['hiddenHeaderOptionTemplate']
+
+function addHiddenHeaderOption(headerID) {
+    const option = hiddenHeaderOptionTemplate.content.firstElementChild.cloneNode(true)
+    new MDCRipple(option.children[0])
+    option.id = headerID
+
+    option.onclick = () => {
+        if (selectedHeader) {
+            option.remove()
+            tableHeadersList.insertBefore(newHeader(headerID), selectedHeader)
+        }
+        refreshAndSaveColumns()
+
+        hiddenHeadersMenu.materialComponent.open = false
+    }
+
+    const label = option.children[1]
+    label.textContent = translate(columnsJSON[headerID])
+
+    hiddenHeadersList.appendChild(option)
+}
+
 const columnsJSON = {
     "__name__": "ID",
     "name": "NAME",
@@ -13,6 +58,7 @@ const columnsJSON = {
 }
 const tableHeadersList = pricesTable.querySelector('#tableHeadersList')
 const headerTemplate = document.getElementById('headerTemplate')
+let selectedHeader
 
 function newHeader(headerID) {
     const th = headerTemplate.content.firstElementChild.cloneNode(true)
@@ -20,20 +66,18 @@ function newHeader(headerID) {
     th.id = headerID
 
     th.onmousedown = mouseEvent => {
-        if (mouseEvent.button == 0) {
-            if (th.parentElement != tableHeadersList) {
-                setOverlayState('drag')
-            }
+        if (mouseEvent.button == 2) {
+            selectedHeader = th
+            addOption.classList.toggle('mdc-list-item--disabled', hiddenHeadersList.childElementCount == 0)
+            hideOption.classList.toggle('mdc-list-item--disabled', tableHeadersList.childElementCount < 2)
         }
     }
-    th.onmouseup = () => {
-        if (th.parentElement != tableHeadersList) {
-            if (priceList.childElementCount > 0) {
-                setOverlayState('hide')
-            }
-            else {
-                setOverlayState('empty')
-            }
+    th.onmouseup = mouseEvent => {
+        if (mouseEvent.button == 2) {
+            tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
+            tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
+            tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+            tableHeaderContextMenu.materialComponent.open = true
         }
     }
     th.onclick = () => headerClick(headerID)
@@ -54,7 +98,11 @@ function loadColumns() {
         columns = localStorage.getItem('priceColumns').split(',')
     }
     columns.forEach(headerID => tableHeadersList.appendChild(newHeader(headerID)))
-
+    for (const column in columnsJSON) {
+        if (!columns.includes(column)) {
+            addHiddenHeaderOption(column)
+        }
+    }
     if (tableHeadersList.children['name']) {
         headerClick('name')
         headerClick('name')
@@ -439,13 +487,6 @@ function setOverlayState(state) {
             pricesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             pricesOverlayText.hidden = false
             pricesOverlayText.innerText = translate('ACTIVITIES') + ' ' + translate('NOT_FOUND')
-            break
-        case 'drag':
-            pricesOverlay.classList.remove('hide')
-            pricesOverlay.classList.add('show-headers')
-            pricesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            pricesOverlayText.hidden = false
-            pricesOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
             pricesOverlay.classList.add('hide')

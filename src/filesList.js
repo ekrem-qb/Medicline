@@ -32,7 +32,6 @@ function newFileHeader(headerID) {
     th.onmousedown = mouseEvent => {
         if (mouseEvent.button == 0) {
             if (th.parentElement != filesHeadersList) {
-                setFilesOverlayState('drag')
             }
         }
     }
@@ -335,13 +334,6 @@ function setFilesOverlayState(state) {
             filesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             filesOverlayText.hidden = false
             filesOverlayText.innerText = translate('FILES') + ' ' + translate('NOT_FOUND')
-            break
-        case 'drag':
-            filesOverlay.classList.remove('hide')
-            filesOverlay.classList.add('show-headers')
-            filesOverlayIcon[0].setAttribute('data-icon', 'mdi:archive-arrow-up-outline')
-            filesOverlayText.hidden = false
-            filesOverlayText.innerText = translate('DRAG_AND_DROP')
             break
         case 'hide':
             filesOverlay.classList.add('hide')
