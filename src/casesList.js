@@ -90,8 +90,8 @@ function loadColumns() {
     setOverlayState('loading')
 
     let columns = ['insuranceRefNo', 'insurance', 'callDate', 'createTime', 'createUser', 'surnameName', 'address', 'phone', 'status', 'birthDate', 'provider', 'provider2']
-    if (localStorage.getItem('enabledColumns')) {
-        columns = localStorage.getItem('enabledColumns').split(',')
+    if (localStorage.getItem('caseColumns')) {
+        columns = localStorage.getItem('caseColumns').split(',')
     }
     columns.forEach(column => tableHeadersList.appendChild(newHeader(column)))
     for (const column in columnsJSON) {
@@ -822,9 +822,9 @@ ipcRenderer.on('file-save', (event, filePath) => {
 
 function refreshAndSaveColumns() {
     listCases(currentCasesSnap)
-    let enabledColumns = []
+    let caseColumns = []
     for (const header of tableHeadersList.children) {
-        enabledColumns.push(header.id)
+        caseColumns.push(header.id)
     }
-    localStorage.setItem('enabledColumns', enabledColumns)
+    localStorage.setItem('caseColumns', caseColumns)
 }
