@@ -633,10 +633,6 @@ label {
   padding-right: max(8px, calc(var(--mdc-shape-small, 4px) + 4px));
 }
 
-#inlineEdit .mdc-text-field input {
-  font-weight: bold;
-}
-
 #foundCasesLinks {
   overflow: auto;
   display: block;

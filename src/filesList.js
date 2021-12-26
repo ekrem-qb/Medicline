@@ -94,15 +94,12 @@ firebase.auth().onAuthStateChanged(user => {
 
 const inputNewFile = filesTabPage.querySelector('input#newFile')
 inputNewFile.onchange = () => {
-    if (inputNewFile.value.trim() != '') {
-        const fileName = inputNewFile.files[0].name.split('.')
-        if (fileName.length > 1) {
-            inputFileName.value = fileName[0]
-            inputFileName.fileType = fileName[1]
-            inputFileName.focus()
-            inputFileName.parentElement.parentElement.classList.remove('hide')
-            buttonUploadFile.classList.add('hide')
-        }
+    if (inputNewFile.value != '') {
+        inputFileName.value = inputNewFile.files[0].name.slice(0, inputNewFile.files[0].name.lastIndexOf('.'))
+        inputFileName.fileType = inputNewFile.files[0].name.slice(inputNewFile.files[0].name.lastIndexOf('.')).toLowerCase()
+        inputFileName.focus()
+        inputFileName.parentElement.parentElement.classList.remove('hide')
+        buttonUploadFile.classList.add('hide')
     }
 }
 const buttonUploadFile = filesTabPage.querySelector('button#uploadFile')
@@ -119,11 +116,11 @@ const buttonDoneFile = filesTabPage.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
     if (filesCurrentQuery && inputNewFile.value.trim() != '' && inputFileName.value.trim() != '') {
         filesCurrentQuery.add({
-            name: inputFileName.value + '.' + inputFileName.fileType,
+            name: inputFileName.value + inputFileName.fileType,
             createUser: allUsers.doc(firebase.auth().currentUser.uid),
             createDate: firebase.firestore.Timestamp.now()
         }).then(snapshot => {
-            storage.child(snapshot.parent.parent.id + '/' + snapshot.id + '.' + inputFileName.fileType).put(inputNewFile.files[0], { name: inputFileName.value + '.' + inputFileName.fileType }).on('state_changed',
+            storage.child(snapshot.parent.parent.id + '/' + snapshot.id + inputFileName.fileType).put(inputNewFile.files[0], { name: inputFileName.value + inputFileName.fileType }).on('state_changed',
                 (snapshot) => {
                     const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                     console.log('Upload is ' + percent + '% done')
@@ -275,7 +272,7 @@ function listFiles(snap) {
                     }
                 }
                 if (td.id == 'name') {
-                    td.onclick = () => showInlineEdit(td, fileSnap.ref.path, td.textContent.split('.')[0], td.textContent.split('.')[1])
+                    td.onclick = () => showInlineEdit(td, fileSnap.ref.path, td.textContent.slice(0, td.textContent.lastIndexOf('.')), td.textContent.slice(td.textContent.lastIndexOf('.')).toLowerCase())
                 }
             }
         })
@@ -345,39 +342,38 @@ function setFilesOverlayState(state) {
 
 const inputReplaceFile = filesTabPage.querySelector('input#replaceFile')
 inputReplaceFile.onchange = () => {
-    if (inputReplaceFile.value != '') {
-        const fileName = inputReplaceFile.files[0].name.split('.')
-        if (fileName.length > 1 && selectedCaseID && selectedFileID) {
-            if ('.' + fileName[1] == inputReplaceFile.accept) {
-                storage.child(selectedCaseID + '/' + selectedFileID + '.' + fileName[1]).put(inputReplaceFile.files[0], { name: selectedCaseID + '/' + selectedFileID + '.' + fileName[1] }).on('state_changed',
-                    (snapshot) => {
-                        const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                        console.log('Upload is ' + percent + '% done')
+    if (inputReplaceFile.value != '' && selectedCaseID && selectedFileID) {
+        if (inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase() == inputReplaceFile.accept) {
+            storage.child(selectedCaseID + '/' + selectedFileID + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()).put(inputReplaceFile.files[0], {
+                name: selectedCaseID + '/' + selectedFileID + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()
+            }).on('state_changed',
+                (snapshot) => {
+                    const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    console.log('Upload is ' + percent + '% done')
 
-                        if (percent == 100) {
-                            inputReplaceFile.value = ''
-                            inputReplaceFile.accept = ''
+                    if (percent == 100) {
+                        inputReplaceFile.value = ''
+                        inputReplaceFile.accept = ''
 
-                            const fullpath = snapshot.metadata.fullPath.split('.')[0].split('/')
+                        const fullpath = snapshot.metadata.fullPath.split('.')[0].split('/')
 
-                            allCases.doc(fullpath[0] + '/files/' + fullpath[1]).update({
-                                updateUser: allUsers.doc(firebase.auth().currentUser.uid),
-                                updateDate: firebase.firestore.Timestamp.now()
-                            }).then(() => {
+                        allCases.doc(fullpath[0] + '/files/' + fullpath[1]).update({
+                            updateUser: allUsers.doc(firebase.auth().currentUser.uid),
+                            updateDate: firebase.firestore.Timestamp.now()
+                        }).then(() => {
 
-                            }).catch(error => {
-                                console.error('Error updating file: ', error)
-                            })
-                        }
-                    },
-                    (error) => {
-                        console.error('Error replacing file: ', error)
+                        }).catch(error => {
+                            console.error('Error updating file: ', error)
+                        })
                     }
-                )
-            }
-            else {
-                alert(translate('NOT_SAME_FILE_TYPE'))
-            }
+                },
+                (error) => {
+                    console.error('Error replacing file: ', error)
+                }
+            )
+        }
+        else {
+            alert(translate('WRONG_FILE_TYPE'))
         }
     }
 }
@@ -387,7 +383,7 @@ filesContextMenu.downloadOption = filesContextMenu.children[0].children['downloa
 filesContextMenu.downloadOption.onclick = () => {
     if (selectedCaseID && selectedFileRow) {
         const fileName = selectedFileRow.children['name'].textContent
-        storage.child(selectedCaseID + '/' + selectedFileID + '.' + fileName.split('.')[1]).getDownloadURL().then(url => {
+        storage.child(selectedCaseID + '/' + selectedFileID + fileName.slice(fileName.lastIndexOf('.')).toLowerCase()).getDownloadURL().then(url => {
             ipcRenderer.send('download', url, fileName)
         }).catch(error => {
             console.error('Error downloading file: ', error)
@@ -396,12 +392,12 @@ filesContextMenu.downloadOption.onclick = () => {
 }
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => {
-    showInlineEdit(selectedFileRow.children['name'], selectedFile.path, selectedFileRow.children['name'].textContent.split('.')[0], selectedFileRow.children['name'].textContent.split('.')[1])
+    showInlineEdit(selectedFileRow.children['name'], selectedFile.path, selectedFileRow.children['name'].textContent.slice(0, selectedFileRow.children['name'].textContent.lastIndexOf('.')), selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase())
 }
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
 filesContextMenu.replaceOption.onclick = () => {
     if (filesCurrentQuery) {
-        inputReplaceFile.accept = '.' + selectedFileRow.children['name'].textContent.split('.')[1]
+        inputReplaceFile.accept = selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase()
         inputReplaceFile.click()
     }
 }
@@ -412,7 +408,7 @@ const dialogDeleteFile = filesTabPage.querySelector('#dialogDeleteFile')
 dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         if (selectedCaseID && selectedFileRow) {
-            storage.child(selectedCaseID + '/' + selectedFileID + '.' + selectedFileRow.children['name'].textContent.split('.')[1]).delete().then(() => {
+            storage.child(selectedCaseID + '/' + selectedFileID + selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase()).delete().then(() => {
                 selectedFile.delete().then(() => {
                     selectedFile = undefined
                     selectedFileID = undefined
@@ -462,7 +458,11 @@ function showInlineEdit(anchor, path, oldValue, fileType) {
     inlineEditInput.fileType = fileType
     saveButton.disabled = true
 
-    inlineEditAnchorSelector = '#' + anchor.parentElement.id + '>' + anchor.tagName.toLocaleLowerCase() + '#' + anchor.id
+    inlineEditAnchorSelector = '#'
+    if (!isNaN(anchor.parentElement.id[0])) {
+        inlineEditAnchorSelector += '\\3'
+    }
+    inlineEditAnchorSelector += anchor.parentElement.id + '>' + anchor.tagName.toLocaleLowerCase() + '#' + anchor.id
     moveInlineEditToAnchor()
 
     inlineEditPath = path
@@ -475,7 +475,7 @@ saveButton.onclick = () => {
         saveButtonIcon[0].setAttribute('data-icon', 'eos-icons:loading')
 
         db.doc(inlineEditPath).update({
-            name: inlineEditInput.value.trim() + '.' + inlineEditInput.fileType
+            name: inlineEditInput.value.trim() + inlineEditInput.fileType
         }).then(() => {
             saveButton.disabled = true
             saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
@@ -517,7 +517,7 @@ inlineEditInput.onkeydown = event => {
 }
 
 function moveInlineEditToAnchor() {
-    let anchor = filesTabPage.querySelector(inlineEditAnchorSelector)
+    const anchor = filesTabPage.querySelector(inlineEditAnchorSelector)
 
     if (anchor != null) {
         if (anchor.localName == 'button') {
