@@ -209,6 +209,10 @@ th .iconify {
   height: 0 !important;
 }
 
+table {
+  width: 100%;
+}
+
 .table {
   margin: 0;
   min-width: max-content;
@@ -584,7 +588,8 @@ label {
 }
 
 #statusBar.dimmed>.status:not(:hover, .selected),
-#statusBar:hover>.status:not(:hover, .selected) {
+#statusBar:hover>.status:not(:hover, .selected),
+tbody>tr.dimmed {
   filter: grayscale(1) opacity(.25);
 }
 
@@ -992,6 +997,7 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 
 .mdc-dialog .mdc-dialog__surface {
   max-width: 90vw;
+  max-height: 90vh;
 }
 
 .mdc-dialog__title,

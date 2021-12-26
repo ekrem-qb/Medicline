@@ -496,22 +496,12 @@ function setOverlayState(state) {
     }
 }
 
-const { writeFile, utils } = require('xlsx')
-
-function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
-}
-
-ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(pricesTable), filePath)
-})
-
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
-tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.materialComponent.open()
-const dialogDeletePrice = document.querySelector('#dialogDeletePrice')
+tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.open()
+const dialogDeletePrice = document.querySelector('#dialogDeletePrice').materialComponent
 
-dialogDeletePrice.materialComponent.listen('MDCDialog:closed', event => {
+dialogDeletePrice.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         selectedPrice.delete().then(() => {
             selectedPrice = undefined
@@ -530,3 +520,107 @@ function refreshAndSaveColumns() {
     }
     localStorage.setItem('priceColumns', priceColumns)
 }
+
+const { read, writeFile, utils } = require('xlsx')
+
+const inputExcel = document.querySelector('input#excel')
+const buttonImport = document.querySelector('button#import')
+buttonImport.onclick = () => inputExcel.click()
+inputExcel.onchange = async () => {
+    if (inputExcel.value != '') {
+        if (inputExcel.files[0].name.slice(inputExcel.files[0].name.lastIndexOf('.')).toLowerCase() == inputExcel.accept) {
+            const data = await inputExcel.files[0].arrayBuffer()
+            const workbook = read(data)
+            dialogImport.content.innerHTML = utils.sheet_to_html(workbook.Sheets[workbook.SheetNames[0]])
+            dialogImport.open()
+            inputExcel.value = ''
+
+            importTable = dialogImport.content.querySelector('table')
+            toggleFirstRow.checked = true
+            importTable.rows[0].classList.toggle('dimmed', toggleFirstRow.checked)
+        }
+        else {
+            inputExcel.value = ''
+            alert(translate('WRONG_FILE_TYPE'))
+        }
+    }
+}
+const dialogImport = document.querySelector('#dialogImport').materialComponent
+let importTable
+const toggleFirstRow = dialogImport.container.querySelector('input[type=checkbox]')
+toggleFirstRow.onchange = () => {
+    if (importTable) {
+        if (importTable.rows[0]) {
+            importTable.rows[0].classList.toggle('dimmed', toggleFirstRow.checked)
+        }
+    }
+}
+const selectImportCurrency = document.getElementById('importCurrency').materialComponent
+const buttonAddImport = dialogImport.container.querySelector('button#addImport')
+buttonAddImport.icon = buttonAddImport.getElementsByClassName('iconify')
+buttonAddImport.onclick = () => {
+    dialogImport.scrimClickAction = ''
+    toggleFirstRow.disabled = true
+    selectImportCurrency.disabled = true
+    buttonAddImport.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    const promises = []
+    let i = 0
+    if (toggleFirstRow.checked) {
+        i = 1
+    }
+    for (i; i < importTable.rows.length; i++) {
+        const row = importTable.rows[i]
+        const name = row.cells[0].textContent.trim()
+        if (name != '') {
+            const price = parseFloat(row.cells[1].textContent.trim())
+            if (!isNaN(price)) {
+                let currency = selectImportCurrency.value
+                if (row.cells[1].textContent.trim().includes('₺')) {
+                    currency = '₺'
+                }
+                else if (row.cells[1].textContent.trim().includes('$')) {
+                    currency = '$'
+                }
+                else if (row.cells[1].textContent.trim().includes('€')) {
+                    currency = '€'
+                }
+                else if (row.cells[1].textContent.trim().includes('₽')) {
+                    currency = '₽'
+                }
+                promises.push(
+                    currentQuery.add({
+                        name: name,
+                        price: price,
+                        currency: currency
+                    }).then(() => {
+                        row.classList.add('btn-success')
+                    }).catch(error => {
+                        console.error('Error creating price: ', error)
+                        row.classList.add('btn-danger')
+                    })
+                )
+            }
+            else {
+                row.cells[1].classList.add('btn-danger')
+            }
+        }
+        else {
+            row.cells[0].classList.add('btn-danger')
+        }
+    }
+    Promise.all(promises).then(() => {
+        dialogImport.scrimClickAction = 'cancel'
+        toggleFirstRow.disabled = false
+        selectImportCurrency.disabled = false
+        buttonAddImport.icon[0].setAttribute('data-icon', 'ic:round-plus')
+        dialogImport.close()
+        dialogImport.content.innerHTML = ''
+    })
+}
+
+const buttonExport = document.querySelector('button#export')
+buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+
+ipcRenderer.on('file-save', (event, filePath) => {
+    writeFile(utils.table_to_book(pricesTable), filePath)
+})

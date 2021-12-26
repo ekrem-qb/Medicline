@@ -115,8 +115,14 @@
                     <tbody id="priceList"></tbody>
                 </table>
             </div>
-            <div class="modal-footer flex-column">
-                <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
+            <div class="modal-footer">
+                <input type="file" id="excel" accept=".xlsx" hidden>
+                <button class="mdc-button mdc-button--outlined mdc-button--green flex-grow-1 me-1" id="import">
+                    <div class="mdc-button__ripple"></div>
+                    <i class="iconify mdc-button__icon" data-icon="mdi:table-arrow-left"></i>
+                    <span class="mdc-button__label" translate>IMPORT</span>
+                </button>
+                <button class="mdc-button mdc-button--outlined mdc-button--green flex-grow-1 ms-1" id="export">
                     <div class="mdc-button__ripple"></div>
                     <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
                     <span class="mdc-button__label" translate>EXPORT</span>
@@ -186,6 +192,66 @@
                         <div class="mdc-button__ripple"></div>
                         <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+    <div class="mdc-dialog mdc-dialog--scrollable" id="dialogImport">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface">
+                <div class="mdc-dialog__title flex-column align-items-start">
+                    <div class="d-flex align-items-center w-100 justify-content-between mb-3">
+                        <label class="me-3" for="firstRow" translate>FIRST_ROW_IS_FOR_HEADERS</label>
+                        <div class="form-switch">
+                            <input class="form-check-input" type="checkbox" checked id="firstRow">
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center w-100 justify-content-between">
+                        <label class="me-3" translate>CURRENCY_IF_NO_CURRENCY</label>
+                        <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="importCurrency">
+                            <div class="mdc-select__anchor h-auto">
+                                <span class="mdc-notched-outline mdc-notched-outline--no-label">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <span class="mdc-select__selected-text-container">
+                                    <span class="mdc-select__selected-text"></span>
+                                </span>
+                                <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
+                            </div>
+                            <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                                <ul class="mdc-deprecated-list">
+                                    <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="₺" aria-selected="true">
+                                        <span class="mdc-deprecated-list-item__text" translate>₺</span>
+                                    </li>
+                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="$">
+                                        <span class="mdc-deprecated-list-item__text" translate>$</span>
+                                    </li>
+                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="€">
+                                        <span class="mdc-deprecated-list-item__text" translate>€</span>
+                                    </li>
+                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="₽">
+                                        <span class="mdc-deprecated-list-item__text" translate>₽</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdc-dialog__content align-items-start fw-normal">
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" id="replaceImport">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="iconify mdc-button__icon" data-icon="tabler:replace"></i>
+                        <span class="mdc-button__label" translate>REPLACE</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" id="addImport" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                        <div class="mdc-button__ripple"></div>
+                        <i class="iconify mdc-button__icon" data-icon="ic:round-plus"></i>
+                        <span class="mdc-button__label" translate>ADD</span>
                     </button>
                 </div>
             </div>
