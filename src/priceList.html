@@ -201,42 +201,34 @@
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogImport">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__title flex-column align-items-start">
-                    <div class="d-flex align-items-center w-100 justify-content-between mb-3">
-                        <label class="me-3" for="firstRow" translate>FIRST_ROW_IS_FOR_HEADERS</label>
-                        <div class="form-switch">
-                            <input class="form-check-input" type="checkbox" checked id="firstRow">
+                <div class="mdc-dialog__title align-items-start">
+                    <label class="me-3" translate>CURRENCY_IF_NO_CURRENCY</label>
+                    <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="importCurrency">
+                        <div class="mdc-select__anchor h-auto">
+                            <span class="mdc-notched-outline mdc-notched-outline--no-label">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <span class="mdc-select__selected-text-container">
+                                <span class="mdc-select__selected-text"></span>
+                            </span>
+                            <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                         </div>
-                    </div>
-                    <div class="d-flex align-items-center w-100 justify-content-between">
-                        <label class="me-3" translate>CURRENCY_IF_NO_CURRENCY</label>
-                        <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="importCurrency">
-                            <div class="mdc-select__anchor h-auto">
-                                <span class="mdc-notched-outline mdc-notched-outline--no-label">
-                                    <span class="mdc-notched-outline__leading"></span>
-                                    <span class="mdc-notched-outline__trailing"></span>
-                                </span>
-                                <span class="mdc-select__selected-text-container">
-                                    <span class="mdc-select__selected-text"></span>
-                                </span>
-                                <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
-                            </div>
-                            <div class="mdc-select__menu mdc-menu mdc-menu-surface">
-                                <ul class="mdc-deprecated-list">
-                                    <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="₺" aria-selected="true">
-                                        <span class="mdc-deprecated-list-item__text" translate>₺</span>
-                                    </li>
-                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="$">
-                                        <span class="mdc-deprecated-list-item__text" translate>$</span>
-                                    </li>
-                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="€">
-                                        <span class="mdc-deprecated-list-item__text" translate>€</span>
-                                    </li>
-                                    <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="₽">
-                                        <span class="mdc-deprecated-list-item__text" translate>₽</span>
-                                    </li>
-                                </ul>
-                            </div>
+                        <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                            <ul class="mdc-deprecated-list">
+                                <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="₺" aria-selected="true">
+                                    <span class="mdc-deprecated-list-item__text" translate>₺</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="$">
+                                    <span class="mdc-deprecated-list-item__text" translate>$</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="€">
+                                    <span class="mdc-deprecated-list-item__text" translate>€</span>
+                                </li>
+                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="₽">
+                                    <span class="mdc-deprecated-list-item__text" translate>₽</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>

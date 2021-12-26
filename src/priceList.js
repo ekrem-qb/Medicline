@@ -536,8 +536,16 @@ inputExcel.onchange = async () => {
             inputExcel.value = ''
 
             importTable = dialogImport.content.querySelector('table')
-            toggleFirstRow.checked = true
-            importTable.rows[0].classList.toggle('dimmed', toggleFirstRow.checked)
+            for (const row of importTable.rows) {
+                if (row.cells[0].textContent.trim() == '') {
+                    row.cells[0].classList.add('btn-danger')
+                    row.classList.add('dimmed')
+                }
+                else if (isNaN(parseFloat(row.cells[1].textContent.trim()))) {
+                    row.cells[1].classList.add('btn-danger')
+                    row.classList.add('dimmed')
+                }
+            }
         }
         else {
             inputExcel.value = ''
@@ -547,74 +555,47 @@ inputExcel.onchange = async () => {
 }
 const dialogImport = document.querySelector('#dialogImport').materialComponent
 let importTable
-const toggleFirstRow = dialogImport.container.querySelector('input[type=checkbox]')
-toggleFirstRow.onchange = () => {
-    if (importTable) {
-        if (importTable.rows[0]) {
-            importTable.rows[0].classList.toggle('dimmed', toggleFirstRow.checked)
-        }
-    }
-}
 const selectImportCurrency = document.getElementById('importCurrency').materialComponent
 const buttonAddImport = dialogImport.container.querySelector('button#addImport')
 buttonAddImport.icon = buttonAddImport.getElementsByClassName('iconify')
 buttonAddImport.onclick = () => {
     dialogImport.scrimClickAction = ''
-    toggleFirstRow.disabled = true
     selectImportCurrency.disabled = true
     buttonAddImport.icon[0].setAttribute('data-icon', 'eos-icons:loading')
     const promises = []
-    let i = 0
-    if (toggleFirstRow.checked) {
-        i = 1
-    }
-    for (i; i < importTable.rows.length; i++) {
-        const row = importTable.rows[i]
-        const name = row.cells[0].textContent.trim()
-        if (name != '') {
-            const price = parseFloat(row.cells[1].textContent.trim())
-            if (!isNaN(price)) {
-                let currency = selectImportCurrency.value
-                if (row.cells[1].textContent.trim().includes('₺')) {
-                    currency = '₺'
-                }
-                else if (row.cells[1].textContent.trim().includes('$')) {
-                    currency = '$'
-                }
-                else if (row.cells[1].textContent.trim().includes('€')) {
-                    currency = '€'
-                }
-                else if (row.cells[1].textContent.trim().includes('₽')) {
-                    currency = '₽'
-                }
-                promises.push(
-                    currentQuery.add({
-                        name: name,
-                        price: price,
-                        currency: currency
-                    }).then(() => {
-                        row.classList.add('btn-success')
-                    }).catch(error => {
-                        console.error('Error creating price: ', error)
-                        row.classList.add('btn-danger')
-                    })
-                )
-            }
-            else {
-                row.cells[1].classList.add('btn-danger')
-            }
+    importTable.querySelectorAll('tr:not(.dimmed)').forEach(row => {
+        let currency = selectImportCurrency.value
+        if (row.cells[1].textContent.trim().includes('₺')) {
+            currency = '₺'
         }
-        else {
-            row.cells[0].classList.add('btn-danger')
+        else if (row.cells[1].textContent.trim().includes('$')) {
+            currency = '$'
         }
-    }
+        else if (row.cells[1].textContent.trim().includes('€')) {
+            currency = '€'
+        }
+        else if (row.cells[1].textContent.trim().includes('₽')) {
+            currency = '₽'
+        }
+        promises.push(
+            currentQuery.add({
+                name: row.cells[0].textContent.trim(),
+                price: parseFloat(row.cells[1].textContent.trim()),
+                currency: currency
+            }).then(() => {
+                row.classList.add('btn-success')
+            }).catch(error => {
+                console.error('Error creating price: ', error)
+                row.classList.add('btn-danger')
+            })
+        )
+    })
     Promise.all(promises).then(() => {
         dialogImport.scrimClickAction = 'cancel'
-        toggleFirstRow.disabled = false
         selectImportCurrency.disabled = false
         buttonAddImport.icon[0].setAttribute('data-icon', 'ic:round-plus')
-        dialogImport.close()
-        dialogImport.content.innerHTML = ''
+        // dialogImport.close()
+        // dialogImport.content.innerHTML = ''
     })
 }
 
