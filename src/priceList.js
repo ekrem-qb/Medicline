@@ -533,6 +533,9 @@ inputExcel.onchange = async () => {
             const workbook = read(data)
             dialogImport.content.innerHTML = utils.sheet_to_html(workbook.Sheets[workbook.SheetNames[0]])
             dialogImport.open()
+            selectImportCurrency.disabled = false
+            buttonReplaceImport.disabled = false
+            buttonAddImport.disabled = false
             inputExcel.value = ''
 
             importTable = dialogImport.content.querySelector('table')
@@ -558,10 +561,13 @@ let importTable
 const selectImportCurrency = document.getElementById('importCurrency').materialComponent
 const buttonAddImport = dialogImport.container.querySelector('button#addImport')
 buttonAddImport.icon = buttonAddImport.getElementsByClassName('iconify')
-buttonAddImport.onclick = () => {
+
+function importPrices() {
     dialogImport.scrimClickAction = ''
     selectImportCurrency.disabled = true
     buttonAddImport.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    buttonAddImport.disabled = true
+    buttonReplaceImport.disabled = true
     const promises = []
     importTable.querySelectorAll('tr:not(.dimmed)').forEach(row => {
         let currency = selectImportCurrency.value
@@ -592,10 +598,33 @@ buttonAddImport.onclick = () => {
     })
     Promise.all(promises).then(() => {
         dialogImport.scrimClickAction = 'cancel'
-        selectImportCurrency.disabled = false
         buttonAddImport.icon[0].setAttribute('data-icon', 'ic:round-plus')
-        // dialogImport.close()
-        // dialogImport.content.innerHTML = ''
+    })
+}
+buttonAddImport.onclick = importPrices
+
+const buttonReplaceImport = dialogImport.container.querySelector('button#replaceImport')
+buttonReplaceImport.icon = buttonReplaceImport.getElementsByClassName('iconify')
+buttonReplaceImport.onclick = () => {
+    dialogImport.scrimClickAction = ''
+    selectImportCurrency.disabled = true
+    buttonReplaceImport.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    buttonReplaceImport.disabled = true
+    buttonAddImport.disabled = true
+    currentQuery.get().then(prices => {
+        const promises = []
+        prices.forEach(price => {
+            promises.push(
+                price.ref.delete().then(() => {
+                }).catch(error => {
+                    console.error('Error removing price: ', error)
+                })
+            )
+        })
+        Promise.all(promises).then(() => {
+            buttonReplaceImport.icon[0].setAttribute('data-icon', 'tabler:replace')
+            importPrices()
+        })
     })
 }
 
