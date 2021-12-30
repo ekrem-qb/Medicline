@@ -53,7 +53,7 @@ function addHiddenHeaderOption(headerID) {
 
 const columnsJSON = {
     "__name__": "ID",
-    "name": "NAME",
+    "name": "DESCRIPTION",
     "price": "PRICE",
 }
 const tableHeadersList = pricesTable.querySelector('#tableHeadersList')
@@ -341,13 +341,13 @@ function listPrices(snap) {
         priceList.innerHTML = ''
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentRefQueries = []
-        snap.forEach(Pricesnap => {
-            if (foundPrices == undefined || foundPrices.includes(Pricesnap.id)) {
+        snap.forEach(priceSnap => {
+            if (foundPrices == undefined || foundPrices.includes(priceSnap.id)) {
                 setOverlayState('hide')
                 noOneFound = false
 
                 const tr = document.createElement('tr')
-                tr.id = Pricesnap.id
+                tr.id = priceSnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
                         ipcRenderer.send('new-window', 'price', selectedPriceID, selectPriceType.value)
@@ -355,12 +355,12 @@ function listPrices(snap) {
                 }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (selectedPriceID != Pricesnap.id) {
+                        if (selectedPriceID != priceSnap.id) {
                             if (selectedPriceRow) {
                                 selectedPriceRow.classList.remove('selected')
                             }
-                            selectedPrice = currentQuery.doc(Pricesnap.id)
-                            selectedPriceID = Pricesnap.id
+                            selectedPrice = currentQuery.doc(priceSnap.id)
+                            selectedPriceID = priceSnap.id
                             selectedPriceRow = tr
                             selectedPriceRow.classList.add('selected')
                         }
@@ -392,34 +392,16 @@ function listPrices(snap) {
                     td.id = column.id
                     tr.appendChild(td)
 
-                    if (td.id == '__name__') {
-                        td.textContent = Pricesnap.id
-                    }
-                    else {
-                        const value = Pricesnap.get(td.id)
-                        if (value != undefined) {
-                            if (typeof value === 'object' && value !== null) {
-                                currentRefQueries.push(
-                                    value.onSnapshot(
-                                        snapshot => {
-                                            td.textContent = snapshot.get('name')
-
-                                            if (searchQuery != undefined && searchQuery != '') {
-                                                td.classList.toggle('found', td.textContent.toLowerCase().includes(searchQuery))
-                                            }
-
-                                            orderPrices(currentOrder, currentOrderDirection)
-                                        },
-                                        error => {
-                                            console.error(error)
-                                        }
-                                    )
-                                )
-                            }
-                            else {
-                                td.textContent = value
-                            }
-                        }
+                    switch (td.id) {
+                        case '__name_':
+                            td.textContent = priceSnap.id
+                            break;
+                        case 'price':
+                            td.textContent = priceSnap.get(td.id) + ' ' + priceSnap.get('currency')
+                            break;
+                        default:
+                            td.textContent = priceSnap.get(td.id)
+                            break;
                     }
 
                     if (searchQuery != undefined && searchQuery != '') {
@@ -632,5 +614,5 @@ const buttonExport = document.querySelector('button#export')
 buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 
 ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(pricesTable), filePath)
+    writeFile(utils.table_to_book(pricesTable, { raw: true }), filePath)
 })

@@ -100,5 +100,6 @@
     "REPLACE": "Replace",
     "DONE": "Done",
     "ACTIVITY": "Billable Activity",
-    "ACTIVITIES": "Billable Activities"
+    "ACTIVITIES": "Billable Activities",
+    "DESCRIPTION": "Description"
 }

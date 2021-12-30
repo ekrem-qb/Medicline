@@ -108,5 +108,6 @@
     "DONE": "Готово",
     "ACTIVITY": "Услуга",
     "NEW#ACTIVITY": "Новая Услуга",
-    "ACTIVITIES": "Услуги"
+    "ACTIVITIES": "Услуги",
+    "DESCRIPTION": "Описание"
 }
