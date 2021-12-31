@@ -16,7 +16,7 @@ filesTabPage.loadContent = () => {
 }
 
 const filesTable = filesTabPage.querySelector('table#files')
-filesTable.parentElement.onscroll = () => moveInlineEditToAnchor()
+filesTable.parentElement.onscroll = () => inlineEdit.moveToAnchor()
 const filesList = filesTable.querySelector('tbody#filesList')
 let filesCurrentOrder, filesCurrentOrderDirection
 
@@ -272,7 +272,11 @@ function listFiles(snap) {
                     }
                 }
                 if (td.id == 'name') {
-                    td.onclick = () => showInlineEdit(td, fileSnap.ref.path, td.textContent.slice(0, td.textContent.lastIndexOf('.')), td.textContent.slice(td.textContent.lastIndexOf('.')).toLowerCase())
+                    td.onclick = () => {
+                        const fileName = td.textContent
+                        inlineEdit.show(td, fileSnap.ref.path, fileName.slice(0, fileName.lastIndexOf('.')))
+                        inlineEditInput.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
+                    }
                 }
             }
         })
@@ -392,7 +396,9 @@ filesContextMenu.downloadOption.onclick = () => {
 }
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => {
-    showInlineEdit(selectedFileRow.children['name'], selectedFile.path, selectedFileRow.children['name'].textContent.slice(0, selectedFileRow.children['name'].textContent.lastIndexOf('.')), selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase())
+    const fileName = selectedFileRow.children['name'].textContent
+    inlineEdit.show(selectedFileRow.children['name'], fileSnap.ref.path, fileName.slice(0, fileName.lastIndexOf('.')))
+    inlineEditInput.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
 }
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
 filesContextMenu.replaceOption.onclick = () => {
@@ -441,34 +447,9 @@ function refreshAndSaveFileColumns() {
     localStorage.setItem('fileColumns', fileColumns)
 }
 
-const inlineEdit = document.getElementById('inlineEdit')
 const inlineEditInput = inlineEdit.querySelector('input')
-let inlineEditPath, inlineEditAnchorSelector
 const saveButton = inlineEdit.querySelector('button#save')
 const saveButtonIcon = saveButton.getElementsByClassName('iconify')
-
-function showInlineEdit(anchor, path, oldValue, fileType) {
-    if (oldValue) {
-        inlineEditInput.value = oldValue
-        inlineEditInput.oldValue = oldValue
-    } else {
-        inlineEditInput.value = ''
-        inlineEditInput.oldValue = ''
-    }
-    inlineEditInput.fileType = fileType
-    saveButton.disabled = true
-
-    inlineEditAnchorSelector = '#'
-    if (!isNaN(anchor.parentElement.id[0])) {
-        inlineEditAnchorSelector += '\\3'
-    }
-    inlineEditAnchorSelector += anchor.parentElement.id + '>' + anchor.tagName.toLocaleLowerCase() + '#' + anchor.id
-    moveInlineEditToAnchor()
-
-    inlineEditPath = path
-    inlineEdit.classList.add('show')
-    inlineEditInput.focus()
-}
 
 saveButton.onclick = () => {
     if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
@@ -479,7 +460,7 @@ saveButton.onclick = () => {
         }).then(() => {
             saveButton.disabled = true
             saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-            inlineEdit.classList.remove('show')
+            inlineEdit.hide()
         }).catch(error => {
             saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
             console.error('Error updating file name: ', error)
@@ -502,7 +483,7 @@ inlineEditInput.onblur = event => {
             return
         }
     }
-    inlineEdit.classList.remove('show')
+    inlineEdit.hide()
 }
 
 inlineEditInput.onkeydown = event => {
@@ -511,29 +492,7 @@ inlineEditInput.onkeydown = event => {
             saveButton.click()
             break
         case 'Escape':
-            inlineEdit.classList.remove('show')
+            inlineEdit.hide()
             break
-    }
-}
-
-function moveInlineEditToAnchor() {
-    const anchor = filesTabPage.querySelector(inlineEditAnchorSelector)
-
-    if (anchor != null) {
-        if (anchor.localName == 'button') {
-            inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
-            inlineEdit.style.left = (anchor.parentElement.parentElement.offsetLeft + 1) + 'px'
-            inlineEdit.style.height = anchor.offsetHeight + 'px'
-            inlineEdit.style.width = anchor.offsetWidth + 'px'
-            inlineEdit.style.zIndex = '15'
-        } else {
-            inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
-            inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
-            inlineEdit.style.height = anchor.offsetHeight + 'px'
-            inlineEdit.style.width = anchor.offsetWidth + 'px'
-            inlineEdit.style.zIndex = ''
-        }
-    } else {
-        inlineEdit.classList.remove('show')
     }
 }

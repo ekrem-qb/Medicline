@@ -1,7 +1,7 @@
 const buttonCreateAddress = document.querySelector('button#createAddress')
-buttonCreateAddress.onclick = () => showInlineEdit(buttonCreateAddress, 'address')
+buttonCreateAddress.onclick = () => inlineEdit.show(buttonCreateAddress, 'address')
 const buttonCreateHotel = document.querySelector('button#createHotel')
-buttonCreateHotel.onclick = () => showInlineEdit(buttonCreateHotel, 'hotel')
+buttonCreateHotel.onclick = () => inlineEdit.show(buttonCreateHotel, 'hotel')
 
 const addressList = document.getElementById('addressList')
 addressList.overlay = document.getElementById('addressessListOverlay')
@@ -17,8 +17,8 @@ let stopAddressQuery = () => { }
 let stopHotelQuery = () => { }
 let stopFilteredCasesQuery = () => { }
 
-addressList.onscroll = () => moveInlineEditToAnchor()
-hotelsList.onscroll = () => moveInlineEditToAnchor()
+addressList.onscroll = () => inlineEdit.moveToAnchor()
+hotelsList.onscroll = () => inlineEdit.moveToAnchor()
 
 function listItems(collection, list) {
     list.innerHTML = ''
@@ -52,7 +52,7 @@ function listItems(collection, list) {
 
                             const label = listItem.children['label']
                             label.textContent = change.doc.get('name')
-                            label.onclick = () => showInlineEdit(listItem, listItem.id, label.textContent)
+                            label.onclick = () => inlineEdit.show(listItem, listItem.id, label.textContent)
                             label.classList.toggle('disabled', !haveEditPermission)
 
                             listItem.label = label
@@ -167,7 +167,7 @@ function listItems(collection, list) {
                     addressList.children[0].click()
                 }
             }
-            moveInlineEditToAnchor()
+            inlineEdit.moveToAnchor()
         },
         error => {
             console.error('Error getting ' + collection + ': ' + error)
@@ -222,29 +222,9 @@ function loadPermissions() {
     )
 }
 
-const inlineEdit = document.getElementById('inlineEdit')
 const inlineEditInput = inlineEdit.querySelector('input')
-let inlineEditPath, inlineEditAnchorID
 const saveButton = inlineEdit.querySelector('button#save')
 const saveButtonIcon = saveButton.getElementsByClassName('iconify')
-
-function showInlineEdit(anchor, path, oldValue) {
-    if (oldValue) {
-        inlineEditInput.value = oldValue
-        inlineEditInput.oldValue = oldValue
-    } else {
-        inlineEditInput.value = ''
-        inlineEditInput.oldValue = ''
-    }
-    saveButton.disabled = true
-
-    inlineEditAnchorID = anchor.id
-    moveInlineEditToAnchor()
-
-    inlineEditPath = path
-    inlineEdit.classList.add('show')
-    inlineEditInput.focus()
-}
 
 saveButton.onclick = () => {
     if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
@@ -267,7 +247,7 @@ saveButton.onclick = () => {
             }).then(snapshot => {
                 saveButton.disabled = true
                 saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-                inlineEdit.classList.remove('show')
+                inlineEdit.hide()
 
                 if (inlineEditPath == 'address') {
                     const newElement = document.getElementById(snapshot.path)
@@ -285,7 +265,7 @@ saveButton.onclick = () => {
             }).then(() => {
                 saveButton.disabled = true
                 saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-                inlineEdit.classList.remove('show')
+                inlineEdit.hide()
             }).catch(error => {
                 saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 console.error('Error updating ' + inlineEditPath + ': ', error)
@@ -309,7 +289,7 @@ inlineEditInput.onblur = event => {
             return
         }
     }
-    inlineEdit.classList.remove('show')
+    inlineEdit.hide()
 }
 
 inlineEditInput.onkeydown = event => {
@@ -318,30 +298,8 @@ inlineEditInput.onkeydown = event => {
             saveButton.click()
             break
         case 'Escape':
-            inlineEdit.classList.remove('show')
+            inlineEdit.hide()
             break
-    }
-}
-
-function moveInlineEditToAnchor() {
-    let anchor = document.getElementById(inlineEditAnchorID)
-
-    if (anchor != null) {
-        if (anchor.localName == 'button') {
-            inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
-            inlineEdit.style.left = (anchor.parentElement.parentElement.offsetLeft + 1) + 'px'
-            inlineEdit.style.height = anchor.offsetHeight + 'px'
-            inlineEdit.style.width = anchor.offsetWidth + 'px'
-            inlineEdit.style.zIndex = '15'
-        } else {
-            inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
-            inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
-            inlineEdit.style.height = (anchor.offsetHeight - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
-            inlineEdit.style.width = (anchor.offsetWidth - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
-            inlineEdit.style.zIndex = ''
-        }
-    } else {
-        inlineEdit.classList.remove('show')
     }
 }
 
