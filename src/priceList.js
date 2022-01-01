@@ -157,22 +157,22 @@ function loadPermissions() {
 }
 const buttonCreate = document.querySelector('button#createPrice')
 buttonCreate.onclick = () => {
-    buttonCreate.nextElementSibling.classList.remove('hide')
+    inlineEdit.show(buttonCreate)
     buttonCreate.classList.add('hide')
-    inputName.focus()
+    inlineEditInput.focus()
 }
 const buttonCancel = document.querySelector('button#cancelPrice')
 buttonCancel.onclick = () => {
-    inputName.value = ''
-    inputName.materialComponent.valid = true
+    inlineEditInput.value = ''
+    inlineEditInput.materialComponent.valid = true
     inputPrice.value = '0.00'
     inputPrice.materialComponent.valid = true
-    buttonCreate.nextElementSibling.classList.add('hide')
+    inlineEdit.hide()
     buttonCreate.classList.remove('hide')
 }
-const inputName = document.querySelector('input#activityName')
-inputName.oninput = () => inputName.materialComponent.valid = inputName.value.trim() != ''
-inputName.onkeydown = event => {
+const inlineEditInput = inlineEdit.querySelector('input#activityName')
+inlineEditInput.oninput = () => inlineEditInput.materialComponent.valid = inlineEditInput.value.trim() != ''
+inlineEditInput.onkeydown = event => {
     switch (event.key) {
         case 'Enter':
             buttonDone.click()
@@ -182,7 +182,7 @@ inputName.onkeydown = event => {
             break
     }
 }
-const inputPrice = document.querySelector('input#activityPrice')
+const inputPrice = inlineEdit.querySelector('input#activityPrice')
 inputPrice.oninput = () => inputPrice.materialComponent.valid = inputPrice.value.trim() != ''
 inputPrice.onkeydown = event => {
     switch (event.key) {
@@ -194,12 +194,12 @@ inputPrice.onkeydown = event => {
             break
     }
 }
-const selectCurrency = document.getElementById('currency').materialComponent
-const buttonDone = document.querySelector('button#donePrice')
+const selectCurrency = inlineEdit.querySelector('.mdc-select#currency').materialComponent
+const buttonDone = inlineEdit.querySelector('button#donePrice')
 buttonDone.onclick = () => {
-    if (inputName.value.trim() != '') {
+    if (inlineEditInput.value.trim() != '') {
         currentQuery.add({
-            name: inputName.value.trim(),
+            name: inlineEditInput.value.trim(),
             price: parseFloat(inputPrice.mask.unmaskedvalue()),
             currency: selectCurrency.value
         }).then(() => {
@@ -209,7 +209,7 @@ buttonDone.onclick = () => {
         })
     }
     else {
-        inputName.focus()
+        inlineEditInput.focus()
     }
 }
 const inputSearch = document.querySelector('input#search')

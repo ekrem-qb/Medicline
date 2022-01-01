@@ -6,7 +6,7 @@ inlineEdit.moveToAnchor = () => {
         switch (anchor.localName) {
             case 'button':
                 inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
-                inlineEdit.style.left = (anchor.parentElement.parentElement.offsetLeft + 1) + 'px'
+                inlineEdit.style.left = anchor.parentElement.parentElement.offsetLeft + 'px'
                 inlineEdit.style.height = anchor.offsetHeight + 'px'
                 inlineEdit.style.width = anchor.offsetWidth + 'px'
                 inlineEdit.style.zIndex = '15'
@@ -55,3 +55,4 @@ inlineEdit.show = (anchor, path, oldValue) => {
     inlineEditInput.focus()
 }
 inlineEdit.hide = () => inlineEdit.classList.remove('show')
+window.onresize = () => inlineEdit.moveToAnchor()
