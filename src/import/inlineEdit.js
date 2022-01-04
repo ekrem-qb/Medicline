@@ -14,8 +14,8 @@ inlineEdit.moveToAnchor = () => {
             default:
                 inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
                 inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
-                inlineEdit.style.height = (anchor.offsetHeight - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
-                inlineEdit.style.width = (anchor.offsetWidth - (Number.parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
+                inlineEdit.style.height = (anchor.offsetHeight - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
+                inlineEdit.style.width = (anchor.offsetWidth - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
                 inlineEdit.style.zIndex = ''
                 break
         }
@@ -39,14 +39,18 @@ inlineEdit.show = (anchor, path, oldValue) => {
         if (!isNaN(anchor.parentElement.id[0])) {
             inlineEditAnchorSelector += '\\3'
         }
-        inlineEditAnchorSelector += anchor.parentElement.id + '>'
+        inlineEditAnchorSelector += anchor.parentElement.id.replaceAll('/', '\\/') + '>'
     }
     else {
         inlineEditAnchorSelector = ''
     }
     inlineEditAnchorSelector += anchor.tagName.toLocaleLowerCase()
     if (anchor.id != '') {
-        inlineEditAnchorSelector += '#' + anchor.id.replaceAll('/', '\\/')
+        inlineEditAnchorSelector += '#'
+        if (!isNaN(anchor.id[0])) {
+            inlineEditAnchorSelector += '\\3'
+        }
+        inlineEditAnchorSelector += anchor.id.replaceAll('/', '\\/')
     }
     inlineEdit.moveToAnchor()
 

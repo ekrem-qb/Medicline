@@ -139,7 +139,14 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
+    buttonImport.disabled = !editIsAllowed
+    tableRowContextMenu.editOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
     tableRowContextMenu.deleteOption.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+    if (!editIsAllowed) {
+        buttonCancel.click()
+        dialogDeletePrice.close()
+        dialogImport.close()
+    }
 }
 
 function loadPermissions() {
@@ -157,6 +164,8 @@ function loadPermissions() {
 }
 const buttonCreate = document.querySelector('button#createPrice')
 buttonCreate.onclick = () => {
+    inlineEdit.classList.add('m-3')
+    buttonCancel.click()
     inlineEdit.show(buttonCreate)
     buttonCreate.classList.add('hide')
     inlineEditInput.focus()
@@ -169,6 +178,10 @@ buttonCancel.onclick = () => {
     inputPrice.materialComponent.valid = true
     inlineEdit.hide()
     buttonCreate.classList.remove('hide')
+    const hiddenPrice = priceList.querySelector('.hide')
+    if (hiddenPrice) {
+        hiddenPrice.classList.remove('hide')
+    }
 }
 const inlineEditInput = inlineEdit.querySelector('input#activityName')
 inlineEditInput.oninput = () => inlineEditInput.materialComponent.valid = inlineEditInput.value.trim() != ''
@@ -197,19 +210,32 @@ inputPrice.onkeydown = event => {
 const selectCurrency = inlineEdit.querySelector('.mdc-select#currency').materialComponent
 const buttonDone = inlineEdit.querySelector('button#donePrice')
 buttonDone.onclick = () => {
-    if (inlineEditInput.value.trim() != '') {
-        currentQuery.add({
+    if (inlineEditInput.value.trim() == '') {
+        inlineEditInput.focus()
+    }
+    else if (inputPrice.value == '') {
+        inputPrice.focus()
+    }
+    else {
+        const data = {
             name: inlineEditInput.value.trim(),
             price: parseFloat(inputPrice.mask.unmaskedvalue()),
             currency: selectCurrency.value
-        }).then(() => {
-            buttonCancel.click()
-        }).catch(error => {
-            console.error('Error creating price: ', error)
-        })
-    }
-    else {
-        inlineEditInput.focus()
+        }
+        if (inlineEditPath != undefined) {
+            currentQuery.doc(inlineEditPath).update(data).then(() => {
+                buttonCancel.click()
+            }).catch(error => {
+                console.error('Error updating price: ', error)
+            })
+        }
+        else {
+            currentQuery.add(data).then(() => {
+                buttonCancel.click()
+            }).catch(error => {
+                console.error('Error creating price: ', error)
+            })
+        }
     }
 }
 const inputSearch = document.querySelector('input#search')
@@ -481,6 +507,15 @@ function setOverlayState(state) {
 const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.open()
+tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
+tableRowContextMenu.editOption.onclick = () => {
+    inlineEdit.classList.remove('m-3')
+    buttonCancel.click()
+    inputPrice.value = parseFloat(selectedPriceRow.children['price'].textContent)
+    selectCurrency.value = selectedPriceRow.children['price'].textContent[selectedPriceRow.children['price'].textContent.length - 1]
+    selectedPriceRow.classList.add('hide')
+    inlineEdit.show(selectedPriceRow, selectedPriceID, selectedPriceRow.children['name'].textContent)
+}
 const dialogDeletePrice = document.querySelector('#dialogDeletePrice').materialComponent
 
 dialogDeletePrice.listen('MDCDialog:closed', event => {

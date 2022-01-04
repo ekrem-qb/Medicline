@@ -61,7 +61,7 @@
             </div>
             <div class="modal-footer">
                 <input type="file" id="excel" accept=".xlsx" hidden>
-                <button class="mdc-button mdc-button--outlined mdc-button--green flex-grow-1 me-1" id="import">
+                <button class="mdc-button mdc-button--outlined mdc-button--green flex-grow-1 me-1" id="import" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="iconify mdc-button__icon" data-icon="mdi:table-arrow-left"></i>
                     <span class="mdc-button__label" translate>IMPORT</span>
@@ -75,7 +75,7 @@
         </div>
     </div>
     <div class="d-flex m-3" id="inlineEdit">
-        <button class="mdc-button mdc-button--outlined mdc-button--red" id="cancelPrice">
+        <button class="mdc-button mdc-button--outlined mdc-button--red h-auto" id="cancelPrice">
             <div class="mdc-button__ripple"></div>
             <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
             <span class="mdc-button__label" translate>CANCEL</span>
@@ -122,7 +122,7 @@
                 </ul>
             </div>
         </div>
-        <button class="mdc-button mdc-button--raised mdc-button--green" id="donePrice">
+        <button class="mdc-button mdc-button--raised mdc-button--green h-auto" id="donePrice">
             <div class="mdc-button__ripple"></div>
             <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
             <span class="mdc-button__label" translate>DONE</span>
@@ -130,6 +130,12 @@
     </div>
     <div class="mdc-menu mdc-menu-surface" id="tableRowContextMenu">
         <ul class="mdc-list">
+            <li class="mdc-list-item" id="edit" disabled>
+                <i class="mdc-list-item__graphic iconify" data-icon="ic:round-edit"></i>
+                <span class="mdc-list-item__ripple"></span>
+                <span class="mdc-list-item__text mx-2" translate>EDIT</span>
+            </li>
+            <li class="mdc-list-divider">
             <li class="mdc-list-item" id="delete" disabled>
                 <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
                 <span class="mdc-list-item__ripple"></span>
