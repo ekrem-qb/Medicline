@@ -26,10 +26,29 @@ const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
 
 dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        selectedInstitution.delete().then(() => {
+        const promises = []
+        promises.push(
+            selectedInstitution.collection('prices').get().then(prices => {
+                prices.forEach(price => {
+                    promises.push(
+                        price.ref.delete().then(() => {
+                        }).catch(error => {
+                            console.error('Error removing price: ', error)
+                        })
+                    )
+                })
+            }).catch(error => {
+                console.error('Error getting prices: ', error)
+            })
+        )
+        promises.push(
+            selectedInstitution.delete().then(() => {
+            }).catch(error => {
+                console.error('Error removing institution: ', error)
+            })
+        )
+        Promise.all(promises).then(() => {
             ipcRenderer.send('window-action', 'exit')
-        }).catch(error => {
-            console.error('Error removing institution: ', error)
         })
     }
 })

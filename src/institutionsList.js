@@ -333,7 +333,7 @@ function listInstitutions(snap) {
                         textContextMenu.materialComponent.open = true
                     }
                     else if (mouseEvent.button == 2) {
-                        tableRowContextMenu.pricesOption.hidden = selectInstitutionType.value != "insurance"
+                        tableRowContextMenu.pricesOption.hidden = selectInstitutionType.value != 'insurance'
 
                         tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
                         tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
@@ -537,9 +537,24 @@ const foundCasesLinks = dialogDeleteInstitution.querySelector('span')
 
 dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        selectedInstitution.delete().then(() => {
-            selectedInstitution = undefined
-            selectedInstitutionID = undefined
+        const institutionRef = selectedInstitution
+        if (institutionRef.parent.path == 'insurance') {
+            institutionRef.collection('prices').get().then(prices => {
+                prices.forEach(price => {
+                    price.ref.delete().then(() => {
+                    }).catch(error => {
+                        console.error('Error removing price: ', error)
+                    })
+                })
+            }).catch(error => {
+                console.error('Error getting prices: ', error)
+            })
+        }
+        institutionRef.delete().then(() => {
+            if (institutionRef == selectedInstitution) {
+                selectedInstitution = undefined
+                selectedInstitutionID = undefined
+            }
         }).catch(error => {
             console.error('Error removing institution: ', error)
         })

@@ -114,7 +114,7 @@ function loadColumns() {
 
 loadColumns()
 
-let currentQuery = db.collection('insurance').doc(location.hash.replace('#', '')).collection('prices')
+const allPrices = db.collection('insurance').doc(location.hash.replace('#', '')).collection('prices')
 let searchQuery
 let foundPrices
 let currentPricesSnap
@@ -223,14 +223,14 @@ buttonDone.onclick = () => {
             currency: selectCurrency.value
         }
         if (inlineEditPath != undefined) {
-            currentQuery.doc(inlineEditPath).update(data).then(() => {
+            allPrices.doc(inlineEditPath).update(data).then(() => {
                 buttonCancel.click()
             }).catch(error => {
                 console.error('Error updating price: ', error)
             })
         }
         else {
-            currentQuery.add(data).then(() => {
+            allPrices.add(data).then(() => {
                 buttonCancel.click()
             }).catch(error => {
                 console.error('Error creating price: ', error)
@@ -346,7 +346,7 @@ function headerClick(headerID) {
 
 function loadPrices() {
     stopCurrentQuery()
-    stopCurrentQuery = currentQuery.onSnapshot(
+    stopCurrentQuery = allPrices.onSnapshot(
         snapshot => {
             console.log(snapshot)
             currentPricesSnap = snapshot
@@ -385,7 +385,7 @@ function listPrices(snap) {
                             if (selectedPriceRow) {
                                 selectedPriceRow.classList.remove('selected')
                             }
-                            selectedPrice = currentQuery.doc(priceSnap.id)
+                            selectedPrice = allPrices.doc(priceSnap.id)
                             selectedPriceID = priceSnap.id
                             selectedPriceRow = tr
                             selectedPriceRow.classList.add('selected')
@@ -407,7 +407,7 @@ function listPrices(snap) {
                     }
                 }
                 if (tr.id == selectedPriceID) {
-                    selectedPrice = currentQuery.doc(selectedPriceID)
+                    selectedPrice = allPrices.doc(selectedPriceID)
                     selectedPriceRow = tr
                     selectedPriceRow.classList.add('selected')
                 }
@@ -601,7 +601,7 @@ function importPrices() {
             currency = '₽'
         }
         promises.push(
-            currentQuery.add({
+            allPrices.add({
                 name: row.cells[0].textContent.trim(),
                 price: parseFloat(row.cells[1].textContent.trim()),
                 currency: currency
@@ -628,7 +628,7 @@ buttonReplaceImport.onclick = () => {
     buttonReplaceImport.icon[0].setAttribute('data-icon', 'eos-icons:loading')
     buttonReplaceImport.disabled = true
     buttonAddImport.disabled = true
-    currentQuery.get().then(prices => {
+    allPrices.get().then(prices => {
         const promises = []
         prices.forEach(price => {
             promises.push(

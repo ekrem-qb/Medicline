@@ -1,7 +1,7 @@
 const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        let promises = []
+        const promises = []
         promises.push(
             currentCase.collection('files').get().then(files => {
                 files.forEach(file => {
