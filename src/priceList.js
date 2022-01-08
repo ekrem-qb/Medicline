@@ -114,11 +114,13 @@ function loadColumns() {
 
 loadColumns()
 
-const allPrices = db.collection('insurance').doc(location.hash.replace('#', '')).collection('prices')
+const selectedInsurance = db.collection('insurance').doc(location.hash.replace('#', ''))
+let stopInsuranceQuery = () => { }
+const allPrices = selectedInsurance.collection('prices')
 let searchQuery
 let foundPrices
 let currentPricesSnap
-let stopCurrentQuery = () => { }
+let stopPricesQuery = () => { }
 let currentRefQueries = []
 let selectedPrice, selectedPriceRow, selectedPriceID
 
@@ -128,8 +130,9 @@ firebase.auth().onAuthStateChanged(user => {
         loadPermissions()
     }
     else {
+        stopInsuranceQuery()
         stopPermissionsQuery()
-        stopCurrentQuery()
+        stopPricesQuery()
         currentRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentRefQueries = []
     }
@@ -345,8 +348,19 @@ function headerClick(headerID) {
 }
 
 function loadPrices() {
-    stopCurrentQuery()
-    stopCurrentQuery = allPrices.onSnapshot(
+    stopInsuranceQuery()
+    stopInsuranceQuery = selectedInsurance.onSnapshot(
+        snapshot => {
+            if (!snapshot.exists) {
+                ipcRenderer.send('window-action', 'exit')
+            }
+        },
+        error => {
+            console.error('Error getting insurance: ' + error)
+        }
+    )
+    stopPricesQuery()
+    stopPricesQuery = allPrices.onSnapshot(
         snapshot => {
             console.log(snapshot)
             currentPricesSnap = snapshot
