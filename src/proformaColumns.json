@@ -1,0 +1,8 @@
+{
+    "__name__": "ID",
+    "name": "FILE_NAME",
+    "date": "DATE",
+    "price": "PRICE",
+    "quantity": "QUANTITY",
+    "totalPrice": "TOTAL_PRICE"
+}
