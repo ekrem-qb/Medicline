@@ -220,6 +220,7 @@ table {
 
 .table-responsive {
   min-height: 5rem;
+  position: relative;
 }
 
 tbody>tr {

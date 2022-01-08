@@ -67,8 +67,6 @@ async function main() {
             case 'exit':
                 event.sender.getOwnerBrowserWindow().close()
                 break
-            default:
-                break
         }
     })
 

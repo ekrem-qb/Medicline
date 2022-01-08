@@ -452,8 +452,6 @@ function setOverlayState(state) {
         case 'hide':
             institutionsOverlay.classList.add('hide')
             break
-        default:
-            break
     }
 }
 

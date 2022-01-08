@@ -90,6 +90,9 @@ function newHeader(headerID) {
     return th
 }
 
+const buttonExport = document.querySelector('button#export')
+buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+
 function loadColumns() {
     setOverlayState('loading')
 
@@ -388,11 +391,6 @@ function listPrices(snap) {
 
                 const tr = document.createElement('tr')
                 tr.id = priceSnap.id
-                tr.ondblclick = () => {
-                    if (getSelectedText() == '') {
-                        ipcRenderer.send('new-window', 'price', selectedPriceID, selectPriceType.value)
-                    }
-                }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
                         if (selectedPriceID != priceSnap.id) {
@@ -430,6 +428,20 @@ function listPrices(snap) {
                 for (const column of tableHeadersList.children) {
                     const td = document.createElement('td')
                     td.id = column.id
+                    td.ondblclick = () => {
+                        if (getSelectedText() == '') {
+                            inlineEdit.classList.remove('m-3')
+                            buttonCancel.click()
+                            inputPrice.value = parseFloat(tr.children['price'].textContent)
+                            selectCurrency.value = tr.children['price'].textContent[tr.children['price'].textContent.length - 1]
+                            tr.classList.add('hide')
+                            inlineEdit.show(tr, selectedPriceID, tr.children['name'].textContent)
+
+                            if (td.id == 'price') {
+                                inputPrice.focus()
+                            }
+                        }
+                    }
                     tr.appendChild(td)
 
                     switch (td.id) {
@@ -496,6 +508,8 @@ function orderPrices(orderBy, orderDirection) {
 }
 
 function setOverlayState(state) {
+    buttonExport.disabled = true
+
     switch (state) {
         case 'loading':
             pricesOverlay.classList.remove('hide')
@@ -512,8 +526,7 @@ function setOverlayState(state) {
             break
         case 'hide':
             pricesOverlay.classList.add('hide')
-            break
-        default:
+            buttonExport.disabled = false
             break
     }
 }
@@ -658,9 +671,6 @@ buttonReplaceImport.onclick = () => {
         })
     })
 }
-
-const buttonExport = document.querySelector('button#export')
-buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
 
 ipcRenderer.on('file-save', (event, filePath) => {
     writeFile(utils.table_to_book(pricesTable, { raw: true }), filePath)

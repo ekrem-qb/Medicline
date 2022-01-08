@@ -540,8 +540,6 @@ function setOverlayState(state) {
         case 'hide':
             casesOverlay.classList.add('hide')
             break
-        default:
-            break
     }
 }
 

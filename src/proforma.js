@@ -284,8 +284,6 @@ function setProformaOverlayState(state) {
         case 'hide':
             proformaOverlay.classList.add('hide')
             break
-        default:
-            break
     }
 }
 

@@ -339,8 +339,6 @@ function setFilesOverlayState(state) {
         case 'hide':
             filesOverlay.classList.add('hide')
             break
-        default:
-            break
     }
 }
 
