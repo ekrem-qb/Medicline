@@ -295,3 +295,12 @@ function refreshAndSaveProformaColumns() {
     }
     localStorage.setItem('proformaColumns', proformaColumns)
 }
+
+const dialogAddActivity = proformaTabPage.querySelector('#dialogAddActivity')
+
+const buttonNewActivity = proformaTabPage.querySelector('button#newActivity')
+buttonNewActivity.onclick = () => {
+    if (proformaCurrentQuery) {
+        dialogAddActivity.materialComponent.open()
+    }
+}

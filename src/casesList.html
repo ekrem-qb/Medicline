@@ -476,7 +476,7 @@
                 <h3 class="my-2" hidden></h3>
             </div>
             <header class="list-group-flush list-group-item p-2">
-                <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createPrice" disabled>
+                <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="newActivity" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                     <span class="mdc-button__label" translate>NEW#ACTIVITY</span>
@@ -495,6 +495,52 @@
                     </thead>
                     <tbody id="proformaList"></tbody>
                 </table>
+            </div>
+            <div class="mdc-dialog mdc-dialog--scrollable" id="dialogAddActivity">
+                <div class="mdc-dialog__container">
+                    <div class="mdc-dialog__surface">
+                        <div class="mdc-dialog__content flex-column">
+                            <div class="input-group input-group-sm ms-1">
+                                <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
+                                <input type="text" class="form-control" id="searchActivities" placeholder="SEARCH">
+                                <button class="btn" id="clearSearchActivities" onclick="clearSearchActivities()" disabled>
+                                    <i class="iconify" data-icon="ic:round-close"></i>
+                                </button>
+                            </div>
+                            <ul id="activitiesList" class="list-group list-group-flush overflow-auto">
+                                <div class="overlay inset-0" id="activitiesListOverlay">
+                                    <i class="iconify" data-icon="eos-icons:loading"></i>
+                                    <h3 class="my-2" hidden></h3>
+                                </div>
+                            </ul>
+                            <template id="listItemTemplate">
+                                <li class="list-group-item d-flex align-items-center px-2">
+                                    <span class="d-flex flex-column overflow-auto me-auto">
+                                        <b></b>
+                                        <small class="opacity-75"></small>
+                                    </span>
+                                    <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="add" disabled>
+                                        <div class="mdc-icon-button__ripple"></div>
+                                        <i class="iconify" data-icon="ic:round-plus"></i>
+                                    </button>
+                                </li>
+                            </template>
+                        </div>
+                        <div class="mdc-dialog__actions">
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" data-mdc-dialog-action="cancel">
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
+                                <span class="mdc-button__label" translate>CANCEL</span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" data-mdc-dialog-action="add" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
+                                <span class="mdc-button__label" translate>ADD</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
             </div>
         </div>
     </div>

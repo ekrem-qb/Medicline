@@ -157,6 +157,7 @@ function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
     buttonUploadFile.disabled = !editIsAllowed
     buttonDoneFile.disabled = !editIsAllowed
+    buttonNewActivity.disabled = !editIsAllowed
     for (const option of tableRowContextMenu.children[0].children) {
         if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)

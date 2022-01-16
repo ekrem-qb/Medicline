@@ -611,6 +611,11 @@ tbody>tr.dimmed {
   background-color: var(--mdc-theme-background);
 }
 
+#dialogAddActivity .mdc-dialog__content {
+  min-width: 40rem;
+  min-height: 20rem;
+}
+
 #inlineEdit {
   position: fixed;
   transition: opacity var(--transition);
@@ -787,6 +792,9 @@ textarea::-webkit-scrollbar {
   --mdc-ripple-color: currentColor;
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-hover-opacity: .1;
+  --mdc-ripple-focus-opacity: 0;
+  --mdc-protected-button-focus-state-layer-opacity: var(--mdc-ripple-focus-opacity);
+  --mdc-outlined-button-focus-state-layer-opacity: var(--mdc-ripple-focus-opacity);
   --mdc-typography-button-text-transform: normal;
   --mdc-shape-medium: .5rem;
 }
