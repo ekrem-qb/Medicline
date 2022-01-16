@@ -936,6 +936,11 @@ textarea::-webkit-scrollbar {
   color: inherit !important;
 }
 
+.mdc-deprecated-list-item.mdc-ripple-surface.mdc-ripple-upgraded--background-focused::before,
+.mdc-deprecated-list-item.mdc-ripple-surface:not(.mdc-ripple-upgraded):focus::before {
+  opacity: 0.12;
+}
+
 th .iconify {
   margin-left: .5rem;
   float: right;
