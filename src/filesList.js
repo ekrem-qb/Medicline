@@ -251,7 +251,8 @@ function listFiles(snap) {
                     const value = fileSnap.get(td.id)
                     if (value != undefined) {
                         if (td.id.includes('Date')) {
-                            td.textContent = new Date(value.seconds * 1000).toLocaleString()
+                            td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
+                            td.realValue = value.seconds
                         }
                         else if (typeof value === 'object' && value !== null) {
                             currentFilesRefQueries.push(
@@ -294,17 +295,26 @@ function orderFiles(orderBy, orderDirection) {
         for (i = 0; i < filesList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            const a = filesList.children[i].children[orderBy]
-            const b = filesList.children[i + 1].children[orderBy]
+            let a = filesList.children[i].children[orderBy]
+            let b = filesList.children[i + 1].children[orderBy]
+
+            if (a.realValue != undefined) {
+                a = a.realValue
+                b = b.realValue
+            }
+            else {
+                a = a.textContent.toLowerCase()
+                b = b.textContent.toLowerCase()
+            }
 
             if (orderDirection == 'asc') {
-                if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                if (a > b) {
                     shouldSwitch = true
                     break
                 }
             }
             else if (orderDirection == 'desc') {
-                if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                if (a < b) {
                     shouldSwitch = true
                     break
                 }
@@ -395,7 +405,7 @@ filesContextMenu.downloadOption.onclick = () => {
 filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => {
     const fileName = selectedFileRow.children['name'].textContent
-    inlineEdit.show(selectedFileRow.children['name'], fileSnap.ref.path, fileName.slice(0, fileName.lastIndexOf('.')))
+    inlineEdit.show(selectedFileRow.children['name'], selectedFile.path, fileName.slice(0, fileName.lastIndexOf('.')))
     inlineEditInput.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
 }
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']

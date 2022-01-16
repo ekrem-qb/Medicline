@@ -407,17 +407,26 @@ function orderInstitutions(orderBy, orderDirection) {
         for (i = 0; i < institutionsList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            const a = institutionsList.children[i].children[orderBy]
-            const b = institutionsList.children[i + 1].children[orderBy]
+            let a = institutionsList.children[i].children[orderBy]
+            let b = institutionsList.children[i + 1].children[orderBy]
+
+            if (a.realValue != undefined) {
+                a = a.realValue
+                b = b.realValue
+            }
+            else {
+                a = a.textContent.toLowerCase()
+                b = b.textContent.toLowerCase()
+            }
 
             if (orderDirection == 'asc') {
-                if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                if (a > b) {
                     shouldSwitch = true
                     break
                 }
             }
             else if (orderDirection == 'desc') {
-                if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                if (a < b) {
                     shouldSwitch = true
                     break
                 }
@@ -458,7 +467,7 @@ function setOverlayState(state) {
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {

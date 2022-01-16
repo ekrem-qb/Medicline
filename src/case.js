@@ -287,9 +287,9 @@ else {
         }
     )
     formEditCase.querySelector('#callDate').value = new Date().toLocaleDateString('tr')
-    formEditCase.querySelector('#callTime').value = new Date().toLocaleTimeString().substr(0, 5)
+    formEditCase.querySelector('#callTime').value = new Date().toLocaleTimeString('tr').substr(0, 5)
     formEditCase.querySelector('#appointmentDate').value = new Date().toLocaleDateString('tr')
-    formEditCase.querySelector('#appointmentTime').value = new Date().toLocaleTimeString().substr(0, 5)
+    formEditCase.querySelector('#appointmentTime').value = new Date().toLocaleTimeString('tr').substr(0, 5)
 }
 
 function saveCase() {
@@ -352,7 +352,7 @@ function saveCase() {
         if (caseExists) {
             caseData.updateUser = allUsers.doc(firebase.auth().currentUser.uid)
             caseData.updateDate = today[2] + '-' + today[1] + '-' + today[0]
-            caseData.updateTime = new Date().toLocaleTimeString().substr(0, 5)
+            caseData.updateTime = new Date().toLocaleTimeString('tr').substr(0, 5)
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {
@@ -362,7 +362,7 @@ function saveCase() {
         else {
             caseData.createUser = allUsers.doc(firebase.auth().currentUser.uid)
             caseData.createDate = today[2] + '-' + today[1] + '-' + today[0]
-            caseData.createTime = new Date().toLocaleTimeString().substr(0, 5)
+            caseData.createTime = new Date().toLocaleTimeString('tr').substr(0, 5)
             currentCase.set(caseData).then(() => {
                 ipcRenderer.send('window-action', 'exit')
             }).catch(error => {

@@ -196,7 +196,8 @@ function listProforma(snap) {
                     const value = Proformanap.get(td.id)
                     if (value != undefined) {
                         if (td.id.includes('Date')) {
-                            td.textContent = new Date(value.seconds * 1000).toLocaleString()
+                            td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
+                            td.realValue = value.seconds
                         }
                         else if (typeof value === 'object' && value !== null) {
                             currentProformaRefQueries.push(
@@ -239,17 +240,26 @@ function orderProforma(orderBy, orderDirection) {
         for (i = 0; i < proformaList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            const a = proformaList.children[i].children[orderBy]
-            const b = proformaList.children[i + 1].children[orderBy]
+            let a = proformaList.children[i].children[orderBy]
+            let b = proformaList.children[i + 1].children[orderBy]
+
+            if (a.realValue != undefined) {
+                a = a.realValue
+                b = b.realValue
+            }
+            else {
+                a = a.textContent.toLowerCase()
+                b = b.textContent.toLowerCase()
+            }
 
             if (orderDirection == 'asc') {
-                if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                if (a > b) {
                     shouldSwitch = true
                     break
                 }
             }
             else if (orderDirection == 'desc') {
-                if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                if (a < b) {
                     shouldSwitch = true
                     break
                 }

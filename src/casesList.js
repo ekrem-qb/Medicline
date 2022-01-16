@@ -450,7 +450,8 @@ function listCases(snap) {
                                             break
                                         default:
                                             if (td.id.includes('Date')) {
-                                                td.textContent = new Date(value).toJSON().substr(0, 10)
+                                                td.textContent = new Date(value).toLocaleDateString('tr')
+                                                td.realValue = value
                                             }
                                             else {
                                                 td.textContent = value
@@ -487,17 +488,26 @@ function orderCases(orderBy, orderDirection) {
             for (i = 0; i < casesList.childElementCount - 1; i++) {
                 shouldSwitch = false
 
-                const a = casesList.children[i].children[orderBy]
-                const b = casesList.children[i + 1].children[orderBy]
+                let a = casesList.children[i].children[orderBy]
+                let b = casesList.children[i + 1].children[orderBy]
+
+                if (a.realValue != undefined) {
+                    a = a.realValue
+                    b = b.realValue
+                }
+                else {
+                    a = a.textContent.toLowerCase()
+                    b = b.textContent.toLowerCase()
+                }
 
                 if (orderDirection == 'asc') {
-                    if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                    if (a > b) {
                         shouldSwitch = true
                         break
                     }
                 }
                 else if (orderDirection == 'desc') {
-                    if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                    if (a < b) {
                         shouldSwitch = true
                         break
                     }
@@ -550,7 +560,7 @@ function changeCaseStatus(newStatus) {
         status: newStatus,
         updateUser: allUsers.doc(firebase.auth().currentUser.uid),
         updateDate: today[2] + '-' + today[1] + '-' + today[0],
-        updateTime: new Date().toLocaleTimeString().substr(0, 5)
+        updateTime: new Date().toLocaleTimeString('tr').substr(0, 5)
     }).catch(error => {
         console.error('Error updating case: ', error)
     })
@@ -812,7 +822,7 @@ tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialCompon
 const { writeFile, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate('CASES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('dialog-save', translate('CASES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
 }
 
 ipcRenderer.on('file-save', (event, filePath) => {

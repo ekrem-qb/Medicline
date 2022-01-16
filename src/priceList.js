@@ -91,7 +91,7 @@ function newHeader(headerID) {
 }
 
 const buttonExport = document.querySelector('button#export')
-buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString().replace(',', '').replaceAll(':', '-') + '.xlsx')
+buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
 
 function loadColumns() {
     setOverlayState('loading')
@@ -480,17 +480,26 @@ function orderPrices(orderBy, orderDirection) {
         for (i = 0; i < priceList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            const a = priceList.children[i].children[orderBy]
-            const b = priceList.children[i + 1].children[orderBy]
+            let a = priceList.children[i].children[orderBy]
+            let b = priceList.children[i + 1].children[orderBy]
+
+            if (a.realValue != undefined) {
+                a = a.realValue
+                b = b.realValue
+            }
+            else {
+                a = a.textContent.toLowerCase()
+                b = b.textContent.toLowerCase()
+            }
 
             if (orderDirection == 'asc') {
-                if (a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase()) {
+                if (a > b) {
                     shouldSwitch = true
                     break
                 }
             }
             else if (orderDirection == 'desc') {
-                if (a.innerHTML.toLowerCase() < b.innerHTML.toLowerCase()) {
+                if (a < b) {
                     shouldSwitch = true
                     break
                 }
