@@ -9,10 +9,12 @@ proformaTabPage.stopLoadingContent = () => {
     proformaCurrentQuery = undefined
     currentProformaRefQueries.forEach(stopRefQuery => stopRefQuery())
     currentProformaRefQueries = []
+    stopActivityQuery()
 }
 proformaTabPage.loadContent = () => {
     proformaTabPage.stopLoadingContent()
     loadProforma()
+    listActivities()
 }
 
 const proformaTable = proformaTabPage.querySelector('table#proforma')
@@ -312,5 +314,119 @@ const buttonNewActivity = proformaTabPage.querySelector('button#newActivity')
 buttonNewActivity.onclick = () => {
     if (proformaCurrentQuery) {
         dialogAddActivity.materialComponent.open()
+        listActivities()
+    }
+}
+
+const activitiesList = document.getElementById('activitiesList')
+activitiesList.overlay = document.getElementById('activitiesListOverlay')
+activitiesList.overlay.icon = activitiesList.overlay.getElementsByClassName('iconify')
+activitiesList.overlay.text = activitiesList.overlay.querySelector('h3')
+const listItemTemplate = document.getElementById('listItemTemplate')
+let stopActivityQuery = () => { }
+
+function listActivities() {
+    activitiesList.innerHTML = ''
+    stopActivityQuery()
+    const selectedCaseSnap = currentCasesSnap.docs.find(a => a.id == selectedCaseID)
+    if (selectedCaseSnap) {
+        const selectedCaseInsurance = selectedCaseSnap.get('insurance')
+        if (selectedCaseInsurance) {
+            stopActivityQuery = selectedCaseInsurance.collection('prices').orderBy('name', 'asc').onSnapshot(
+                snapshot => {
+                    console.log(snapshot.docChanges())
+                    snapshot.docChanges().forEach(
+                        change => {
+                            switch (change.type) {
+                                case 'added':
+                                    const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
+                                    listItem.id = change.doc.ref.path
+
+                                    const label = listItem.querySelector('b')
+                                    const subLabel = listItem.querySelector('small')
+                                    listItem.label = label
+                                    listItem.subLabel = subLabel
+
+                                    label.textContent = change.doc.get('name')
+                                    subLabel.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+
+                                    const buttonRemove = listItem.children['remove']
+                                    buttonRemove.onclick = () => {
+                                        quantity.textContent = Number.parseInt(quantity.textContent) - 1
+
+                                        buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                    }
+                                    buttonRemove.materialRipple = new MDCRipple(buttonRemove)
+                                    buttonRemove.materialRipple.unbounded = true
+
+                                    const quantity = listItem.children['quantity']
+
+                                    const buttonAdd = listItem.children['add']
+                                    buttonAdd.onclick = () => {
+                                        quantity.textContent = Number.parseInt(quantity.textContent) + 1
+
+                                        buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                    }
+                                    buttonAdd.materialRipple = new MDCRipple(buttonAdd)
+                                    buttonAdd.materialRipple.unbounded = true
+
+                                    if (change.newIndex == activitiesList.childElementCount) {
+                                        activitiesList.appendChild(listItem)
+                                    } else {
+                                        activitiesList.insertBefore(listItem, activitiesList.children[change.newIndex])
+                                    }
+                                    break
+                                case 'modified':
+                                    activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+
+                                    if (change.newIndex == activitiesList.childElementCount) {
+                                        activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
+                                    } else {
+                                        const removedChild = activitiesList.removeChild(activitiesList.children[change.doc.ref.path])
+                                        activitiesList.insertBefore(removedChild, activitiesList.children[change.newIndex])
+                                    }
+                                    break
+                                case 'removed':
+                                    activitiesList.children[change.doc.ref.path].remove()
+                                    break
+                            }
+                        }
+                    )
+                    if (activitiesList.childElementCount > 0) {
+                        setListOverlayState(activitiesList.overlay, 'hide')
+                    } else {
+                        setListOverlayState(activitiesList.overlay, 'empty')
+                    }
+                },
+                error => {
+                    console.error('Error getting billable activities: ' + error)
+                }
+            )
+        }
+    }
+
+    if (activitiesList.childElementCount > 0) {
+        setListOverlayState(activitiesList.overlay, 'hide')
+    } else {
+        setListOverlayState(activitiesList.overlay, 'empty')
+    }
+}
+
+function setListOverlayState(overlay, state) {
+    switch (state) {
+        case 'loading':
+            overlay.classList.remove('hide')
+            overlay.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+            overlay.text.hidden = true
+            break
+        case 'empty':
+            overlay.classList.remove('hide')
+            overlay.icon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
+            overlay.text.hidden = false
+            overlay.text.innerText = translate(overlay.id.replace('ListOverlay', '').toUpperCase()) + ' ' + translate('NOT_FOUND')
+            break
+        case 'hide':
+            overlay.classList.add('hide')
+            break
     }
 }

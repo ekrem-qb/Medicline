@@ -500,14 +500,14 @@
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
                         <div class="mdc-dialog__content flex-column">
-                            <div class="input-group input-group-sm ms-1">
+                            <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                                 <input type="text" class="form-control" id="searchActivities" placeholder="SEARCH">
                                 <button class="btn" id="clearSearchActivities" onclick="clearSearchActivities()" disabled>
                                     <i class="iconify" data-icon="ic:round-close"></i>
                                 </button>
                             </div>
-                            <ul id="activitiesList" class="list-group list-group-flush overflow-auto">
+                            <ul id="activitiesList" class="list-group list-group-flush overflow-auto w-100">
                                 <div class="overlay inset-0" id="activitiesListOverlay">
                                     <i class="iconify" data-icon="eos-icons:loading"></i>
                                     <h3 class="my-2" hidden></h3>
@@ -519,7 +519,12 @@
                                         <b></b>
                                         <small class="opacity-75"></small>
                                     </span>
-                                    <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="add" disabled>
+                                    <button class="mdc-icon-button mdc-button--outlined mdc-button--red" id="remove" disabled>
+                                        <div class="mdc-icon-button__ripple"></div>
+                                        <i class="iconify" data-icon="ic:round-minus"></i>
+                                    </button>
+                                    <b id="quantity" disabled>0</b>
+                                    <button class="mdc-icon-button mdc-button--outlined mdc-button--green" id="add">
                                         <div class="mdc-icon-button__ripple"></div>
                                         <i class="iconify" data-icon="ic:round-plus"></i>
                                     </button>
@@ -532,7 +537,7 @@
                                 <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
                                 <span class="mdc-button__label" translate>CANCEL</span>
                             </button>
-                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" data-mdc-dialog-action="add" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--green" data-mdc-dialog-action="add" data-mdc-dialog-button-default data-mdc-dialog-initial-focus disabled>
                                 <div class="mdc-button__ripple"></div>
                                 <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                                 <span class="mdc-button__label" translate>ADD</span>
