@@ -318,6 +318,37 @@ buttonNewActivity.onclick = () => {
     }
 }
 
+inputSearchActivities = dialogAddActivity.querySelector('input#searchActivities')
+const buttonClearSearchActivities = inputSearchActivities.parentElement.querySelector('button#clearSearchActivities')
+
+function refreshSearchActivities() {
+    const searchActivitiesQuery = String(inputSearchActivities.value).trim().toLowerCase()
+
+    if (searchActivitiesQuery != '') {
+        buttonClearSearchActivities.disabled = false
+
+        for (const activity of activitiesList.children) {
+            activity.classList.toggle('hide', !(activity.label.textContent.toLowerCase() + activity.price.textContent).includes(searchActivitiesQuery))
+        }
+
+        refreshListOverlayState()
+    }
+    else {
+        clearSearchActivities()
+    }
+}
+
+inputSearchActivities.oninput = refreshSearchActivities
+
+function clearSearchActivities() {
+    activitiesList.querySelectorAll('li.hide').forEach(activity => {
+        activity.classList.remove('hide')
+    })
+    refreshListOverlayState()
+    buttonClearSearchActivities.disabled = true
+    inputSearchActivities.value = ''
+}
+
 const activitiesList = document.getElementById('activitiesList')
 activitiesList.overlay = document.getElementById('activitiesListOverlay')
 activitiesList.overlay.icon = activitiesList.overlay.getElementsByClassName('iconify')
@@ -343,12 +374,12 @@ function listActivities() {
                                     listItem.id = change.doc.ref.path
 
                                     const label = listItem.querySelector('b')
-                                    const subLabel = listItem.querySelector('small')
+                                    const price = listItem.querySelector('small')
                                     listItem.label = label
-                                    listItem.subLabel = subLabel
+                                    listItem.price = price
 
                                     label.textContent = change.doc.get('name')
-                                    subLabel.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+                                    price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
 
                                     const buttonRemove = listItem.children['remove']
                                     buttonRemove.onclick = () => {
@@ -378,6 +409,7 @@ function listActivities() {
                                     break
                                 case 'modified':
                                     activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+                                    activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
 
                                     if (change.newIndex == activitiesList.childElementCount) {
                                         activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
@@ -392,11 +424,7 @@ function listActivities() {
                             }
                         }
                     )
-                    if (activitiesList.childElementCount > 0) {
-                        setListOverlayState(activitiesList.overlay, 'hide')
-                    } else {
-                        setListOverlayState(activitiesList.overlay, 'empty')
-                    }
+                    refreshSearchActivities()
                 },
                 error => {
                     console.error('Error getting billable activities: ' + error)
@@ -405,11 +433,7 @@ function listActivities() {
         }
     }
 
-    if (activitiesList.childElementCount > 0) {
-        setListOverlayState(activitiesList.overlay, 'hide')
-    } else {
-        setListOverlayState(activitiesList.overlay, 'empty')
-    }
+    refreshListOverlayState()
 }
 
 function setListOverlayState(overlay, state) {
@@ -428,5 +452,13 @@ function setListOverlayState(overlay, state) {
         case 'hide':
             overlay.classList.add('hide')
             break
+    }
+}
+
+function refreshListOverlayState() {
+    if (activitiesList.querySelectorAll('li:not(.hide)').length > 0) {
+        setListOverlayState(activitiesList.overlay, 'hide')
+    } else {
+        setListOverlayState(activitiesList.overlay, 'empty')
     }
 }
