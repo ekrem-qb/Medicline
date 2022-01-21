@@ -256,7 +256,7 @@
                         </div>
                     </div>
                 </form>
-                <div class="modal-footer">
+                <footer class="modal-footer">
                     <button class="mdc-button mdc-button--raised mdc-button--green flex-grow-1 me-1" onclick="applyFilter()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
@@ -267,7 +267,7 @@
                         <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CLEAR</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="overflow-auto w-100 px-2 py-3" id="casesPanel">
@@ -304,13 +304,13 @@
                         <tbody id="casesList"></tbody>
                     </table>
                 </div>
-                <div class="modal-footer flex-column">
+                <footer class="modal-footer flex-column">
                     <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="mdi:microsoft-excel"></i>
                         <span class="mdc-button__label" translate>EXPORT</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
     </div>
@@ -360,7 +360,7 @@
     </header>
     <div class="modal-body collapsed h-75 p-0">
         <div class="tab-page show">
-            <li class="list-group-flush list-group-item p-2">
+            <li class="modal-header p-2">
                 <input type="file" id="newFile" hidden>
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="uploadFile" disabled>
                     <div class="mdc-button__ripple"></div>
@@ -449,11 +449,11 @@
             <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteFile">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <div class="mdc-dialog__content">
+                        <section class="mdc-dialog__content">
                             <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                             <p class="mb-0" translate>ASK_DELETE#THIS_FILE</p>
-                        </div>
-                        <div class="mdc-dialog__actions">
+                        </section>
+                        <footer class="mdc-dialog__actions">
                             <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                                 <div class="mdc-button__ripple"></div>
                                 <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
@@ -464,18 +464,14 @@
                                 <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                                 <span class="mdc-button__label" translate>DELETE</span>
                             </button>
-                        </div>
+                        </footer>
                     </div>
                 </div>
                 <div class="mdc-dialog__scrim"></div>
             </div>
         </div>
         <div class="tab-page">
-            <div class="overlay" id="proformaOverlay">
-                <i class="iconify" data-icon="eos-icons:loading"></i>
-                <h3 class="my-2" hidden></h3>
-            </div>
-            <header class="list-group-flush list-group-item p-2">
+            <header class="modal-header p-2">
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="newActivity" disabled>
                     <div class="mdc-button__ripple"></div>
                     <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
@@ -496,10 +492,14 @@
                     <tbody id="proformaList"></tbody>
                 </table>
             </div>
+            <div class="overlay" id="proformaOverlay">
+                <i class="iconify" data-icon="eos-icons:loading"></i>
+                <h3 class="my-2" hidden></h3>
+            </div>
             <div class="mdc-dialog mdc-dialog--scrollable" id="dialogAddActivity">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <div class="mdc-dialog__content flex-column">
+                        <header class="mdc-dialog__title">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                                 <input type="text" class="form-control" id="searchActivities" placeholder="SEARCH">
@@ -507,14 +507,16 @@
                                     <i class="iconify" data-icon="ic:round-close"></i>
                                 </button>
                             </div>
-                            <div class="overlay inset-0" id="activitiesListOverlay">
+                        </header>
+                        <section class="mdc-dialog__content flex-column position-relative p-0">
+                            <div class="overlay top-0 h-100" id="activitiesListOverlay">
                                 <i class="iconify" data-icon="eos-icons:loading"></i>
                                 <h3 class="my-2" hidden></h3>
                             </div>
                             <ul id="activitiesList" class="list-group list-group-flush overflow-auto w-100">
                             </ul>
                             <template id="listItemTemplate">
-                                <li class="list-group-item d-flex align-items-center px-2">
+                                <li class="list-group-item">
                                     <span class="d-flex flex-column overflow-auto me-auto">
                                         <b></b>
                                         <small class="opacity-75"></small>
@@ -530,8 +532,8 @@
                                     </button>
                                 </li>
                             </template>
-                        </div>
-                        <div class="mdc-dialog__actions">
+                        </section>
+                        <footer class="mdc-dialog__actions">
                             <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" data-mdc-dialog-action="cancel">
                                 <div class="mdc-button__ripple"></div>
                                 <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
@@ -542,7 +544,7 @@
                                 <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                                 <span class="mdc-button__label" translate>ADD</span>
                             </button>
-                        </div>
+                        </footer>
                     </div>
                 </div>
                 <div class="mdc-dialog__scrim"></div>
@@ -652,11 +654,11 @@
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteCase">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
+                <section class="mdc-dialog__content">
                     <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
-                </div>
-                <div class="mdc-dialog__actions">
+                </section>
+                <footer class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
@@ -667,7 +669,7 @@
                         <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>

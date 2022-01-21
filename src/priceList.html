@@ -58,7 +58,7 @@
                 <tbody id="priceList"></tbody>
             </table>
         </div>
-        <div class="modal-footer">
+        <footer class="modal-footer">
             <input type="file" id="excel" accept=".xlsx" hidden>
             <button class="mdc-button mdc-button--outlined mdc-button--green flex-grow-1 me-1" id="import" disabled>
                 <div class="mdc-button__ripple"></div>
@@ -70,7 +70,7 @@
                 <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
                 <span class="mdc-button__label" translate>EXPORT</span>
             </button>
-        </div>
+        </footer>
     </div>
     <div class="d-flex m-3" id="inlineEdit">
         <button class="mdc-button mdc-button--outlined mdc-button--red h-auto" id="cancelPrice">
@@ -178,13 +178,13 @@
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeletePrice">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
+                <section class="mdc-dialog__content">
                     <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <div class="overflow-auto">
                         <p class="mb-0">ASK_DELETE#THIS_PRICE</p>
                     </div>
-                </div>
-                <div class="mdc-dialog__actions">
+                </section>
+                <footer class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="iconify mdc-button__icon" data-icon="ic:round-close"></i>
@@ -195,7 +195,7 @@
                         <i class="iconify mdc-button__icon" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>
@@ -203,7 +203,7 @@
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogImport">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__title align-items-start">
+                <header class="mdc-dialog__title">
                     <label class="me-3" translate>CURRENCY_IF_NO_CURRENCY</label>
                     <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="importCurrency">
                         <div class="mdc-select__anchor h-auto">
@@ -233,10 +233,10 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-                <div class="mdc-dialog__content align-items-start fw-normal">
-                </div>
-                <div class="mdc-dialog__actions">
+                </header>
+                <section class="mdc-dialog__content align-items-start fw-normal">
+                </section>
+                <footer class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" id="replaceImport">
                         <div class="mdc-button__ripple"></div>
                         <i class="iconify mdc-button__icon" data-icon="tabler:replace"></i>
@@ -247,7 +247,7 @@
                         <i class="iconify mdc-button__icon" data-icon="ic:round-plus"></i>
                         <span class="mdc-button__label" translate>ADD</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>

@@ -369,7 +369,7 @@
             </div>
         </div>
     </form>
-    <div class="mdc-dialog__actions hide" id="actionButtonsPanel">
+    <footer class="mdc-dialog__actions hide" id="actionButtonsPanel">
         <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--red" id="delete" disabled>
             <div class="mdc-button__ripple"></div>
             <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
@@ -380,15 +380,15 @@
             <i class="mdc-button__icon iconify" data-icon="ic:round-save"></i>
             <span class="mdc-button__label" translate>SAVE</span>
         </button>
-    </div>
+    </footer>
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteCase">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
+                <section class="mdc-dialog__content">
                     <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <p class="mb-0" translate>ASK_DELETE#THIS_CASE</p>
-                </div>
-                <div class="mdc-dialog__actions">
+                </section>
+                <footer class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
@@ -399,7 +399,7 @@
                         <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>

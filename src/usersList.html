@@ -27,7 +27,7 @@
                 <h3 class="my-2" hidden></h3>
             </div>
             <template id="listItemTemplate">
-                <li class="list-group-item d-flex align-items-center mdc-ripple-surface px-2">
+                <li class="list-group-item mdc-ripple-surface px-2">
                     <i class="avatar iconify me-3" data-icon="ic:round-account-circle"></i>
                     <span class="d-flex flex-column overflow-auto me-auto">
                         <b></b>
@@ -45,13 +45,13 @@
             </template>
         </div>
         <div class="d-flex flex-column w-50 ms-2">
-            <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between align-items-center mdc-elevation--z6 px-3" id="permissionsHeader">
+            <li class="modal-footer list-group-flush list-group-item mdc-ripple-surface justify-content-between mdc-elevation--z6 px-3" id="permissionsHeader">
                 <h3 class="my-1-5px" translate>PERMISSIONS</h3>
                 <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
             </li>
             <ul id="permissionsList" class="list-group list-group-flush mdc-elevation--z6 overflow-auto">
-                <li class="list-group-item p-0" id="cases">
-                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                <li class="list-group-item flex-column p-0" id="cases">
+                    <div class="list-group-item mdc-ripple-surface w-100 border-0">
                         <i class="iconify me-3" data-icon="mdi:table-large"></i>
                         <b class="me-auto" translate>CASES</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -73,8 +73,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="list-group-item p-0" id="users">
-                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                <li class="list-group-item flex-column p-0" id="users">
+                    <div class="list-group-item mdc-ripple-surface w-100 border-0">
                         <i class="iconify me-3" data-icon="ic:round-groups"></i>
                         <b class="me-auto" translate>USERS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -96,8 +96,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="list-group-item p-0" id="hotels">
-                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                <li class="list-group-item flex-column p-0" id="hotels">
+                    <div class="list-group-item mdc-ripple-surface w-100 border-0">
                         <i class="iconify me-3" data-icon="ic:round-hotel"></i>
                         <b class="me-auto" translate>HOTELS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -119,8 +119,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="list-group-item p-0" id="countries">
-                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                <li class="list-group-item flex-column p-0" id="countries">
+                    <div class="list-group-item mdc-ripple-surface w-100 border-0">
                         <i class="iconify me-3" data-icon="ic:round-public"></i>
                         <b class="me-auto" translate>COUNTRIES</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -142,8 +142,8 @@
                         </li>
                     </ul>
                 </li>
-                <li class="list-group-item p-0" id="institutions">
-                    <div class="d-flex mdc-ripple-surface align-items-center px-3 py-2">
+                <li class="list-group-item flex-column p-0" id="institutions">
+                    <div class="list-group-item mdc-ripple-surface w-100 border-0">
                         <i class="iconify me-3" data-icon="ic:round-apartment"></i>
                         <b class="me-auto" translate>INSTITUTIONS</b>
                         <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -171,14 +171,14 @@
     <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteUser">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
-                <div class="mdc-dialog__content">
+                <section class="mdc-dialog__content">
                     <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                     <div class="overflow-auto">
                         <p class="mb-0"></p>
                         <span id="foundCasesLinks"></span>
                     </div>
-                </div>
-                <div class="mdc-dialog__actions">
+                </section>
+                <footer class="mdc-dialog__actions">
                     <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
@@ -189,7 +189,7 @@
                         <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
                         <span class="mdc-button__label" translate>DELETE</span>
                     </button>
-                </div>
+                </footer>
             </div>
         </div>
         <div class="mdc-dialog__scrim"></div>

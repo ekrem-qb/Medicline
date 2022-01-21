@@ -373,6 +373,8 @@ th>label {
 }
 
 .list-group-item {
+  display: flex;
+  align-items: center;
   min-height: 52px;
   transition: var(--transition);
 }
@@ -1013,12 +1015,12 @@ th .iconify[data-icon="ic:round-unfold-more"] {
   max-height: 90vh;
 }
 
-.mdc-dialog__title,
-.mdc-dialog__content {
+.mdc-dialog .mdc-dialog__title,
+.mdc-dialog .mdc-dialog__content {
   display: flex;
   line-height: normal;
   align-items: center;
-  padding: 1rem !important;
+  padding: 1rem;
   user-select: none;
 }
 

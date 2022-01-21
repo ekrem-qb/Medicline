@@ -359,77 +359,78 @@ let stopActivityQuery = () => { }
 function listActivities() {
     activitiesList.innerHTML = ''
     stopActivityQuery()
-    const selectedCaseSnap = currentCasesSnap.docs.find(a => a.id == selectedCaseID)
-    if (selectedCaseSnap) {
-        const selectedCaseInsurance = selectedCaseSnap.get('insurance')
-        if (selectedCaseInsurance) {
-            stopActivityQuery = selectedCaseInsurance.collection('prices').orderBy('name', 'asc').onSnapshot(
-                snapshot => {
-                    console.log(snapshot.docChanges())
-                    snapshot.docChanges().forEach(
-                        change => {
-                            switch (change.type) {
-                                case 'added':
-                                    const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
-                                    listItem.id = change.doc.ref.path
+    if (currentCasesSnap) {
+        const selectedCaseSnap = currentCasesSnap.docs.find(a => a.id == selectedCaseID)
+        if (selectedCaseSnap) {
+            const selectedCaseInsurance = selectedCaseSnap.get('insurance')
+            if (selectedCaseInsurance) {
+                stopActivityQuery = selectedCaseInsurance.collection('prices').orderBy('name', 'asc').onSnapshot(
+                    snapshot => {
+                        snapshot.docChanges().forEach(
+                            change => {
+                                switch (change.type) {
+                                    case 'added':
+                                        const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
+                                        listItem.id = change.doc.ref.path
 
-                                    const label = listItem.querySelector('b')
-                                    const price = listItem.querySelector('small')
-                                    listItem.label = label
-                                    listItem.price = price
+                                        const label = listItem.querySelector('b')
+                                        const price = listItem.querySelector('small')
+                                        listItem.label = label
+                                        listItem.price = price
 
-                                    label.textContent = change.doc.get('name')
-                                    price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+                                        label.textContent = change.doc.get('name')
+                                        price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
 
-                                    const buttonRemove = listItem.children['remove']
-                                    buttonRemove.onclick = () => {
-                                        quantity.textContent = Number.parseInt(quantity.textContent) - 1
+                                        const buttonRemove = listItem.children['remove']
+                                        buttonRemove.onclick = () => {
+                                            quantity.textContent = Number.parseInt(quantity.textContent) - 1
 
-                                        buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
-                                    }
-                                    buttonRemove.materialRipple = new MDCRipple(buttonRemove)
-                                    buttonRemove.materialRipple.unbounded = true
+                                            buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                        }
+                                        buttonRemove.materialRipple = new MDCRipple(buttonRemove)
+                                        buttonRemove.materialRipple.unbounded = true
 
-                                    const quantity = listItem.children['quantity']
+                                        const quantity = listItem.children['quantity']
 
-                                    const buttonAdd = listItem.children['add']
-                                    buttonAdd.onclick = () => {
-                                        quantity.textContent = Number.parseInt(quantity.textContent) + 1
+                                        const buttonAdd = listItem.children['add']
+                                        buttonAdd.onclick = () => {
+                                            quantity.textContent = Number.parseInt(quantity.textContent) + 1
 
-                                        buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
-                                    }
-                                    buttonAdd.materialRipple = new MDCRipple(buttonAdd)
-                                    buttonAdd.materialRipple.unbounded = true
+                                            buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                        }
+                                        buttonAdd.materialRipple = new MDCRipple(buttonAdd)
+                                        buttonAdd.materialRipple.unbounded = true
 
-                                    if (change.newIndex == activitiesList.childElementCount) {
-                                        activitiesList.appendChild(listItem)
-                                    } else {
-                                        activitiesList.insertBefore(listItem, activitiesList.children[change.newIndex])
-                                    }
-                                    break
-                                case 'modified':
-                                    activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
-                                    activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+                                        if (change.newIndex == activitiesList.childElementCount) {
+                                            activitiesList.appendChild(listItem)
+                                        } else {
+                                            activitiesList.insertBefore(listItem, activitiesList.children[change.newIndex])
+                                        }
+                                        break
+                                    case 'modified':
+                                        activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+                                        activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
 
-                                    if (change.newIndex == activitiesList.childElementCount) {
-                                        activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
-                                    } else {
-                                        const removedChild = activitiesList.removeChild(activitiesList.children[change.doc.ref.path])
-                                        activitiesList.insertBefore(removedChild, activitiesList.children[change.newIndex])
-                                    }
-                                    break
-                                case 'removed':
-                                    activitiesList.children[change.doc.ref.path].remove()
-                                    break
+                                        if (change.newIndex == activitiesList.childElementCount) {
+                                            activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
+                                        } else {
+                                            const removedChild = activitiesList.removeChild(activitiesList.children[change.doc.ref.path])
+                                            activitiesList.insertBefore(removedChild, activitiesList.children[change.newIndex])
+                                        }
+                                        break
+                                    case 'removed':
+                                        activitiesList.children[change.doc.ref.path].remove()
+                                        break
+                                }
                             }
-                        }
-                    )
-                    refreshSearchActivities()
-                },
-                error => {
-                    console.error('Error getting billable activities: ' + error)
-                }
-            )
+                        )
+                        refreshSearchActivities()
+                    },
+                    error => {
+                        console.error('Error getting billable activities: ' + error)
+                    }
+                )
+            }
         }
     }
 
