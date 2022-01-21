@@ -1,8 +1,4 @@
-const filesOverlay = document.getElementById('filesOverlay')
-const filesOverlayIcon = filesOverlay.getElementsByClassName('iconify')
-const filesOverlayText = filesOverlay.querySelector('h3')
-
-const filesTabPage = filesOverlay.parentElement
+const filesTabPage = document.querySelector('.tab-page#files')
 filesTabPage.stopLoadingContent = () => {
     stopFilesCurrentQuery()
     stopFilesCurrentQuery = () => { }
@@ -15,7 +11,11 @@ filesTabPage.loadContent = () => {
     loadFiles()
 }
 
-const filesTable = filesTabPage.querySelector('table#files')
+const filesOverlay = filesTabPage.querySelector('.overlay')
+const filesOverlayIcon = filesOverlay.getElementsByClassName('iconify')
+const filesOverlayText = filesOverlay.querySelector('h3')
+
+const filesTable = filesTabPage.querySelector('table')
 filesTable.parentElement.onscroll = () => inlineEdit.moveToAnchor()
 const filesList = filesTable.querySelector('tbody#filesList')
 let filesCurrentOrder, filesCurrentOrderDirection
@@ -109,9 +109,8 @@ buttonUploadFile.onclick = () => {
     }
 }
 const inputFileName = filesTabPage.querySelector('input#fileName')
-inputFileName.oninput = () => {
-    inputFileName.materialComponent.valid = inputFileName.value.trim() != ''
-}
+inputFileName.oninput = () => inputFileName.materialComponent.valid = inputFileName.value.trim() != ''
+inputFileName.onchange = () => inputFileName.value = inputFileName.value.trim()
 const buttonDoneFile = filesTabPage.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
     if (filesCurrentQuery && inputNewFile.value.trim() != '' && inputFileName.value.trim() != '') {
@@ -196,8 +195,8 @@ function loadFiles() {
 }
 
 function listFiles(snap) {
+    filesList.innerHTML = ''
     if (snap.docs.length > 0) {
-        filesList.innerHTML = ''
         currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentFilesRefQueries = []
         snap.forEach(fileSnap => {

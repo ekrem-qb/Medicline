@@ -1,8 +1,4 @@
-const proformaOverlay = document.getElementById('proformaOverlay')
-const proformaOverlayIcon = proformaOverlay.getElementsByClassName('iconify')
-const proformaOverlayText = proformaOverlay.querySelector('h3')
-
-const proformaTabPage = proformaOverlay.parentElement
+const proformaTabPage = document.querySelector('.tab-page#proforma')
 proformaTabPage.stopLoadingContent = () => {
     stopProformaCurrentQuery()
     stopProformaCurrentQuery = () => { }
@@ -17,7 +13,11 @@ proformaTabPage.loadContent = () => {
     listActivities()
 }
 
-const proformaTable = proformaTabPage.querySelector('table#proforma')
+const proformaOverlay = filesTabPage.querySelector('.overlay')
+const proformaOverlayIcon = proformaOverlay.getElementsByClassName('iconify')
+const proformaOverlayText = proformaOverlay.querySelector('h3')
+
+const proformaTable = proformaTabPage.querySelector('table')
 proformaTable.parentElement.onscroll = () => inlineEdit.moveToAnchor()
 const proformaList = proformaTable.querySelector('tbody#proformaList')
 let proformaCurrentOrder, proformaCurrentOrderDirection
