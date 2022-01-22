@@ -16,7 +16,7 @@
     <div class="d-flex h-100 overflow-auto">
         <div class="px-2 py-3" id="toolsPanel">
             <div class="mdc-card mdc-elevation--z6">
-                <header class="modal-header mdc-ripple-surface" onclick="modalExpand(this)">
+                <header class="modal-header mdc-ripple-surface p-3" onclick="modalExpand(this)">
                     <i class="iconify me-3" data-icon="ic:round-filter-alt"></i>
                     <h5 class="modal-title" translate>FILTER</h5>
                     <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
@@ -499,7 +499,7 @@
             <div class="mdc-dialog mdc-dialog--scrollable" id="dialogAddActivity">
                 <div class="mdc-dialog__container">
                     <div class="mdc-dialog__surface">
-                        <header class="mdc-dialog__title">
+                        <header class="modal-header">
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                                 <input type="text" class="form-control" id="searchActivities" placeholder="SEARCH">
@@ -516,8 +516,18 @@
                             <ul id="activitiesList" class="list-group list-group-flush overflow-auto w-100">
                             </ul>
                             <template id="listItemTemplate">
-                                <li class="list-group-item">
-                                    <span class="d-flex flex-column overflow-auto me-auto">
+                                <li class="list-group-item mdc-ripple-surface ps-2 pe-0">
+                                    <div class="mdc-checkbox">
+                                        <input type="checkbox" class="mdc-checkbox__native-control" />
+                                        <div class="mdc-checkbox__background">
+                                            <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                                <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                                            </svg>
+                                            <div class="mdc-checkbox__mixedmark"></div>
+                                        </div>
+                                        <div class="mdc-checkbox__ripple"></div>
+                                    </div>
+                                    <span class="d-flex flex-column overflow-auto ms-2 me-auto">
                                         <b></b>
                                         <small class="opacity-75"></small>
                                     </span>

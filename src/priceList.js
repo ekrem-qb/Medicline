@@ -170,7 +170,7 @@ function loadPermissions() {
 }
 const buttonCreate = document.querySelector('button#createPrice')
 buttonCreate.onclick = () => {
-    inlineEdit.classList.add('m-3')
+    inlineEdit.classList.add('m-2')
     buttonCancel.click()
     inlineEdit.show(buttonCreate)
     buttonCreate.classList.add('hide')
@@ -430,7 +430,7 @@ function listPrices(snap) {
                     td.id = column.id
                     td.ondblclick = () => {
                         if (getSelectedText() == '') {
-                            inlineEdit.classList.remove('m-3')
+                            inlineEdit.classList.remove('m-2')
                             buttonCancel.click()
                             inputPrice.value = parseFloat(tr.children['price'].textContent)
                             selectCurrency.value = tr.children['price'].textContent[tr.children['price'].textContent.length - 1]
@@ -545,7 +545,7 @@ tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['del
 tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.open()
 tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
 tableRowContextMenu.editOption.onclick = () => {
-    inlineEdit.classList.remove('m-3')
+    inlineEdit.classList.remove('m-2')
     buttonCancel.click()
     inputPrice.value = parseFloat(selectedPriceRow.children['price'].textContent)
     selectCurrency.value = selectedPriceRow.children['price'].textContent[selectedPriceRow.children['price'].textContent.length - 1]

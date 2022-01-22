@@ -372,6 +372,22 @@ function listActivities() {
                                     case 'added':
                                         const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
                                         listItem.id = change.doc.ref.path
+                                        listItem.onclick = event => {
+                                            if (event.target.parentElement != buttonRemove && event.target.parentElement != buttonAdd
+                                                && event.target.parentElement.parentElement != buttonRemove && event.target.parentElement.parentElement != buttonAdd) {
+                                                if (Number.parseInt(quantity.textContent) > 0) {
+                                                    quantity.textContent = 0
+                                                }
+                                                else {
+                                                    quantity.textContent = 1
+                                                }
+                                                buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                                checkbox.checked = Number.parseInt(quantity.textContent) > 0
+                                            }
+                                        }
+                                        new MDCRipple(listItem)
+
+                                        const checkbox = listItem.querySelector('input[type=checkbox]')
 
                                         const label = listItem.querySelector('b')
                                         const price = listItem.querySelector('small')
@@ -386,6 +402,7 @@ function listActivities() {
                                             quantity.textContent = Number.parseInt(quantity.textContent) - 1
 
                                             buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                            checkbox.checked = Number.parseInt(quantity.textContent) > 0
                                         }
                                         buttonRemove.materialRipple = new MDCRipple(buttonRemove)
                                         buttonRemove.materialRipple.unbounded = true
@@ -397,6 +414,7 @@ function listActivities() {
                                             quantity.textContent = Number.parseInt(quantity.textContent) + 1
 
                                             buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
+                                            checkbox.checked = Number.parseInt(quantity.textContent) > 0
                                         }
                                         buttonAdd.materialRipple = new MDCRipple(buttonAdd)
                                         buttonAdd.materialRipple.unbounded = true

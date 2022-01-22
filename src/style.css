@@ -447,9 +447,9 @@ thead>tr {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100% - 4.3rem);
+  height: calc(100% - 3.4rem);
   min-height: 8rem;
-  top: 4.3rem;
+  top: 3.4rem;
   position: absolute;
   justify-content: center;
   background-color: #fff;
@@ -542,6 +542,7 @@ label {
 
 .modal-header,
 .modal-footer {
+  padding: .5rem;
   align-items: stretch;
   flex-wrap: nowrap;
 }
