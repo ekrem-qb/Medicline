@@ -5,10 +5,14 @@ selectInstitutionType.listen('MDCSelect:change', () => {
     if (!location.hash) {
         document.title = translate('NEW#' + selectInstitutionType.value.toUpperCase())
     }
+    panelCurrency.classList.toggle('hide', selectInstitutionType.value != 'insurance')
+    currencyInputs.forEach(input => input.disabled = selectInstitutionType.value != 'insurance')
 })
 
 const formInstitution = document.getElementById('institution')
-const inputName = document.getElementById('name')
+const inputName = formInstitution.querySelector('input#name')
+const panelCurrency = formInstitution.querySelector('#currency')
+const currencyInputs = panelCurrency.querySelectorAll('input')
 
 formInstitution.querySelectorAll('input, textarea').forEach(input => {
     input.onchange = () => {
@@ -115,14 +119,13 @@ function saveInstitution() {
     let valid = true
 
     for (const input of formInstitution.querySelectorAll('input, textarea')) {
-        if (input != undefined) {
+        if (!input.disabled && !input.readOnly) {
             if (!validateInput(input)) {
                 valid = false
                 input.focus()
                 break
             }
-
-            if (input.value != '' && !input.disabled && !input.readOnly) {
+            if (input.value != '') {
                 if (input.mask != undefined) {
                     data[input.id] = input.mask.unmaskedvalue()
                 }
@@ -251,9 +254,6 @@ if (location.search != '') {
     }
     else {
         buttonSave.disabled = false
-        const inputName = formInstitution.querySelector('input#name')
-        if (inputName) {
-            inputName.focus()
-        }
+        inputName.focus()
     }
 }
