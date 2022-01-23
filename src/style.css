@@ -1146,6 +1146,7 @@ form .mdc-text-field {
 }
 
 .mdc-text-field__icon--trailing {
+  padding: 0;
   margin-left: .5rem;
   margin-right: 1rem;
 }
@@ -1216,6 +1217,7 @@ form .mdc-text-field {
 
 .mdc-checkbox+label {
   cursor: pointer;
+  font-weight: bold;
 }
 
 /*#endregion*/

@@ -10,9 +10,12 @@ selectInstitutionType.listen('MDCSelect:change', () => {
 const formInstitution = document.getElementById('institution')
 const inputName = document.getElementById('name')
 
-formInstitution.querySelectorAll('input, textarea').forEach(input => input.onchange = () => {
-    input.value = input.value.trim()
-    validateInput(input)
+formInstitution.querySelectorAll('input, textarea').forEach(input => {
+    input.onchange = () => {
+        input.value = input.value.trim()
+        validateInput(input)
+    }
+    input.oninput = validateInput
 })
 
 let selectedInstitution
@@ -108,15 +111,15 @@ function deleteInstitution() {
 }
 
 function saveInstitution() {
-    let data = {}
+    const data = {}
     let valid = true
 
-    formInstitution.querySelectorAll('input, textarea').forEach(input => {
+    for (const input of formInstitution.querySelectorAll('input, textarea')) {
         if (input != undefined) {
-            input.oninput = validateInput
-
             if (!validateInput(input)) {
                 valid = false
+                input.focus()
+                break
             }
 
             if (input.value != '' && !input.disabled && !input.readOnly) {
@@ -128,7 +131,7 @@ function saveInstitution() {
                 }
             }
         }
-    })
+    }
 
     console.log(data)
     console.log('isValid: ' + valid)
@@ -205,8 +208,8 @@ function validateInput(input) {
     }
     if (input.mask) {
         input.materialComponent.valid = input.mask.isValid()
-        if (!input.required && input.mask.unmaskedvalue() == '') {
-            input.materialComponent.valid = true
+        if (input.value == '') {
+            input.materialComponent.valid = !input.required
         }
     }
     else {
@@ -241,25 +244,8 @@ if (location.search != '') {
             if (snapshot.exists) {
                 formInstitution.querySelectorAll('input, textarea').forEach(input => {
                     const itemValue = snapshot.get(input.id)
-
                     if (itemValue != undefined) {
-                        if (input.disabled) {
-                            if (itemValue != '') {
-                                input.parentElement.parentElement.hidden = false
-                            }
-                        }
-                        else {
-                            input.parentElement.parentElement.hidden = false
-                        }
-
-                        if (!input.parentElement.parentElement.hidden) {
-                            if (input.getAttribute('mask') == 'date') {
-                                input.materialComponent.value = new Date(itemValue).toLocaleDateString('tr')
-                            }
-                            else {
-                                input.materialComponent.value = itemValue
-                            }
-                        }
+                        input.materialComponent.value = itemValue
                     }
                 })
             }

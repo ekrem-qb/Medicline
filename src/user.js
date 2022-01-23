@@ -111,7 +111,7 @@ else {
         event.preventDefault()
         event.stopPropagation()
 
-        let data = {}
+        const data = {}
 
         if (inputUsername.value == '') {
             inputUsername.materialComponent.valid = false

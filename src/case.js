@@ -75,8 +75,8 @@ function validateInput(input) {
     }
     if (input.mask) {
         input.classList.toggle('is-invalid', !input.mask.isValid())
-        if (!input.required && input.mask.unmaskedvalue() == '') {
-            input.classList.remove('is-invalid')
+        if (input.value == '') {
+            input.classList.toggle('is-invalid', input.required)
         }
     }
     else {
@@ -293,55 +293,58 @@ else {
 }
 
 function saveCase() {
-    let caseData = { status: currentCaseStatus }
+    const caseData = { status: currentCaseStatus }
     let valid = true
 
-    formEditCase.querySelectorAll('input, textarea').forEach(inputEdit => {
-        if (inputEdit != undefined) {
-            inputEdit.oninput = validateInput
+    for (const input of formEditCase.querySelectorAll('input, textarea, select')) {
+        if (input != undefined) {
+            if (input.tomselect != undefined) {
+                input.onchange = validateInput
 
-            if (!validateInput(inputEdit)) {
-                valid = false
-            }
+                if (!validateInput(input)) {
+                    valid = false
+                    input.tomselect.focus()
+                    break
+                }
 
-            if (inputEdit.value != '' && !inputEdit.readOnly && !inputEdit.parentElement.parentElement.hidden) {
-                if (inputEdit.mask != undefined) {
-                    caseData[inputEdit.id] = inputEdit.mask.unmaskedvalue()
+                const value = input.tomselect.getValue()
+
+                if (Array.isArray(value)) {
+                    if (value.length > 0) {
+                        caseData[input.id] = value
+                    }
                 }
                 else {
-                    if (inputEdit.type != 'checkbox') {
-                        caseData[inputEdit.id] = inputEdit.value
+                    if (value != '') {
+                        caseData[input.id] = db.doc(value)
                     }
-                    else {
-                        caseData[inputEdit.id] = inputEdit.checked
-                    }
-                }
-            }
-        }
-    })
-
-    formEditCase.querySelectorAll('select').forEach(select => {
-        if (select != undefined) {
-            select.onchange = validateInput
-
-            if (!validateInput(select)) {
-                valid = false
-            }
-
-            const value = select.tomselect.getValue()
-
-            if (Array.isArray(value)) {
-                if (value.length > 0) {
-                    caseData[select.id] = value
                 }
             }
             else {
-                if (value != '') {
-                    caseData[select.id] = db.doc(value)
+                input.oninput = validateInput
+
+                if (!validateInput(input)) {
+                    valid = false
+                    input.focus()
+                    break
+                }
+
+                if (input.value != '' && !input.readOnly && !input.parentElement.parentElement.hidden) {
+                    if (input.mask != undefined) {
+                        caseData[input.id] = input.mask.unmaskedvalue()
+                    }
+                    else {
+                        if (input.type != 'checkbox') {
+                            caseData[input.id] = input.value
+                        }
+                        else {
+                            caseData[input.id] = input.checked
+                        }
+                    }
                 }
             }
         }
-    })
+    }
 
     console.log(caseData)
     console.log('isValid: ' + valid)

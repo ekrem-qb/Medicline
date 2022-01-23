@@ -1,7 +1,7 @@
 require('inputmask')
 
 document.querySelectorAll('input[mask]').forEach(input => {
-    let options = {
+    const options = {
         showMaskOnHover: false
     }
     switch (input.getAttribute('mask')) {
@@ -19,11 +19,12 @@ document.querySelectorAll('input[mask]').forEach(input => {
         case 'tel':
             options.alias = '[+]9999999[99999999]'
             options.placeholder = ''
-            options.onUnMask = (maskedValue) => { return maskedValue }
+            options.onUnMask = maskedValue => { return maskedValue }
             break
         case 'price':
             options.alias = 'currency'
             options.showMaskOnFocus = false
+            options.onUnMask = maskedValue => { return parseFloat(maskedValue) }
             break
     }
     input.mask = new Inputmask(options).mask(input)

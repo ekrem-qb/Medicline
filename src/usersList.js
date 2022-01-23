@@ -292,7 +292,7 @@ for (const listItem of permissionsList.children) {
         subListItem.toggle = subListItem.querySelector('input[type=checkbox]')
         subListItem.onclick = () => {
             subListItem.toggle.checked = !subListItem.toggle.checked
-            let data = {}
+            const data = {}
             data[subListItem.id] = subListItem.toggle.checked
             allUsers.doc(selectedUser.id).collection('permissions').doc(listItem.id).update(data).then(() => {
             }).catch(error => {

@@ -225,7 +225,7 @@ buttonDone.onclick = () => {
     else {
         const data = {
             name: inlineEditInput.value.trim(),
-            price: parseFloat(inputPrice.mask.unmaskedvalue()),
+            price: inputPrice.mask.unmaskedvalue(),
             currency: selectCurrency.value
         }
         if (inlineEditPath != undefined) {

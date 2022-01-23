@@ -9,7 +9,7 @@ function loadSelectMenus() {
         const selectID = select.id.replace(/[0-9]/g, '').replace('createUser', 'users').replace('updateUser', 'users')
 
         if (select.tomselect == undefined) {
-            let settings = {
+            const settings = {
                 render: {
                     option_create: function (data, escape) {
                         return '<div class="create">' + translate('ADD') + ' <b>' + escape(data.input) + '</b>&hellip;</div>'

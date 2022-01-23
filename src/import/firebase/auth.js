@@ -1,4 +1,4 @@
-var firebaseConfig = {
+const firebaseConfig = {
     apiKey: 'AIzaSyBEMpWUykF8sZB83zlpZZpq5u5QgTID0W8',
     authDomain: 'medicline-35e34.firebaseapp.com',
     databaseURL: 'https://medicline-35e34.firebaseio.com',
