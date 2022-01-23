@@ -207,19 +207,17 @@ function validateInput(input) {
         input = input.target
     }
     if (input.mask) {
-        input.materialComponent.valid = input.mask.isValid()
+        input.classList.toggle('is-invalid', !input.mask.isValid())
         if (input.value == '') {
-            input.materialComponent.valid = !input.required
+            input.classList.toggle('is-invalid', input.required)
         }
     }
     else {
-        input.value = String(input.value).trim()
         if (input.required) {
-            input.materialComponent.valid = input.value != ''
+            input.classList.toggle('is-invalid', input.value == '')
         }
-        input.materialComponent.valid = input.validity.valid
     }
-    return input.materialComponent.valid
+    return !input.classList.contains('is-invalid')
 }
 
 if (location.search != '') {
@@ -245,7 +243,7 @@ if (location.search != '') {
                 formInstitution.querySelectorAll('input, textarea').forEach(input => {
                     const itemValue = snapshot.get(input.id)
                     if (itemValue != undefined) {
-                        input.materialComponent.value = itemValue
+                        input.value = itemValue
                     }
                 })
             }

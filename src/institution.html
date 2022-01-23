@@ -44,109 +44,59 @@
             <i class="iconify" data-icon="codicon:chrome-close"></i>
         </button>
     </header>
-    <form class="d-flex flex-column p-4 m-auto" id="institution">
-        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-            <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-apartment"></i>
-            <input type="text" class="mdc-text-field__input" id="name" required>
-            <div class="mdc-notched-outline">
-                <div class="mdc-notched-outline__leading"></div>
-                <div class="mdc-notched-outline__notch">
-                    <span class="mdc-floating-label" translate>INSTITUTION_NAME</span>
+    <form class="px-4 py-2 m-auto" id="institution">
+        <label class="form-label" translate>INSTITUTION_NAME</label>
+        <div class="input-group input-group-sm mb-2">
+            <span class="input-group-text"><i class="iconify" data-icon="ic:round-apartment"></i></span>
+            <input class="form-control" id="name" required>
+        </div>
+        <div class="d-flex mb-2">
+            <div class="w-50 me-2">
+                <label class="form-label" translate>REPRESENTATIVE</label>
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-person"></i></span>
+                    <input class="form-control" id="representative">
                 </div>
-                <div class="mdc-notched-outline__trailing"></div>
+                <label class="form-label" translate>PHONE</label>
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-phone"></i></span>
+                    <input mask="tel" class="form-control" id="phone">
+                </div>
+                <label class="form-label" translate>PHONE2</label>
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-phone"></i></span>
+                    <input mask="tel" class="form-control" id="phone2">
+                </div>
+                <label class="form-label" translate>Email</label>
+                <div class="input-group input-group-sm mb-2">
+                    <span class="input-group-text"><i class="iconify" data-icon="ic:round-alternate-email"></i></span>
+                    <input type="email" class="form-control" id="email">
+                </div>
             </div>
-        </label>
-        <div class="d-flex mb-3">
-            <div class="d-flex flex-column me-2">
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-person"></i>
-                    <input type="text" class="mdc-text-field__input" id="representative">
-                    <div class="mdc-notched-outline">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" translate>REPRESENTATIVE</span>
-                        </div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-phone"></i>
-                    <input mask="tel" type="text" class="mdc-text-field__input" id="phone">
-                    <div class="mdc-notched-outline">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" translate>PHONE</span>
-                        </div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-phone"></i>
-                    <input mask="tel" type="text" class="mdc-text-field__input" id="phone2">
-                    <div class="mdc-notched-outline">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" translate>PHONE2</span>
-                        </div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-leading-icon">
-                    <i class="mdc-text-field__icon mdc-text-field__icon--leading iconify" data-icon="ic:round-alternate-email"></i>
-                    <input type="email" class="mdc-text-field__input" id="email">
-                    <div class="mdc-notched-outline">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" translate>Email</span>
-                        </div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-            </div>
-            <div class="d-flex flex-column">
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea h-100">
-                    <span class="mdc-text-field__resizer">
-                        <textarea class="mdc-text-field__input" cols="40" id="address"></textarea>
-                    </span>
-                    <span class="mdc-notched-outline">
-                        <span class="mdc-notched-outline__leading"></span>
-                        <div class="mdc-notched-outline__notch">
-                            <span class="mdc-floating-label" translate>ADDRESS</span>
-                        </div>
-                        <span class="mdc-notched-outline__trailing"></span>
-                    </span>
-                </label>
+            <div class="d-flex flex-column w-75">
+                <label class="form-label" translate>ADDRESS</label>
+                <div class="input-group input-group-sm h-100 mb-2">
+                    <textarea class="form-control" cols="40" id="address"></textarea>
+                </div>
             </div>
         </div>
         <div class="d-flex">
-            <div class="d-flex align-items-center me-3">
+            <div class="d-flex align-items-center mx-3">
                 <h1>1$ =</h1>
             </div>
             <div class="d-flex flex-column flex-grow-1">
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                    <input mask="price" class="mdc-text-field__input" id="try" value="1" required>
-                    <i class="mdc-text-field__icon mdc-text-field__icon--trailing iconify" data-icon="mdi:currency-try"></i>
-                    <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                    <input mask="price" class="mdc-text-field__input" id="eur" value="1" required>
-                    <i class="mdc-text-field__icon mdc-text-field__icon--trailing iconify" data-icon="mdi:currency-eur"></i>
-                    <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                    <input mask="price" class="mdc-text-field__input" id="rub" value="1" required>
-                    <i class="mdc-text-field__icon mdc-text-field__icon--trailing iconify" data-icon="mdi:currency-rub"></i>
-                    <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
+                <div class="input-group input-group-sm mb-2">
+                    <input mask="price" class="form-control" id="try" value="1" required>
+                    <span class="input-group-text"><i class="iconify" data-icon="mdi:currency-try"></i></span>
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                    <input mask="price" class="form-control" id="eur" value="1" required>
+                    <span class="input-group-text"><i class="iconify" data-icon="mdi:currency-eur"></i></span>
+                </div>
+                <div class="input-group input-group-sm mb-2">
+                    <input mask="price" class="form-control" id="rub" value="1" required>
+                    <span class="input-group-text"><i class="iconify" data-icon="mdi:currency-rub"></i></span>
+                </div>
             </div>
         </div>
     </form>
@@ -204,7 +154,6 @@
     <script src="import/firebase/auth.js"></script>
     <script src="import/firebase/firestore.js"></script>
     <script src="import/material/ripple.js"></script>
-    <script src="import/material/textField.js"></script>
     <script src="import/material/select.js"></script>
     <script src="import/material/dialog.js"></script>
     <script src="import/material/snackbar.js"></script>

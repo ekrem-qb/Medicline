@@ -87,7 +87,6 @@ function validateInput(input) {
             }
         }
         else {
-            input.value = String(input.value).trim()
             if (input.required) {
                 input.classList.toggle('is-invalid', input.value == '')
             }
