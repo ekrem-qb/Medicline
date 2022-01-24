@@ -383,6 +383,11 @@ th>label {
 }
 
 .list-group-item.active {
+  background-color: var(--mdc-theme-primary);
+  border-color: var(--mdc-theme-primary);
+}
+
+.list-group:not(#activitiesList) .list-group-item.active {
   cursor: default;
   pointer-events: none;
 }
@@ -396,7 +401,7 @@ th>label {
   pointer-events: initial;
 }
 
-.list-group-item.active .mdc-button--red {
+.list-group-item.active .mdc-icon-button {
   color: inherit;
 }
 
@@ -617,8 +622,8 @@ tbody>tr.dimmed {
 }
 
 #dialogAddActivity .mdc-dialog__content {
-  min-width: 40rem;
-  min-height: 20rem;
+  min-width: 30rem;
+  min-height: 15rem;
 }
 
 #inlineEdit {

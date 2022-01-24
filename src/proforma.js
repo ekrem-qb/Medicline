@@ -308,17 +308,18 @@ function refreshAndSaveProformaColumns() {
     localStorage.setItem('proformaColumns', proformaColumns)
 }
 
-const dialogAddActivity = proformaTabPage.querySelector('#dialogAddActivity')
-
 const buttonNewActivity = proformaTabPage.querySelector('button#newActivity')
 buttonNewActivity.onclick = () => {
     if (proformaCurrentQuery) {
         dialogAddActivity.materialComponent.open()
-        listActivities()
     }
 }
+const dialogAddActivity = proformaTabPage.querySelector('#dialogAddActivity')
 
-inputSearchActivities = dialogAddActivity.querySelector('input#searchActivities')
+const buttonAddActivities = dialogAddActivity.querySelector('button#addActivities')
+buttonAddActivities.label = buttonAddActivities.querySelector('.mdc-button__label')
+
+const inputSearchActivities = dialogAddActivity.querySelector('input#searchActivities')
 const buttonClearSearchActivities = inputSearchActivities.parentElement.querySelector('button#clearSearchActivities')
 
 function refreshSearchActivities() {
@@ -360,7 +361,7 @@ function listActivities() {
     activitiesList.innerHTML = ''
     stopActivityQuery()
     if (currentCasesSnap) {
-        const selectedCaseSnap = currentCasesSnap.docs.find(a => a.id == selectedCaseID)
+        const selectedCaseSnap = currentCasesSnap.docs.find(_case => _case.id == selectedCaseID)
         if (selectedCaseSnap) {
             const selectedCaseInsurance = selectedCaseSnap.get('insurance')
             if (selectedCaseInsurance) {
@@ -381,40 +382,38 @@ function listActivities() {
                                                 else {
                                                     quantity.textContent = 1
                                                 }
-                                                buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
-                                                checkbox.checked = Number.parseInt(quantity.textContent) > 0
+                                                calculateDialogActivitiesTotalPrice(listItem)
                                             }
                                         }
                                         new MDCRipple(listItem)
 
-                                        const checkbox = listItem.querySelector('input[type=checkbox]')
-
                                         const label = listItem.querySelector('b')
-                                        const price = listItem.querySelector('small')
                                         listItem.label = label
+                                        const price = listItem.querySelector('small')
                                         listItem.price = price
 
                                         label.textContent = change.doc.get('name')
                                         price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
 
                                         const buttonRemove = listItem.children['remove']
+                                        listItem.buttonRemove = buttonRemove
                                         buttonRemove.onclick = () => {
                                             quantity.textContent = Number.parseInt(quantity.textContent) - 1
 
-                                            buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
-                                            checkbox.checked = Number.parseInt(quantity.textContent) > 0
+                                            calculateDialogActivitiesTotalPrice(listItem)
                                         }
                                         buttonRemove.materialRipple = new MDCRipple(buttonRemove)
                                         buttonRemove.materialRipple.unbounded = true
 
                                         const quantity = listItem.children['quantity']
+                                        listItem.quantity = quantity
 
                                         const buttonAdd = listItem.children['add']
+                                        listItem.buttonAdd = buttonAdd
                                         buttonAdd.onclick = () => {
                                             quantity.textContent = Number.parseInt(quantity.textContent) + 1
 
-                                            buttonRemove.disabled = Number.parseInt(quantity.textContent) <= 0
-                                            checkbox.checked = Number.parseInt(quantity.textContent) > 0
+                                            calculateDialogActivitiesTotalPrice(listItem)
                                         }
                                         buttonAdd.materialRipple = new MDCRipple(buttonAdd)
                                         buttonAdd.materialRipple.unbounded = true
@@ -451,8 +450,25 @@ function listActivities() {
             }
         }
     }
-
     refreshListOverlayState()
+    calculateDialogActivitiesTotalPrice()
+}
+
+function calculateDialogActivitiesTotalPrice(clickedActivity) {
+    if (clickedActivity) {
+        clickedActivity.classList.toggle('active', Number.parseInt(clickedActivity.quantity.textContent) > 0)
+        clickedActivity.buttonRemove.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
+        clickedActivity.quantity.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
+    }
+    let totalPrice = 0
+    activitiesList.querySelectorAll('.list-group-item.active').forEach(activity => {
+        totalPrice += parseFloat(activity.price.textContent) * parseInt(activity.quantity.textContent)
+    })
+    buttonAddActivities.label.textContent = translate('ADD')
+    if (totalPrice > 0) {
+        buttonAddActivities.label.textContent += ' (' + totalPrice + '$)'
+    }
+    buttonAddActivities.disabled = totalPrice <= 0
 }
 
 function setListOverlayState(overlay, state) {
