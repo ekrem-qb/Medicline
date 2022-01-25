@@ -76,7 +76,7 @@ async function main() {
             height: 720,
             minWidth: 1280,
             minHeight: 720,
-            titleBarStyle: 'hidden',
+            frame: false,
             show: false,
             webPreferences: {
                 contextIsolation: false,
@@ -118,7 +118,7 @@ async function main() {
     // initiate creating the main window
     const mainWindowPromise = createMainWindow()
 
-    // await both the window to have loaded 
+    // await both the window to have loaded
     // and 'rendererReady' notification to have been fired,
     // while observing premature termination
     await Promise.race([
@@ -155,7 +155,7 @@ async function main() {
                 height: 720,
                 minWidth: 800,
                 minHeight: 600,
-                titleBarStyle: 'hidden',
+                frame: false,
                 show: false,
                 autoHideMenuBar: true,
                 webPreferences: {

@@ -6,11 +6,57 @@ proformaTabPage.stopLoadingContent = () => {
     currentProformaRefQueries.forEach(stopRefQuery => stopRefQuery())
     currentProformaRefQueries = []
     stopActivityQuery()
+    stopActivityQuery = () => { }
+    stopSelectedCaseQuery()
+    stopSelectedCaseQuery = () => { }
+    stopCurrentInsuranceQuery()
+    stopCurrentInsuranceQuery = () => { }
 }
 proformaTabPage.loadContent = () => {
     proformaTabPage.stopLoadingContent()
-    loadProforma()
-    listActivities()
+    loadInsurance()
+}
+
+let stopSelectedCaseQuery = () => { }
+let stopCurrentInsuranceQuery = () => { }
+let currentInsurance
+
+function loadInsurance() {
+    if (selectedCaseID) {
+        stopSelectedCaseQuery()
+        stopSelectedCaseQuery = allCases.doc(selectedCaseID).onSnapshot(
+            snapshot => {
+                if (snapshot.get('insurance') != currentInsurance) {
+                    stopCurrentInsuranceQuery()
+                    stopCurrentInsuranceQuery = snapshot.get('insurance').onSnapshot(
+                        snapshot => {
+                            if (currentInsurance) {
+                                if (currentInsurance.id != snapshot.id) {
+                                    currentInsurance = snapshot
+                                    loadProforma()
+                                    listActivities()
+                                }
+                                else {
+                                    calculateDialogActivitiesTotalPrice()
+                                }
+                            }
+                            else {
+                                currentInsurance = snapshot
+                                loadProforma()
+                                listActivities()
+                            }
+                        },
+                        error => {
+                            console.error('Error getting insurance: ' + error)
+                        }
+                    )
+                }
+            },
+            error => {
+                console.error('Error getting case: ' + error)
+            }
+        )
+    }
 }
 
 const proformaOverlay = filesTabPage.querySelector('.overlay')
@@ -360,95 +406,89 @@ let stopActivityQuery = () => { }
 function listActivities() {
     activitiesList.innerHTML = ''
     stopActivityQuery()
-    if (currentCasesSnap) {
-        const selectedCaseSnap = currentCasesSnap.docs.find(_case => _case.id == selectedCaseID)
-        if (selectedCaseSnap) {
-            const selectedCaseInsurance = selectedCaseSnap.get('insurance')
-            if (selectedCaseInsurance) {
-                stopActivityQuery = selectedCaseInsurance.collection('prices').orderBy('name', 'asc').onSnapshot(
-                    snapshot => {
-                        snapshot.docChanges().forEach(
-                            change => {
-                                switch (change.type) {
-                                    case 'added':
-                                        const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
-                                        listItem.id = change.doc.ref.path
-                                        listItem.onclick = event => {
-                                            if (event.target.parentElement != buttonRemove && event.target.parentElement != buttonAdd
-                                                && event.target.parentElement.parentElement != buttonRemove && event.target.parentElement.parentElement != buttonAdd) {
-                                                if (Number.parseInt(quantity.textContent) > 0) {
-                                                    quantity.textContent = 0
-                                                }
-                                                else {
-                                                    quantity.textContent = 1
-                                                }
-                                                calculateDialogActivitiesTotalPrice(listItem)
-                                            }
+    if (currentInsurance) {
+        stopActivityQuery = currentInsurance.ref.collection('prices').orderBy('name', 'asc').onSnapshot(
+            snapshot => {
+                snapshot.docChanges().forEach(
+                    change => {
+                        switch (change.type) {
+                            case 'added':
+                                const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
+                                listItem.id = change.doc.ref.path
+                                listItem.onclick = event => {
+                                    if (event.target.parentElement != buttonRemove && event.target.parentElement != buttonAdd
+                                        && event.target.parentElement.parentElement != buttonRemove && event.target.parentElement.parentElement != buttonAdd) {
+                                        if (Number.parseInt(quantity.textContent) > 0) {
+                                            quantity.textContent = 0
                                         }
-                                        new MDCRipple(listItem)
-
-                                        const label = listItem.querySelector('b')
-                                        listItem.label = label
-                                        const price = listItem.querySelector('small')
-                                        listItem.price = price
-
-                                        label.textContent = change.doc.get('name')
-                                        price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
-
-                                        const buttonRemove = listItem.children['remove']
-                                        listItem.buttonRemove = buttonRemove
-                                        buttonRemove.onclick = () => {
-                                            quantity.textContent = Number.parseInt(quantity.textContent) - 1
-
-                                            calculateDialogActivitiesTotalPrice(listItem)
+                                        else {
+                                            quantity.textContent = 1
                                         }
-                                        buttonRemove.materialRipple = new MDCRipple(buttonRemove)
-                                        buttonRemove.materialRipple.unbounded = true
-
-                                        const quantity = listItem.children['quantity']
-                                        listItem.quantity = quantity
-
-                                        const buttonAdd = listItem.children['add']
-                                        listItem.buttonAdd = buttonAdd
-                                        buttonAdd.onclick = () => {
-                                            quantity.textContent = Number.parseInt(quantity.textContent) + 1
-
-                                            calculateDialogActivitiesTotalPrice(listItem)
-                                        }
-                                        buttonAdd.materialRipple = new MDCRipple(buttonAdd)
-                                        buttonAdd.materialRipple.unbounded = true
-
-                                        if (change.newIndex == activitiesList.childElementCount) {
-                                            activitiesList.appendChild(listItem)
-                                        } else {
-                                            activitiesList.insertBefore(listItem, activitiesList.children[change.newIndex])
-                                        }
-                                        break
-                                    case 'modified':
-                                        activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
-                                        activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
-
-                                        if (change.newIndex == activitiesList.childElementCount) {
-                                            activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
-                                        } else {
-                                            const removedChild = activitiesList.removeChild(activitiesList.children[change.doc.ref.path])
-                                            activitiesList.insertBefore(removedChild, activitiesList.children[change.newIndex])
-                                        }
-                                        break
-                                    case 'removed':
-                                        activitiesList.children[change.doc.ref.path].remove()
-                                        break
+                                        calculateDialogActivitiesTotalPrice(listItem)
+                                    }
                                 }
-                            }
-                        )
-                        refreshSearchActivities()
-                    },
-                    error => {
-                        console.error('Error getting billable activities: ' + error)
+                                new MDCRipple(listItem)
+
+                                const label = listItem.querySelector('b')
+                                listItem.label = label
+                                const price = listItem.querySelector('small')
+                                listItem.price = price
+
+                                label.textContent = change.doc.get('name')
+                                price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+
+                                const buttonRemove = listItem.children['remove']
+                                listItem.buttonRemove = buttonRemove
+                                buttonRemove.onclick = () => {
+                                    quantity.textContent = Number.parseInt(quantity.textContent) - 1
+
+                                    calculateDialogActivitiesTotalPrice(listItem)
+                                }
+                                buttonRemove.materialRipple = new MDCRipple(buttonRemove)
+                                buttonRemove.materialRipple.unbounded = true
+
+                                const quantity = listItem.children['quantity']
+                                listItem.quantity = quantity
+
+                                const buttonAdd = listItem.children['add']
+                                listItem.buttonAdd = buttonAdd
+                                buttonAdd.onclick = () => {
+                                    quantity.textContent = Number.parseInt(quantity.textContent) + 1
+
+                                    calculateDialogActivitiesTotalPrice(listItem)
+                                }
+                                buttonAdd.materialRipple = new MDCRipple(buttonAdd)
+                                buttonAdd.materialRipple.unbounded = true
+
+                                if (change.newIndex == activitiesList.childElementCount) {
+                                    activitiesList.appendChild(listItem)
+                                } else {
+                                    activitiesList.insertBefore(listItem, activitiesList.children[change.newIndex])
+                                }
+                                break
+                            case 'modified':
+                                activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
+                                activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+
+                                if (change.newIndex == activitiesList.childElementCount) {
+                                    activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
+                                } else {
+                                    const removedChild = activitiesList.removeChild(activitiesList.children[change.doc.ref.path])
+                                    activitiesList.insertBefore(removedChild, activitiesList.children[change.newIndex])
+                                }
+                                break
+                            case 'removed':
+                                activitiesList.children[change.doc.ref.path].remove()
+                                break
+                        }
                     }
                 )
+                refreshSearchActivities()
+            },
+            error => {
+                console.error('Error getting billable activities: ' + error)
             }
-        }
+        )
     }
     refreshListOverlayState()
     calculateDialogActivitiesTotalPrice()
@@ -462,11 +502,19 @@ function calculateDialogActivitiesTotalPrice(clickedActivity) {
     }
     let totalPrice = 0
     activitiesList.querySelectorAll('.list-group-item.active').forEach(activity => {
-        totalPrice += parseFloat(activity.price.textContent) * parseInt(activity.quantity.textContent)
+        const priceNcurrency = activity.price.textContent.split(' ')
+        let price = parseFloat(priceNcurrency[0])
+        if (currentInsurance) {
+            const currency = currentInsurance.get(priceNcurrency[1])
+            if (currency) {
+                price /= parseFloat(currency)
+            }
+        }
+        totalPrice += price * parseInt(activity.quantity.textContent)
     })
     buttonAddActivities.label.textContent = translate('ADD')
     if (totalPrice > 0) {
-        buttonAddActivities.label.textContent += ' (' + totalPrice + '$)'
+        buttonAddActivities.label.textContent += ' (' + (Math.round(totalPrice * 100) / 100) + '$)'
     }
     buttonAddActivities.disabled = totalPrice <= 0
 }
