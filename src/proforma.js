@@ -129,7 +129,7 @@ loadProformaColumns()
 let proformaCurrentQuery
 let proformaCurrentSnap
 let stopProformaCurrentQuery = () => { }
-let selectedProforma, selectedProformaRow, selectedProformaID
+let selectedActivity, selectedActivityRow, selectedActivityID
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -199,14 +199,14 @@ function listProforma(snap) {
             tr.id = proformaSnap.id
             tr.onmousedown = mouseEvent => {
                 if (mouseEvent.button != 1) {
-                    if (selectedProformaID != proformaSnap.id) {
-                        if (selectedProformaRow) {
-                            selectedProformaRow.classList.remove('selected')
+                    if (selectedActivityID != proformaSnap.id) {
+                        if (selectedActivityRow) {
+                            selectedActivityRow.classList.remove('selected')
                         }
-                        selectedProforma = proformaCurrentQuery.doc(proformaSnap.id)
-                        selectedProformaID = proformaSnap.id
-                        selectedProformaRow = tr
-                        selectedProformaRow.classList.add('selected')
+                        selectedActivity = proformaCurrentQuery.doc(proformaSnap.id)
+                        selectedActivityID = proformaSnap.id
+                        selectedActivityRow = tr
+                        selectedActivityRow.classList.add('selected')
                     }
                 }
             }
@@ -224,10 +224,10 @@ function listProforma(snap) {
                     proformaContextMenu.materialComponent.open = true
                 }
             }
-            if (tr.id == selectedProformaID) {
-                selectedProforma = proformaCurrentQuery.doc(selectedProformaID)
-                selectedProformaRow = tr
-                selectedProformaRow.classList.add('selected')
+            if (tr.id == selectedActivityID) {
+                selectedActivity = proformaCurrentQuery.doc(selectedActivityID)
+                selectedActivityRow = tr
+                selectedActivityRow.classList.add('selected')
             }
             proformaList.appendChild(tr)
 
@@ -333,6 +333,24 @@ function setProformaOverlayState(state) {
             break
     }
 }
+
+const proformaContextMenu = document.getElementById('proformaContextMenu')
+proformaContextMenu.deleteOption = proformaContextMenu.children[0].children['delete']
+proformaContextMenu.deleteOption.onclick = () => dialogDeleteActivity.materialComponent.open()
+
+const dialogDeleteActivity = proformaTabPage.querySelector('#dialogDeleteActivity')
+dialogDeleteActivity.materialComponent.listen('MDCDialog:closed', event => {
+    if (event.detail.action == 'delete') {
+        if (selectedActivity) {
+            selectedActivity.delete().then(() => {
+                selectedActivity = undefined
+                selectedActivityID = undefined
+            }).catch(error => {
+                console.error('Error removing activity from firestore: ', error)
+            })
+        }
+    }
+})
 
 function refreshAndSaveProformaColumns() {
     listProforma(proformaCurrentSnap)

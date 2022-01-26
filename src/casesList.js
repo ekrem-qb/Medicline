@@ -168,6 +168,11 @@ function toggleEditMode(editIsAllowed) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
         }
     }
+    for (const option of proformaContextMenu.children[0].children) {
+        if (!option.classList.contains('mdc-list-divider')) {
+            option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+        }
+    }
     if (editIsAllowed) {
         tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-edit')
         tableRowContextMenu.editOption.label.textContent = translate('EDIT')
