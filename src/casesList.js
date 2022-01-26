@@ -449,7 +449,7 @@ function listCases(snap) {
                                             td.textContent = td.title = value
                                             break
                                         default:
-                                            if (td.id.includes('Date')) {
+                                            if (td.id.toLowerCase().includes('date')) {
                                                 td.textContent = new Date(value).toLocaleDateString('tr')
                                                 td.realValue = value
                                             }

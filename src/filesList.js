@@ -249,7 +249,7 @@ function listFiles(snap) {
                 else {
                     const value = fileSnap.get(td.id)
                     if (value != undefined) {
-                        if (td.id.includes('Date')) {
+                        if (td.id.toLowerCase().includes('date')) {
                             td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
                             td.realValue = value.seconds
                         }

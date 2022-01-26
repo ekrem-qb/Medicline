@@ -1,5 +1,6 @@
 const proformaTabPage = document.querySelector('.tab-page#proforma')
 proformaTabPage.stopLoadingContent = () => {
+    currentInsurance = undefined
     stopProformaCurrentQuery()
     stopProformaCurrentQuery = () => { }
     proformaCurrentQuery = undefined
@@ -57,9 +58,13 @@ function loadInsurance() {
             }
         )
     }
+    else {
+        setListOverlayState('empty')
+        setProformaOverlayState('empty')
+    }
 }
 
-const proformaOverlay = filesTabPage.querySelector('.overlay')
+const proformaOverlay = proformaTabPage.querySelector('.overlay')
 const proformaOverlayIcon = proformaOverlay.getElementsByClassName('iconify')
 const proformaOverlayText = proformaOverlay.querySelector('h3')
 
@@ -124,7 +129,7 @@ function loadProformaColumns() {
 loadProformaColumns()
 
 let proformaCurrentQuery
-let proformaCurrentProformaSnap
+let proformaCurrentSnap
 let stopProformaCurrentQuery = () => { }
 let currentProformaRefQueries = []
 let selectedProforma, selectedProformaRow, selectedProformaID
@@ -171,7 +176,7 @@ function loadProforma() {
         stopProformaCurrentQuery = proformaCurrentQuery.onSnapshot(
             snapshot => {
                 console.log(snapshot)
-                proformaCurrentProformaSnap = snapshot
+                proformaCurrentSnap = snapshot
                 listProforma(snapshot)
             },
             error => {
@@ -191,21 +196,20 @@ function loadProforma() {
 function listProforma(snap) {
     if (snap.docs.length > 0) {
         proformaList.innerHTML = ''
+        setProformaOverlayState('hide')
         currentProformaRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentProformaRefQueries = []
-        snap.forEach(Proformanap => {
-            setProformaOverlayState('hide')
-
+        snap.forEach(proformaSnap => {
             const tr = document.createElement('tr')
-            tr.id = Proformanap.id
+            tr.id = proformaSnap.id
             tr.onmousedown = mouseEvent => {
                 if (mouseEvent.button != 1) {
-                    if (selectedProformaID != Proformanap.id) {
+                    if (selectedProformaID != proformaSnap.id) {
                         if (selectedProformaRow) {
                             selectedProformaRow.classList.remove('selected')
                         }
-                        selectedProforma = proformaCurrentQuery.doc(Proformanap.id)
-                        selectedProformaID = Proformanap.id
+                        selectedProforma = proformaCurrentQuery.doc(proformaSnap.id)
+                        selectedProformaID = proformaSnap.id
                         selectedProformaRow = tr
                         selectedProformaRow.classList.add('selected')
                     }
@@ -237,38 +241,46 @@ function listProforma(snap) {
                 td.id = column.id
                 tr.appendChild(td)
 
-                if (td.id == '__name__') {
-                    td.textContent = Proformanap.id
-                }
-                else {
-                    const value = Proformanap.get(td.id)
-                    if (value != undefined) {
-                        if (td.id.includes('Date')) {
-                            td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
-                            td.realValue = value.seconds
-                        }
-                        else if (typeof value === 'object' && value !== null) {
-                            currentProformaRefQueries.push(
-                                value.onSnapshot(
-                                    snapshot => {
-                                        td.textContent = snapshot.get('name')
-                                        orderProforma(proformaCurrentOrder, proformaCurrentOrderDirection)
-                                    },
-                                    error => {
-                                        console.error(error)
-                                    }
+                switch (td.id) {
+                    case '__name__':
+                        td.textContent = proformaSnap.id
+                        break
+                    case 'price':
+                        td.textContent = proformaSnap.get(td.id) + ' ' + proformaSnap.get('currency')
+                        break
+                    case 'totalPrice':
+                        td.textContent = (proformaSnap.get('price') * proformaSnap.get('quantity')) + ' ' + proformaSnap.get('currency')
+                        break
+                    default:
+                        const value = proformaSnap.get(td.id)
+                        if (value != undefined) {
+                            if (td.id.toLowerCase().includes('date')) {
+                                td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
+                                td.realValue = value.seconds
+                            }
+                            else if (typeof value === 'object' && value !== null) {
+                                currentProformaRefQueries.push(
+                                    value.onSnapshot(
+                                        snapshot => {
+                                            td.textContent = snapshot.get('name')
+                                            orderProforma(proformaCurrentOrder, proformaCurrentOrderDirection)
+                                        },
+                                        error => {
+                                            console.error(error)
+                                        }
+                                    )
                                 )
-                            )
+                            }
+                            else {
+                                td.textContent = value
+                            }
                         }
-                        else {
-                            td.textContent = value
-                        }
-                    }
+                        break
                 }
                 if (td.id == 'name') {
                     td.onclick = () => {
                         const proformaName = td.textContent
-                        inlineEdit.show(td, Proformanap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
+                        inlineEdit.show(td, proformaSnap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
                         inlineEditInput.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
                     }
                 }
@@ -346,7 +358,7 @@ function setProformaOverlayState(state) {
 }
 
 function refreshAndSaveProformaColumns() {
-    listProforma(proformaCurrentProformaSnap)
+    listProforma(proformaCurrentSnap)
     let proformaColumns = []
     for (const header of proformaHeadersList.children) {
         proformaColumns.push(header.id)
@@ -361,9 +373,6 @@ buttonNewActivity.onclick = () => {
     }
 }
 const dialogAddActivity = proformaTabPage.querySelector('#dialogAddActivity')
-
-const buttonAddActivities = dialogAddActivity.querySelector('button#addActivities')
-buttonAddActivities.label = buttonAddActivities.querySelector('.mdc-button__label')
 
 const inputSearchActivities = dialogAddActivity.querySelector('input#searchActivities')
 const buttonClearSearchActivities = inputSearchActivities.parentElement.querySelector('button#clearSearchActivities')
@@ -501,7 +510,7 @@ function calculateDialogActivitiesTotalPrice(clickedActivity) {
         clickedActivity.quantity.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
     }
     let totalPrice = 0
-    activitiesList.querySelectorAll('.list-group-item.active').forEach(activity => {
+    activitiesList.querySelectorAll('li.active').forEach(activity => {
         const priceNcurrency = activity.price.textContent.split(' ')
         let price = parseFloat(priceNcurrency[0])
         if (currentInsurance) {
@@ -543,5 +552,51 @@ function refreshListOverlayState() {
         setListOverlayState(activitiesList.overlay, 'hide')
     } else {
         setListOverlayState(activitiesList.overlay, 'empty')
+    }
+}
+
+const buttonCancelActivities = dialogAddActivity.querySelector('button#cancelActivities')
+
+const buttonAddActivities = dialogAddActivity.querySelector('button#addActivities')
+buttonAddActivities.label = buttonAddActivities.querySelector('.mdc-button__label')
+buttonAddActivities.icon = buttonAddActivities.getElementsByClassName('iconify')
+buttonAddActivities.onclick = () => {
+    if (selectedCase) {
+        if (activitiesList.querySelector('li.active')) {
+            dialogAddActivity.scrimClickAction = ''
+            buttonCancelActivities.disabled = true
+            buttonAddActivities.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+            buttonAddActivities.disabled = true
+            const promises = []
+            for (const activity of activitiesList.children) {
+                activity.classList.add('disabled')
+                activity.buttonRemove.disabled = true
+                activity.buttonAdd.disabled = true
+                if (activity.classList.contains('active')) {
+                    const priceNcurrency = activity.price.textContent.split(' ')
+                    promises.push(
+                        selectedCase.collection('proforma').add({
+                            name: activity.label.textContent.trim(),
+                            price: parseFloat(priceNcurrency[0]),
+                            currency: priceNcurrency[1],
+                            quantity: parseInt(activity.quantity.textContent),
+                            date: firebase.firestore.Timestamp.now()
+                        }).then(() => {
+                            activity.classList.add('bg-success')
+                            activity.classList.add('border-success')
+                        }).catch(error => {
+                            console.error('Error adding activity: ', error)
+                            activity.classList.add('bg-danger')
+                            activity.classList.add('border-danger')
+                        })
+                    )
+                }
+            }
+            Promise.all(promises).then(() => {
+                dialogAddActivity.scrimClickAction = 'cancel'
+                buttonCancelActivities.disabled = false
+                buttonAddActivities.icon[0].setAttribute('data-icon', 'ic:round-plus')
+            })
+        }
     }
 }
