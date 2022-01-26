@@ -268,6 +268,7 @@ function listProforma(snap) {
     else {
         setProformaOverlayState('empty')
     }
+    calculateProformaTotal()
 }
 
 function orderProforma(orderBy, orderDirection) {
@@ -504,23 +505,29 @@ function calculateDialogActivitiesTotalPrice(clickedActivity) {
         clickedActivity.buttonRemove.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
         clickedActivity.quantity.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
     }
-    let totalPrice = 0
+    let total = 0
     activitiesList.querySelectorAll('li.active').forEach(activity => {
         const priceNcurrency = activity.price.textContent.split(' ')
         let price = parseFloat(priceNcurrency[0])
-        if (currentInsurance) {
-            const currency = currentInsurance.get(priceNcurrency[1])
-            if (currency) {
-                price /= parseFloat(currency)
+        if (priceNcurrency[1] != selectCurrency.value) {
+            if (currentInsurance) {
+                const exchangeToUSD = currentInsurance.get(priceNcurrency[1])
+                if (exchangeToUSD) {
+                    price /= parseFloat(exchangeToUSD)
+                }
+                const exchangeBack = currentInsurance.get(selectCurrency.value)
+                if (exchangeBack) {
+                    price *= parseFloat(exchangeBack)
+                }
             }
         }
-        totalPrice += price * parseInt(activity.quantity.textContent)
+        total += price * parseInt(activity.quantity.textContent)
     })
     buttonAddActivities.label.textContent = translate('ADD')
-    if (totalPrice > 0) {
-        buttonAddActivities.label.textContent += ' (' + (Math.round(totalPrice * 100) / 100) + '$)'
+    if (total > 0) {
+        buttonAddActivities.label.textContent += ' (' + (Math.round(total * 100) / 100) + selectCurrency.value + ')'
     }
-    buttonAddActivities.disabled = totalPrice <= 0
+    buttonAddActivities.disabled = total <= 0
 }
 
 function setListOverlayState(overlay, state) {
@@ -606,3 +613,35 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
         }
     })
 })
+
+const totalPanel = proformaTabPage.querySelector('#totalPanel')
+const selectCurrency = totalPanel.querySelector('.mdc-select#currency').materialComponent
+selectCurrency.listen('MDCSelect:change', () => {
+    calculateProformaTotal()
+    calculateDialogActivitiesTotalPrice()
+})
+const textTotal = totalPanel.querySelector('h4#total')
+
+function calculateProformaTotal() {
+    let total = 0
+    if (proformaOverlay.classList.contains('hide')) {
+        for (const row of proformaList.rows) {
+            const priceNcurrency = row.cells['totalPrice'].textContent.split(' ')
+            let price = parseFloat(priceNcurrency[0])
+            if (priceNcurrency[1] != selectCurrency.value) {
+                if (currentInsurance) {
+                    const exchangeToUSD = currentInsurance.get(priceNcurrency[1])
+                    if (exchangeToUSD) {
+                        price /= parseFloat(exchangeToUSD)
+                    }
+                    const exchangeBack = currentInsurance.get(selectCurrency.value)
+                    if (exchangeBack) {
+                        price *= parseFloat(exchangeBack)
+                    }
+                }
+            }
+            total += price
+        }
+    }
+    textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value
+}
