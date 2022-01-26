@@ -4,8 +4,6 @@ proformaTabPage.stopLoadingContent = () => {
     stopProformaCurrentQuery()
     stopProformaCurrentQuery = () => { }
     proformaCurrentQuery = undefined
-    currentProformaRefQueries.forEach(stopRefQuery => stopRefQuery())
-    currentProformaRefQueries = []
     stopActivityQuery()
     stopActivityQuery = () => { }
     stopSelectedCaseQuery()
@@ -131,7 +129,6 @@ loadProformaColumns()
 let proformaCurrentQuery
 let proformaCurrentSnap
 let stopProformaCurrentQuery = () => { }
-let currentProformaRefQueries = []
 let selectedProforma, selectedProformaRow, selectedProformaID
 
 firebase.auth().onAuthStateChanged(user => {
@@ -197,8 +194,6 @@ function listProforma(snap) {
     if (snap.docs.length > 0) {
         proformaList.innerHTML = ''
         setProformaOverlayState('hide')
-        currentProformaRefQueries.forEach(stopRefQuery => stopRefQuery())
-        currentProformaRefQueries = []
         snap.forEach(proformaSnap => {
             const tr = document.createElement('tr')
             tr.id = proformaSnap.id
@@ -251,30 +246,12 @@ function listProforma(snap) {
                     case 'totalPrice':
                         td.textContent = (proformaSnap.get('price') * proformaSnap.get('quantity')) + ' ' + proformaSnap.get('currency')
                         break
+                    case 'date':
+                        td.textContent = new Date(proformaSnap.get(td.id).seconds * 1000).toLocaleString('tr').replace(',', '')
+                        td.realValue = proformaSnap.get(td.id).seconds
+                        break
                     default:
-                        const value = proformaSnap.get(td.id)
-                        if (value != undefined) {
-                            if (td.id.toLowerCase().includes('date')) {
-                                td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
-                                td.realValue = value.seconds
-                            }
-                            else if (typeof value === 'object' && value !== null) {
-                                currentProformaRefQueries.push(
-                                    value.onSnapshot(
-                                        snapshot => {
-                                            td.textContent = snapshot.get('name')
-                                            orderProforma(proformaCurrentOrder, proformaCurrentOrderDirection)
-                                        },
-                                        error => {
-                                            console.error(error)
-                                        }
-                                    )
-                                )
-                            }
-                            else {
-                                td.textContent = value
-                            }
-                        }
+                        td.textContent = proformaSnap.get(td.id)
                         break
                 }
                 if (td.id == 'name') {
@@ -600,3 +577,14 @@ buttonAddActivities.onclick = () => {
         }
     }
 }
+
+dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
+    activitiesList.querySelectorAll('li.disabled').forEach(activity => {
+        activity.buttonRemove.disabled = false
+        activity.buttonAdd.disabled = false
+        activity.classList.remove('disabled', 'bg-success', 'border-success', 'bg-danger', 'border-danger')
+        if (activity.classList.contains('active')) {
+            activity.click()
+        }
+    })
+})
