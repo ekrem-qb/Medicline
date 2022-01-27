@@ -4,5 +4,5 @@
     "date": "DATE",
     "price": "PRICE",
     "quantity": "QUANTITY",
-    "totalPrice": "TOTAL_PRICE"
+    "total": "TOTAL"
 }

@@ -36,7 +36,7 @@ function loadInsurance() {
                                     listActivities()
                                 }
                                 else {
-                                    calculateDialogActivitiesTotalPrice()
+                                    calculateDialogActivitiesTotal()
                                 }
                             }
                             else {
@@ -243,7 +243,7 @@ function listProforma(snap) {
                     case 'price':
                         td.textContent = proformaSnap.get(td.id) + ' ' + proformaSnap.get('currency')
                         break
-                    case 'totalPrice':
+                    case 'total':
                         td.textContent = (proformaSnap.get('price') * proformaSnap.get('quantity')) + ' ' + proformaSnap.get('currency')
                         break
                     case 'date':
@@ -268,7 +268,7 @@ function listProforma(snap) {
     else {
         setProformaOverlayState('empty')
     }
-    calculateProformaTotal()
+    calculateProformaSubtotal()
 }
 
 function orderProforma(orderBy, orderDirection) {
@@ -429,7 +429,7 @@ function listActivities() {
                                         else {
                                             quantity.textContent = 1
                                         }
-                                        calculateDialogActivitiesTotalPrice(listItem)
+                                        calculateDialogActivitiesTotal(listItem)
                                     }
                                 }
                                 new MDCRipple(listItem)
@@ -447,7 +447,7 @@ function listActivities() {
                                 buttonRemove.onclick = () => {
                                     quantity.textContent = Number.parseInt(quantity.textContent) - 1
 
-                                    calculateDialogActivitiesTotalPrice(listItem)
+                                    calculateDialogActivitiesTotal(listItem)
                                 }
                                 buttonRemove.materialRipple = new MDCRipple(buttonRemove)
                                 buttonRemove.materialRipple.unbounded = true
@@ -460,7 +460,7 @@ function listActivities() {
                                 buttonAdd.onclick = () => {
                                     quantity.textContent = Number.parseInt(quantity.textContent) + 1
 
-                                    calculateDialogActivitiesTotalPrice(listItem)
+                                    calculateDialogActivitiesTotal(listItem)
                                 }
                                 buttonAdd.materialRipple = new MDCRipple(buttonAdd)
                                 buttonAdd.materialRipple.unbounded = true
@@ -496,10 +496,10 @@ function listActivities() {
         )
     }
     refreshListOverlayState()
-    calculateDialogActivitiesTotalPrice()
+    calculateDialogActivitiesTotal()
 }
 
-function calculateDialogActivitiesTotalPrice(clickedActivity) {
+function calculateDialogActivitiesTotal(clickedActivity) {
     if (clickedActivity) {
         clickedActivity.classList.toggle('active', Number.parseInt(clickedActivity.quantity.textContent) > 0)
         clickedActivity.buttonRemove.classList.toggle('hide', Number.parseInt(clickedActivity.quantity.textContent) <= 0)
@@ -617,16 +617,18 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
 const totalPanel = proformaTabPage.querySelector('#totalPanel')
 const selectCurrency = totalPanel.querySelector('.mdc-select#currency').materialComponent
 selectCurrency.listen('MDCSelect:change', () => {
-    calculateProformaTotal()
-    calculateDialogActivitiesTotalPrice()
+    inputPrepay.symbol.textContent = selectCurrency.value
+    calculateProformaSubtotal()
+    calculateDialogActivitiesTotal()
 })
-const textTotal = totalPanel.querySelector('h4#total')
+const textSubtotal = totalPanel.querySelector('h5#subtotal')
+let subtotal = 0
 
-function calculateProformaTotal() {
-    let total = 0
+function calculateProformaSubtotal() {
+    subtotal = 0
     if (proformaOverlay.classList.contains('hide')) {
         for (const row of proformaList.rows) {
-            const priceNcurrency = row.cells['totalPrice'].textContent.split(' ')
+            const priceNcurrency = row.cells['total'].textContent.split(' ')
             let price = parseFloat(priceNcurrency[0])
             if (priceNcurrency[1] != selectCurrency.value) {
                 if (currentInsurance) {
@@ -640,7 +642,28 @@ function calculateProformaTotal() {
                     }
                 }
             }
-            total += price
+            subtotal += price
+        }
+    }
+    textSubtotal.textContent = (Math.round(subtotal * 100) / 100) + ' ' + selectCurrency.value
+    calculateProformaTotal()
+}
+
+const inputDiscount = totalPanel.querySelector('input#discount')
+inputDiscount.oninput = calculateProformaTotal
+const inputPrepay = totalPanel.querySelector('input#prepay')
+inputPrepay.oninput = calculateProformaTotal
+inputPrepay.symbol = inputPrepay.nextElementSibling
+const textTotal = totalPanel.querySelector('h4#total')
+
+function calculateProformaTotal() {
+    let total = subtotal
+    if (total) {
+        if (inputDiscount.value) {
+            total -= total * (inputDiscount.value / 100)
+        }
+        if (inputPrepay.value) {
+            total -= inputPrepay.value
         }
     }
     textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value

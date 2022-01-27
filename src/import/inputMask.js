@@ -20,11 +20,16 @@ document.querySelectorAll('input[mask]').forEach(input => {
             options.alias = '[+]9999999[99999999]'
             options.placeholder = ''
             options.onUnMask = maskedValue => { return maskedValue }
-            break
         case 'price':
             options.alias = 'currency'
             options.showMaskOnFocus = false
             options.onUnMask = maskedValue => { return parseFloat(maskedValue) }
+            break
+        case 'percent':
+            options.regex = '[0-9]|[1-9][0-9]|100'
+            options.rightAlign = true
+            options.placeholder = ''
+            options.onUnMask = maskedValue => { return parseInt(maskedValue) }
             break
     }
     input.mask = new Inputmask(options).mask(input)

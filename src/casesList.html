@@ -507,9 +507,9 @@
                     </ul>
                 </div>
             </div>
-            <div class="d-flex flex-column justify-content-between w-25 border-start" id="totalPanel">
-                <header class="modal-header">
-                    <h4 class="my-1" translate>CURRENCY</h4>
+            <div class="d-flex flex-column w-25 p-2 border-start" id="totalPanel">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="me-2" translate>CURRENCY</label>
                     <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="currency">
                         <div class="mdc-select__anchor h-auto">
                             <span class="mdc-notched-outline mdc-notched-outline--no-label">
@@ -538,7 +538,25 @@
                             </ul>
                         </div>
                     </div>
-                </header>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="me-2" translate>SUBTOTAL</label>
+                    <h5 class="me-2 mb-0" id="subtotal">0 ₺</h5>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="me-2" translate>DISCOUNT</label>
+                    <div class="input-group input-group-sm w-auto">
+                        <input mask="percent" class="form-control" id="discount" value="0">
+                        <span class="input-group-text">%</i></span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="me-2" translate>PREPAY</label>
+                    <div class="input-group input-group-sm w-auto">
+                        <input mask="price" class="form-control" id="prepay" value="0">
+                        <span class="input-group-text">₺</i></span>
+                    </div>
+                </div>
                 <footer class="modal-footer justify-content-between">
                     <h4 translate>TOTAL:</h4>
                     <h4 id="total">0 ₺</h4>
