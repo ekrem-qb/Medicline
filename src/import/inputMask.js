@@ -20,6 +20,7 @@ document.querySelectorAll('input[mask]').forEach(input => {
             options.alias = '[+]9999999[99999999]'
             options.placeholder = ''
             options.onUnMask = maskedValue => { return maskedValue }
+            break
         case 'price':
             options.alias = 'currency'
             options.showMaskOnFocus = false

@@ -70,9 +70,9 @@ function newHeader(headerID) {
     }
     th.onmouseup = mouseEvent => {
         if (mouseEvent.button == 2) {
-            tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
-            tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
-            tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+            tableHeaderContextMenu.style.left = mouseEvent.clientX + 'px'
+            tableHeaderContextMenu.style.top = mouseEvent.clientY + 'px'
+            tableHeaderContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
             tableHeaderContextMenu.materialComponent.open = true
         }
     }
@@ -399,16 +399,10 @@ function listCases(snap) {
                         }
                     }
                     tr.onmouseup = mouseEvent => {
-                        if (getSelectedText() != '') {
-                            textContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                            textContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                            textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                            textContextMenu.materialComponent.open = true
-                        }
-                        else if (mouseEvent.button == 2) {
-                            tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                            tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                            tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                        if (mouseEvent.button == 2) {
+                            tableRowContextMenu.style.left = mouseEvent.clientX + 'px'
+                            tableRowContextMenu.style.top = mouseEvent.clientY + 'px'
+                            tableRowContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                             tableRowContextMenu.materialComponent.open = true
                         }
                     }
@@ -493,7 +487,7 @@ function orderCases(orderBy, orderDirection) {
             for (i = 0; i < casesList.childElementCount - 1; i++) {
                 shouldSwitch = false
 
-                let a = proformaList.children[i].children[orderBy]
+                let a = casesList.children[i].children[orderBy]
                 if (a.realValue != undefined) {
                     a = a.realValue
                 }
@@ -501,7 +495,7 @@ function orderCases(orderBy, orderDirection) {
                     a = a.textContent.toLowerCase()
                 }
 
-                let b = proformaList.children[i + 1].children[orderBy]
+                let b = casesList.children[i + 1].children[orderBy]
                 if (b.realValue != undefined) {
                     b = b.realValue
                 }

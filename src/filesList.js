@@ -218,16 +218,10 @@ function listFiles(snap) {
                 }
             }
             tr.onmouseup = mouseEvent => {
-                if (getSelectedText() != '') {
-                    textContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                    textContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                    textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                    textContextMenu.materialComponent.open = true
-                }
-                else if (mouseEvent.button == 2) {
-                    filesContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                    filesContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                    filesContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                if (mouseEvent.button == 2) {
+                    filesContextMenu.style.left = mouseEvent.clientX + 'px'
+                    filesContextMenu.style.top = mouseEvent.clientY + 'px'
+                    filesContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                     filesContextMenu.materialComponent.open = true
                 }
             }
@@ -294,7 +288,7 @@ function orderFiles(orderBy, orderDirection) {
         for (i = 0; i < filesList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            let a = proformaList.children[i].children[orderBy]
+            let a = filesList.children[i].children[orderBy]
             if (a.realValue != undefined) {
                 a = a.realValue
             }
@@ -302,7 +296,7 @@ function orderFiles(orderBy, orderDirection) {
                 a = a.textContent.toLowerCase()
             }
 
-            let b = proformaList.children[i + 1].children[orderBy]
+            let b = filesList.children[i + 1].children[orderBy]
             if (b.realValue != undefined) {
                 b = b.realValue
             }

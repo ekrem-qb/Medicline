@@ -211,16 +211,10 @@ function listProforma(snap) {
                 }
             }
             tr.onmouseup = mouseEvent => {
-                if (getSelectedText() != '') {
-                    textContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                    textContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                    textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                    textContextMenu.materialComponent.open = true
-                }
-                else if (mouseEvent.button == 2) {
-                    proformaContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                    proformaContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                    proformaContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                if (mouseEvent.button == 2) {
+                    proformaContextMenu.style.left = mouseEvent.clientX + 'px'
+                    proformaContextMenu.style.top = mouseEvent.clientY + 'px'
+                    proformaContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                     proformaContextMenu.materialComponent.open = true
                 }
             }

@@ -74,9 +74,9 @@ function newHeader(headerID) {
     }
     th.onmouseup = mouseEvent => {
         if (mouseEvent.button == 2) {
-            tableHeaderContextMenu.style.left = (mouseEvent.clientX) + 'px'
-            tableHeaderContextMenu.style.top = (mouseEvent.clientY) + 'px'
-            tableHeaderContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+            tableHeaderContextMenu.style.left = mouseEvent.clientX + 'px'
+            tableHeaderContextMenu.style.top = mouseEvent.clientY + 'px'
+            tableHeaderContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
             tableHeaderContextMenu.materialComponent.open = true
         }
     }
@@ -405,16 +405,10 @@ function listPrices(snap) {
                     }
                 }
                 tr.onmouseup = mouseEvent => {
-                    if (getSelectedText() != '') {
-                        textContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                        textContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                        textContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
-                        textContextMenu.materialComponent.open = true
-                    }
-                    else if (mouseEvent.button == 2) {
-                        tableRowContextMenu.style.left = (mouseEvent.clientX) + 'px'
-                        tableRowContextMenu.style.top = (mouseEvent.clientY) + 'px'
-                        tableRowContextMenu.materialComponent.setAbsolutePosition((mouseEvent.clientX), (mouseEvent.clientY))
+                    if (mouseEvent.button == 2) {
+                        tableRowContextMenu.style.left = mouseEvent.clientX + 'px'
+                        tableRowContextMenu.style.top = mouseEvent.clientY + 'px'
+                        tableRowContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                         tableRowContextMenu.materialComponent.open = true
                     }
                 }
@@ -480,7 +474,7 @@ function orderPrices(orderBy, orderDirection) {
         for (i = 0; i < priceList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            let a = proformaList.children[i].children[orderBy]
+            let a = priceList.children[i].children[orderBy]
             if (a.realValue != undefined) {
                 a = a.realValue
             }
@@ -488,7 +482,7 @@ function orderPrices(orderBy, orderDirection) {
                 a = a.textContent.toLowerCase()
             }
 
-            let b = proformaList.children[i + 1].children[orderBy]
+            let b = priceList.children[i + 1].children[orderBy]
             if (b.realValue != undefined) {
                 b = b.realValue
             }
