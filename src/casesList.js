@@ -454,7 +454,7 @@ function listCases(snap) {
                                             td.textContent = td.title = value
                                             break
                                         default:
-                                            if (td.id.toLowerCase().includes('date')) {
+                                            if (td.id.includes('Date')) {
                                                 td.textContent = new Date(value).toLocaleDateString('tr')
                                                 td.realValue = value
                                             }
@@ -493,15 +493,19 @@ function orderCases(orderBy, orderDirection) {
             for (i = 0; i < casesList.childElementCount - 1; i++) {
                 shouldSwitch = false
 
-                let a = casesList.children[i].children[orderBy]
-                let b = casesList.children[i + 1].children[orderBy]
-
+                let a = proformaList.children[i].children[orderBy]
                 if (a.realValue != undefined) {
                     a = a.realValue
-                    b = b.realValue
                 }
                 else {
                     a = a.textContent.toLowerCase()
+                }
+
+                let b = proformaList.children[i + 1].children[orderBy]
+                if (b.realValue != undefined) {
+                    b = b.realValue
+                }
+                else {
                     b = b.textContent.toLowerCase()
                 }
 

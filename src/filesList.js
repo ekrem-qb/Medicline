@@ -249,7 +249,7 @@ function listFiles(snap) {
                 else {
                     const value = fileSnap.get(td.id)
                     if (value != undefined) {
-                        if (td.id.toLowerCase().includes('date')) {
+                        if (td.id.includes('Date')) {
                             td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
                             td.realValue = value.seconds
                         }
@@ -294,15 +294,19 @@ function orderFiles(orderBy, orderDirection) {
         for (i = 0; i < filesList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            let a = filesList.children[i].children[orderBy]
-            let b = filesList.children[i + 1].children[orderBy]
-
+            let a = proformaList.children[i].children[orderBy]
             if (a.realValue != undefined) {
                 a = a.realValue
-                b = b.realValue
             }
             else {
                 a = a.textContent.toLowerCase()
+            }
+
+            let b = proformaList.children[i + 1].children[orderBy]
+            if (b.realValue != undefined) {
+                b = b.realValue
+            }
+            else {
                 b = b.textContent.toLowerCase()
             }
 

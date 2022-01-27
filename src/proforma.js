@@ -241,25 +241,40 @@ function listProforma(snap) {
                         td.textContent = proformaSnap.id
                         break
                     case 'price':
-                        td.textContent = proformaSnap.get(td.id) + ' ' + proformaSnap.get('currency')
-                        break
                     case 'total':
-                        td.textContent = (proformaSnap.get('price') * proformaSnap.get('quantity')) + ' ' + proformaSnap.get('currency')
+                        const price = proformaSnap.get('price')
+                        const currency = proformaSnap.get('currency')
+                        td.textContent = price + ' ' + currency
+                        td.realValue = price
+                        if (currentInsurance) {
+                            const exchangeToUSD = currentInsurance.get(currency)
+                            if (exchangeToUSD) {
+                                td.realValue = price / parseFloat(exchangeToUSD)
+                            }
+                        }
                         break
                     case 'date':
-                        td.textContent = new Date(proformaSnap.get(td.id).seconds * 1000).toLocaleString('tr').replace(',', '')
-                        td.realValue = proformaSnap.get(td.id).seconds
+                        const seconds = proformaSnap.get(td.id).seconds
+                        td.textContent = new Date(seconds * 1000).toLocaleString('tr').replace(',', '')
+                        td.realValue = seconds
                         break
                     default:
                         td.textContent = proformaSnap.get(td.id)
                         break
                 }
-                if (td.id == 'name') {
-                    td.onclick = () => {
-                        const proformaName = td.textContent
-                        inlineEdit.show(td, proformaSnap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
-                        inlineEditInput.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
-                    }
+                switch (td.id) {
+                    case 'name':
+                        td.onclick = () => {
+                            const proformaName = td.textContent
+                            inlineEdit.show(td, proformaSnap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
+                            inlineEditInput.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
+                        }
+                        break
+                    case 'total':
+                        const quantity = proformaSnap.get('quantity')
+                        td.textContent = (parseFloat(td.textContent) * quantity) + ' ' + proformaSnap.get('currency')
+                        td.realValue = parseFloat(td.realValue) * quantity
+                        break
                 }
             }
         })
@@ -279,14 +294,18 @@ function orderProforma(orderBy, orderDirection) {
             shouldSwitch = false
 
             let a = proformaList.children[i].children[orderBy]
-            let b = proformaList.children[i + 1].children[orderBy]
-
             if (a.realValue != undefined) {
                 a = a.realValue
-                b = b.realValue
             }
             else {
                 a = a.textContent.toLowerCase()
+            }
+
+            let b = proformaList.children[i + 1].children[orderBy]
+            if (b.realValue != undefined) {
+                b = b.realValue
+            }
+            else {
                 b = b.textContent.toLowerCase()
             }
 

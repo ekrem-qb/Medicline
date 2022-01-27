@@ -407,15 +407,19 @@ function orderInstitutions(orderBy, orderDirection) {
         for (i = 0; i < institutionsList.childElementCount - 1; i++) {
             shouldSwitch = false
 
-            let a = institutionsList.children[i].children[orderBy]
-            let b = institutionsList.children[i + 1].children[orderBy]
-
+            let a = proformaList.children[i].children[orderBy]
             if (a.realValue != undefined) {
                 a = a.realValue
-                b = b.realValue
             }
             else {
                 a = a.textContent.toLowerCase()
+            }
+
+            let b = proformaList.children[i + 1].children[orderBy]
+            if (b.realValue != undefined) {
+                b = b.realValue
+            }
+            else {
                 b = b.textContent.toLowerCase()
             }
 
