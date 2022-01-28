@@ -365,7 +365,6 @@ function loadPrices() {
     stopPricesQuery()
     stopPricesQuery = allPrices.onSnapshot(
         snapshot => {
-            console.log(snapshot)
             currentPricesSnap = snapshot
             listPrices(snapshot)
             refreshSearch()

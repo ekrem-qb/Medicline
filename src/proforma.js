@@ -44,6 +44,13 @@ function loadInsurance() {
                                 loadProforma()
                                 listActivities()
                             }
+                            const address = snapshot.get('address')
+                            if (address != undefined) {
+                                inputAddress.value = address
+                            }
+                            else {
+                                inputAddress.value = ''
+                            }
                         },
                         error => {
                             console.error('Error getting insurance: ' + error)
@@ -172,7 +179,6 @@ function loadProforma() {
         proformaCurrentQuery = selectedCase.collection('proforma')
         stopProformaCurrentQuery = proformaCurrentQuery.onSnapshot(
             snapshot => {
-                console.log(snapshot)
                 proformaCurrentSnap = snapshot
                 listProforma(snapshot)
             },
@@ -628,6 +634,7 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const totalPanel = proformaTabPage.querySelector('#totalPanel')
+const inputAddress = totalPanel.querySelector('textarea#address')
 const selectCurrency = totalPanel.querySelector('.mdc-select#currency').materialComponent
 selectCurrency.listen('MDCSelect:change', () => {
     inputPrepay.symbol.textContent = selectCurrency.value

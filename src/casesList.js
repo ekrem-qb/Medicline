@@ -306,7 +306,6 @@ function loadCases() {
     stopCurrentQuery()
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
-            console.log(snapshot)
             currentCasesSnap = snapshot
             listCases(snapshot)
             refreshSearch()

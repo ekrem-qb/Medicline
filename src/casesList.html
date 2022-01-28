@@ -508,6 +508,12 @@
                 </div>
             </div>
             <div class="d-flex flex-column w-25 p-2 border-start" id="totalPanel">
+                <div class="d-flex justify-content-between mb-2">
+                    <label class="me-2" translate>ADDRESS</label>
+                    <div class="input-group input-group-sm w-auto">
+                        <textarea class="form-control" id="address" rows="3"></textarea>
+                    </div>
+                </div>
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <label class="me-2" translate>CURRENCY</label>
                     <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="currency">
@@ -522,18 +528,22 @@
                             <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                         </div>
                         <div class="mdc-select__menu mdc-menu mdc-menu-surface">
-                            <ul class="mdc-deprecated-list">
-                                <li class="mdc-deprecated-list-item mdc-ripple-surface mdc-deprecated-list-item--selected" data-value="₺" aria-selected="true">
-                                    <span class="mdc-deprecated-list-item__text" translate>₺</span>
+                            <ul class="mdc-list">
+                                <li class="mdc-list-item mdc-list-item--selected" data-value="₺" aria-selected="true">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">₺</span>
                                 </li>
-                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="$">
-                                    <span class="mdc-deprecated-list-item__text" translate>$</span>
+                                <li class="mdc-list-item" data-value="$">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">$</span>
                                 </li>
-                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="€">
-                                    <span class="mdc-deprecated-list-item__text" translate>€</span>
+                                <li class="mdc-list-item" data-value="€">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">€</span>
                                 </li>
-                                <li class="mdc-deprecated-list-item mdc-ripple-surface" data-value="₽">
-                                    <span class="mdc-deprecated-list-item__text" translate>₽</span>
+                                <li class="mdc-list-item" data-value="₽">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">₽</span>
                                 </li>
                             </ul>
                         </div>
@@ -784,7 +794,6 @@
     <script src="import/material/ripple.js"></script>
     <script src="import/material/textField.js"></script>
     <script src="import/material/menu.js"></script>
-    <script src="import/material/list.js"></script>
     <script src="import/material/dialog.js"></script>
     <script src="import/material/select.js"></script>
     <script src="import/material/tabBar.js"></script>

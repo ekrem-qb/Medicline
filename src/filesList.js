@@ -176,7 +176,6 @@ function loadFiles() {
         filesCurrentQuery = selectedCase.collection('files')
         stopFilesCurrentQuery = filesCurrentQuery.onSnapshot(
             snapshot => {
-                console.log(snapshot)
                 filesCurrentFilesSnap = snapshot
                 listFiles(snapshot)
             },

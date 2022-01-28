@@ -802,11 +802,13 @@ textarea::-webkit-scrollbar {
   --mdc-ripple-color: currentColor;
   --transition: .15s cubic-bezier(0.4, 0, 0.2, 1);
   --mdc-ripple-hover-opacity: .1;
+  --mdc-ripple-select-opacity: .2;
   --mdc-ripple-focus-opacity: 0;
   --mdc-protected-button-focus-state-layer-opacity: var(--mdc-ripple-focus-opacity);
   --mdc-outlined-button-focus-state-layer-opacity: var(--mdc-ripple-focus-opacity);
   --mdc-typography-button-text-transform: normal;
   --mdc-shape-medium: .5rem;
+  --mdc-menu-min-width: 4.5rem;
 }
 
 .mdc-card {
@@ -867,10 +869,13 @@ textarea::-webkit-scrollbar {
 :not(.mdc-list-item--disabled).mdc-list-item:hover .mdc-list-item__ripple::before,
 :not(.mdc-list-item--disabled).mdc-list-item.mdc-ripple-surface--hover .mdc-list-item__ripple::before,
 .mdc-tab:hover .mdc-tab__ripple::before,
-.mdc-tab.mdc-ripple-surface--hover .mdc-tab__ripple::before,
-:not(.mdc-deprecated-list-item--disabled).mdc-deprecated-list-item--activated.mdc-ripple-upgraded--background-focused .mdc-deprecated-list-item__ripple::before,
-:not(.mdc-deprecated-list-item--disabled).mdc-deprecated-list-item--activated:not(.mdc-ripple-upgraded):focus .mdc-deprecated-list-item__ripple::before {
+.mdc-tab.mdc-ripple-surface--hover .mdc-tab__ripple::before {
   opacity: var(--mdc-ripple-hover-opacity);
+}
+
+:not(.mdc-list-item--disabled).mdc-list-item--selected.mdc-ripple-upgraded--background-focused .mdc-list-item__ripple::before,
+:not(.mdc-list-item--disabled).mdc-list-item--selected:not(.mdc-ripple-upgraded):focus .mdc-list-item__ripple::before {
+  opacity: var(--mdc-ripple-select-opacity);
 }
 
 .mdc-ripple-surface::before,
@@ -1098,6 +1103,9 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 .mdc-list {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+.mdc-menu:not(.mdc-select__menu)>.mdc-list {
   font-family: var(--mdc-typography-subtitle1-font-family, var(--mdc-typography-font-family, system-ui));
 }
 
@@ -1106,14 +1114,18 @@ th .iconify[data-icon="ic:round-unfold-more"] {
 }
 
 .mdc-menu>.mdc-list>.mdc-list-item {
-  background-color: transparent;
-  color: inherit;
-  font-weight: bold;
-  height: 2rem;
-  padding: 0 .5rem;
+  height: 2.5rem;
   align-items: center;
   user-select: none;
   cursor: pointer;
+}
+
+.mdc-menu:not(.mdc-select__menu)>.mdc-list>.mdc-list-item {
+  height: 2rem;
+  background-color: transparent;
+  color: inherit;
+  font-weight: bold;
+  padding: 0 .5rem;
 }
 
 .mdc-list-item>.iconify[data-icon="ic:round-plus"],
