@@ -679,11 +679,13 @@ const textTotal = totalPanel.querySelector('h4#total')
 function calculateProformaTotal() {
     let total = subtotal
     if (total) {
-        if (inputDiscount.value) {
-            total -= total * (inputDiscount.value / 100)
+        const discount = inputDiscount.mask.unmaskedvalue()
+        if (discount) {
+            total -= total * (discount / 100)
         }
-        if (inputPrepay.value) {
-            total -= inputPrepay.value
+        const prepay = inputPrepay.mask.unmaskedvalue()
+        if (prepay) {
+            total -= prepay
         }
     }
     textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value
