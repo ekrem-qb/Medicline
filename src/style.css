@@ -1270,3 +1270,10 @@ form .mdc-text-field {
 .inset-0 {
   inset: 0;
 }
+
+#totalPanel>* {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
