@@ -690,3 +690,12 @@ function calculateProformaTotal() {
     }
     textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value
 }
+
+const { generatePdf } = require('html-pdf-node')
+
+const buttonPdf = totalPanel.querySelector('button#pdf')
+buttonPdf.onclick = () => {
+    generatePdf({ content: proformaTable.outerHTML }, { format: 'A4' }).then(data => {
+        ipcRenderer.send('save-file', 'Test.pdf', data)
+    })
+}

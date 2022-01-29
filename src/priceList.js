@@ -91,7 +91,7 @@ function newHeader(headerID) {
 }
 
 const buttonExport = document.querySelector('button#export')
-buttonExport.onclick = () => ipcRenderer.send('dialog-save', translate('ACTIVITIES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
+buttonExport.onclick = () => ipcRenderer.send('save-file', translate('ACTIVITIES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(pricesTable), { type: 'buffer' }))
 
 function loadColumns() {
     setOverlayState('loading')
@@ -571,7 +571,7 @@ function refreshAndSaveColumns() {
     localStorage.setItem('priceColumns', priceColumns)
 }
 
-const { read, writeFile, utils } = require('xlsx')
+const { read, write, utils } = require('xlsx')
 
 const inputExcel = document.querySelector('input#excel')
 const buttonImport = document.querySelector('button#import')
@@ -677,7 +677,3 @@ buttonReplaceImport.onclick = () => {
         })
     })
 }
-
-ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(pricesTable, { raw: true }), filePath)
-})

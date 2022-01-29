@@ -461,15 +461,11 @@ function setOverlayState(state) {
     }
 }
 
-const { writeFile, utils } = require('xlsx')
+const { write, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('save-file', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(institutionsTable), { type: 'buffer' }))
 }
-
-ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(institutionsTable), filePath)
-})
 
 let stopFilteredCasesQuery = () => { }
 

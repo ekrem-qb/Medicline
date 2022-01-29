@@ -821,15 +821,12 @@ tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelec
 tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
-const { writeFile, utils } = require('xlsx')
+
+const { write, utils } = require('xlsx')
 
 function exportToExcel() {
-    ipcRenderer.send('dialog-save', translate('CASES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx')
+    ipcRenderer.send('save-file', translate('CASES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(casesTable), { type: 'buffer' }))
 }
-
-ipcRenderer.on('file-save', (event, filePath) => {
-    writeFile(utils.table_to_book(casesTable), filePath)
-})
 
 function refreshAndSaveColumns() {
     listCases(currentCasesSnap)

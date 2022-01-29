@@ -1,10 +1,11 @@
 'use strict'
 
 async function main() {
-    const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+    const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron')
     const log = require('electron-log')
     const { autoUpdater } = require('electron-updater')
     const { download } = require('electron-dl')
+    const { writeFile } = require('fs')
 
     ipcMain.on('download', async (event, url, name) => {
         console.log(await download(event.sender.getOwnerBrowserWindow(), url, { saveAs: true, filename: name, openFolderWhenDone: true }))
@@ -199,13 +200,19 @@ async function main() {
         }
     })
 
-    ipcMain.on('dialog-save', (event, fileName) => {
+    ipcMain.on('save-file', (event, fileName, data) => {
         dialog.showSaveDialog(event.sender.getOwnerBrowserWindow(), {
-            defaultPath: fileName,
-            filters: [{ name: 'Excel', extensions: ['xlsx'] }]
+            defaultPath: fileName
         }).then(dialogEvent => {
             if (!dialogEvent.canceled) {
-                event.sender.send('file-save', dialogEvent.filePath)
+                writeFile(dialogEvent.filePath, data, error => {
+                    if (error != null) {
+                        log.error('Error in saving file', error)
+                    }
+                    else {
+                        shell.showItemInFolder(dialogEvent.filePath)
+                    }
+                })
             }
         })
     })

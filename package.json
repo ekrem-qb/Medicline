@@ -38,6 +38,7 @@
     "electron-updater": "^4.6.1",
     "firebase": "^9.6.3",
     "firebase-admin": "^10.0.0",
+    "html-pdf-node": "^1.0.8",
     "inputmask": "^5.0.7",
     "material-components-web": "^13.0.0",
     "sortablejs": "^1.14.0",
