@@ -16,12 +16,13 @@ proformaTabPage.loadContent = () => {
     loadInsurance()
 }
 
-const { generatePdf } = require('html-pdf-node')
+let generatePdf
 
 const buttonPdf = proformaTabPage.querySelector('button#pdf')
 buttonPdf.icon = buttonPdf.getElementsByClassName('iconify')
 buttonPdf.onclick = () => {
     buttonPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    if (!generatePdf) generatePdf = require('html-pdf-node').generatePdf
     generatePdf({ content: proformaTable.outerHTML }, { format: 'A4' }).then(data => {
         buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
         ipcRenderer.send('save-file', 'Test.pdf', data)

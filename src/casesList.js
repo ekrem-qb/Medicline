@@ -155,6 +155,7 @@ firebase.auth().onAuthStateChanged(user => {
 })
 
 let stopPermissionsQuery = () => { }
+let haveEditPermission = false
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
@@ -188,6 +189,7 @@ function toggleEditMode(editIsAllowed) {
         tableRowContextMenu.editOption.icon[0].setAttribute('data-icon', 'ic:round-visibility')
         tableRowContextMenu.editOption.label.textContent = translate('VIEW')
     }
+    haveEditPermission = editIsAllowed
 }
 
 function loadPermissions() {
@@ -620,7 +622,7 @@ function loadTab(page) {
         script.src = page.id + '.js'
         document.head.appendChild(script)
         script.onload = () => {
-            loadPermissions()
+            toggleEditMode(haveEditPermission)
             if (page.loadContent) {
                 page.loadContent()
             }
@@ -836,9 +838,11 @@ tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'c
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 
-const { write, utils } = require('xlsx')
+let write, utils
 
 function exportToExcel() {
+    if (!write) write = require('xlsx').write
+    if (!utils) utils = require('xlsx').utils
     ipcRenderer.send('save-file', translate('CASES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(casesTable), { type: 'buffer' }))
 }
 

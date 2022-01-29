@@ -332,7 +332,7 @@
                 <div class="mdc-tab-scroller__scroll-content">
                     <button class="mdc-tab mdc-tab--active" role="tab" tabindex="0">
                         <span class="mdc-tab__content">
-                            <span class="mdc-tab__text-label" translate>FILES</span>
+                            <span class="mdc-tab__text-label">Proforma</span>
                         </span>
                         <span class="mdc-tab-indicator mdc-tab-indicator--active">
                             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
@@ -341,7 +341,7 @@
                     </button>
                     <button class="mdc-tab" role="tab" tabindex="0">
                         <span class="mdc-tab__content">
-                            <span class="mdc-tab__text-label">Proforma</span>
+                            <span class="mdc-tab__text-label" translate>FILES</span>
                         </span>
                         <span class="mdc-tab-indicator">
                             <span class="mdc-tab-indicator__content mdc-tab-indicator__content--underline"></span>
@@ -359,118 +359,7 @@
         <i class="dropdown-icon iconify ms-2" data-icon="ic:round-keyboard-arrow-up"></i>
     </header>
     <div class="modal-body collapsed h-75 p-0">
-        <div class="tab-page show" id="files">
-            <li class="modal-header position-relative">
-                <input type="file" id="newFile" hidden>
-                <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="uploadFile" disabled>
-                    <div class="mdc-button__ripple"></div>
-                    <i class="mdc-button__icon iconify" data-icon="ic:round-upload"></i>
-                    <span class="mdc-button__label" translate>UPLOAD_FILE</span>
-                </button>
-                <div class="d-flex position-absolute p-2 inset-0 hide">
-                    <button class="mdc-button mdc-button--raised mdc-button--green h-100" id="doneFile">
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
-                        <span class="mdc-button__label" translate>DONE</span>
-                    </button>
-                    <label class="mdc-text-field mdc-text-field--outlined flex-grow-1 h-100 mx-2">
-                        <input type="text" class="mdc-text-field__input fw-normal" id="fileName" />
-                        <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                            <div class="mdc-notched-outline__leading"></div>
-                            <div class="mdc-notched-outline__trailing"></div>
-                        </div>
-                    </label>
-                    <button class="mdc-button mdc-button--outlined mdc-button--red h-100" id="cancelFile">
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
-                        <span class="mdc-button__label" translate>CANCEL</span>
-                    </button>
-                </div>
-            </li>
-            <div class="table-responsive h-100">
-                <table class="table table-borderless border-bottom">
-                    <thead>
-                        <tr id="filesHeadersList"></tr>
-                        <template id="filesHeaderTemplate">
-                            <th class="mdc-ripple-surface">
-                                <label></label>
-                                <i class="iconify" data-icon="ic:round-unfold-more"></i>
-                            </th>
-                        </template>
-                    </thead>
-                    <tbody id="filesList"></tbody>
-                </table>
-                <div class="overlay top-0 h-100">
-                    <i class="iconify" data-icon="eos-icons:loading"></i>
-                    <h3 class="my-2" hidden></h3>
-                </div>
-            </div>
-            <input type="file" id="replaceFile" hidden>
-            <div id="inlineEdit" class="mdc-elevation--z6">
-                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
-                    <input type="text" class="mdc-text-field__input" />
-                    <button class="mdc-icon-button" id="save" disabled>
-                        <div class="mdc-icon-button__ripple"></div>
-                        <i class="iconify" data-icon="ic:round-done"></i>
-                    </button>
-                    <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                        <div class="mdc-notched-outline__leading"></div>
-                        <div class="mdc-notched-outline__trailing"></div>
-                    </div>
-                </label>
-            </div>
-            <div class="mdc-menu mdc-menu-surface" id="filesContextMenu">
-                <ul class="mdc-list">
-                    <li class="mdc-list-item" id="download">
-                        <i class="mdc-list-item__graphic iconify" data-icon="ic:round-download"></i>
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text mx-2" translate>DOWNLOAD</span>
-                    </li>
-                    <li class="mdc-list-divider">
-                    <li class="mdc-list-item" id="rename">
-                        <i class="mdc-list-item__graphic iconify" data-icon="mdi:cursor-text"></i>
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text mx-2" translate>RENAME</span>
-                    </li>
-                    <li class="mdc-list-divider">
-                    <li class="mdc-list-item" id="replace">
-                        <i class="mdc-list-item__graphic iconify" data-icon="tabler:replace"></i>
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text mx-2" translate>REPLACE</span>
-                    </li>
-                    <li class="mdc-list-divider">
-                    <li class="mdc-list-item mdc-list-item--disabled" id="delete">
-                        <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text mx-2" translate>DELETE</span>
-                    </li>
-                </ul>
-            </div>
-            <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteFile">
-                <div class="mdc-dialog__container">
-                    <div class="mdc-dialog__surface">
-                        <section class="mdc-dialog__content">
-                            <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
-                            <p class="mb-0" translate>ASK_DELETE#THIS_FILE</p>
-                        </section>
-                        <footer class="mdc-dialog__actions">
-                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
-                                <div class="mdc-button__ripple"></div>
-                                <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
-                                <span class="mdc-button__label" translate>CANCEL</span>
-                            </button>
-                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
-                                <div class="mdc-button__ripple"></div>
-                                <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
-                                <span class="mdc-button__label" translate>DELETE</span>
-                            </button>
-                        </footer>
-                    </div>
-                </div>
-                <div class="mdc-dialog__scrim"></div>
-            </div>
-        </div>
-        <div class="tab-page flex-row" id="proforma">
+        <div class="tab-page flex-row show" id="proforma">
             <div class="d-flex flex-column w-75">
                 <header class="modal-header">
                     <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="newActivity" disabled>
@@ -638,6 +527,117 @@
                         <section class="mdc-dialog__content">
                             <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
                             <p class="mb-0" translate>ASK_DELETE#THIS_ACTIVITY</p>
+                        </section>
+                        <footer class="mdc-dialog__actions">
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
+                                <span class="mdc-button__label" translate>CANCEL</span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-dialog__button mdc-button--raised mdc-button--red" data-mdc-dialog-action="delete" data-mdc-dialog-button-default data-mdc-dialog-initial-focus>
+                                <div class="mdc-button__ripple"></div>
+                                <i class="mdc-button__icon iconify" data-icon="mdi:trash-can"></i>
+                                <span class="mdc-button__label" translate>DELETE</span>
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
+            </div>
+        </div>
+        <div class="tab-page" id="files">
+            <li class="modal-header position-relative">
+                <input type="file" id="newFile" hidden>
+                <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="uploadFile" disabled>
+                    <div class="mdc-button__ripple"></div>
+                    <i class="mdc-button__icon iconify" data-icon="ic:round-upload"></i>
+                    <span class="mdc-button__label" translate>UPLOAD_FILE</span>
+                </button>
+                <div class="d-flex position-absolute p-2 inset-0 hide">
+                    <button class="mdc-button mdc-button--raised mdc-button--green h-100" id="doneFile">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
+                        <span class="mdc-button__label" translate>DONE</span>
+                    </button>
+                    <label class="mdc-text-field mdc-text-field--outlined flex-grow-1 h-100 mx-2">
+                        <input type="text" class="mdc-text-field__input fw-normal" id="fileName" />
+                        <div class="mdc-notched-outline mdc-notched-outline--no-label">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                    <button class="mdc-button mdc-button--outlined mdc-button--red h-100" id="cancelFile">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
+                        <span class="mdc-button__label" translate>CANCEL</span>
+                    </button>
+                </div>
+            </li>
+            <div class="table-responsive h-100">
+                <table class="table table-borderless border-bottom">
+                    <thead>
+                        <tr id="filesHeadersList"></tr>
+                        <template id="filesHeaderTemplate">
+                            <th class="mdc-ripple-surface">
+                                <label></label>
+                                <i class="iconify" data-icon="ic:round-unfold-more"></i>
+                            </th>
+                        </template>
+                    </thead>
+                    <tbody id="filesList"></tbody>
+                </table>
+                <div class="overlay top-0 h-100">
+                    <i class="iconify" data-icon="eos-icons:loading"></i>
+                    <h3 class="my-2" hidden></h3>
+                </div>
+            </div>
+            <input type="file" id="replaceFile" hidden>
+            <div id="inlineEdit" class="mdc-elevation--z6">
+                <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+                    <input type="text" class="mdc-text-field__input" />
+                    <button class="mdc-icon-button" id="save" disabled>
+                        <div class="mdc-icon-button__ripple"></div>
+                        <i class="iconify" data-icon="ic:round-done"></i>
+                    </button>
+                    <div class="mdc-notched-outline mdc-notched-outline--no-label">
+                        <div class="mdc-notched-outline__leading"></div>
+                        <div class="mdc-notched-outline__trailing"></div>
+                    </div>
+                </label>
+            </div>
+            <div class="mdc-menu mdc-menu-surface" id="filesContextMenu">
+                <ul class="mdc-list">
+                    <li class="mdc-list-item" id="download">
+                        <i class="mdc-list-item__graphic iconify" data-icon="ic:round-download"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>DOWNLOAD</span>
+                    </li>
+                    <li class="mdc-list-divider">
+                    <li class="mdc-list-item" id="rename">
+                        <i class="mdc-list-item__graphic iconify" data-icon="mdi:cursor-text"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>RENAME</span>
+                    </li>
+                    <li class="mdc-list-divider">
+                    <li class="mdc-list-item" id="replace">
+                        <i class="mdc-list-item__graphic iconify" data-icon="tabler:replace"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>REPLACE</span>
+                    </li>
+                    <li class="mdc-list-divider">
+                    <li class="mdc-list-item mdc-list-item--disabled" id="delete">
+                        <i class="mdc-list-item__graphic iconify" data-icon="mdi:trash-can"></i>
+                        <span class="mdc-list-item__ripple"></span>
+                        <span class="mdc-list-item__text mx-2" translate>DELETE</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="mdc-dialog mdc-dialog--scrollable" id="dialogDeleteFile">
+                <div class="mdc-dialog__container">
+                    <div class="mdc-dialog__surface">
+                        <section class="mdc-dialog__content">
+                            <i class="iconify me-3" data-icon="ic:round-help-outline"></i>
+                            <p class="mb-0" translate>ASK_DELETE#THIS_FILE</p>
                         </section>
                         <footer class="mdc-dialog__actions">
                             <button type="button" class="mdc-button mdc-dialog__button mdc-button--outlined mdc-button--green" data-mdc-dialog-action="cancel">

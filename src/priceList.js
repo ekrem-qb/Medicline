@@ -90,8 +90,14 @@ function newHeader(headerID) {
     return th
 }
 
+let read, write, utils
+
 const buttonExport = document.querySelector('button#export')
-buttonExport.onclick = () => ipcRenderer.send('save-file', translate('ACTIVITIES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(pricesTable), { type: 'buffer' }))
+buttonExport.onclick = () => {
+    if (!write) write = require('xlsx').write
+    if (!utils) utils = require('xlsx').utils
+    ipcRenderer.send('save-file', translate('ACTIVITIES') + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(pricesTable), { type: 'buffer' }))
+}
 
 function loadColumns() {
     setOverlayState('loading')
@@ -571,8 +577,6 @@ function refreshAndSaveColumns() {
     localStorage.setItem('priceColumns', priceColumns)
 }
 
-const { read, write, utils } = require('xlsx')
-
 const inputExcel = document.querySelector('input#excel')
 const buttonImport = document.querySelector('button#import')
 buttonImport.onclick = () => inputExcel.click()
@@ -580,7 +584,9 @@ inputExcel.onchange = async () => {
     if (inputExcel.value != '') {
         if (inputExcel.files[0].name.slice(inputExcel.files[0].name.lastIndexOf('.')).toLowerCase() == inputExcel.accept) {
             const data = await inputExcel.files[0].arrayBuffer()
+            if (!read) read = require('xlsx').read
             const workbook = read(data)
+            if (!utils) utils = require('xlsx').utils
             dialogImport.content.innerHTML = utils.sheet_to_html(workbook.Sheets[workbook.SheetNames[0]])
             dialogImport.open()
             selectImportCurrency.disabled = false

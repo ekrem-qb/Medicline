@@ -461,9 +461,11 @@ function setOverlayState(state) {
     }
 }
 
-const { write, utils } = require('xlsx')
+let write, utils
 
 function exportToExcel() {
+    if (!write) write = require('xlsx').write
+    if (!utils) utils = require('xlsx').utils
     ipcRenderer.send('save-file', translate((selectInstitutionType.value + 's').toUpperCase()) + ' ' + new Date().toLocaleString('tr').replace(',', '').replaceAll(':', '-') + '.xlsx', write(utils.table_to_book(institutionsTable), { type: 'buffer' }))
 }
 
