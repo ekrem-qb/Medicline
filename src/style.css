@@ -7,43 +7,19 @@
 
   0%,
   100% {
-    color: #00800080;
+    color: #4885ed;
   }
 
-  10% {
-    color: #000000bf;
-  }
-
-  20% {
-    color: #ff000080;
-  }
-
-  30% {
-    color: #80ffff80;
-  }
-
-  40% {
-    color: #00ff0080;
+  25% {
+    color: #db3236;
   }
 
   50% {
-    color: #ff008080;
+    color: #f4c20d;
   }
 
-  60% {
-    color: #8000ff80;
-  }
-
-  70% {
-    color: #ff800080;
-  }
-
-  80% {
-    color: #ffff0080;
-  }
-
-  90% {
-    color: #0080ff80;
+  75% {
+    color: #3cba54;
   }
 }
 
@@ -479,7 +455,7 @@ thead>tr {
 }
 
 .overlay>.iconify[data-icon="eos-icons:loading"] {
-  animation: rainbow 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: rainbow 2s linear infinite;
   transition: none;
 }
 

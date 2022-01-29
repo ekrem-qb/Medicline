@@ -16,6 +16,18 @@ proformaTabPage.loadContent = () => {
     loadInsurance()
 }
 
+const { generatePdf } = require('html-pdf-node')
+
+const buttonPdf = proformaTabPage.querySelector('button#pdf')
+buttonPdf.icon = buttonPdf.getElementsByClassName('iconify')
+buttonPdf.onclick = () => {
+    buttonPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    generatePdf({ content: proformaTable.outerHTML }, { format: 'A4' }).then(data => {
+        buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
+        ipcRenderer.send('save-file', 'Test.pdf', data)
+    })
+}
+
 let stopSelectedCaseQuery = () => { }
 let stopCurrentInsuranceQuery = () => { }
 let currentInsurance
@@ -176,6 +188,7 @@ function proformaHeaderClick(headerID) {
 
 function loadProforma() {
     if (selectedCase) {
+        setProformaOverlayState('loading')
         proformaCurrentQuery = selectedCase.collection('proforma')
         stopProformaCurrentQuery = proformaCurrentQuery.onSnapshot(
             snapshot => {
@@ -334,6 +347,7 @@ function orderProforma(orderBy, orderDirection) {
 }
 
 function setProformaOverlayState(state) {
+    buttonPdf.disabled = true
     switch (state) {
         case 'loading':
             proformaOverlay.classList.remove('hide')
@@ -350,6 +364,7 @@ function setProformaOverlayState(state) {
             break
         case 'hide':
             proformaOverlay.classList.add('hide')
+            buttonPdf.disabled = false
             break
     }
 }
@@ -689,13 +704,4 @@ function calculateProformaTotal() {
         }
     }
     textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value
-}
-
-const { generatePdf } = require('html-pdf-node')
-
-const buttonPdf = totalPanel.querySelector('button#pdf')
-buttonPdf.onclick = () => {
-    generatePdf({ content: proformaTable.outerHTML }, { format: 'A4' }).then(data => {
-        ipcRenderer.send('save-file', 'Test.pdf', data)
-    })
 }

@@ -173,6 +173,7 @@ function filesHeaderClick(headerID) {
 
 function loadFiles() {
     if (selectedCase) {
+        setFilesOverlayState('loading')
         filesCurrentQuery = selectedCase.collection('files')
         stopFilesCurrentQuery = filesCurrentQuery.onSnapshot(
             snapshot => {
@@ -194,8 +195,8 @@ function loadFiles() {
 }
 
 function listFiles(snap) {
-    filesList.innerHTML = ''
     if (snap.docs.length > 0) {
+        filesList.innerHTML = ''
         currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
         currentFilesRefQueries = []
         snap.forEach(fileSnap => {

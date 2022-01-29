@@ -142,6 +142,9 @@ firebase.auth().onAuthStateChanged(user => {
         else {
             listCases(currentCasesSnap)
         }
+        if (localStorage.getItem('isDocumentsPanelOpen')) {
+            headerDocuments.click()
+        }
     }
     else {
         stopPermissionsQuery()
@@ -155,22 +158,26 @@ let stopPermissionsQuery = () => { }
 
 function toggleEditMode(editIsAllowed) {
     buttonCreate.disabled = !editIsAllowed
-    buttonUploadFile.disabled = !editIsAllowed
-    buttonDoneFile.disabled = !editIsAllowed
-    buttonNewActivity.disabled = !editIsAllowed
+    if (typeof buttonUploadFile !== 'undefined') {
+        buttonUploadFile.disabled = !editIsAllowed
+        buttonDoneFile.disabled = !editIsAllowed
+        for (const option of filesContextMenu.children[0].children) {
+            if (option != filesContextMenu.downloadOption && !option.classList.contains('mdc-list-divider')) {
+                option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+            }
+        }
+    }
     for (const option of tableRowContextMenu.children[0].children) {
         if (option != tableRowContextMenu.editOption && !option.classList.contains('mdc-list-divider')) {
             option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
         }
     }
-    for (const option of filesContextMenu.children[0].children) {
-        if (option != filesContextMenu.downloadOption && !option.classList.contains('mdc-list-divider')) {
-            option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
-        }
-    }
-    for (const option of proformaContextMenu.children[0].children) {
-        if (!option.classList.contains('mdc-list-divider')) {
-            option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+    if (typeof buttonNewActivity !== 'undefined') {
+        buttonNewActivity.disabled = !editIsAllowed
+        for (const option of proformaContextMenu.children[0].children) {
+            if (!option.classList.contains('mdc-list-divider')) {
+                option.classList.toggle('mdc-list-item--disabled', !editIsAllowed)
+            }
         }
     }
     if (editIsAllowed) {
@@ -389,10 +396,7 @@ function listCases(snap) {
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
                                 if (headerDocuments.classList.contains('hide')) {
-                                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-                                    if (activePage.loadContent) {
-                                        activePage.loadContent()
-                                    }
+                                    loadTab(documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()])
                                 }
                             }
                         }
@@ -606,8 +610,25 @@ const headerDocuments = document.querySelector('header#documents')
 const tabBar = headerDocuments.previousElementSibling.materialComponent
 const documentsContent = headerDocuments.nextElementSibling
 
-if (localStorage.getItem('isDocumentsPanelOpen')) {
-    headerDocuments.click()
+function loadTab(page) {
+    if (page.loadContent) {
+        page.loadContent()
+    }
+    else {
+        const script = document.createElement('script')
+        script.type = 'text/javascript'
+        script.src = page.id + '.js'
+        document.head.appendChild(script)
+        script.onload = () => {
+            loadPermissions()
+            if (page.loadContent) {
+                page.loadContent()
+            }
+        }
+        script.onerror = () => {
+            page.loadContent = () => { }
+        }
+    }
 }
 
 tabBar.listen('MDCTabBar:activated', event => {
@@ -619,9 +640,7 @@ tabBar.listen('MDCTabBar:activated', event => {
         }
         prevPage.classList.remove('show')
     }
-    if (activePage.loadContent) {
-        activePage.loadContent()
-    }
+    loadTab(activePage)
     activePage.classList.add('show')
 })
 
@@ -639,9 +658,7 @@ function modalExpand(header) {
         const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
         if (header.classList.contains('hide')) {
             localStorage.setItem('isDocumentsPanelOpen', 1)
-            if (activePage.loadContent) {
-                activePage.loadContent()
-            }
+            loadTab(activePage)
         }
         else {
             localStorage.removeItem('isDocumentsPanelOpen')
@@ -802,10 +819,7 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
                 selectedCase = undefined
                 selectedCaseID = undefined
                 if (headerDocuments.classList.contains('hide')) {
-                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-                    if (activePage.loadContent) {
-                        activePage.loadContent()
-                    }
+                    loadTab(documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()])
                 }
             }
         }).catch(error => {
