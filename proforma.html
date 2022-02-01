@@ -65,8 +65,7 @@
             width: fit-content;
         }
 
-        section.patient {
-            align-items: center;
+        .patient {
             margin: 5pt 0 8pt 0;
             border: solid black;
             border-width: 2pt 0 2pt 0;
@@ -149,29 +148,30 @@
                 </section>
             </div>
             <div>
-                <i class="f9">To:SAVITAR GROUP LTD RUSSIA</i>
+                <i class="f9">To:{{insurance.name}}</i>
                 <i><br></i>
-                <i class="f9">Address:20, BUILDING 3, ENTRANCE 1,2, B.KARETNIY</i>
-                <i class="f9">B.KARETNIY</i>
-                <i class="f9">Tel:+74959871775 +74959871775</i>
-                <i>Fax:+74959871775</i>
-                <i>E-mail:svg@savitar-gr.com</i>
+                <i class="f9">Address:{{insurance.address}}</i>
+                <i class="f9">{{insurance.representative}}</i>
+                <i class="f9">Tel:{{insurance.phone}} {{insurance.phone2}}</i>
+                <i>E-mail:{{insurance.email}}</i>
             </div>
         </section>
         <b style="margin-top: 5pt;">Patient Details</b>
-        <section class="patient">
-            <div>
-                <i>Diagnosis: </i>
-                <i style="margin-top: 3pt;">Case Type: OUTPATIENT</i>
-                <i style="margin-top: 3pt;">Name Surname: SHKLIANKO LEANID</i>
-                <i>Ref. No: SGM-21-175266</i>
-                <i>Policy Number: MTA1801 113874845</i>
-            </div>
-            <div>
-                <i style="margin-top: 6pt;">Admission date:29.10.2021</i>
-                <i>Discharge date: 0</i>
-            </div>
-        </section>
+        <div class="patient">
+            <i>Diagnosis: {{case.diagnosis}}</i>
+            <section>
+                <div>
+                    <i style="margin-top: 3pt;">Case Type: {{case.patientStatus}}</i>
+                    <i style="margin-top: 3pt;">Name Surname: {{case.surnameName}}</i>
+                    <i>Ref. No: {{case.insuranceRefNo}}</i>
+                    <i>Policy Number: {{case.policyNo}}</i>
+                </div>
+                <div>
+                    <i style="margin-top: 6pt;">Admission date:29.10.2021</i>
+                    <i>Discharge date: 0</i>
+                </div>
+            </section>
+        </div>
         <table>
             <thead>
                 <th><b>Billable Act.</b></th>
@@ -204,15 +204,15 @@
         <section class="total">
             <div>
                 <p>TOTAL AMOUNT:</p>
-                <p>DISCOUNT %10:</p>
+                <p>DISCOUNT %{{discount_percent}}:</p>
                 <p>DEDUCTIBLE:</p>
                 <b>INVOICE TOTAL:</b>
             </div>
             <div>
-                <p>150,00 USD</p>
-                <p>15,00 USD</p>
-                <p>20,00 USD</p>
-                <b>115,00 USD</b>
+                <p>{{subtotal}}</p>
+                <p>{{discount}}</p>
+                <p>{{prepay}}</p>
+                <b>{{total}}</b>
             </div>
         </section>
         <footer>

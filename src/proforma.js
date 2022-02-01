@@ -1,5 +1,6 @@
 const proformaTabPage = document.querySelector('.tab-page#proforma')
 proformaTabPage.stopLoadingContent = () => {
+    selectedCaseSnap = undefined
     currentInsurance = undefined
     stopProformaCurrentQuery()
     stopProformaCurrentQuery = () => { }
@@ -20,69 +21,88 @@ let readFile, compile, templateProforma, puppeteer, browserPage
 
 const buttonPdf = proformaTabPage.querySelector('button#pdf')
 buttonPdf.icon = buttonPdf.getElementsByClassName('iconify')
-buttonPdf.onclick = () => {
+buttonPdf.onclick = async () => {
     buttonPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
-    if (templateProforma) {
-        openPuppeteer()
-    }
-    else {
+    if (!templateProforma) {
         if (!readFile) readFile = require('fs').readFile
-        readFile('proforma.html', 'utf8', (err, html) => {
+        await readFile('proforma.html', 'utf8', (err, html) => {
             if (err) throw err
 
             if (!compile) compile = require('handlebars').compile
             templateProforma = compile(html)
-            openPuppeteer()
         })
     }
-}
-
-function openPuppeteer() {
-    if (browserPage) {
-        printPageToPdf()
-    }
-    else {
+    if (!browserPage) {
         if (!puppeteer) puppeteer = require('puppeteer')
-        puppeteer.launch({
+        const browser = await puppeteer.launch({
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
             ]
-        }).then(browser => {
-            browser.newPage().then(page => {
-                browserPage = page
-                printPageToPdf()
-            })
+        })
+        await browser.newPage().then(page => {
+            browserPage = page
         })
     }
-}
+    if (selectedCaseID, currentInsurance, selectedCaseSnap) {
+        const caseData = []
 
-function printPageToPdf() {
-    if (selectedCaseID) {
+        if (Array.isArray(selectedCaseSnap.get('diagnosis'))) {
+            caseData['diagnosis'] = []
+            selectedCaseSnap.get('diagnosis').forEach(item => {
+                if (!icd10Codes) icd10Codes = require('./icd10_codes.json')
+                if (icd10Codes[item]) {
+                    caseData['diagnosis'].push(icd10Codes[item])
+                }
+                else {
+                    caseData['diagnosis'].push(item)
+                }
+            })
+        }
+
+        await selectedCaseSnap.get('patientStatus').get().then(value => {
+            caseData['patientStatus'] = value.get('name')
+        }).catch(error => {
+            console.error('Error getting patient status: ', error)
+        })
+
+        caseData['surnameName'] = selectedCaseSnap.get('surnameName')
+        caseData['insuranceRefNo'] = selectedCaseSnap.get('insuranceRefNo')
+        caseData['policyNo'] = selectedCaseSnap.get('policyNo')
+
+        const discount = inputDiscount.mask.unmaskedvalue()
         const data = {
             id: selectedCaseID,
-            date: new Date().toLocaleDateString('tr')
+            date: new Date().toLocaleDateString('tr'),
+            case: caseData,
+            insurance: currentInsurance.data(),
+            subtotal: textSubtotal.textContent,
+            discount_percent: discount,
+            discount: roundFloat(subtotal * (discount / 100)),
+            prepay: inputPrepay.mask.unmaskedvalue() + ' ' + selectCurrency.value,
+            total: textTotal.textContent,
         }
-        browserPage.setContent(templateProforma(data), {
+        console.log(data)
+        await browserPage.setContent(templateProforma(data), {
             waitUntil: 'networkidle0'
-        }).then(() => {
-            browserPage.pdf({ format: 'A4' }).then(pdf => {
-                buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
-                ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
-            })
+        })
+        await browserPage.pdf({ format: 'A4' }).then(pdf => {
+            ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
         })
     }
+    buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
 }
 
 let stopSelectedCaseQuery = () => { }
 let stopCurrentInsuranceQuery = () => { }
-let currentInsurance
+let currentInsurance, selectedCaseSnap
 
 function loadInsurance() {
     if (selectedCaseID) {
         stopSelectedCaseQuery()
         stopSelectedCaseQuery = allCases.doc(selectedCaseID).onSnapshot(
             snapshot => {
+                selectedCaseSnap = snapshot
                 if (snapshot.get('insurance') != currentInsurance) {
                     stopCurrentInsuranceQuery()
                     stopCurrentInsuranceQuery = snapshot.get('insurance').onSnapshot(
@@ -605,7 +625,7 @@ function calculateDialogActivitiesTotal(clickedActivity) {
     })
     buttonAddActivities.label.textContent = translate('ADD')
     if (total > 0) {
-        buttonAddActivities.label.textContent += ' (' + (Math.round(total * 100) / 100) + selectCurrency.value + ')'
+        buttonAddActivities.label.textContent += ' (' + roundFloat(total) + ')'
     }
     buttonAddActivities.disabled = total <= 0
 }
@@ -726,14 +746,16 @@ function calculateProformaSubtotal() {
             subtotal += price
         }
     }
-    textSubtotal.textContent = (Math.round(subtotal * 100) / 100) + ' ' + selectCurrency.value
+    textSubtotal.textContent = roundFloat(subtotal)
     calculateProformaTotal()
 }
 
 const inputDiscount = totalPanel.querySelector('input#discount')
 inputDiscount.oninput = calculateProformaTotal
+inputDiscount.onchange = () => { if (inputDiscount.value == '') inputDiscount.value = 0 }
 const inputPrepay = totalPanel.querySelector('input#prepay')
 inputPrepay.oninput = calculateProformaTotal
+inputPrepay.onchange = () => { if (inputPrepay.value == '') inputPrepay.value = 0 }
 inputPrepay.symbol = inputPrepay.nextElementSibling
 const textTotal = totalPanel.querySelector('h4#total')
 
@@ -749,5 +771,9 @@ function calculateProformaTotal() {
             total -= prepay
         }
     }
-    textTotal.textContent = (Math.round(total * 100) / 100) + ' ' + selectCurrency.value
+    textTotal.textContent = roundFloat(total)
+}
+
+function roundFloat(float, dontAddCurrency) {
+    return dontAddCurrency ? Math.round(float * 100) / 100 : (Math.round(float * 100) / 100) + ' ' + selectCurrency.value
 }

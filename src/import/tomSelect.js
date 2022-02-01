@@ -1,6 +1,7 @@
 const TomSelect = require('tom-select/dist/js/tom-select.base')
 let selectMenuQueries = []
 let selectMenus = []
+let icd10Codes
 
 function loadSelectMenus() {
     selectMenus = []
@@ -19,7 +20,7 @@ function loadSelectMenus() {
                 }
             }
             if (selectID == 'diagnosis') {
-                const icd10Codes = require('./icd10_codes.json')
+                if (!icd10Codes) icd10Codes = require('./icd10_codes.json')
 
                 settings.maxItems = 10
                 settings.create = true
