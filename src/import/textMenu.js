@@ -24,9 +24,9 @@ if (textContextMenu) {
     document.onmouseup = mouseEvent => {
         if (mouseEvent.detail == 2) {
             if (getSelectedText() != '') {
-                textContextMenu.style.left = mouseEvent.clientX + 'px'
-                textContextMenu.style.top = mouseEvent.clientY + 'px'
-                textContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
+                textContextMenu.style.left = mouseEvent.clientX + 2 + 'px'
+                textContextMenu.style.top = mouseEvent.clientY + 2 + 'px'
+                textContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX + 2, mouseEvent.clientY + 2)
                 textContextMenu.materialComponent.open = true
             }
         }

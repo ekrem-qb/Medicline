@@ -16,17 +16,62 @@ proformaTabPage.loadContent = () => {
     loadInsurance()
 }
 
-let generatePdf
+let readFile, compile, templateProforma, puppeteer, browserPage
 
 const buttonPdf = proformaTabPage.querySelector('button#pdf')
 buttonPdf.icon = buttonPdf.getElementsByClassName('iconify')
 buttonPdf.onclick = () => {
     buttonPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
-    if (!generatePdf) generatePdf = require('html-pdf-node').generatePdf
-    generatePdf({ content: proformaTable.outerHTML }, { format: 'A4' }).then(data => {
-        buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
-        ipcRenderer.send('save-file', 'Test.pdf', data)
-    })
+    if (templateProforma) {
+        openPuppeteer()
+    }
+    else {
+        if (!readFile) readFile = require('fs').readFile
+        readFile('proforma.html', 'utf8', (err, html) => {
+            if (err) throw err
+
+            if (!compile) compile = require('handlebars').compile
+            templateProforma = compile(html)
+            openPuppeteer()
+        })
+    }
+}
+
+function openPuppeteer() {
+    if (browserPage) {
+        printPageToPdf()
+    }
+    else {
+        if (!puppeteer) puppeteer = require('puppeteer')
+        puppeteer.launch({
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+            ]
+        }).then(browser => {
+            browser.newPage().then(page => {
+                browserPage = page
+                printPageToPdf()
+            })
+        })
+    }
+}
+
+function printPageToPdf() {
+    if (selectedCaseID) {
+        const data = {
+            id: selectedCaseID,
+            date: new Date().toLocaleDateString('tr')
+        }
+        browserPage.setContent(templateProforma(data), {
+            waitUntil: 'networkidle0'
+        }).then(() => {
+            browserPage.pdf({ format: 'A4' }).then(pdf => {
+                buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
+                ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
+            })
+        })
+    }
 }
 
 let stopSelectedCaseQuery = () => { }
