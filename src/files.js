@@ -80,6 +80,7 @@ let filesCurrentFilesSnap
 let stopFilesCurrentQuery = () => { }
 let currentFilesRefQueries = []
 let selectedFile, selectedFileRow, selectedFileID
+let attachPdf
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -94,7 +95,7 @@ firebase.auth().onAuthStateChanged(user => {
 
 const inputNewFile = filesTabPage.querySelector('input#newFile')
 inputNewFile.onchange = () => {
-    if (inputNewFile.value != '') {
+    if (inputNewFile.files[0]) {
         inputFileName.value = inputNewFile.files[0].name.slice(0, inputNewFile.files[0].name.lastIndexOf('.'))
         inputFileName.fileType = inputNewFile.files[0].name.slice(inputNewFile.files[0].name.lastIndexOf('.')).toLowerCase()
         inputFileName.focus()
@@ -105,7 +106,16 @@ inputNewFile.onchange = () => {
 const buttonUploadFile = filesTabPage.querySelector('button#uploadFile')
 buttonUploadFile.onclick = () => {
     if (filesCurrentQuery) {
-        inputNewFile.click()
+        if (attachPdf) {
+            inputFileName.value = attachPdf.name.slice(0, attachPdf.name.lastIndexOf('.'))
+            inputFileName.fileType = attachPdf.name.slice(attachPdf.name.lastIndexOf('.')).toLowerCase()
+            inputFileName.focus()
+            inputFileName.parentElement.parentElement.classList.remove('hide')
+            buttonUploadFile.classList.add('hide')
+        }
+        else {
+            inputNewFile.click()
+        }
     }
 }
 const inputFileName = filesTabPage.querySelector('input#fileName')
@@ -113,19 +123,20 @@ inputFileName.oninput = () => inputFileName.materialComponent.valid = inputFileN
 inputFileName.onchange = () => inputFileName.value = inputFileName.value.trim()
 const buttonDoneFile = filesTabPage.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
-    if (filesCurrentQuery && inputNewFile.value.trim() != '' && inputFileName.value.trim() != '') {
+    if (filesCurrentQuery && (attachPdf || inputNewFile.files[0]) && inputFileName.value.trim() != '') {
         filesCurrentQuery.add({
             name: inputFileName.value + inputFileName.fileType,
             createUser: allUsers.doc(firebase.auth().currentUser.uid),
             createDate: firebase.firestore.Timestamp.now()
         }).then(snapshot => {
-            storage.child(snapshot.parent.parent.id + '/' + snapshot.id + inputFileName.fileType).put(inputNewFile.files[0], { name: inputFileName.value + inputFileName.fileType }).on('state_changed',
+            storage.child(snapshot.parent.parent.id + '/' + snapshot.id + inputFileName.fileType).put(attachPdf || inputNewFile.files[0], { name: inputFileName.value + inputFileName.fileType }).on('state_changed',
                 (snapshot) => {
                     const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
                     console.log('Upload is ' + percent + '% done')
 
                     if (percent == 100) {
                         inputNewFile.value = ''
+                        attachPdf = undefined
                         inputFileName.parentElement.parentElement.classList.add('hide')
                         buttonUploadFile.classList.remove('hide')
                     }
@@ -142,6 +153,7 @@ buttonDoneFile.onclick = () => {
 const buttonCancelFile = filesTabPage.querySelector('button#cancelFile')
 buttonCancelFile.onclick = () => {
     inputNewFile.value = ''
+    attachPdf = undefined
     inputFileName.parentElement.parentElement.classList.add('hide')
     buttonUploadFile.classList.remove('hide')
 }

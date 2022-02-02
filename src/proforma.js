@@ -702,10 +702,7 @@ function roundFloat(float, dontAddCurrency) {
 
 let readFile, compile, templateProforma, puppeteer, browserPage
 
-const buttonExportPdf = proformaTabPage.querySelector('button#exportPdf')
-buttonExportPdf.icon = buttonExportPdf.getElementsByClassName('iconify')
-buttonExportPdf.onclick = async () => {
-    buttonExportPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+async function proformaToPdf(attach) {
     if (!templateProforma) {
         if (!readFile) readFile = require('fs').readFile
         await readFile('proforma.html', 'utf8', (err, html) => {
@@ -773,8 +770,31 @@ buttonExportPdf.onclick = async () => {
         console.log(data)
         await browserPage.setContent(templateProforma(data))
         await browserPage.pdf({ format: 'A4' }).then(pdf => {
-            ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
+            if (attach) {
+                attachPdf = pdf
+                attachPdf.name = 'Proforma ' + selectedCaseID + '.pdf'
+                tabBar.activateTab(tabBar.tabList.findIndex(tab => tab.id == 'files'))
+                buttonUploadFile.click()
+            }
+            else {
+                ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
+            }
         })
     }
+}
+
+const buttonExportPdf = proformaTabPage.querySelector('button#exportPdf')
+buttonExportPdf.icon = buttonExportPdf.getElementsByClassName('iconify')
+buttonExportPdf.onclick = async () => {
+    buttonExportPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    await proformaToPdf(false)
     buttonExportPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
+}
+
+const buttonAttachPdf = proformaTabPage.querySelector('button#attachPdf')
+buttonAttachPdf.icon = buttonAttachPdf.getElementsByClassName('iconify')
+buttonAttachPdf.onclick = async () => {
+    buttonAttachPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    await proformaToPdf(true)
+    buttonAttachPdf.icon[0].setAttribute('data-icon', 'ic:round-attach-file')
 }
