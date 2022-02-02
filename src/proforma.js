@@ -17,85 +17,6 @@ proformaTabPage.loadContent = () => {
     loadInsurance()
 }
 
-let readFile, compile, templateProforma, puppeteer, browserPage
-
-const buttonExportPdf = proformaTabPage.querySelector('button#exportPdf')
-buttonExportPdf.icon = buttonExportPdf.getElementsByClassName('iconify')
-buttonExportPdf.onclick = async () => {
-    buttonExportPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
-    if (!templateProforma) {
-        if (!readFile) readFile = require('fs').readFile
-        await readFile('proforma.html', 'utf8', (err, html) => {
-            if (err) throw err
-
-            if (!compile) compile = require('handlebars').compile
-            templateProforma = compile(html)
-        })
-    }
-    if (!browserPage) {
-        if (!puppeteer) puppeteer = require('puppeteer')
-        const browser = await puppeteer.launch()
-        await browser.pages().then(pages => {
-            browserPage = pages[0]
-        })
-    }
-    if (selectedCaseID, currentInsurance, selectedCaseSnap) {
-        const caseData = {}
-
-        if (Array.isArray(selectedCaseSnap.get('diagnosis'))) {
-            caseData.diagnosis = []
-            selectedCaseSnap.get('diagnosis').forEach(item => {
-                if (!icd10Codes) icd10Codes = require('./icd10_codes.json')
-                if (icd10Codes[item]) {
-                    caseData.diagnosis.push(icd10Codes[item])
-                }
-                else {
-                    caseData.diagnosis.push(item)
-                }
-            })
-        }
-
-        await selectedCaseSnap.get('patientStatus').get().then(value => {
-            caseData.patientStatus = value.get('name')
-        }).catch(error => {
-            console.error('Error getting patient status: ', error)
-        })
-
-        caseData.surnameName = selectedCaseSnap.get('surnameName')
-        caseData.insuranceRefNo = selectedCaseSnap.get('insuranceRefNo')
-        caseData.policyNo = selectedCaseSnap.get('policyNo')
-
-        const activities = []
-        for (const row of proformaList.rows) {
-            activities.push({
-                name: row.cells['name'].textContent,
-                quantity: row.cells['quantity'].textContent,
-                total: row.cells['total'].textContent,
-            })
-        }
-
-        const discount = inputDiscount.mask.unmaskedvalue()
-        const data = {
-            id: selectedCaseID,
-            date: new Date().toLocaleDateString('tr'),
-            case: caseData,
-            insurance: currentInsurance.data(),
-            activities: activities,
-            subtotal: textSubtotal.textContent,
-            discount_percent: discount,
-            discount: roundFloat(subtotal * (discount / 100)),
-            prepay: inputPrepay.mask.unmaskedvalue() + ' ' + selectCurrency.value,
-            total: textTotal.textContent,
-        }
-        console.log(data)
-        await browserPage.setContent(templateProforma(data))
-        await browserPage.pdf({ format: 'A4' }).then(pdf => {
-            ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
-        })
-    }
-    buttonExportPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
-}
-
 let stopSelectedCaseQuery = () => { }
 let stopCurrentInsuranceQuery = () => { }
 let currentInsurance, selectedCaseSnap
@@ -777,4 +698,83 @@ function calculateProformaTotal() {
 
 function roundFloat(float, dontAddCurrency) {
     return dontAddCurrency ? Math.round(float * 100) / 100 : (Math.round(float * 100) / 100) + ' ' + selectCurrency.value
+}
+
+let readFile, compile, templateProforma, puppeteer, browserPage
+
+const buttonExportPdf = proformaTabPage.querySelector('button#exportPdf')
+buttonExportPdf.icon = buttonExportPdf.getElementsByClassName('iconify')
+buttonExportPdf.onclick = async () => {
+    buttonExportPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    if (!templateProforma) {
+        if (!readFile) readFile = require('fs').readFile
+        await readFile('proforma.html', 'utf8', (err, html) => {
+            if (err) throw err
+
+            if (!compile) compile = require('handlebars').compile
+            templateProforma = compile(html)
+        })
+    }
+    if (!browserPage) {
+        if (!puppeteer) puppeteer = require('puppeteer')
+        const browser = await puppeteer.launch()
+        await browser.pages().then(pages => {
+            browserPage = pages[0]
+        })
+    }
+    if (selectedCaseID, currentInsurance, selectedCaseSnap) {
+        const caseData = {}
+
+        if (Array.isArray(selectedCaseSnap.get('diagnosis'))) {
+            caseData.diagnosis = []
+            selectedCaseSnap.get('diagnosis').forEach(item => {
+                if (!icd10Codes) icd10Codes = require('./icd10_codes.json')
+                if (icd10Codes[item]) {
+                    caseData.diagnosis.push(icd10Codes[item])
+                }
+                else {
+                    caseData.diagnosis.push(item)
+                }
+            })
+        }
+
+        await selectedCaseSnap.get('patientStatus').get().then(value => {
+            caseData.patientStatus = value.get('name')
+        }).catch(error => {
+            console.error('Error getting patient status: ', error)
+        })
+
+        caseData.surnameName = selectedCaseSnap.get('surnameName')
+        caseData.insuranceRefNo = selectedCaseSnap.get('insuranceRefNo')
+        caseData.policyNo = selectedCaseSnap.get('policyNo')
+
+        const activities = []
+        for (const row of proformaList.rows) {
+            activities.push({
+                name: row.cells['name'].textContent,
+                quantity: row.cells['quantity'].textContent,
+                total: row.cells['total'].textContent,
+            })
+        }
+
+        const discount = inputDiscount.mask.unmaskedvalue()
+        const data = {
+            id: selectedCaseID,
+            date: new Date().toLocaleDateString('tr'),
+            case: caseData,
+            insurance: currentInsurance.data(),
+            activities: activities,
+            subtotal: textSubtotal.textContent,
+            discount_percent: discount,
+            discount: roundFloat(subtotal * (discount / 100)),
+            prepay: inputPrepay.mask.unmaskedvalue() + ' ' + selectCurrency.value,
+            total: textTotal.textContent,
+        }
+        console.log(data)
+        await browserPage.setContent(templateProforma(data))
+        await browserPage.pdf({ format: 'A4' }).then(pdf => {
+            ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
+        })
+    }
+    buttonExportPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
 }
