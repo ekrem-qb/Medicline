@@ -32,7 +32,7 @@
                 <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                 <span class="mdc-button__label" translate>NEW#ACTIVITY</span>
             </button>
-            <div class="input-group input-group-sm w-25 ms-2">
+            <div class="input-group input-group-sm w-25">
                 <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                 <input type="text" class="form-control" id="search" placeholder="SEARCH">
                 <button class="btn" id="clearSearch" onclick="clearSearch()" disabled>
@@ -59,19 +59,19 @@
             </table>
         </div>
         <footer class="modal-footer">
-            <input type="file" id="excel" accept=".xlsx" hidden>
-            <button class="mdc-button mdc-button--outlined mdc-button--green w-50 me-1" id="import" disabled>
+            <button class="mdc-button mdc-button--outlined mdc-button--green w-50" id="import" disabled>
                 <div class="mdc-button__ripple"></div>
                 <i class="iconify mdc-button__icon" data-icon="mdi:table-arrow-left"></i>
                 <span class="mdc-button__label" translate>IMPORT</span>
             </button>
-            <button class="mdc-button mdc-button--outlined mdc-button--green w-50 ms-1" id="export" disabled>
+            <button class="mdc-button mdc-button--outlined mdc-button--green w-50" id="export" disabled>
                 <div class="mdc-button__ripple"></div>
                 <i class="iconify mdc-button__icon" data-icon="mdi:microsoft-excel"></i>
                 <span class="mdc-button__label" translate>EXPORT</span>
             </button>
         </footer>
     </div>
+    <input type="file" id="excel" accept=".xlsx" hidden>
     <div class="d-flex m-2" id="inlineEdit">
         <button class="mdc-button mdc-button--outlined mdc-button--red h-auto" id="cancelPrice">
             <div class="mdc-button__ripple"></div>

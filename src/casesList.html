@@ -21,7 +21,7 @@
                     <h5 class="modal-title" translate>FILTER</h5>
                     <i class="dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
                 </header>
-                <form class="modal-body collapsed hide row g-2 m-0 p-2" id="filter">
+                <form class="modal-body flex-row collapsed hide row g-2 m-0 p-2" id="filter">
                     <div class="col-md-12 collapsed">
                         <label class="form-label" translate>SURNAME_NAME</label>
                         <div class="input-group input-group-sm">
@@ -257,12 +257,12 @@
                     </div>
                 </form>
                 <footer class="modal-footer">
-                    <button class="mdc-button mdc-button--raised mdc-button--green flex-grow-1 me-1" onclick="applyFilter()">
+                    <button class="mdc-button mdc-button--raised mdc-button--green flex-grow-1" onclick="applyFilter()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
                         <span class="mdc-button__label" translate>APPLY</span>
                     </button>
-                    <button class="mdc-button mdc-button--outlined mdc-button--red flex-grow-1 ms-1" id="clearFilter" disabled>
+                    <button class="mdc-button mdc-button--outlined mdc-button--red flex-grow-1" id="clearFilter" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
                         <span class="mdc-button__label" translate>CLEAR</span>
@@ -277,12 +277,12 @@
                     <h3 class="my-2" hidden></h3>
                 </div>
                 <header class="modal-header">
-                    <button class="mdc-button mdc-button--raised mdc-button--green w-25 me-1" id="create" disabled>
+                    <button class="mdc-button mdc-button--raised mdc-button--green w-25" id="create" disabled>
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
                         <span class="mdc-button__label" translate>NEW#CASE</span>
                     </button>
-                    <div class="input-group input-group-sm w-75 ms-1">
+                    <div class="input-group input-group-sm w-75">
                         <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                         <input type="text" class="form-control" id="search" placeholder="SEARCH">
                         <button class="btn" id="clearSearch" onclick="clearSearch()" disabled>
@@ -304,8 +304,8 @@
                         <tbody id="casesList"></tbody>
                     </table>
                 </div>
-                <footer class="modal-footer flex-column">
-                    <button class="mdc-button mdc-button--outlined mdc-button--green" onclick="exportToExcel()">
+                <footer class="modal-footer">
+                    <button class="mdc-button mdc-button--outlined mdc-button--green w-100" onclick="exportToExcel()">
                         <div class="mdc-button__ripple"></div>
                         <i class="mdc-button__icon iconify" data-icon="mdi:microsoft-excel"></i>
                         <span class="mdc-button__label" translate>EXPORT</span>
@@ -330,7 +330,7 @@
         <div class="mdc-tab-scroller">
             <div class="mdc-tab-scroller__scroll-area">
                 <div class="mdc-tab-scroller__scroll-content">
-                    <button class="mdc-tab mdc-tab--active" role="tab" tabindex="0">
+                    <button class="mdc-tab mdc-tab--active" role="tab" tabindex="0" id="proforma">
                         <span class="mdc-tab__content">
                             <span class="mdc-tab__text-label">Proforma</span>
                         </span>
@@ -339,7 +339,7 @@
                         </span>
                         <span class="mdc-tab__ripple"></span>
                     </button>
-                    <button class="mdc-tab" role="tab" tabindex="0">
+                    <button class="mdc-tab" role="tab" tabindex="0" id="files">
                         <span class="mdc-tab__content">
                             <span class="mdc-tab__text-label" translate>FILES</span>
                         </span>
@@ -358,7 +358,7 @@
     <header class="modal-header mdc-ripple-surface justify-content-center" id="documents" onclick="modalExpand(this)">
         <i class="dropdown-icon iconify ms-2" data-icon="ic:round-keyboard-arrow-up"></i>
     </header>
-    <div class="modal-body collapsed h-75 p-0">
+    <div class="modal-body collapsed h-75">
         <div class="tab-page flex-row show" id="proforma">
             <div class="d-flex flex-column w-75">
                 <header class="modal-header">
@@ -368,24 +368,38 @@
                         <span class="mdc-button__label" translate>NEW#ACTIVITY</span>
                     </button>
                 </header>
-                <div class="table-responsive h-100">
-                    <table class="table table-borderless border-bottom">
-                        <thead>
-                            <tr id="proformaHeadersList"></tr>
-                            <template id="proformaHeaderTemplate">
-                                <th class="mdc-ripple-surface">
-                                    <label></label>
-                                    <i class="iconify" data-icon="ic:round-unfold-more"></i>
-                                </th>
-                            </template>
-                        </thead>
-                        <tbody id="proformaList"></tbody>
-                    </table>
+                <section class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-borderless border-bottom">
+                            <thead>
+                                <tr id="proformaHeadersList"></tr>
+                                <template id="proformaHeaderTemplate">
+                                    <th class="mdc-ripple-surface">
+                                        <label></label>
+                                        <i class="iconify" data-icon="ic:round-unfold-more"></i>
+                                    </th>
+                                </template>
+                            </thead>
+                            <tbody id="proformaList"></tbody>
+                        </table>
+                    </div>
                     <div class="overlay top-0 h-100">
                         <i class="iconify" data-icon="eos-icons:loading"></i>
                         <h3 class="my-2" hidden></h3>
                     </div>
-                </div>
+                    <footer class="modal-footer">
+                        <button class="mdc-button mdc-button--outlined mdc-button--green w-50" id="attachPdf">
+                            <div class="mdc-button__ripple"></div>
+                            <i class="mdc-button__icon iconify" data-icon="ic:round-attach-file"></i>
+                            <span class="mdc-button__label" translate>ATTACH_PDF</span>
+                        </button>
+                        <button class="mdc-button mdc-button--outlined mdc-button--green w-50" id="exportPdf">
+                            <div class="mdc-button__ripple"></div>
+                            <i class="mdc-button__icon iconify" data-icon="mdi:file-pdf"></i>
+                            <span class="mdc-button__label" translate>EXPORT_PDF</span>
+                        </button>
+                    </footer>
+                </section>
                 <div class="mdc-menu mdc-menu-surface" id="proformaContextMenu">
                     <ul class="mdc-list">
                         <li class="mdc-list-item mdc-list-item--disabled" id="delete">
@@ -459,13 +473,6 @@
                 <div>
                     <h4 translate>TOTAL:</h4>
                     <h4 id="total">0 ₺</h4>
-                </div>
-                <div>
-                    <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="pdf" disabled>
-                        <div class="mdc-button__ripple"></div>
-                        <i class="mdc-button__icon iconify" data-icon="mdi:file-pdf"></i>
-                        <span class="mdc-button__label" translate>PDF</span>
-                    </button>
                 </div>
             </div>
             <div class="mdc-dialog mdc-dialog--scrollable" id="dialogAddActivity">
@@ -546,7 +553,7 @@
             </div>
         </div>
         <div class="tab-page" id="files">
-            <li class="modal-header position-relative">
+            <header class="modal-header">
                 <input type="file" id="newFile" hidden>
                 <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="uploadFile" disabled>
                     <div class="mdc-button__ripple"></div>
@@ -572,25 +579,27 @@
                         <span class="mdc-button__label" translate>CANCEL</span>
                     </button>
                 </div>
-            </li>
-            <div class="table-responsive h-100">
-                <table class="table table-borderless border-bottom">
-                    <thead>
-                        <tr id="filesHeadersList"></tr>
-                        <template id="filesHeaderTemplate">
-                            <th class="mdc-ripple-surface">
-                                <label></label>
-                                <i class="iconify" data-icon="ic:round-unfold-more"></i>
-                            </th>
-                        </template>
-                    </thead>
-                    <tbody id="filesList"></tbody>
-                </table>
+            </header>
+            <section class="modal-body">
+                <div class="table-responsive h-100">
+                    <table class="table table-borderless border-bottom">
+                        <thead>
+                            <tr id="filesHeadersList"></tr>
+                            <template id="filesHeaderTemplate">
+                                <th class="mdc-ripple-surface">
+                                    <label></label>
+                                    <i class="iconify" data-icon="ic:round-unfold-more"></i>
+                                </th>
+                            </template>
+                        </thead>
+                        <tbody id="filesList"></tbody>
+                    </table>
+                </div>
                 <div class="overlay top-0 h-100">
                     <i class="iconify" data-icon="eos-icons:loading"></i>
                     <h3 class="my-2" hidden></h3>
                 </div>
-            </div>
+            </section>
             <input type="file" id="replaceFile" hidden>
             <div id="inlineEdit" class="mdc-elevation--z6">
                 <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">

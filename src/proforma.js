@@ -19,10 +19,10 @@ proformaTabPage.loadContent = () => {
 
 let readFile, compile, templateProforma, puppeteer, browserPage
 
-const buttonPdf = proformaTabPage.querySelector('button#pdf')
-buttonPdf.icon = buttonPdf.getElementsByClassName('iconify')
-buttonPdf.onclick = async () => {
-    buttonPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+const buttonExportPdf = proformaTabPage.querySelector('button#exportPdf')
+buttonExportPdf.icon = buttonExportPdf.getElementsByClassName('iconify')
+buttonExportPdf.onclick = async () => {
+    buttonExportPdf.icon[0].setAttribute('data-icon', 'eos-icons:loading')
     if (!templateProforma) {
         if (!readFile) readFile = require('fs').readFile
         await readFile('proforma.html', 'utf8', (err, html) => {
@@ -93,7 +93,7 @@ buttonPdf.onclick = async () => {
             ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
         })
     }
-    buttonPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
+    buttonExportPdf.icon[0].setAttribute('data-icon', 'mdi:file-pdf')
 }
 
 let stopSelectedCaseQuery = () => { }
@@ -416,7 +416,6 @@ function orderProforma(orderBy, orderDirection) {
 }
 
 function setProformaOverlayState(state) {
-    buttonPdf.disabled = true
     switch (state) {
         case 'loading':
             proformaOverlay.classList.remove('hide')
@@ -433,7 +432,6 @@ function setProformaOverlayState(state) {
             break
         case 'hide':
             proformaOverlay.classList.add('hide')
-            buttonPdf.disabled = false
             break
     }
 }

@@ -474,6 +474,9 @@ thead>tr {
 }
 
 .modal-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
   overflow: auto;
   transition: var(--transition);
   will-change: contents;
@@ -520,6 +523,7 @@ label {
 }
 
 .modal-header {
+  position: relative;
   z-index: 2;
   transition: var(--transition);
 }
@@ -533,6 +537,11 @@ label {
 
 .modal-footer>* {
   margin: 0;
+}
+
+.modal-header>*:first-child+*:last-child,
+.modal-footer>*:first-child+*:last-child {
+  margin-left: .5rem;
 }
 
 .my-1-5px {
