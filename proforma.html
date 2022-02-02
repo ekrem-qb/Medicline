@@ -17,7 +17,7 @@
             flex-direction: column;
             align-items: center;
             height: 100vh;
-            font-size: 8pt;
+            font-size: 9pt;
         }
 
         .container {
@@ -47,10 +47,6 @@
             font-size: 10pt;
         }
 
-        .f9 {
-            font-size: 9pt;
-        }
-
         section {
             display: flex;
             justify-content: space-between;
@@ -70,6 +66,10 @@
             border: solid black;
             border-width: 2pt 0 2pt 0;
             padding: 5pt 0 5pt 0;
+        }
+
+        .patient>section {
+            align-items: flex-end;
         }
 
         table {
@@ -148,11 +148,11 @@
                 </section>
             </div>
             <div>
-                <i class="f9">To:{{insurance.name}}</i>
+                <i>To:{{insurance.name}}</i>
                 <i><br></i>
-                <i class="f9">Address:{{insurance.address}}</i>
-                <i class="f9">{{insurance.representative}}</i>
-                <i class="f9">Tel:{{insurance.phone}} {{insurance.phone2}}</i>
+                <i>Address:{{insurance.address}}</i>
+                <i>{{insurance.representative}}</i>
+                <i>Tel:{{insurance.phone}} {{insurance.phone2}}</i>
                 <i>E-mail:{{insurance.email}}</i>
             </div>
         </section>
@@ -167,8 +167,8 @@
                     <i>Policy Number: {{case.policyNo}}</i>
                 </div>
                 <div>
-                    <i style="margin-top: 6pt;">Admission date:29.10.2021</i>
-                    <i>Discharge date: 0</i>
+                    <i>Admission date:29.10.2021</i>
+                    <i style="margin-bottom: 10pt;">Discharge date: 0</i>
                 </div>
             </section>
         </div>
@@ -179,26 +179,13 @@
                 <th><b>Amount</b></th>
             </thead>
             <tbody>
+                {{#each activities}}
                 <tr>
-                    <td>HEPARIN COFACTOR II</td>
-                    <td>1,00</td>
-                    <td>20,00 USD</td>
+                    <td>{{name}}</td>
+                    <td>{{quantity}}</td>
+                    <td>{{total}}</td>
                 </tr>
-                <tr>
-                    <td>HEMOGLOBIN CHAIN ANALYSIS (HPLC)</td>
-                    <td>1,00</td>
-                    <td>60,00 USD</td>
-                </tr>
-                <tr>
-                    <td>HB S</td>
-                    <td>1,00</td>
-                    <td>30,00 USD</td>
-                </tr>
-                <tr>
-                    <td>FIBRONECTIN</td>
-                    <td>1,00</td>
-                    <td>40,00 USD</td>
-                </tr>
+                {{/each}}
             </tbody>
         </table>
         <section class="total">

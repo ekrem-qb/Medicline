@@ -34,41 +34,45 @@ buttonPdf.onclick = async () => {
     }
     if (!browserPage) {
         if (!puppeteer) puppeteer = require('puppeteer')
-        const browser = await puppeteer.launch({
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-            ]
-        })
-        await browser.newPage().then(page => {
-            browserPage = page
+        const browser = await puppeteer.launch()
+        await browser.pages().then(pages => {
+            browserPage = pages[0]
         })
     }
     if (selectedCaseID, currentInsurance, selectedCaseSnap) {
-        const caseData = []
+        const caseData = {}
 
         if (Array.isArray(selectedCaseSnap.get('diagnosis'))) {
-            caseData['diagnosis'] = []
+            caseData.diagnosis = []
             selectedCaseSnap.get('diagnosis').forEach(item => {
                 if (!icd10Codes) icd10Codes = require('./icd10_codes.json')
                 if (icd10Codes[item]) {
-                    caseData['diagnosis'].push(icd10Codes[item])
+                    caseData.diagnosis.push(icd10Codes[item])
                 }
                 else {
-                    caseData['diagnosis'].push(item)
+                    caseData.diagnosis.push(item)
                 }
             })
         }
 
         await selectedCaseSnap.get('patientStatus').get().then(value => {
-            caseData['patientStatus'] = value.get('name')
+            caseData.patientStatus = value.get('name')
         }).catch(error => {
             console.error('Error getting patient status: ', error)
         })
 
-        caseData['surnameName'] = selectedCaseSnap.get('surnameName')
-        caseData['insuranceRefNo'] = selectedCaseSnap.get('insuranceRefNo')
-        caseData['policyNo'] = selectedCaseSnap.get('policyNo')
+        caseData.surnameName = selectedCaseSnap.get('surnameName')
+        caseData.insuranceRefNo = selectedCaseSnap.get('insuranceRefNo')
+        caseData.policyNo = selectedCaseSnap.get('policyNo')
+
+        const activities = []
+        for (const row of proformaList.rows) {
+            activities.push({
+                name: row.cells['name'].textContent,
+                quantity: row.cells['quantity'].textContent,
+                total: row.cells['total'].textContent,
+            })
+        }
 
         const discount = inputDiscount.mask.unmaskedvalue()
         const data = {
@@ -76,6 +80,7 @@ buttonPdf.onclick = async () => {
             date: new Date().toLocaleDateString('tr'),
             case: caseData,
             insurance: currentInsurance.data(),
+            activities: activities,
             subtotal: textSubtotal.textContent,
             discount_percent: discount,
             discount: roundFloat(subtotal * (discount / 100)),
@@ -83,9 +88,7 @@ buttonPdf.onclick = async () => {
             total: textTotal.textContent,
         }
         console.log(data)
-        await browserPage.setContent(templateProforma(data), {
-            waitUntil: 'networkidle0'
-        })
+        await browserPage.setContent(templateProforma(data))
         await browserPage.pdf({ format: 'A4' }).then(pdf => {
             ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
         })
