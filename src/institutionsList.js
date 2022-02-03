@@ -116,7 +116,7 @@ let foundInstitutions
 let currentInstitutionsSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
-let selectedInstitution, selectedInstitutionRow, selectedInstitutionID
+let selectedInstitution, selectedInstitutionRow
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -308,17 +308,14 @@ function listInstitutions(snap) {
                 tr.id = institutionSnap.id
                 tr.ondblclick = () => {
                     if (getSelectedText() == '') {
-                        ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+                        ipcRenderer.send('new-window', 'institution', selectedInstitution.id, selectInstitutionType.value)
                     }
                 }
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (selectedInstitutionID != institutionSnap.id) {
-                            if (selectedInstitutionRow) {
-                                selectedInstitutionRow.classList.remove('selected')
-                            }
-                            selectedInstitution = currentQuery.doc(institutionSnap.id)
-                            selectedInstitutionID = institutionSnap.id
+                        if (selectedInstitution?.id != institutionSnap.id) {
+                            selectedInstitutionRow?.classList.remove('selected')
+                            selectedInstitution = institutionSnap.ref
                             selectedInstitutionRow = tr
                             selectedInstitutionRow.classList.add('selected')
                         }
@@ -333,11 +330,6 @@ function listInstitutions(snap) {
                         tableRowContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                         tableRowContextMenu.materialComponent.open = true
                     }
-                }
-                if (tr.id == selectedInstitutionID) {
-                    selectedInstitution = currentQuery.doc(selectedInstitutionID)
-                    selectedInstitutionRow = tr
-                    selectedInstitutionRow.classList.add('selected')
                 }
                 institutionsList.appendChild(tr)
 
@@ -382,6 +374,15 @@ function listInstitutions(snap) {
                 }
             }
         })
+        if (institutionsList.children.namedItem(selectedInstitution?.id)) {
+            selectedInstitutionRow = institutionsList.children.namedItem(selectedInstitution.id)
+            selectedInstitutionRow.classList.add('selected')
+        }
+        else {
+            selectedInstitution = undefined
+            selectedInstitutionRow = undefined
+            dialogDeleteInstitution.materialComponent.close()
+        }
         orderInstitutions(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
@@ -441,13 +442,11 @@ function setOverlayState(state) {
     switch (state) {
         case 'loading':
             institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.remove('show-headers')
             institutionsOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             institutionsOverlayText.hidden = true
             break
         case 'empty':
             institutionsOverlay.classList.remove('hide')
-            institutionsOverlay.classList.remove('show-headers')
             institutionsOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             institutionsOverlayText.hidden = false
             institutionsOverlayText.innerText = translate('INSTITUTIONS') + ' ' + translate('NOT_FOUND')
@@ -472,12 +471,12 @@ const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
 tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
 tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
-tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitutionID, selectInstitutionType.value)
+tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'institution', selectedInstitution.id, selectInstitutionType.value)
 tableRowContextMenu.pricesOption = tableRowContextMenu.children[0].children['prices']
-tableRowContextMenu.pricesOption.onclick = () => { ipcRenderer.send('new-window', 'priceList', selectedInstitutionID) }
+tableRowContextMenu.pricesOption.onclick = () => { ipcRenderer.send('new-window', 'priceList', selectedInstitution.id) }
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => {
-    const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitutionID))
+    const filteredCases = allCases.where(selectInstitutionType.value, '==', db.doc(selectInstitutionType.value + '/' + selectedInstitution.id))
 
     stopFilteredCasesQuery()
     stopFilteredCasesQuery = filteredCases.onSnapshot(
@@ -550,10 +549,6 @@ dialogDeleteInstitution.materialComponent.listen('MDCDialog:closed', event => {
             })
         }
         institutionRef.delete().then(() => {
-            if (institutionRef == selectedInstitution) {
-                selectedInstitution = undefined
-                selectedInstitutionID = undefined
-            }
         }).catch(error => {
             console.error('Error removing institution: ', error)
         })

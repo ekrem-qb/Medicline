@@ -131,7 +131,7 @@ let foundPrices
 let currentPricesSnap
 let stopPricesQuery = () => { }
 let currentRefQueries = []
-let selectedPrice, selectedPriceRow, selectedPriceID
+let selectedPrice, selectedPriceRow
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -398,12 +398,9 @@ function listPrices(snap) {
                 tr.id = priceSnap.id
                 tr.onmousedown = mouseEvent => {
                     if (mouseEvent.button != 1) {
-                        if (selectedPriceID != priceSnap.id) {
-                            if (selectedPriceRow) {
-                                selectedPriceRow.classList.remove('selected')
-                            }
-                            selectedPrice = allPrices.doc(priceSnap.id)
-                            selectedPriceID = priceSnap.id
+                        if (selectedPrice?.id != priceSnap.id) {
+                            selectedPriceRow?.classList.remove('selected')
+                            selectedPrice = priceSnap.ref
                             selectedPriceRow = tr
                             selectedPriceRow.classList.add('selected')
                         }
@@ -417,11 +414,6 @@ function listPrices(snap) {
                         tableRowContextMenu.materialComponent.open = true
                     }
                 }
-                if (tr.id == selectedPriceID) {
-                    selectedPrice = allPrices.doc(selectedPriceID)
-                    selectedPriceRow = tr
-                    selectedPriceRow.classList.add('selected')
-                }
                 priceList.appendChild(tr)
 
                 for (const column of tableHeadersList.children) {
@@ -434,7 +426,7 @@ function listPrices(snap) {
                             inputPrice.value = parseFloat(tr.children['price'].textContent)
                             selectCurrency.value = tr.children['price'].textContent[tr.children['price'].textContent.length - 1]
                             tr.classList.add('hide')
-                            inlineEdit.show(tr, selectedPriceID, tr.children['name'].textContent)
+                            inlineEdit.show(tr, selectedPrice.id, tr.children['name'].textContent)
 
                             if (td.id == 'price') {
                                 inputPrice.focus()
@@ -461,6 +453,16 @@ function listPrices(snap) {
                 }
             }
         })
+        if (priceList.children.namedItem(selectedPrice?.id)) {
+            selectedPriceRow = priceList.children.namedItem(selectedPrice.id)
+            selectedPriceRow.classList.add('selected')
+        }
+        else {
+            selectedPrice = undefined
+            selectedPriceRow = undefined
+            dialogDeletePrice.close()
+            buttonCancel.click()
+        }
         orderPrices(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
@@ -522,13 +524,11 @@ function setOverlayState(state) {
     switch (state) {
         case 'loading':
             pricesOverlay.classList.remove('hide')
-            pricesOverlay.classList.remove('show-headers')
             pricesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             pricesOverlayText.hidden = true
             break
         case 'empty':
             pricesOverlay.classList.remove('hide')
-            pricesOverlay.classList.remove('show-headers')
             pricesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             pricesOverlayText.hidden = false
             pricesOverlayText.innerText = translate('ACTIVITIES') + ' ' + translate('NOT_FOUND')
@@ -550,15 +550,13 @@ tableRowContextMenu.editOption.onclick = () => {
     inputPrice.value = parseFloat(selectedPriceRow.children['price'].textContent)
     selectCurrency.value = selectedPriceRow.children['price'].textContent[selectedPriceRow.children['price'].textContent.length - 1]
     selectedPriceRow.classList.add('hide')
-    inlineEdit.show(selectedPriceRow, selectedPriceID, selectedPriceRow.children['name'].textContent)
+    inlineEdit.show(selectedPriceRow, selectedPrice.id, selectedPriceRow.children['name'].textContent)
 }
 const dialogDeletePrice = document.querySelector('#dialogDeletePrice').materialComponent
 
 dialogDeletePrice.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         selectedPrice.delete().then(() => {
-            selectedPrice = undefined
-            selectedPriceID = undefined
         }).catch(error => {
             console.error('Error removing price: ', error)
         })

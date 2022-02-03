@@ -5,6 +5,7 @@ filesTabPage.stopLoadingContent = () => {
     filesCurrentQuery = undefined
     currentFilesRefQueries.forEach(stopRefQuery => stopRefQuery())
     currentFilesRefQueries = []
+    dialogDeleteFile.materialComponent.close()
 }
 filesTabPage.loadContent = () => {
     filesTabPage.stopLoadingContent()
@@ -79,7 +80,7 @@ let filesCurrentQuery
 let filesCurrentFilesSnap
 let stopFilesCurrentQuery = () => { }
 let currentFilesRefQueries = []
-let selectedFile, selectedFileRow, selectedFileID
+let selectedFile, selectedFileRow
 let attachPdf
 
 firebase.auth().onAuthStateChanged(user => {
@@ -211,12 +212,6 @@ function loadFiles() {
             }
         )
     }
-    else {
-        stopFilesCurrentQuery()
-        stopFilesCurrentQuery = () => { }
-        filesCurrentQuery = undefined
-        setFilesOverlayState('empty')
-    }
 }
 
 function listFiles(snap) {
@@ -231,12 +226,9 @@ function listFiles(snap) {
             tr.id = fileSnap.id
             tr.onmousedown = mouseEvent => {
                 if (mouseEvent.button != 1) {
-                    if (selectedFileID != fileSnap.id) {
-                        if (selectedFileRow) {
-                            selectedFileRow.classList.remove('selected')
-                        }
-                        selectedFile = filesCurrentQuery.doc(fileSnap.id)
-                        selectedFileID = fileSnap.id
+                    if (selectedFile?.id != fileSnap.id) {
+                        selectedFileRow?.classList.remove('selected')
+                        selectedFile = fileSnap.ref
                         selectedFileRow = tr
                         selectedFileRow.classList.add('selected')
                     }
@@ -249,11 +241,6 @@ function listFiles(snap) {
                     filesContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                     filesContextMenu.materialComponent.open = true
                 }
-            }
-            if (tr.id == selectedFileID) {
-                selectedFile = filesCurrentQuery.doc(selectedFileID)
-                selectedFileRow = tr
-                selectedFileRow.classList.add('selected')
             }
             filesList.appendChild(tr)
 
@@ -299,6 +286,15 @@ function listFiles(snap) {
                 }
             }
         })
+        if (filesList.children.namedItem(selectedFile?.id)) {
+            selectedFileRow = filesList.children.namedItem(selectedFile.id)
+            selectedFileRow.classList.add('selected')
+        }
+        else {
+            selectedFile = undefined
+            selectedFileRow = undefined
+            dialogDeleteFile.materialComponent.close()
+        }
         orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
     }
     else {
@@ -354,13 +350,11 @@ function setFilesOverlayState(state) {
     switch (state) {
         case 'loading':
             filesOverlay.classList.remove('hide')
-            filesOverlay.classList.remove('show-headers')
             filesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             filesOverlayText.hidden = true
             break
         case 'empty':
             filesOverlay.classList.remove('hide')
-            filesOverlay.classList.remove('show-headers')
             filesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             filesOverlayText.hidden = false
             filesOverlayText.innerText = translate('FILES') + ' ' + translate('NOT_FOUND')
@@ -373,10 +367,10 @@ function setFilesOverlayState(state) {
 
 const inputReplaceFile = filesTabPage.querySelector('input#replaceFile')
 inputReplaceFile.onchange = () => {
-    if (inputReplaceFile.value != '' && selectedCaseID && selectedFileID) {
+    if (inputReplaceFile.value != '' && selectedCase && selectedFile) {
         if (inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase() == inputReplaceFile.accept) {
-            storage.child(selectedCaseID + '/' + selectedFileID + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()).put(inputReplaceFile.files[0], {
-                name: selectedCaseID + '/' + selectedFileID + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()
+            storage.child(selectedCase.id + '/' + selectedFile.id + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()).put(inputReplaceFile.files[0], {
+                name: selectedCase.id + '/' + selectedFile.id + inputReplaceFile.files[0].name.slice(inputReplaceFile.files[0].name.lastIndexOf('.')).toLowerCase()
             }).on('state_changed',
                 (snapshot) => {
                     const percent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
@@ -412,9 +406,9 @@ inputReplaceFile.onchange = () => {
 const filesContextMenu = document.getElementById('filesContextMenu')
 filesContextMenu.downloadOption = filesContextMenu.children[0].children['download']
 filesContextMenu.downloadOption.onclick = () => {
-    if (selectedCaseID && selectedFileRow) {
+    if (selectedCase && selectedFileRow) {
         const fileName = selectedFileRow.children['name'].textContent
-        storage.child(selectedCaseID + '/' + selectedFileID + fileName.slice(fileName.lastIndexOf('.')).toLowerCase()).getDownloadURL().then(url => {
+        storage.child(selectedCase.id + '/' + selectedFile.id + fileName.slice(fileName.lastIndexOf('.')).toLowerCase()).getDownloadURL().then(url => {
             ipcRenderer.send('download', url, fileName)
         }).catch(error => {
             console.error('Error downloading file: ', error)
@@ -440,19 +434,15 @@ filesContextMenu.deleteOption.onclick = () => dialogDeleteFile.materialComponent
 const dialogDeleteFile = filesTabPage.querySelector('#dialogDeleteFile')
 dialogDeleteFile.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        if (selectedCaseID && selectedFileRow) {
-            storage.child(selectedCaseID + '/' + selectedFileID + selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase()).delete().then(() => {
+        if (selectedCase && selectedFileRow) {
+            storage.child(selectedCase.id + '/' + selectedFile.id + selectedFileRow.children['name'].textContent.slice(selectedFileRow.children['name'].textContent.lastIndexOf('.')).toLowerCase()).delete().then(() => {
                 selectedFile.delete().then(() => {
-                    selectedFile = undefined
-                    selectedFileID = undefined
                 }).catch(error => {
                     console.error('Error removing file from firestore: ', error)
                 })
             }).catch(error => {
                 if (error.code == 'storage/object-not-found') {
                     selectedFile.delete().then(() => {
-                        selectedFile = undefined
-                        selectedFileID = undefined
                     }).catch(error => {
                         console.error('Error removing file from firestore: ', error)
                     })

@@ -127,7 +127,7 @@ let foundCases
 let currentCasesSnap
 let stopCurrentQuery = () => { }
 let currentRefQueries = []
-let selectedCase, selectedCaseRow, selectedCaseID
+let selectedCase, selectedCaseRow
 let filters = {}
 
 formFilter.querySelector('#createDate-min').value = new Date().toLocaleDateString('tr')
@@ -389,14 +389,12 @@ function listCases(snap) {
                     }
                     tr.onmousedown = mouseEvent => {
                         if (mouseEvent.button != 1) {
-                            if (selectedCaseID != caseSnap.id) {
-                                if (selectedCaseRow) {
-                                    selectedCaseRow.classList.remove('selected')
-                                }
-                                selectedCase = allCases.doc(caseSnap.id)
-                                selectedCaseID = caseSnap.id
+                            if (selectedCase?.id != caseSnap.id) {
+                                selectedCaseRow?.classList.remove('selected')
+                                selectedCase = caseSnap.ref
                                 selectedCaseRow = tr
                                 selectedCaseRow.classList.add('selected')
+                                tabsOverlay.classList.add('hide')
                                 if (headerDocuments.classList.contains('hide')) {
                                     loadTab(documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()])
                                 }
@@ -410,11 +408,6 @@ function listCases(snap) {
                             tableRowContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                             tableRowContextMenu.materialComponent.open = true
                         }
-                    }
-                    if (tr.id == selectedCaseID) {
-                        selectedCase = allCases.doc(selectedCaseID)
-                        selectedCaseRow = tr
-                        selectedCaseRow.classList.add('selected')
                     }
                     casesList.appendChild(tr)
 
@@ -473,6 +466,22 @@ function listCases(snap) {
                 }
             }
         })
+        if (casesList.children.namedItem(selectedCase?.id)) {
+            selectedCaseRow = casesList.children.namedItem(selectedCase.id)
+            selectedCaseRow.classList.add('selected')
+        }
+        else {
+            selectedCase = undefined
+            selectedCaseRow = undefined
+            dialogDeleteCase.materialComponent.close()
+            tabsOverlay.classList.remove('hide')
+            if (headerDocuments.classList.contains('hide')) {
+                const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+                if (activePage.stopLoadingContent) {
+                    activePage.stopLoadingContent()
+                }
+            }
+        }
         orderCases(currentOrder, currentOrderDirection)
 
         if (noOneFound) {
@@ -532,13 +541,11 @@ function setOverlayState(state) {
     switch (state) {
         case 'loading':
             casesOverlay.classList.remove('hide')
-            casesOverlay.classList.remove('show-headers')
             casesOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             casesOverlayText.hidden = true
             break
         case 'empty':
             casesOverlay.classList.remove('hide')
-            casesOverlay.classList.remove('show-headers')
             casesOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             casesOverlayText.hidden = false
             casesOverlayText.innerText = translate('CASES') + ' ' + translate('NOT_FOUND')
@@ -598,24 +605,27 @@ const headerDocuments = document.querySelector('header#documents')
 
 const tabBar = headerDocuments.previousElementSibling.materialComponent
 const documentsContent = headerDocuments.nextElementSibling
+const tabsOverlay = documentsContent.querySelector('#tabsOverlay')
 
 function loadTab(page) {
-    if (page.loadContent) {
-        page.loadContent()
-    }
-    else {
-        const script = document.createElement('script')
-        script.type = 'text/javascript'
-        script.src = page.id + '.js'
-        document.head.appendChild(script)
-        script.onload = () => {
-            toggleEditMode(haveEditPermission)
-            if (page.loadContent) {
-                page.loadContent()
-            }
+    if (tabsOverlay.classList.contains('hide')) {
+        if (page.loadContent) {
+            page.loadContent()
         }
-        script.onerror = () => {
-            page.loadContent = () => { }
+        else {
+            const script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.src = page.id + '.js'
+            document.head.appendChild(script)
+            script.onload = () => {
+                toggleEditMode(haveEditPermission)
+                if (page.loadContent) {
+                    page.loadContent()
+                }
+            }
+            script.onerror = () => {
+                page.loadContent = () => { }
+            }
         }
     }
 }
@@ -782,7 +792,7 @@ buttonClearFilter.onclick = clearFilter
 const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
-        const caseID = selectedCaseID
+        const caseID = selectedCase.id
         allCases.doc(caseID).collection('proforma').get().then(files => {
             files.forEach(file => {
                 file.ref.delete().then(() => {
@@ -814,17 +824,6 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
             console.error('Error listing files from storage: ', error)
         })
         allCases.doc(caseID).delete().then(() => {
-            if (caseID == selectedCaseID) {
-                selectedCase = undefined
-                selectedCaseID = undefined
-                selectedCaseRow = undefined
-                if (headerDocuments.classList.contains('hide')) {
-                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-                    if (activePage.stopLoadingContent) {
-                        activePage.stopLoadingContent()
-                    }
-                }
-            }
         }).catch(error => {
             console.error('Error removing case: ', error)
         })
@@ -835,7 +834,7 @@ const tableRowContextMenu = document.getElementById('tableRowContextMenu')
 tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
 tableRowContextMenu.editOption.icon = tableRowContextMenu.editOption.getElementsByClassName('iconify')
 tableRowContextMenu.editOption.label = tableRowContextMenu.editOption.querySelector('.mdc-list-item__text')
-tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCaseID)
+tableRowContextMenu.editOption.onclick = () => ipcRenderer.send('new-window', 'case', selectedCase.id)
 tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['delete']
 tableRowContextMenu.deleteOption.onclick = () => dialogDeleteCase.materialComponent.open()
 

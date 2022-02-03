@@ -11,6 +11,8 @@ proformaTabPage.stopLoadingContent = () => {
     stopSelectedCaseQuery = () => { }
     stopCurrentInsuranceQuery()
     stopCurrentInsuranceQuery = () => { }
+    dialogAddActivity.materialComponent.close()
+    dialogDeleteActivity.materialComponent.close()
 }
 proformaTabPage.loadContent = () => {
     proformaTabPage.stopLoadingContent()
@@ -22,9 +24,9 @@ let stopCurrentInsuranceQuery = () => { }
 let currentInsurance, selectedCaseSnap
 
 function loadInsurance() {
-    if (selectedCaseID) {
+    if (selectedCase) {
         stopSelectedCaseQuery()
-        stopSelectedCaseQuery = allCases.doc(selectedCaseID).onSnapshot(
+        stopSelectedCaseQuery = selectedCase.onSnapshot(
             caseSnap => {
                 selectedCaseSnap = caseSnap
                 const newInsurance = caseSnap.get('insurance')
@@ -55,6 +57,7 @@ function loadInsurance() {
                     }
                     else {
                         stopCurrentInsuranceQuery = () => { }
+                        dialogAddActivity.materialComponent.close()
                     }
                 }
             },
@@ -62,10 +65,6 @@ function loadInsurance() {
                 console.error('Error getting case: ' + error)
             }
         )
-    }
-    else {
-        setListOverlayState('empty')
-        setProformaOverlayState('empty')
     }
 }
 
@@ -136,7 +135,7 @@ loadProformaColumns()
 let proformaCurrentQuery
 let proformaCurrentSnap
 let stopProformaCurrentQuery = () => { }
-let selectedActivity, selectedActivityRow, selectedActivityID
+let selectedActivity, selectedActivityRow
 
 firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -206,12 +205,9 @@ function listProforma(snap) {
             tr.id = proformaSnap.id
             tr.onmousedown = mouseEvent => {
                 if (mouseEvent.button != 1) {
-                    if (selectedActivityID != proformaSnap.id) {
-                        if (selectedActivityRow) {
-                            selectedActivityRow.classList.remove('selected')
-                        }
-                        selectedActivity = proformaCurrentQuery.doc(proformaSnap.id)
-                        selectedActivityID = proformaSnap.id
+                    if (selectedActivity?.id != proformaSnap.id) {
+                        selectedActivityRow?.classList.remove('selected')
+                        selectedActivity = proformaSnap.ref
                         selectedActivityRow = tr
                         selectedActivityRow.classList.add('selected')
                     }
@@ -224,11 +220,6 @@ function listProforma(snap) {
                     proformaContextMenu.materialComponent.setAbsolutePosition(mouseEvent.clientX, mouseEvent.clientY)
                     proformaContextMenu.materialComponent.open = true
                 }
-            }
-            if (tr.id == selectedActivityID) {
-                selectedActivity = proformaCurrentQuery.doc(selectedActivityID)
-                selectedActivityRow = tr
-                selectedActivityRow.classList.add('selected')
             }
             proformaList.appendChild(tr)
 
@@ -279,6 +270,15 @@ function listProforma(snap) {
                 }
             }
         })
+        if (proformaList.children.namedItem(selectedActivity?.id)) {
+            selectedActivityRow = proformaList.children.namedItem(selectedActivity.id)
+            selectedActivityRow.classList.add('selected')
+        }
+        else {
+            selectedActivity = undefined
+            selectedActivityRow = undefined
+            dialogDeleteActivity.materialComponent.close()
+        }
         orderProforma(proformaCurrentOrder, proformaCurrentOrderDirection)
     }
     else {
@@ -335,13 +335,11 @@ function setProformaOverlayState(state) {
     switch (state) {
         case 'loading':
             proformaOverlay.classList.remove('hide')
-            proformaOverlay.classList.remove('show-headers')
             proformaOverlayIcon[0].setAttribute('data-icon', 'eos-icons:loading')
             proformaOverlayText.hidden = true
             break
         case 'empty':
             proformaOverlay.classList.remove('hide')
-            proformaOverlay.classList.remove('show-headers')
             proformaOverlayIcon[0].setAttribute('data-icon', 'ic:round-sentiment-dissatisfied')
             proformaOverlayText.hidden = false
             proformaOverlayText.innerText = translate('ACTIVITIES') + ' ' + translate('NOT_FOUND')
@@ -361,8 +359,6 @@ dialogDeleteActivity.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         if (selectedActivity) {
             selectedActivity.delete().then(() => {
-                selectedActivity = undefined
-                selectedActivityID = undefined
             }).catch(error => {
                 console.error('Error removing activity from firestore: ', error)
             })
@@ -725,7 +721,7 @@ async function proformaToPdf(attach) {
             browserPage = pages[0]
         })
     }
-    if (selectedCaseID, currentInsurance, selectedCaseSnap) {
+    if (selectedCase, currentInsurance, selectedCaseSnap) {
         const caseData = {}
 
         if (Array.isArray(selectedCaseSnap.get('diagnosis'))) {
@@ -773,7 +769,7 @@ async function proformaToPdf(attach) {
 
         const discount = inputDiscount.mask.unmaskedvalue()
         const data = {
-            id: selectedCaseID,
+            id: selectedCase.id,
             date: new Date().toLocaleDateString('tr'),
             case: caseData,
             to: personData || currentInsurance.data(),
@@ -789,12 +785,12 @@ async function proformaToPdf(attach) {
         await browserPage.pdf({ format: 'A4' }).then(pdf => {
             if (attach) {
                 attachPdf = pdf
-                attachPdf.name = 'Proforma ' + selectedCaseID + '.pdf'
+                attachPdf.name = 'Proforma ' + selectedCase.id + '.pdf'
                 tabBar.activateTab(tabBar.tabList.findIndex(tab => tab.id == 'files'))
                 buttonUploadFile.click()
             }
             else {
-                ipcRenderer.send('save-file', 'Proforma ' + selectedCaseID + '.pdf', pdf)
+                ipcRenderer.send('save-file', 'Proforma ' + selectedCase.id + '.pdf', pdf)
             }
         })
     }
