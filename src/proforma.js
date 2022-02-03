@@ -25,30 +25,22 @@ function loadInsurance() {
     if (selectedCaseID) {
         stopSelectedCaseQuery()
         stopSelectedCaseQuery = allCases.doc(selectedCaseID).onSnapshot(
-            snapshot => {
-                selectedCaseSnap = snapshot
-                if (snapshot.get('insurance') != currentInsurance) {
+            caseSnap => {
+                selectedCaseSnap = caseSnap
+                if (caseSnap.get('insurance') != currentInsurance) {
                     stopCurrentInsuranceQuery()
-                    stopCurrentInsuranceQuery = snapshot.get('insurance').onSnapshot(
-                        snapshot => {
-                            if (currentInsurance) {
-                                if (currentInsurance.id != snapshot.id) {
-                                    currentInsurance = snapshot
-                                    loadProforma()
-                                    listActivities()
-                                }
-                                else {
-                                    calculateDialogActivitiesTotal()
-                                }
+                    stopCurrentInsuranceQuery = caseSnap.get('insurance').onSnapshot(
+                        insuranceSnap => {
+                            if (currentInsurance?.id == insuranceSnap.id) {
+                                calculateDialogActivitiesTotal()
                             }
                             else {
-                                currentInsurance = snapshot
+                                currentInsurance = insuranceSnap
                                 loadProforma()
                                 listActivities()
                             }
-                            const address = snapshot.get('address')
-                            if (address != undefined) {
-                                inputAddress.value = address
+                            if (toggleAccount.checked) {
+                                inputAddress.value = insuranceSnap.get('address') || ''
                             }
                             else {
                                 inputAddress.value = ''
@@ -637,6 +629,17 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const totalPanel = proformaTabPage.querySelector('#totalPanel')
+const toggleAccount = totalPanel.querySelector('input[type=checkbox]#account')
+toggleAccount.parentElement.parentElement.onclick = () => {
+    toggleAccount.checked = !toggleAccount.checked
+    inputAddress.disabled = toggleAccount.checked
+    if (toggleAccount.checked) {
+        inputAddress.value = currentInsurance?.get('address') || ''
+    }
+    else {
+        inputAddress.value = ''
+    }
+}
 const inputAddress = totalPanel.querySelector('textarea#address')
 const selectCurrency = totalPanel.querySelector('.mdc-select#currency').materialComponent
 selectCurrency.listen('MDCSelect:change', () => {
@@ -745,6 +748,17 @@ async function proformaToPdf(attach) {
         caseData.insuranceRefNo = selectedCaseSnap.get('insuranceRefNo')
         caseData.policyNo = selectedCaseSnap.get('policyNo')
 
+        let personData
+        if (!toggleAccount.checked) {
+            personData = {
+                name: selectedCaseSnap.get('surnameName'),
+                phone: selectedCaseSnap.get('phone'),
+                phone2: selectedCaseSnap.get('phone2'),
+                phone3: selectedCaseSnap.get('phone3'),
+                address: inputAddress.value
+            }
+        }
+
         const activities = []
         for (const row of proformaList.rows) {
             activities.push({
@@ -759,7 +773,7 @@ async function proformaToPdf(attach) {
             id: selectedCaseID,
             date: new Date().toLocaleDateString('tr'),
             case: caseData,
-            insurance: currentInsurance.data(),
+            to: personData || currentInsurance.data(),
             activities: activities,
             subtotal: textSubtotal.textContent,
             discount_percent: discount,

@@ -121,6 +121,16 @@ buttonUploadFile.onclick = () => {
 const inputFileName = filesTabPage.querySelector('input#fileName')
 inputFileName.oninput = () => inputFileName.materialComponent.valid = inputFileName.value.trim() != ''
 inputFileName.onchange = () => inputFileName.value = inputFileName.value.trim()
+inputFileName.onkeydown = event => {
+    switch (event.key) {
+        case 'Enter':
+            buttonDoneFile.click()
+            break
+        case 'Escape':
+            buttonCancelFile.click()
+            break
+    }
+}
 const buttonDoneFile = filesTabPage.querySelector('button#doneFile')
 buttonDoneFile.onclick = () => {
     if (filesCurrentQuery && (attachPdf || inputNewFile.files[0]) && inputFileName.value.trim() != '') {
@@ -153,7 +163,10 @@ buttonDoneFile.onclick = () => {
 const buttonCancelFile = filesTabPage.querySelector('button#cancelFile')
 buttonCancelFile.onclick = () => {
     inputNewFile.value = ''
-    attachPdf = undefined
+    if (attachPdf) {
+        tabBar.activateTab(tabBar.tabList.findIndex(tab => tab.id == 'proforma'))
+        attachPdf = undefined
+    }
     inputFileName.parentElement.parentElement.classList.add('hide')
     buttonUploadFile.classList.remove('hide')
 }

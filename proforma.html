@@ -148,12 +148,20 @@
                 </section>
             </div>
             <div>
-                <i>To:{{insurance.name}}</i>
+                <i>To:{{to.name}}</i>
                 <i><br></i>
-                <i>Address:{{insurance.address}}</i>
-                <i>{{insurance.representative}}</i>
-                <i>Tel:{{insurance.phone}} {{insurance.phone2}}</i>
-                <i>E-mail:{{insurance.email}}</i>
+                {{#if to.address}}
+                <i>Address:{{to.address}}</i>
+                {{/if}}
+                {{#if to.representative}}
+                <i>{{to.representative}}</i>
+                {{/if}}
+                {{#if to.phone}}
+                <i>Tel:{{to.phone}} {{to.phone2}} {{to.phone3}}</i>
+                {{/if}}
+                {{#if to.email}}
+                <i>E-mail:{{to.email}}</i>
+                {{/if}}
             </div>
         </section>
         <b style="margin-top: 5pt;">Patient Details</b>
