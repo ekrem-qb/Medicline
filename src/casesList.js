@@ -492,30 +492,17 @@ function orderCases(orderBy, orderDirection) {
             for (i = 0; i < casesList.childElementCount - 1; i++) {
                 shouldSwitch = false
 
-                let a = casesList.children[i].children[orderBy]
-                if (a.realValue != undefined) {
-                    a = a.realValue
-                }
-                else {
-                    a = a.textContent.toLowerCase()
-                }
-
-                let b = casesList.children[i + 1].children[orderBy]
-                if (b.realValue != undefined) {
-                    b = b.realValue
-                }
-                else {
-                    b = b.textContent.toLowerCase()
-                }
+                const a = casesList.children[i].children[orderBy]
+                const b = casesList.children[i + 1].children[orderBy]
 
                 if (orderDirection == 'asc') {
-                    if (a > b) {
+                    if ((a.realValue || a.textContent.toLowerCase()) > (b.realValue || b.textContent.toLowerCase())) {
                         shouldSwitch = true
                         break
                     }
                 }
                 else if (orderDirection == 'desc') {
-                    if (a < b) {
+                    if ((a.realValue || a.textContent.toLowerCase()) < (b.realValue || b.textContent.toLowerCase())) {
                         shouldSwitch = true
                         break
                     }

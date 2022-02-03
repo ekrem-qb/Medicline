@@ -394,50 +394,47 @@ function listInstitutions(snap) {
 }
 
 function orderInstitutions(orderBy, orderDirection) {
-    let switching, i, shouldSwitch
-    do {
-        switching = false
-        for (i = 0; i < institutionsList.childElementCount - 1; i++) {
-            shouldSwitch = false
+    if (tableHeadersList.children[orderBy]) {
+        let switching, i, shouldSwitch
+        do {
+            switching = false
+            for (i = 0; i < institutionsList.childElementCount - 1; i++) {
+                shouldSwitch = false
 
-            let a = institutionsList.children[i].children[orderBy]
-            if (a.realValue != undefined) {
-                a = a.realValue
-            }
-            else {
-                a = a.textContent.toLowerCase()
-            }
+                const a = institutionsList.children[i].children[orderBy]
+                const b = institutionsList.children[i + 1].children[orderBy]
 
-            let b = institutionsList.children[i + 1].children[orderBy]
-            if (b.realValue != undefined) {
-                b = b.realValue
-            }
-            else {
-                b = b.textContent.toLowerCase()
-            }
-
-            if (orderDirection == 'asc') {
-                if (a > b) {
-                    shouldSwitch = true
-                    break
+                if (orderDirection == 'asc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) > (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
+                }
+                else if (orderDirection == 'desc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) < (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
                 }
             }
-            else if (orderDirection == 'desc') {
-                if (a < b) {
-                    shouldSwitch = true
-                    break
-                }
+            if (shouldSwitch) {
+                institutionsList.children[i].parentElement.insertBefore(institutionsList.children[i + 1], institutionsList.children[i])
+                switching = true
             }
         }
-        if (shouldSwitch) {
-            institutionsList.children[i].parentElement.insertBefore(institutionsList.children[i + 1], institutionsList.children[i])
-            switching = true
+        while (switching)
+
+        currentOrder = orderBy
+        currentOrderDirection = orderDirection
+    }
+    else {
+        if (tableHeadersList.children['__name__']) {
+            headerClick('__name__')
+        }
+        else {
+            headerClick(tableHeadersList.firstChild.id)
         }
     }
-    while (switching)
-
-    currentOrder = orderBy
-    currentOrderDirection = orderDirection
 }
 
 function setOverlayState(state) {

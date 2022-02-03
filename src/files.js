@@ -307,50 +307,47 @@ function listFiles(snap) {
 }
 
 function orderFiles(orderBy, orderDirection) {
-    let switching, i, shouldSwitch
-    do {
-        switching = false
-        for (i = 0; i < filesList.childElementCount - 1; i++) {
-            shouldSwitch = false
+    if (filesHeadersList.children[orderBy]) {
+        let switching, i, shouldSwitch
+        do {
+            switching = false
+            for (i = 0; i < filesList.childElementCount - 1; i++) {
+                shouldSwitch = false
 
-            let a = filesList.children[i].children[orderBy]
-            if (a.realValue != undefined) {
-                a = a.realValue
-            }
-            else {
-                a = a.textContent.toLowerCase()
-            }
+                const a = filesList.children[i].children[orderBy]
+                const b = filesList.children[i + 1].children[orderBy]
 
-            let b = filesList.children[i + 1].children[orderBy]
-            if (b.realValue != undefined) {
-                b = b.realValue
-            }
-            else {
-                b = b.textContent.toLowerCase()
-            }
-
-            if (orderDirection == 'asc') {
-                if (a > b) {
-                    shouldSwitch = true
-                    break
+                if (orderDirection == 'asc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) > (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
+                }
+                else if (orderDirection == 'desc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) < (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
                 }
             }
-            else if (orderDirection == 'desc') {
-                if (a < b) {
-                    shouldSwitch = true
-                    break
-                }
+            if (shouldSwitch) {
+                filesList.children[i].parentElement.insertBefore(filesList.children[i + 1], filesList.children[i])
+                switching = true
             }
         }
-        if (shouldSwitch) {
-            filesList.children[i].parentElement.insertBefore(filesList.children[i + 1], filesList.children[i])
-            switching = true
+        while (switching)
+
+        filesCurrentOrder = orderBy
+        filesCurrentOrderDirection = orderDirection
+    }
+    else {
+        if (filesHeadersList.children['__name__']) {
+            filesHeaderClick('__name__')
+        }
+        else {
+            filesHeaderClick(filesHeadersList.firstChild.id)
         }
     }
-    while (switching)
-
-    filesCurrentOrder = orderBy
-    filesCurrentOrderDirection = orderDirection
 }
 
 function setFilesOverlayState(state) {

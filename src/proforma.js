@@ -288,50 +288,47 @@ function listProforma(snap) {
 }
 
 function orderProforma(orderBy, orderDirection) {
-    let switching, i, shouldSwitch
-    do {
-        switching = false
-        for (i = 0; i < proformaList.childElementCount - 1; i++) {
-            shouldSwitch = false
+    if (proformaHeadersList.children[orderBy]) {
+        let switching, i, shouldSwitch
+        do {
+            switching = false
+            for (i = 0; i < proformaList.childElementCount - 1; i++) {
+                shouldSwitch = false
 
-            let a = proformaList.children[i].children[orderBy]
-            if (a.realValue != undefined) {
-                a = a.realValue
-            }
-            else {
-                a = a.textContent.toLowerCase()
-            }
+                const a = proformaList.children[i].children[orderBy]
+                const b = proformaList.children[i + 1].children[orderBy]
 
-            let b = proformaList.children[i + 1].children[orderBy]
-            if (b.realValue != undefined) {
-                b = b.realValue
-            }
-            else {
-                b = b.textContent.toLowerCase()
-            }
-
-            if (orderDirection == 'asc') {
-                if (a > b) {
-                    shouldSwitch = true
-                    break
+                if (orderDirection == 'asc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) > (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
+                }
+                else if (orderDirection == 'desc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) < (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
                 }
             }
-            else if (orderDirection == 'desc') {
-                if (a < b) {
-                    shouldSwitch = true
-                    break
-                }
+            if (shouldSwitch) {
+                proformaList.children[i].parentElement.insertBefore(proformaList.children[i + 1], proformaList.children[i])
+                switching = true
             }
         }
-        if (shouldSwitch) {
-            proformaList.children[i].parentElement.insertBefore(proformaList.children[i + 1], proformaList.children[i])
-            switching = true
+        while (switching)
+
+        proformaCurrentOrder = orderBy
+        proformaCurrentOrderDirection = orderDirection
+    }
+    else {
+        if (proformaHeadersList.children['__name__']) {
+            proformaHeaderClick('__name__')
+        }
+        else {
+            proformaHeaderClick(proformaHeadersList.firstChild.id)
         }
     }
-    while (switching)
-
-    proformaCurrentOrder = orderBy
-    proformaCurrentOrderDirection = orderDirection
 }
 
 function setProformaOverlayState(state) {

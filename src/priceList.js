@@ -444,7 +444,7 @@ function listPrices(snap) {
                     tr.appendChild(td)
 
                     switch (td.id) {
-                        case '__name_':
+                        case '__name__':
                             td.textContent = priceSnap.id
                             break;
                         case 'price':
@@ -473,50 +473,47 @@ function listPrices(snap) {
 }
 
 function orderPrices(orderBy, orderDirection) {
-    let switching, i, shouldSwitch
-    do {
-        switching = false
-        for (i = 0; i < priceList.childElementCount - 1; i++) {
-            shouldSwitch = false
+    if (tableHeadersList.children[orderBy]) {
+        let switching, i, shouldSwitch
+        do {
+            switching = false
+            for (i = 0; i < priceList.childElementCount - 1; i++) {
+                shouldSwitch = false
 
-            let a = priceList.children[i].children[orderBy]
-            if (a.realValue != undefined) {
-                a = a.realValue
-            }
-            else {
-                a = a.textContent.toLowerCase()
-            }
+                const a = priceList.children[i].children[orderBy]
+                const b = priceList.children[i + 1].children[orderBy]
 
-            let b = priceList.children[i + 1].children[orderBy]
-            if (b.realValue != undefined) {
-                b = b.realValue
-            }
-            else {
-                b = b.textContent.toLowerCase()
-            }
-
-            if (orderDirection == 'asc') {
-                if (a > b) {
-                    shouldSwitch = true
-                    break
+                if (orderDirection == 'asc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) > (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
+                }
+                else if (orderDirection == 'desc') {
+                    if ((a.realValue || a.textContent.toLowerCase()) < (b.realValue || b.textContent.toLowerCase())) {
+                        shouldSwitch = true
+                        break
+                    }
                 }
             }
-            else if (orderDirection == 'desc') {
-                if (a < b) {
-                    shouldSwitch = true
-                    break
-                }
+            if (shouldSwitch) {
+                priceList.children[i].parentElement.insertBefore(priceList.children[i + 1], priceList.children[i])
+                switching = true
             }
         }
-        if (shouldSwitch) {
-            priceList.children[i].parentElement.insertBefore(priceList.children[i + 1], priceList.children[i])
-            switching = true
+        while (switching)
+
+        currentOrder = orderBy
+        currentOrderDirection = orderDirection
+    }
+    else {
+        if (tableHeadersList.children['__name__']) {
+            headerClick('__name__')
+        }
+        else {
+            headerClick(tableHeadersList.firstChild.id)
         }
     }
-    while (switching)
-
-    currentOrder = orderBy
-    currentOrderDirection = orderDirection
 }
 
 function setOverlayState(state) {
