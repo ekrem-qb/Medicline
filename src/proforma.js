@@ -27,29 +27,35 @@ function loadInsurance() {
         stopSelectedCaseQuery = allCases.doc(selectedCaseID).onSnapshot(
             caseSnap => {
                 selectedCaseSnap = caseSnap
-                if (caseSnap.get('insurance') != currentInsurance) {
+                const newInsurance = caseSnap.get('insurance')
+                if (newInsurance != currentInsurance) {
                     stopCurrentInsuranceQuery()
-                    stopCurrentInsuranceQuery = caseSnap.get('insurance').onSnapshot(
-                        insuranceSnap => {
-                            if (currentInsurance?.id == insuranceSnap.id) {
-                                calculateDialogActivitiesTotal()
+                    if (newInsurance) {
+                        stopCurrentInsuranceQuery = newInsurance.onSnapshot(
+                            insuranceSnap => {
+                                if (currentInsurance?.id == insuranceSnap.id) {
+                                    calculateDialogActivitiesTotal()
+                                }
+                                else {
+                                    currentInsurance = insuranceSnap
+                                    loadProforma()
+                                    listActivities()
+                                }
+                                if (toggleAccount.checked) {
+                                    inputAddress.value = insuranceSnap.get('address') || ''
+                                }
+                                else {
+                                    inputAddress.value = ''
+                                }
+                            },
+                            error => {
+                                console.error('Error getting insurance: ' + error)
                             }
-                            else {
-                                currentInsurance = insuranceSnap
-                                loadProforma()
-                                listActivities()
-                            }
-                            if (toggleAccount.checked) {
-                                inputAddress.value = insuranceSnap.get('address') || ''
-                            }
-                            else {
-                                inputAddress.value = ''
-                            }
-                        },
-                        error => {
-                            console.error('Error getting insurance: ' + error)
-                        }
-                    )
+                        )
+                    }
+                    else {
+                        stopCurrentInsuranceQuery = () => { }
+                    }
                 }
             },
             error => {

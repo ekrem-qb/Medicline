@@ -3,6 +3,18 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         const promises = []
         promises.push(
+            currentCase.collection('proforma').get().then(activities => {
+                activities.forEach(file => {
+                    file.ref.delete().then(() => {
+                    }).catch(error => {
+                        console.error('Error removing activity: ', error)
+                    })
+                })
+            }).catch(error => {
+                console.error('Error getting activities: ', error)
+            })
+        )
+        promises.push(
             currentCase.collection('files').get().then(files => {
                 files.forEach(file => {
                     file.ref.delete().then(() => {

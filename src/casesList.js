@@ -796,6 +796,16 @@ const dialogDeleteCase = document.getElementById('dialogDeleteCase')
 dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
     if (event.detail.action == 'delete') {
         const caseID = selectedCaseID
+        allCases.doc(caseID).collection('proforma').get().then(files => {
+            files.forEach(file => {
+                file.ref.delete().then(() => {
+                }).catch(error => {
+                    console.error('Error removing activity: ', error)
+                })
+            })
+        }).catch(error => {
+            console.error('Error getting activities: ', error)
+        })
         allCases.doc(caseID).collection('files').get().then(files => {
             files.forEach(file => {
                 file.ref.delete().then(() => {
@@ -820,8 +830,12 @@ dialogDeleteCase.materialComponent.listen('MDCDialog:closed', event => {
             if (caseID == selectedCaseID) {
                 selectedCase = undefined
                 selectedCaseID = undefined
+                selectedCaseRow = undefined
                 if (headerDocuments.classList.contains('hide')) {
-                    loadTab(documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()])
+                    const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+                    if (activePage.stopLoadingContent) {
+                        activePage.stopLoadingContent()
+                    }
                 }
             }
         }).catch(error => {
