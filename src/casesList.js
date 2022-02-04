@@ -862,3 +862,26 @@ function refreshAndSaveColumns() {
     }
     localStorage.setItem('caseColumns', caseColumns)
 }
+
+buttonDone.onclick = async () => {
+    buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    switch (inlineEditPath.split('/')[2]) {
+        case 'files':
+            await db.doc(inlineEditPath).update({
+                name: inlineEdit.input.value.trim() + inlineEdit.input.fileType
+            }).then(() => {
+            }).catch(error => {
+                console.error('Error updating file name: ', error)
+            })
+            break
+        case 'proforma':
+            const data = {}
+            data[inlineEdit.valueType] = inlineEdit.input.value
+            await db.doc(inlineEditPath).update(data).then(() => {
+            }).catch(error => {
+                console.error('Error updating proforma: ', error)
+            })
+            break
+    }
+    inlineEdit.hide()
+}

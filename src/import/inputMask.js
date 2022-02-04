@@ -40,6 +40,11 @@ function mask(input, mask = input.getAttribute('mask'), dontAlignRight) {
             options.placeholder = ''
             options.onUnMask = maskedValue => { return parseInt(maskedValue) }
             break
+        case 'quantity':
+            options.regex = '[0-9]|[1-9][0-9]|[1-9][0-9][0-9]|1000'
+            options.placeholder = ''
+            options.onUnMask = maskedValue => { return parseInt(maskedValue) }
+            break
     }
     if (dontAlignRight) {
         options.rightAlign = false

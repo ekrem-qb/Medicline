@@ -43,12 +43,8 @@ function loadInsurance() {
                                     loadProforma()
                                     listActivities()
                                 }
-                                if (toggleAccount.checked) {
-                                    inputAddress.value = insuranceSnap.get('address') || ''
-                                }
-                                else {
-                                    inputAddress.value = ''
-                                }
+                                textName.textContent = insuranceSnap.get('name') || ''
+                                inputAddress.value = insuranceSnap.get('address') || ''
                             },
                             error => {
                                 console.error('Error getting insurance: ' + error)
@@ -226,6 +222,13 @@ function listProforma(snap) {
             for (const column of proformaHeadersList.children) {
                 const td = document.createElement('td')
                 td.id = column.id
+                if (td.id != '__name__' && td.id != 'total') {
+                    td.ondblclick = () => {
+                        if (getSelectedText() == '') {
+                            inlineEdit.show(td, proformaSnap.ref.path, proformaSnap.get(td.id), td.id)
+                        }
+                    }
+                }
                 tr.appendChild(td)
 
                 switch (td.id) {
@@ -234,16 +237,7 @@ function listProforma(snap) {
                         break
                     case 'price':
                     case 'total':
-                        const price = proformaSnap.get('price')
-                        const currency = proformaSnap.get('currency')
-                        td.textContent = price + ' ' + currency
-                        td.realValue = price
-                        if (currentInsurance) {
-                            const exchangeToUSD = currentInsurance.get(currency)
-                            if (exchangeToUSD) {
-                                td.realValue = price / parseFloat(exchangeToUSD)
-                            }
-                        }
+                        td.textContent = proformaSnap.get('price')
                         break
                     case 'date':
                         const seconds = proformaSnap.get(td.id).seconds
@@ -255,17 +249,8 @@ function listProforma(snap) {
                         break
                 }
                 switch (td.id) {
-                    case 'name':
-                        td.onclick = () => {
-                            const proformaName = td.textContent
-                            inlineEdit.show(td, proformaSnap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
-                            inlineEdit.input.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
-                        }
-                        break
                     case 'total':
-                        const quantity = proformaSnap.get('quantity')
-                        td.textContent = (parseFloat(td.textContent) * quantity) + ' ' + proformaSnap.get('currency')
-                        td.realValue = parseFloat(td.realValue) * quantity
+                        td.textContent = parseFloat(td.textContent) * proformaSnap.get('quantity')
                         break
                 }
             }
@@ -278,6 +263,7 @@ function listProforma(snap) {
             selectedActivity = undefined
             selectedActivityRow = undefined
             dialogDeleteActivity.materialComponent.close()
+            inlineEdit.hide()
         }
         orderProforma(proformaCurrentOrder, proformaCurrentOrderDirection)
     }
@@ -382,7 +368,13 @@ buttonNewActivity.onclick = () => {
     }
 }
 const dialogAddActivity = proformaTabPage.querySelector('#dialogAddActivity')
-
+const selectCurrency = dialogAddActivity.querySelector('.mdc-select#currency').materialComponent
+selectCurrency.listen('MDCSelect:change', () => {
+    inputPrepay.symbol.textContent = selectCurrency.value
+    textSubtotal.textContent = roundFloat(subtotal)
+    textTotal.textContent = roundFloat(total)
+    listActivities()
+})
 const inputSearchActivities = dialogAddActivity.querySelector('input#searchActivities')
 const buttonClearSearchActivities = inputSearchActivities.parentElement.querySelector('button#clearSearchActivities')
 
@@ -425,7 +417,7 @@ function listActivities() {
     activitiesList.innerHTML = ''
     stopActivityQuery()
     if (currentInsurance) {
-        stopActivityQuery = currentInsurance.ref.collection('prices').orderBy('name', 'asc').onSnapshot(
+        stopActivityQuery = currentInsurance.ref.collection('prices').where('currency', '==', selectCurrency.value).onSnapshot(
             snapshot => {
                 snapshot.docChanges().forEach(
                     change => {
@@ -434,8 +426,7 @@ function listActivities() {
                                 const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
                                 listItem.id = change.doc.ref.path
                                 listItem.onclick = event => {
-                                    if (event.target.parentElement != buttonRemove && event.target.parentElement != buttonAdd
-                                        && event.target.parentElement.parentElement != buttonRemove && event.target.parentElement.parentElement != buttonAdd) {
+                                    if (event.target != buttonRemove && event.target != buttonAdd) {
                                         if (Number.parseInt(quantity.textContent) > 0) {
                                             quantity.textContent = 0
                                         }
@@ -453,7 +444,7 @@ function listActivities() {
                                 listItem.price = price
 
                                 label.textContent = change.doc.get('name')
-                                price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+                                price.textContent = change.doc.get('price')
 
                                 const buttonRemove = listItem.children['remove']
                                 listItem.buttonRemove = buttonRemove
@@ -486,7 +477,7 @@ function listActivities() {
                                 break
                             case 'modified':
                                 activitiesList.children[change.doc.ref.path].label.textContent = change.doc.get('name')
-                                activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price') + ' ' + change.doc.get('currency')
+                                activitiesList.children[change.doc.ref.path].price.textContent = change.doc.get('price')
 
                                 if (change.newIndex == activitiesList.childElementCount) {
                                     activitiesList.appendChild(activitiesList.children[change.doc.ref.path])
@@ -520,21 +511,7 @@ function calculateDialogActivitiesTotal(clickedActivity) {
     }
     let total = 0
     activitiesList.querySelectorAll('li.active').forEach(activity => {
-        const priceNcurrency = activity.price.textContent.split(' ')
-        let price = parseFloat(priceNcurrency[0])
-        if (priceNcurrency[1] != selectCurrency.value) {
-            if (currentInsurance) {
-                const exchangeToUSD = currentInsurance.get(priceNcurrency[1])
-                if (exchangeToUSD) {
-                    price /= parseFloat(exchangeToUSD)
-                }
-                const exchangeBack = currentInsurance.get(selectCurrency.value)
-                if (exchangeBack) {
-                    price *= parseFloat(exchangeBack)
-                }
-            }
-        }
-        total += price * parseInt(activity.quantity.textContent)
+        total += parseFloat(activity.price.textContent) * parseInt(activity.quantity.textContent)
     })
     buttonAddActivities.label.textContent = translate('ADD')
     if (total > 0) {
@@ -588,12 +565,10 @@ buttonAddActivities.onclick = () => {
                 activity.buttonRemove.disabled = true
                 activity.buttonAdd.disabled = true
                 if (activity.classList.contains('active')) {
-                    const priceNcurrency = activity.price.textContent.split(' ')
                     promises.push(
                         selectedCase.collection('proforma').add({
                             name: activity.label.textContent.trim(),
-                            price: parseFloat(priceNcurrency[0]),
-                            currency: priceNcurrency[1],
+                            price: parseFloat(activity.price.textContent),
                             quantity: parseInt(activity.quantity.textContent),
                             date: firebase.firestore.Timestamp.now()
                         }).then(() => {
@@ -628,24 +603,8 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const totalPanel = proformaTabPage.querySelector('#totalPanel')
-const toggleAccount = totalPanel.querySelector('input[type=checkbox]#account')
-toggleAccount.parentElement.parentElement.onclick = () => {
-    toggleAccount.checked = !toggleAccount.checked
-    inputAddress.disabled = toggleAccount.checked
-    if (toggleAccount.checked) {
-        inputAddress.value = currentInsurance?.get('address') || ''
-    }
-    else {
-        inputAddress.value = ''
-    }
-}
+const textName = totalPanel.querySelector('h6#name')
 const inputAddress = totalPanel.querySelector('textarea#address')
-const selectCurrency = totalPanel.querySelector('.mdc-select#currency').materialComponent
-selectCurrency.listen('MDCSelect:change', () => {
-    inputPrepay.symbol.textContent = selectCurrency.value
-    calculateProformaSubtotal()
-    calculateDialogActivitiesTotal()
-})
 const textSubtotal = totalPanel.querySelector('h5#subtotal')
 let subtotal = 0
 
@@ -653,21 +612,7 @@ function calculateProformaSubtotal() {
     subtotal = 0
     if (proformaOverlay.classList.contains('hide')) {
         for (const row of proformaList.rows) {
-            const priceNcurrency = row.cells['total'].textContent.split(' ')
-            let price = parseFloat(priceNcurrency[0])
-            if (priceNcurrency[1] != selectCurrency.value) {
-                if (currentInsurance) {
-                    const exchangeToUSD = currentInsurance.get(priceNcurrency[1])
-                    if (exchangeToUSD) {
-                        price /= parseFloat(exchangeToUSD)
-                    }
-                    const exchangeBack = currentInsurance.get(selectCurrency.value)
-                    if (exchangeBack) {
-                        price *= parseFloat(exchangeBack)
-                    }
-                }
-            }
-            subtotal += price
+            subtotal += parseFloat(row.cells['total'].textContent)
         }
     }
     textSubtotal.textContent = roundFloat(subtotal)
@@ -680,9 +625,10 @@ const inputPrepay = totalPanel.querySelector('input#prepay')
 inputPrepay.oninput = calculateProformaTotal
 inputPrepay.symbol = inputPrepay.nextElementSibling
 const textTotal = totalPanel.querySelector('h4#total')
+let total = 0
 
 function calculateProformaTotal() {
-    let total = subtotal
+    total = subtotal
     if (total) {
         const discount = inputDiscount.inputmask.unmaskedvalue()
         if (discount) {
@@ -745,17 +691,6 @@ async function proformaToPdf(attach) {
         caseData.insuranceRefNo = selectedCaseSnap.get('insuranceRefNo')
         caseData.policyNo = selectedCaseSnap.get('policyNo')
 
-        let personData
-        if (!toggleAccount.checked) {
-            personData = {
-                name: selectedCaseSnap.get('surnameName'),
-                phone: selectedCaseSnap.get('phone'),
-                phone2: selectedCaseSnap.get('phone2'),
-                phone3: selectedCaseSnap.get('phone3'),
-                address: inputAddress.value
-            }
-        }
-
         const activities = []
         for (const row of proformaList.rows) {
             activities.push({
@@ -770,7 +705,7 @@ async function proformaToPdf(attach) {
             id: selectedCase.id,
             date: new Date().toLocaleDateString('tr'),
             case: caseData,
-            to: personData || currentInsurance.data(),
+            to: currentInsurance.data(),
             activities: activities,
             subtotal: textSubtotal.textContent,
             discount_percent: discount,

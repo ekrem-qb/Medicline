@@ -463,16 +463,3 @@ function refreshAndSaveFileColumns() {
     }
     localStorage.setItem('fileColumns', fileColumns)
 }
-
-buttonDone.onclick = async () => {
-    if (inlineEdit.input.value != '' && inlineEdit.input.value != inlineEdit.input.oldValue) {
-        buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
-        await db.doc(inlineEditPath).update({
-            name: inlineEdit.input.value.trim() + inlineEdit.input.fileType
-        }).then(() => {
-        }).catch(error => {
-            console.error('Error updating file name: ', error)
-        })
-        inlineEdit.hide()
-    }
-}

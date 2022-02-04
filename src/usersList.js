@@ -67,8 +67,7 @@ function listUsers() {
                                 const listItem = listItemTemplate.content.firstElementChild.cloneNode(true)
                                 listItem.id = change.doc.id
                                 listItem.onclick = event => {
-                                    if (event.target.parentElement != buttonEdit && event.target.parentElement != buttonDelete
-                                        && event.target.parentElement.parentElement != buttonEdit && event.target.parentElement.parentElement != buttonDelete) {
+                                    if (event.target != buttonEdit && event.target != buttonDelete) {
                                         const activeItem = usersList.querySelector('.list-group-item.active')
                                         if (activeItem) {
                                             activeItem.classList.remove('active')

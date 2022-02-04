@@ -446,7 +446,7 @@ thead>tr {
   border-bottom-left-radius: var(--mdc-shape-medium);
   border-bottom-right-radius: var(--mdc-shape-medium);
   transition: opacity var(--transition);
-  z-index: 2;
+  z-index: 1;
 }
 
 .overlay>* {

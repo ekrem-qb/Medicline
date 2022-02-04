@@ -28,6 +28,7 @@ inlineEdit.show = (anchor, path, oldValue, valueType = 'name') => {
     switch (valueType) {
         case 'price':
         case 'date':
+        case 'quantity':
             mask(inlineEdit.input, valueType, true)
             inlineEdit.input.value = oldValue
             inlineEdit.input.oldValue = oldValue
@@ -52,7 +53,7 @@ inlineEdit.show = (anchor, path, oldValue, valueType = 'name') => {
     else {
         inlineEditAnchorSelector = ''
     }
-    inlineEditAnchorSelector += anchor.tagName.toLocaleLowerCase()
+    inlineEditAnchorSelector += anchor.tagName.toLowerCase()
     if (anchor.id != '') {
         inlineEditAnchorSelector += '#'
         if (!isNaN(anchor.id[0])) {
@@ -98,7 +99,7 @@ if (inlineEdit.input.id != 'activityName') {
     }
     inlineEdit.input.onkeyup = () => {
         if (inlineEdit.input.inputmask) {
-            buttonDone.disabled = inlineEdit.input.inputmask.unmaskedvalue().toString() == '' || inlineEdit.input.inputmask.unmaskedvalue() == inlineEdit.input.oldValue || !inlineEdit.input.inputmask.isValid()
+            buttonDone.disabled = inlineEdit.input.inputmask.unmaskedvalue().toString() == '' || inlineEdit.input.inputmask.unmaskedvalue() == inlineEdit.input.oldValue
         }
     }
 }
