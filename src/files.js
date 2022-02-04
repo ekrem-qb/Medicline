@@ -281,7 +281,7 @@ function listFiles(snap) {
                     td.onclick = () => {
                         const fileName = td.textContent
                         inlineEdit.show(td, fileSnap.ref.path, fileName.slice(0, fileName.lastIndexOf('.')))
-                        inlineEditInput.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
+                        inlineEdit.input.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
                     }
                 }
             }
@@ -419,7 +419,7 @@ filesContextMenu.renameOption = filesContextMenu.children[0].children['rename']
 filesContextMenu.renameOption.onclick = () => {
     const fileName = selectedFileRow.children['name'].textContent
     inlineEdit.show(selectedFileRow.children['name'], selectedFile.path, fileName.slice(0, fileName.lastIndexOf('.')))
-    inlineEditInput.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
+    inlineEdit.input.fileType = fileName.slice(fileName.lastIndexOf('.')).toLowerCase()
 }
 filesContextMenu.replaceOption = filesContextMenu.children[0].children['replace']
 filesContextMenu.replaceOption.onclick = () => {
@@ -464,52 +464,18 @@ function refreshAndSaveFileColumns() {
     localStorage.setItem('fileColumns', fileColumns)
 }
 
-const inlineEditInput = inlineEdit.querySelector('input')
-const saveButton = inlineEdit.querySelector('button#save')
-const saveButtonIcon = saveButton.getElementsByClassName('iconify')
+const buttonDone = inlineEdit.querySelector('button#save')
+buttonDone.icon = buttonDone.getElementsByClassName('iconify')
 
-saveButton.onclick = () => {
-    if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
-        saveButtonIcon[0].setAttribute('data-icon', 'eos-icons:loading')
-
-        db.doc(inlineEditPath).update({
-            name: inlineEditInput.value.trim() + inlineEditInput.fileType
+buttonDone.onclick = async () => {
+    if (inlineEdit.input.value != '' && inlineEdit.input.value != inlineEdit.input.oldValue) {
+        buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+        await db.doc(inlineEditPath).update({
+            name: inlineEdit.input.value.trim() + inlineEdit.input.fileType
         }).then(() => {
-            saveButton.disabled = true
-            saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-            inlineEdit.hide()
         }).catch(error => {
-            saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
             console.error('Error updating file name: ', error)
         })
-    }
-}
-
-inlineEditInput.oninput = () => {
-    if (inlineEditInput.value.trim() != '' && inlineEditInput.value.trim() != inlineEditInput.oldValue) {
-        saveButton.disabled = false
-    } else {
-        saveButton.disabled = true
-    }
-}
-inlineEditInput.onchange = () => inlineEditInput.value = inlineEditInput.value.trim()
-
-inlineEditInput.onblur = event => {
-    if (event.relatedTarget != null) {
-        if (event.relatedTarget.parentElement == inlineEdit) {
-            return
-        }
-    }
-    inlineEdit.hide()
-}
-
-inlineEditInput.onkeydown = event => {
-    switch (event.key) {
-        case 'Enter':
-            saveButton.click()
-            break
-        case 'Escape':
-            inlineEdit.hide()
-            break
+        inlineEdit.hide()
     }
 }

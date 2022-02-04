@@ -180,24 +180,19 @@ buttonCreate.onclick = () => {
     buttonCancel.click()
     inlineEdit.show(buttonCreate)
     buttonCreate.classList.add('hide')
-    inlineEditInput.focus()
+    inlineEdit.input.focus()
 }
 const buttonCancel = document.querySelector('button#cancelPrice')
 buttonCancel.onclick = () => {
-    inlineEditInput.value = ''
-    inlineEditInput.materialComponent.valid = true
-    inputPrice.value = '0.00'
+    inlineEdit.input.materialComponent.valid = true
+    inputPrice.value = '0'
     inputPrice.materialComponent.valid = true
     inlineEdit.hide()
     buttonCreate.classList.remove('hide')
-    const hiddenPrice = priceList.querySelector('.hide')
-    if (hiddenPrice) {
-        hiddenPrice.classList.remove('hide')
-    }
+    priceList.querySelector('.hide')?.classList.remove('hide')
 }
-const inlineEditInput = inlineEdit.querySelector('input#activityName')
-inlineEditInput.oninput = () => inlineEditInput.materialComponent.valid = inlineEditInput.value.trim() != ''
-inlineEditInput.onkeydown = event => {
+inlineEdit.input.oninput = () => inlineEdit.input.materialComponent.valid = inlineEdit.input.value.trim() != ''
+inlineEdit.input.onkeydown = event => {
     switch (event.key) {
         case 'Enter':
             buttonDone.click()
@@ -221,33 +216,34 @@ inputPrice.onkeydown = event => {
 }
 const selectCurrency = inlineEdit.querySelector('.mdc-select#currency').materialComponent
 const buttonDone = inlineEdit.querySelector('button#donePrice')
-buttonDone.onclick = () => {
-    if (inlineEditInput.value.trim() == '') {
-        inlineEditInput.focus()
+buttonDone.icon = buttonDone.getElementsByClassName('iconify')
+buttonDone.onclick = async () => {
+    if (inlineEdit.input.value.trim() == '') {
+        inlineEdit.input.focus()
     }
     else if (inputPrice.value == '') {
         inputPrice.focus()
     }
     else {
+        buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
         const data = {
-            name: inlineEditInput.value.trim(),
+            name: inlineEdit.input.value.trim(),
             price: inputPrice.mask.unmaskedvalue(),
             currency: selectCurrency.value
         }
         if (inlineEditPath != undefined) {
-            allPrices.doc(inlineEditPath).update(data).then(() => {
-                buttonCancel.click()
+            await allPrices.doc(inlineEditPath).update(data).then(() => {
             }).catch(error => {
                 console.error('Error updating price: ', error)
             })
         }
         else {
-            allPrices.add(data).then(() => {
-                buttonCancel.click()
+            await allPrices.add(data).then(() => {
             }).catch(error => {
                 console.error('Error creating price: ', error)
             })
         }
+        buttonCancel.click()
     }
 }
 const inputSearch = document.querySelector('input#search')

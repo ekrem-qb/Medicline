@@ -180,66 +180,28 @@ function loadPermissions() {
     )
 }
 
-const inlineEditInput = inlineEdit.querySelector('input')
-const saveButton = inlineEdit.querySelector('button#save')
-const saveButtonIcon = saveButton.getElementsByClassName('iconify')
+const buttonDone = inlineEdit.querySelector('button#save')
+buttonDone.icon = buttonDone.getElementsByClassName('iconify')
 
-saveButton.onclick = () => {
-    if (inlineEditInput.value != '' && inlineEditInput.value != inlineEditInput.oldValue) {
-        saveButtonIcon[0].setAttribute('data-icon', 'eos-icons:loading')
-
+buttonDone.onclick = async () => {
+    if (inlineEdit.input.value != '' && inlineEdit.input.value != inlineEdit.input.oldValue) {
+        buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
         if (inlineEditPath == 'country') {
-            db.collection(inlineEditPath).add({
-                name: inlineEditInput.value.trim()
-            }).then(snapshot => {
-                saveButton.disabled = true
-                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-                inlineEdit.hide()
+            await db.collection(inlineEditPath).add({
+                name: inlineEdit.input.value.trim()
+            }).then(() => {
             }).catch(error => {
-                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 console.error('Error creating ' + inlineEditPath + ': ', error)
             })
         } else {
-            db.doc(inlineEditPath).update({
-                name: inlineEditInput.value.trim()
+            await db.doc(inlineEditPath).update({
+                name: inlineEdit.input.value.trim()
             }).then(() => {
-                saveButton.disabled = true
-                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
-                inlineEdit.hide()
             }).catch(error => {
-                saveButtonIcon[0].setAttribute('data-icon', 'ic:round-done')
                 console.error('Error updating ' + inlineEditPath + ': ', error)
             })
         }
-    }
-}
-
-inlineEditInput.oninput = () => {
-    if (inlineEditInput.value.trim() != '' && inlineEditInput.value.trim() != inlineEditInput.oldValue) {
-        saveButton.disabled = false
-    } else {
-        saveButton.disabled = true
-    }
-}
-inlineEditInput.onchange = () => inlineEditInput.value = inlineEditInput.value.trim()
-
-inlineEditInput.onblur = event => {
-    if (event.relatedTarget != null) {
-        if (event.relatedTarget.parentElement == inlineEdit) {
-            return
-        }
-    }
-    inlineEdit.hide()
-}
-
-inlineEditInput.onkeydown = event => {
-    switch (event.key) {
-        case 'Enter':
-            saveButton.click()
-            break
-        case 'Escape':
-            inlineEdit.hide()
-            break
+        inlineEdit.hide()
     }
 }
 

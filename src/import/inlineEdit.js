@@ -24,15 +24,11 @@ inlineEdit.moveToAnchor = () => {
     }
 }
 inlineEdit.show = (anchor, path, oldValue) => {
-    if (oldValue) {
-        inlineEditInput.value = oldValue
-        inlineEditInput.oldValue = oldValue
-    } else {
-        inlineEditInput.value = ''
-        inlineEditInput.oldValue = ''
-    }
-    if (typeof saveButton !== 'undefined') {
-        saveButton.disabled = true
+    inlineEdit.input.value = oldValue || ''
+    inlineEdit.input.oldValue = oldValue || ''
+    buttonDone.icon[0].setAttribute('data-icon', 'ic:round-done')
+    if (inlineEdit.input.id != 'activityName') {
+        buttonDone.disabled = true
     }
     if (anchor.parentElement.id != '') {
         inlineEditAnchorSelector = '#'
@@ -56,7 +52,38 @@ inlineEdit.show = (anchor, path, oldValue) => {
 
     inlineEditPath = path
     inlineEdit.classList.add('show')
-    inlineEditInput.focus()
+    inlineEdit.input.focus()
 }
 inlineEdit.hide = () => inlineEdit.classList.remove('show')
 window.onresize = () => inlineEdit.moveToAnchor()
+
+inlineEdit.input = inlineEdit.querySelector('input')
+inlineEdit.input.onchange = () => inlineEdit.input.value = inlineEdit.input.value.trim()
+
+if (inlineEdit.input.id != 'activityName') {
+    inlineEdit.input.oninput = () => {
+        if (inlineEdit.input.value.trim() != '' && inlineEdit.input.value.trim() != inlineEdit.input.oldValue) {
+            buttonDone.disabled = false
+        } else {
+            buttonDone.disabled = true
+        }
+    }
+    inlineEdit.input.onblur = event => {
+        if (event.relatedTarget != null) {
+            if (event.relatedTarget.parentElement == inlineEdit.input.parentElement) {
+                return
+            }
+        }
+        inlineEdit.hide()
+    }
+    inlineEdit.input.onkeydown = event => {
+        switch (event.key) {
+            case 'Enter':
+                buttonDone.click()
+                break
+            case 'Escape':
+                inlineEdit.hide()
+                break
+        }
+    }
+}

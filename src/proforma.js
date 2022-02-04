@@ -259,7 +259,7 @@ function listProforma(snap) {
                         td.onclick = () => {
                             const proformaName = td.textContent
                             inlineEdit.show(td, proformaSnap.ref.path, proformaName.slice(0, proformaName.lastIndexOf('.')))
-                            inlineEditInput.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
+                            inlineEdit.input.proformaType = proformaName.slice(proformaName.lastIndexOf('.')).toLowerCase()
                         }
                         break
                     case 'total':
