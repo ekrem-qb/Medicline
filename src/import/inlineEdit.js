@@ -87,3 +87,5 @@ if (inlineEdit.input.id != 'activityName') {
         }
     }
 }
+const buttonDone = inlineEdit.querySelector('button#done')
+buttonDone.icon = buttonDone.getElementsByClassName('iconify')

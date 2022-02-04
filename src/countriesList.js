@@ -180,9 +180,6 @@ function loadPermissions() {
     )
 }
 
-const buttonDone = inlineEdit.querySelector('button#save')
-buttonDone.icon = buttonDone.getElementsByClassName('iconify')
-
 buttonDone.onclick = async () => {
     if (inlineEdit.input.value != '' && inlineEdit.input.value != inlineEdit.input.oldValue) {
         buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')

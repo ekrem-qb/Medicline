@@ -215,8 +215,7 @@ inputPrice.onkeydown = event => {
     }
 }
 const selectCurrency = inlineEdit.querySelector('.mdc-select#currency').materialComponent
-const buttonDone = inlineEdit.querySelector('button#donePrice')
-buttonDone.icon = buttonDone.getElementsByClassName('iconify')
+
 buttonDone.onclick = async () => {
     if (inlineEdit.input.value.trim() == '') {
         inlineEdit.input.focus()
