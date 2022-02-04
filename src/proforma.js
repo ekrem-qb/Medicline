@@ -676,10 +676,8 @@ function calculateProformaSubtotal() {
 
 const inputDiscount = totalPanel.querySelector('input#discount')
 inputDiscount.oninput = calculateProformaTotal
-inputDiscount.onchange = () => { if (inputDiscount.value == '') inputDiscount.value = 0 }
 const inputPrepay = totalPanel.querySelector('input#prepay')
 inputPrepay.oninput = calculateProformaTotal
-inputPrepay.onchange = () => { if (inputPrepay.value == '') inputPrepay.value = 0 }
 inputPrepay.symbol = inputPrepay.nextElementSibling
 const textTotal = totalPanel.querySelector('h4#total')
 

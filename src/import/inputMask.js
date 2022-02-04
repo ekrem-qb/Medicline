@@ -4,14 +4,23 @@ document.querySelectorAll('input[mask]').forEach(input => {
     const options = {
         showMaskOnHover: false
     }
-    switch (input.getAttribute('mask')) {
+    const maskType = input.getAttribute('mask')
+    switch (maskType) {
         case 'time':
+        case 'date':
             options.alias = 'datetime'
+            break
+        case 'price':
+        case 'percent':
+            input.onchange = () => { if (input.value == '') input.value = 0 }
+            break
+    }
+    switch (maskType) {
+        case 'time':
             options.inputFormat = 'HH:MM'
             options.placeholder = '--:--'
             break
         case 'date':
-            options.alias = 'datetime'
             options.inputFormat = 'dd.mm.yyyy'
             options.outputFormat = 'yyyy-mm-dd'
             options.placeholder = '--.--.----'

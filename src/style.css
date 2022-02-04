@@ -68,6 +68,11 @@ body {
   z-index: 100;
 }
 
+input[mask="time"],
+input[mask="date"] {
+  font-family: Lucida Sans Typewriter, consolas, monospace;
+}
+
 .form-group {
   margin-bottom: 1rem;
 }
