@@ -853,7 +853,9 @@ textarea::-webkit-scrollbar {
   will-change: auto;
 }
 
-.mdc-ripple-surface input[type=checkbox] {
+.mdc-ripple-surface input[type=checkbox],
+.mdc-ripple-surface h5,
+.mdc-ripple-surface .iconify {
   pointer-events: none;
 }
 

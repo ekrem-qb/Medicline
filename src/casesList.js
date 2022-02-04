@@ -116,7 +116,10 @@ const buttonCreate = document.querySelector('button#create')
 buttonCreate.onclick = () => ipcRenderer.send('new-window', 'case')
 
 const formFilter = document.querySelector('form#filter')
-const buttonClearFilter = document.querySelector('button#clearFilter')
+const headerFilter = formFilter.previousElementSibling
+headerFilter.onclick = modalExpand
+const buttonClearFilter = formFilter.nextElementSibling.querySelector('button#clearFilter')
+const buttonApplyFilter = formFilter.nextElementSibling.querySelector('button#applyFilter')
 
 const statusBar = document.getElementById('statusBar')
 let selectedStatus
@@ -142,9 +145,7 @@ firebase.auth().onAuthStateChanged(user => {
         else {
             listCases(currentCasesSnap)
         }
-        if (localStorage.getItem('isDocumentsPanelOpen')) {
-            headerDocuments.click()
-        }
+        modalExpand(headerDocuments, localStorage.getItem('isDocumentsPanelOpen') || false)
     }
     else {
         stopPermissionsQuery()
@@ -602,7 +603,7 @@ for (const status of statusBar.children) {
 }
 
 const headerDocuments = document.querySelector('header#documents')
-
+headerDocuments.onclick = modalExpand
 const tabBar = headerDocuments.previousElementSibling.materialComponent
 const documentsContent = headerDocuments.nextElementSibling
 const tabsOverlay = documentsContent.querySelector('#tabsOverlay')
@@ -643,36 +644,41 @@ tabBar.listen('MDCTabBar:activated', event => {
     activePage.classList.add('show')
 })
 
-function modalExpand(header) {
-    const modalBody = header.nextElementSibling
-    const expandIcon = header.querySelector('.dropdown-icon')
-
-    expandIcon.classList.toggle('rot-180', modalBody.classList.contains('collapsed'))
-    modalBody.classList.toggle('collapsed', !modalBody.classList.contains('collapsed'))
-    header.classList.toggle('align-items-center', modalBody.classList.contains('collapsed'))
-
-    if (header.id == 'documents') {
-        header.classList.toggle('hide')
-        header.previousElementSibling.classList.toggle('hide')
-        const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
-        if (header.classList.contains('hide')) {
-            localStorage.setItem('isDocumentsPanelOpen', 1)
-            loadTab(activePage)
+function modalExpand(header, toggle) {
+    if (header.target) {
+        header = header.target
+    }
+    if (header == headerDocuments) {
+        let isCollapsed
+        if (toggle != undefined) {
+            isCollapsed = documentsContent.classList.toggle('collapsed', !toggle)
         }
         else {
+            isCollapsed = documentsContent.classList.toggle('collapsed')
+        }
+        header.classList.toggle('hide', !isCollapsed)
+        header.previousElementSibling.classList.toggle('hide', isCollapsed)
+        const activePage = documentsContent.children[tabBar.foundation.adapter.getPreviousActiveTabIndex()]
+        if (isCollapsed) {
             localStorage.removeItem('isDocumentsPanelOpen')
             if (activePage.stopLoadingContent) {
                 activePage.stopLoadingContent()
             }
         }
+        else {
+            localStorage.setItem('isDocumentsPanelOpen', 1)
+            loadTab(activePage)
+        }
     }
     else {
+        formFilter.classList.toggle('collapsed')
+        header.querySelector('.dropdown-icon').classList.toggle('rot-180', !formFilter.classList.contains('collapsed'))
         hideEmptyFilters()
     }
 }
 
 const buttonCloseDocuments = document.querySelector('button#closeDocuments')
-buttonCloseDocuments.onclick = () => modalExpand(headerDocuments)
+buttonCloseDocuments.onclick = () => modalExpand(headerDocuments, false)
 
 //#region Filter
 
@@ -763,6 +769,8 @@ function applyFilter() {
         alert(translate('EMPTY_FILTERS'))
     }
 }
+
+buttonApplyFilter.onclick = applyFilter
 
 function clearFilter() {
     formFilter.querySelectorAll('input, textarea').forEach(inputFilter => {
