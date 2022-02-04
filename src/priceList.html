@@ -27,11 +27,71 @@
     </header>
     <div class="d-flex flex-column h-100 overflow-auto">
         <header class="modal-header">
-            <button class="mdc-button mdc-button--raised mdc-button--green w-75" id="createPrice" disabled>
-                <div class="mdc-button__ripple"></div>
-                <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
-                <span class="mdc-button__label" translate>NEW#ACTIVITY</span>
-            </button>
+            <div class="w-75">
+                <button class="mdc-button mdc-button--raised mdc-button--green w-100" id="createPrice" disabled>
+                    <div class="mdc-button__ripple"></div>
+                    <i class="mdc-button__icon iconify" data-icon="ic:round-plus"></i>
+                    <span class="mdc-button__label" translate>NEW#ACTIVITY</span>
+                </button>
+                <div class="d-flex position-absolute w-75 inset-0 p-2 hide">
+                    <button class="mdc-button mdc-button--outlined mdc-button--red" id="cancel">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
+                        <span class="mdc-button__label" translate>CANCEL</span>
+                    </button>
+                    <label class="mdc-text-field mdc-text-field--outlined h-100 flex-grow-1 ms-2 me-1">
+                        <input type="text" class="mdc-text-field__input" id="name" required />
+                        <div class="mdc-notched-outline mdc-notched-outline--no-label">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                    <label class="mdc-text-field mdc-text-field--outlined h-100 w-25 mx-1">
+                        <input mask="price" class="mdc-text-field__input" id="price" value="0" required />
+                        <div class="mdc-notched-outline mdc-notched-outline--no-label">
+                            <div class="mdc-notched-outline__leading"></div>
+                            <div class="mdc-notched-outline__trailing"></div>
+                        </div>
+                    </label>
+                    <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="currency">
+                        <div class="mdc-select__anchor h-auto">
+                            <span class="mdc-notched-outline mdc-notched-outline--no-label">
+                                <span class="mdc-notched-outline__leading"></span>
+                                <span class="mdc-notched-outline__trailing"></span>
+                            </span>
+                            <span class="mdc-select__selected-text-container">
+                                <span class="mdc-select__selected-text"></span>
+                            </span>
+                            <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
+                        </div>
+                        <div class="mdc-select__menu mdc-menu mdc-menu-surface">
+                            <ul class="mdc-list">
+                                <li class="mdc-list-item mdc-list-item--selected" data-value="₺" aria-selected="true">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">₺</span>
+                                </li>
+                                <li class="mdc-list-item" data-value="$">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">$</span>
+                                </li>
+                                <li class="mdc-list-item" data-value="€">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">€</span>
+                                </li>
+                                <li class="mdc-list-item" data-value="₽">
+                                    <span class="mdc-list-item__ripple"></span>
+                                    <span class="mdc-list-item__text">₽</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <button class="mdc-button mdc-button--raised mdc-button--green" id="done">
+                        <div class="mdc-button__ripple"></div>
+                        <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
+                        <span class="mdc-button__label" translate>DONE</span>
+                    </button>
+                </div>
+            </div>
             <div class="input-group input-group-sm w-25">
                 <span class="input-group-text"><i class="iconify" data-icon="ic:round-search"></i></span>
                 <input type="text" class="form-control" id="search" placeholder="SEARCH">
@@ -72,63 +132,18 @@
         </footer>
     </div>
     <input type="file" id="excel" accept=".xlsx" hidden>
-    <div class="d-flex m-2" id="inlineEdit">
-        <button class="mdc-button mdc-button--outlined mdc-button--red h-auto" id="cancelPrice">
-            <div class="mdc-button__ripple"></div>
-            <i class="mdc-button__icon iconify" data-icon="ic:round-close"></i>
-            <span class="mdc-button__label" translate>CANCEL</span>
-        </button>
-        <label class="mdc-text-field mdc-text-field--outlined flex-grow-1 ms-2 me-1 w-auto">
-            <input type="text" class="mdc-text-field__input" id="activityName" required />
+    <div id="inlineEdit" class="mdc-elevation--z6">
+        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--with-trailing-icon">
+            <input type="text" class="mdc-text-field__input" />
+            <button class="mdc-icon-button" id="done" disabled>
+                <div class="mdc-icon-button__ripple"></div>
+                <i class="iconify" data-icon="ic:round-done"></i>
+            </button>
             <div class="mdc-notched-outline mdc-notched-outline--no-label">
                 <div class="mdc-notched-outline__leading"></div>
                 <div class="mdc-notched-outline__trailing"></div>
             </div>
         </label>
-        <label class="mdc-text-field mdc-text-field--outlined ms-1 me-1 w-25">
-            <input mask="price" class="mdc-text-field__input" id="activityPrice" value="0" required />
-            <div class="mdc-notched-outline mdc-notched-outline--no-label">
-                <div class="mdc-notched-outline__leading"></div>
-                <div class="mdc-notched-outline__trailing"></div>
-            </div>
-        </label>
-        <div class="mdc-select mdc-select--outlined mdc-select--no-label ms-1 me-2" id="currency">
-            <div class="mdc-select__anchor h-auto">
-                <span class="mdc-notched-outline mdc-notched-outline--no-label">
-                    <span class="mdc-notched-outline__leading"></span>
-                    <span class="mdc-notched-outline__trailing"></span>
-                </span>
-                <span class="mdc-select__selected-text-container">
-                    <span class="mdc-select__selected-text"></span>
-                </span>
-                <i class="mdc-select__dropdown-icon iconify" data-icon="ic:round-keyboard-arrow-down"></i>
-            </div>
-            <div class="mdc-select__menu mdc-menu mdc-menu-surface">
-                <ul class="mdc-list">
-                    <li class="mdc-list-item mdc-list-item--selected" data-value="₺" aria-selected="true">
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text">₺</span>
-                    </li>
-                    <li class="mdc-list-item" data-value="$">
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text">$</span>
-                    </li>
-                    <li class="mdc-list-item" data-value="€">
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text">€</span>
-                    </li>
-                    <li class="mdc-list-item" data-value="₽">
-                        <span class="mdc-list-item__ripple"></span>
-                        <span class="mdc-list-item__text">₽</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <button class="mdc-button mdc-button--raised mdc-button--green h-auto" id="done">
-            <div class="mdc-button__ripple"></div>
-            <i class="mdc-button__icon iconify" data-icon="ic:round-done"></i>
-            <span class="mdc-button__label" translate>DONE</span>
-        </button>
     </div>
     <div class="mdc-menu mdc-menu-surface" id="tableRowContextMenu">
         <ul class="mdc-list">

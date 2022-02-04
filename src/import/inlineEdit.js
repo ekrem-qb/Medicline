@@ -23,9 +23,21 @@ inlineEdit.moveToAnchor = () => {
         inlineEdit.hide()
     }
 }
-inlineEdit.show = (anchor, path, oldValue) => {
-    inlineEdit.input.value = oldValue || ''
-    inlineEdit.input.oldValue = oldValue || ''
+inlineEdit.show = (anchor, path, oldValue, valueType = 'name') => {
+    inlineEdit.valueType = valueType
+    switch (valueType) {
+        case 'price':
+        case 'date':
+            mask(inlineEdit.input, valueType, true)
+            inlineEdit.input.value = oldValue
+            inlineEdit.input.oldValue = oldValue
+            break
+        default:
+            inlineEdit.input.inputmask?.destroy()
+            inlineEdit.input.value = oldValue || ''
+            inlineEdit.input.oldValue = oldValue || ''
+            break
+    }
     buttonDone.icon[0].setAttribute('data-icon', 'ic:round-done')
     if (inlineEdit.input.id != 'activityName') {
         buttonDone.disabled = true
@@ -62,10 +74,8 @@ inlineEdit.input.onchange = () => inlineEdit.input.value = inlineEdit.input.valu
 
 if (inlineEdit.input.id != 'activityName') {
     inlineEdit.input.oninput = () => {
-        if (inlineEdit.input.value.trim() != '' && inlineEdit.input.value.trim() != inlineEdit.input.oldValue) {
-            buttonDone.disabled = false
-        } else {
-            buttonDone.disabled = true
+        if (!inlineEdit.input.inputmask) {
+            buttonDone.disabled = inlineEdit.input.value.trim() == '' || inlineEdit.input.value.trim() == inlineEdit.input.oldValue
         }
     }
     inlineEdit.input.onblur = event => {
@@ -84,6 +94,11 @@ if (inlineEdit.input.id != 'activityName') {
             case 'Escape':
                 inlineEdit.hide()
                 break
+        }
+    }
+    inlineEdit.input.onkeyup = () => {
+        if (inlineEdit.input.inputmask) {
+            buttonDone.disabled = inlineEdit.input.inputmask.unmaskedvalue().toString() == '' || inlineEdit.input.inputmask.unmaskedvalue() == inlineEdit.input.oldValue || !inlineEdit.input.inputmask.isValid()
         }
     }
 }

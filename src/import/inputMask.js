@@ -1,11 +1,10 @@
 require('inputmask')
 
-document.querySelectorAll('input[mask]').forEach(input => {
+function mask(input, mask = input.getAttribute('mask'), dontAlignRight) {
     const options = {
         showMaskOnHover: false
     }
-    const maskType = input.getAttribute('mask')
-    switch (maskType) {
+    switch (mask) {
         case 'time':
         case 'date':
             options.alias = 'datetime'
@@ -15,7 +14,7 @@ document.querySelectorAll('input[mask]').forEach(input => {
             input.onchange = () => { if (input.value == '') input.value = 0 }
             break
     }
-    switch (maskType) {
+    switch (mask) {
         case 'time':
             options.inputFormat = 'HH:MM'
             options.placeholder = '--:--'
@@ -42,5 +41,15 @@ document.querySelectorAll('input[mask]').forEach(input => {
             options.onUnMask = maskedValue => { return parseInt(maskedValue) }
             break
     }
-    input.mask = new Inputmask(options).mask(input)
-})
+    if (dontAlignRight) {
+        options.rightAlign = false
+    }
+    new Inputmask(options).mask(input)
+    input.inputmask.destroy = () => {
+        input.inputmask.remove()
+        if (input.style.textAlign) {
+            input.style.textAlign = ''
+        }
+    }
+}
+document.querySelectorAll('input[mask]').forEach(input => mask(input))

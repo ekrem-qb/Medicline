@@ -727,8 +727,8 @@ function applyFilter() {
 
             let value = inputFilter.value
 
-            if (inputFilter.mask != undefined) {
-                value = inputFilter.mask.unmaskedvalue()
+            if (inputFilter.inputmask != undefined) {
+                value = inputFilter.inputmask.unmaskedvalue()
             }
 
             if (inputFilter.id.split('-')[0] == 'createDate') {

@@ -52,7 +52,6 @@ function addHiddenHeaderOption(headerID) {
 }
 
 const columnsJSON = {
-    "__name__": "ID",
     "name": "DESCRIPTION",
     "price": "PRICE",
 }
@@ -176,74 +175,76 @@ function loadPermissions() {
 }
 const buttonCreate = document.querySelector('button#createPrice')
 buttonCreate.onclick = () => {
-    inlineEdit.classList.add('m-2')
-    buttonCancel.click()
-    inlineEdit.show(buttonCreate)
-    buttonCreate.classList.add('hide')
-    inlineEdit.input.focus()
-}
-const buttonCancel = document.querySelector('button#cancelPrice')
-buttonCancel.onclick = () => {
-    inlineEdit.input.materialComponent.valid = true
+    inputName.value = ''
+    inputName.focus()
+    inputName.materialComponent.valid = true
     inputPrice.value = '0'
-    inputPrice.materialComponent.valid = true
-    inlineEdit.hide()
-    buttonCreate.classList.remove('hide')
-    priceList.querySelector('.hide')?.classList.remove('hide')
+    buttonDoneNewActivity.icon[0].setAttribute('data-icon', 'ic:round-done')
+    panelNewActivity.classList.remove('hide')
+    buttonCreate.classList.add('hide')
 }
-inlineEdit.input.oninput = () => inlineEdit.input.materialComponent.valid = inlineEdit.input.value.trim() != ''
-inlineEdit.input.onkeydown = event => {
+const panelNewActivity = buttonCreate.nextElementSibling
+const buttonCancel = panelNewActivity.querySelector('button#cancel')
+buttonCancel.onclick = () => {
+    panelNewActivity.classList.add('hide')
+    buttonCreate.classList.remove('hide')
+}
+const inputName = panelNewActivity.querySelector('input#name')
+inputName.oninput = () => inputName.materialComponent.valid = inputName.value.trim() != ''
+inputName.onkeydown = event => {
     switch (event.key) {
         case 'Enter':
-            buttonDone.click()
+            buttonDoneNewActivity.click()
             break
         case 'Escape':
             buttonCancel.click()
             break
     }
 }
-const inputPrice = inlineEdit.querySelector('input#activityPrice')
-inputPrice.oninput = () => inputPrice.materialComponent.valid = inputPrice.value.trim() != ''
+const inputPrice = panelNewActivity.querySelector('input#price')
 inputPrice.onkeydown = event => {
     switch (event.key) {
         case 'Enter':
-            buttonDone.click()
+            buttonDoneNewActivity.click()
             break
         case 'Escape':
             buttonCancel.click()
             break
     }
 }
-const selectCurrency = inlineEdit.querySelector('.mdc-select#currency').materialComponent
-
-buttonDone.onclick = async () => {
-    if (inlineEdit.input.value.trim() == '') {
-        inlineEdit.input.focus()
+const selectCurrency = panelNewActivity.querySelector('.mdc-select#currency').materialComponent
+const buttonDoneNewActivity = panelNewActivity.querySelector('button#done')
+buttonDoneNewActivity.icon = buttonDoneNewActivity.getElementsByClassName('iconify')
+buttonDoneNewActivity.onclick = async () => {
+    if (inputName.value.trim() == '') {
+        inputName.focus()
     }
     else if (inputPrice.value == '') {
         inputPrice.focus()
     }
     else {
-        buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+        buttonDoneNewActivity.icon[0].setAttribute('data-icon', 'eos-icons:loading')
         const data = {
-            name: inlineEdit.input.value.trim(),
-            price: inputPrice.mask.unmaskedvalue(),
+            name: inputName.value.trim(),
+            price: inputPrice.inputmask.unmaskedvalue(),
             currency: selectCurrency.value
         }
-        if (inlineEditPath != undefined) {
-            await allPrices.doc(inlineEditPath).update(data).then(() => {
-            }).catch(error => {
-                console.error('Error updating price: ', error)
-            })
-        }
-        else {
-            await allPrices.add(data).then(() => {
-            }).catch(error => {
-                console.error('Error creating price: ', error)
-            })
-        }
+        await allPrices.add(data).then(() => {
+        }).catch(error => {
+            console.error('Error creating price: ', error)
+        })
         buttonCancel.click()
     }
+}
+buttonDone.onclick = async () => {
+    buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
+    const data = {}
+    data[inlineEdit.valueType] = inlineEdit.input.value
+    await allPrices.doc(inlineEditPath).update(data).then(() => {
+    }).catch(error => {
+        console.error('Error updating price: ', error)
+    })
+    inlineEdit.hide()
 }
 const inputSearch = document.querySelector('input#search')
 const buttonClearSearch = document.querySelector('button#clearSearch')
@@ -416,24 +417,12 @@ function listPrices(snap) {
                     td.id = column.id
                     td.ondblclick = () => {
                         if (getSelectedText() == '') {
-                            inlineEdit.classList.remove('m-2')
-                            buttonCancel.click()
-                            inputPrice.value = parseFloat(tr.children['price'].textContent)
-                            selectCurrency.value = tr.children['price'].textContent[tr.children['price'].textContent.length - 1]
-                            tr.classList.add('hide')
-                            inlineEdit.show(tr, selectedPrice.id, tr.children['name'].textContent)
-
-                            if (td.id == 'price') {
-                                inputPrice.focus()
-                            }
+                            inlineEdit.show(td, selectedPrice.id, priceSnap.get(td.id), td.id)
                         }
                     }
                     tr.appendChild(td)
 
                     switch (td.id) {
-                        case '__name__':
-                            td.textContent = priceSnap.id
-                            break;
                         case 'price':
                             td.textContent = priceSnap.get(td.id) + ' ' + priceSnap.get('currency')
                             break;
@@ -456,7 +445,7 @@ function listPrices(snap) {
             selectedPrice = undefined
             selectedPriceRow = undefined
             dialogDeletePrice.close()
-            buttonCancel.click()
+            inlineEdit.hide()
         }
         orderPrices(currentOrder, currentOrderDirection)
 
@@ -540,12 +529,6 @@ tableRowContextMenu.deleteOption = tableRowContextMenu.children[0].children['del
 tableRowContextMenu.deleteOption.onclick = () => dialogDeletePrice.open()
 tableRowContextMenu.editOption = tableRowContextMenu.children[0].children['edit']
 tableRowContextMenu.editOption.onclick = () => {
-    inlineEdit.classList.remove('m-2')
-    buttonCancel.click()
-    inputPrice.value = parseFloat(selectedPriceRow.children['price'].textContent)
-    selectCurrency.value = selectedPriceRow.children['price'].textContent[selectedPriceRow.children['price'].textContent.length - 1]
-    selectedPriceRow.classList.add('hide')
-    inlineEdit.show(selectedPriceRow, selectedPrice.id, selectedPriceRow.children['name'].textContent)
 }
 const dialogDeletePrice = document.querySelector('#dialogDeletePrice').materialComponent
 

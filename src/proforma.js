@@ -684,11 +684,11 @@ const textTotal = totalPanel.querySelector('h4#total')
 function calculateProformaTotal() {
     let total = subtotal
     if (total) {
-        const discount = inputDiscount.mask.unmaskedvalue()
+        const discount = inputDiscount.inputmask.unmaskedvalue()
         if (discount) {
             total -= total * (discount / 100)
         }
-        const prepay = inputPrepay.mask.unmaskedvalue()
+        const prepay = inputPrepay.inputmask.unmaskedvalue()
         if (prepay) {
             total -= prepay
         }
@@ -765,7 +765,7 @@ async function proformaToPdf(attach) {
             })
         }
 
-        const discount = inputDiscount.mask.unmaskedvalue()
+        const discount = inputDiscount.inputmask.unmaskedvalue()
         const data = {
             id: selectedCase.id,
             date: new Date().toLocaleDateString('tr'),
@@ -775,7 +775,7 @@ async function proformaToPdf(attach) {
             subtotal: textSubtotal.textContent,
             discount_percent: discount,
             discount: roundFloat(subtotal * (discount / 100)),
-            prepay: inputPrepay.mask.unmaskedvalue() + ' ' + selectCurrency.value,
+            prepay: inputPrepay.inputmask.unmaskedvalue() + ' ' + selectCurrency.value,
             total: textTotal.textContent,
         }
         console.log(data)

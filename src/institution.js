@@ -126,8 +126,8 @@ function saveInstitution() {
                 break
             }
             if (input.value != '') {
-                if (input.mask != undefined) {
-                    data[input.id] = input.mask.unmaskedvalue()
+                if (input.inputmask != undefined) {
+                    data[input.id] = input.inputmask.unmaskedvalue()
                 }
                 else {
                     data[input.id] = input.value
@@ -209,8 +209,8 @@ function validateInput(input) {
     if (input.target) {
         input = input.target
     }
-    if (input.mask) {
-        input.classList.toggle('is-invalid', !input.mask.isValid())
+    if (input.inputmask) {
+        input.classList.toggle('is-invalid', !input.inputmask.isValid())
         if (input.value == '') {
             input.classList.toggle('is-invalid', input.required)
         }

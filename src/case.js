@@ -85,8 +85,8 @@ function validateInput(input) {
             return true
         }
     }
-    if (input.mask) {
-        input.classList.toggle('is-invalid', !input.mask.isValid())
+    if (input.inputmask) {
+        input.classList.toggle('is-invalid', !input.inputmask.isValid())
         if (input.value == '') {
             input.classList.toggle('is-invalid', input.required)
         }
@@ -341,8 +341,8 @@ function saveCase() {
                 }
 
                 if (input.value != '' && !input.readOnly && !input.parentElement.parentElement.hidden) {
-                    if (input.mask != undefined) {
-                        caseData[input.id] = input.mask.unmaskedvalue()
+                    if (input.inputmask != undefined) {
+                        caseData[input.id] = input.inputmask.unmaskedvalue()
                     }
                     else {
                         if (input.type != 'checkbox') {
