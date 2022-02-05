@@ -1,70 +1,79 @@
 const inlineEdit = document.getElementById('inlineEdit')
-let inlineEditPath, inlineEditAnchorSelector
+let inlineEditPath, inlineEditAnchor, inlineEditAnchorSelector
 inlineEdit.moveToAnchor = () => {
-    const anchor = document.querySelector(inlineEditAnchorSelector)
-    if (anchor != null) {
-        switch (anchor.localName) {
-            case 'button':
-                inlineEdit.style.top = (anchor.parentElement.parentElement.offsetTop + 1) + 'px'
-                inlineEdit.style.left = anchor.parentElement.parentElement.offsetLeft + 'px'
-                inlineEdit.style.height = anchor.offsetHeight + 'px'
-                inlineEdit.style.width = anchor.offsetWidth + 'px'
-                inlineEdit.style.zIndex = '15'
-                break
-            default:
-                inlineEdit.style.top = anchor.getBoundingClientRect().top + 'px'
-                inlineEdit.style.left = anchor.getBoundingClientRect().left + 'px'
-                inlineEdit.style.height = (anchor.offsetHeight - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
-                inlineEdit.style.width = (anchor.offsetWidth - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
-                inlineEdit.style.zIndex = ''
-                break
+    if (inlineEdit.classList.contains('show')) {
+        if (!inlineEditAnchor?.isConnected) {
+            inlineEditAnchor = document.querySelector(inlineEditAnchorSelector)
         }
-    } else {
-        inlineEdit.hide()
+        if (inlineEditAnchor) {
+            switch (inlineEditAnchor.localName) {
+                case 'button':
+                    inlineEdit.style.top = (inlineEditAnchor.parentElement.parentElement.offsetTop + 1) + 'px'
+                    inlineEdit.style.left = inlineEditAnchor.parentElement.parentElement.offsetLeft + 'px'
+                    inlineEdit.style.height = inlineEditAnchor.offsetHeight + 'px'
+                    inlineEdit.style.width = inlineEditAnchor.offsetWidth + 'px'
+                    inlineEdit.style.zIndex = '15'
+                    break
+                default:
+                    inlineEdit.style.top = inlineEditAnchor.getBoundingClientRect().top + 'px'
+                    inlineEdit.style.left = inlineEditAnchor.getBoundingClientRect().left + 'px'
+                    inlineEdit.style.height = (inlineEditAnchor.offsetHeight - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingTop.replace('px', '')) * 2)) + 'px'
+                    inlineEdit.style.width = (inlineEditAnchor.offsetWidth - (parseFloat(window.getComputedStyle(inlineEdit, null).paddingLeft.replace('px', '')) * 2)) + 'px'
+                    inlineEdit.style.zIndex = ''
+                    break
+            }
+        } else {
+            inlineEdit.hide()
+        }
     }
 }
 inlineEdit.show = (anchor, path, oldValue, valueType = 'name') => {
+    inlineEdit.input.type = 'text'
+    inlineEdit.input.min = undefined
+    inlineEdit.input.onkeypress = undefined
+    inlineEdit.input.inputmask?.destroy()
+
     inlineEdit.valueType = valueType
     switch (valueType) {
         case 'price':
         case 'date':
         case 'quantity':
             mask(inlineEdit.input, valueType, true)
-            inlineEdit.input.value = oldValue
-            inlineEdit.input.oldValue = oldValue
-            break
-        default:
-            inlineEdit.input.inputmask?.destroy()
-            inlineEdit.input.value = oldValue || ''
-            inlineEdit.input.oldValue = oldValue || ''
             break
     }
-    buttonDone.icon[0].setAttribute('data-icon', 'ic:round-done')
-    if (inlineEdit.input.id != 'activityName') {
-        buttonDone.disabled = true
-    }
-    if (anchor.parentElement.id != '') {
-        inlineEditAnchorSelector = '#'
-        if (!isNaN(anchor.parentElement.id[0])) {
-            inlineEditAnchorSelector += '\\3'
-        }
-        inlineEditAnchorSelector += anchor.parentElement.id.replaceAll('/', '\\/') + '>'
+    if (oldValue != undefined) {
+        inlineEdit.input.oldValue = oldValue
     }
     else {
-        inlineEditAnchorSelector = ''
+        inlineEdit.input.oldValue = ''
     }
-    inlineEditAnchorSelector += anchor.tagName.toLowerCase()
-    if (anchor.id != '') {
-        inlineEditAnchorSelector += '#'
-        if (!isNaN(anchor.id[0])) {
-            inlineEditAnchorSelector += '\\3'
+    inlineEdit.input.value = inlineEdit.input.oldValue
+    buttonDone.icon[0].setAttribute('data-icon', 'ic:round-done')
+    buttonDone.disabled = true
+    if (inlineEditAnchor != anchor) {
+        inlineEditAnchor = anchor
+        if (anchor.parentElement.id != '') {
+            inlineEditAnchorSelector = '#'
+            if (!isNaN(anchor.parentElement.id[0])) {
+                inlineEditAnchorSelector += '\\3'
+            }
+            inlineEditAnchorSelector += anchor.parentElement.id.replaceAll('/', '\\/') + '>'
         }
-        inlineEditAnchorSelector += anchor.id.replaceAll('/', '\\/')
+        else {
+            inlineEditAnchorSelector = ''
+        }
+        inlineEditAnchorSelector += anchor.tagName.toLowerCase()
+        if (anchor.id != '') {
+            inlineEditAnchorSelector += '#'
+            if (!isNaN(anchor.id[0])) {
+                inlineEditAnchorSelector += '\\3'
+            }
+            inlineEditAnchorSelector += anchor.id.replaceAll('/', '\\/')
+        }
     }
-    inlineEdit.moveToAnchor()
-
     inlineEditPath = path
     inlineEdit.classList.add('show')
+    inlineEdit.moveToAnchor()
     inlineEdit.input.focus()
 }
 inlineEdit.hide = () => inlineEdit.classList.remove('show')
@@ -73,34 +82,32 @@ window.onresize = () => inlineEdit.moveToAnchor()
 inlineEdit.input = inlineEdit.querySelector('input')
 inlineEdit.input.onchange = () => inlineEdit.input.value = inlineEdit.input.value.trim()
 
-if (inlineEdit.input.id != 'activityName') {
-    inlineEdit.input.oninput = () => {
-        if (!inlineEdit.input.inputmask) {
-            buttonDone.disabled = inlineEdit.input.value.trim() == '' || inlineEdit.input.value.trim() == inlineEdit.input.oldValue
+inlineEdit.input.oninput = () => {
+    if (!inlineEdit.input.inputmask) {
+        buttonDone.disabled = inlineEdit.input.value.trim() == '' || inlineEdit.input.value.trim() == inlineEdit.input.oldValue
+    }
+}
+inlineEdit.input.onblur = event => {
+    if (event.relatedTarget != null) {
+        if (event.relatedTarget.parentElement == inlineEdit.input.parentElement) {
+            return
         }
     }
-    inlineEdit.input.onblur = event => {
-        if (event.relatedTarget != null) {
-            if (event.relatedTarget.parentElement == inlineEdit.input.parentElement) {
-                return
-            }
-        }
-        inlineEdit.hide()
+    inlineEdit.hide()
+}
+inlineEdit.input.onkeydown = event => {
+    switch (event.key) {
+        case 'Enter':
+            buttonDone.click()
+            break
+        case 'Escape':
+            inlineEdit.hide()
+            break
     }
-    inlineEdit.input.onkeydown = event => {
-        switch (event.key) {
-            case 'Enter':
-                buttonDone.click()
-                break
-            case 'Escape':
-                inlineEdit.hide()
-                break
-        }
-    }
-    inlineEdit.input.onkeyup = () => {
-        if (inlineEdit.input.inputmask) {
-            buttonDone.disabled = inlineEdit.input.inputmask.unmaskedvalue().toString() == '' || inlineEdit.input.inputmask.unmaskedvalue() == inlineEdit.input.oldValue
-        }
+}
+inlineEdit.input.onkeyup = () => {
+    if (inlineEdit.input.inputmask) {
+        buttonDone.disabled = inlineEdit.input.inputmask.unmaskedvalue().toString() == '' || inlineEdit.input.inputmask.unmaskedvalue() == inlineEdit.input.oldValue
     }
 }
 const buttonDone = inlineEdit.querySelector('button#done')

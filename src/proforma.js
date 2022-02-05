@@ -43,13 +43,13 @@ function loadInsurance() {
                                     loadProforma()
                                     listActivities()
                                 }
-                                textName.textContent = insuranceSnap.get('name') || ''
-                                inputAddress.value = insuranceSnap.get('address') || ''
+                                textName.textContent = insuranceSnap.get(textName.id) || ' '
                             },
                             error => {
                                 console.error('Error getting insurance: ' + error)
                             }
                         )
+                        textName.link = newInsurance.id
                     }
                     else {
                         stopCurrentInsuranceQuery = () => { }
@@ -222,8 +222,8 @@ function listProforma(snap) {
             for (const column of proformaHeadersList.children) {
                 const td = document.createElement('td')
                 td.id = column.id
-                if (td.id != '__name__' && td.id != 'total') {
-                    td.ondblclick = () => {
+                if (td.id != 'total') {
+                    td.onclick = () => {
                         if (getSelectedText() == '') {
                             inlineEdit.show(td, proformaSnap.ref.path, proformaSnap.get(td.id), td.id)
                         }
@@ -232,12 +232,11 @@ function listProforma(snap) {
                 tr.appendChild(td)
 
                 switch (td.id) {
-                    case '__name__':
-                        td.textContent = proformaSnap.id
-                        break
                     case 'price':
-                    case 'total':
                         td.textContent = proformaSnap.get('price')
+                        break
+                    case 'total':
+                        td.textContent = proformaSnap.get('price') * proformaSnap.get('quantity')
                         break
                     case 'date':
                         const seconds = proformaSnap.get(td.id).seconds
@@ -246,11 +245,6 @@ function listProforma(snap) {
                         break
                     default:
                         td.textContent = proformaSnap.get(td.id)
-                        break
-                }
-                switch (td.id) {
-                    case 'total':
-                        td.textContent = parseFloat(td.textContent) * proformaSnap.get('quantity')
                         break
                 }
             }
@@ -306,10 +300,12 @@ function orderProforma(orderBy, orderDirection) {
 
         proformaCurrentOrder = orderBy
         proformaCurrentOrderDirection = orderDirection
+
+        inlineEdit.moveToAnchor()
     }
     else {
-        if (proformaHeadersList.children['__name__']) {
-            proformaHeaderClick('__name__')
+        if (proformaHeadersList.children['name']) {
+            proformaHeaderClick('name')
         }
         else {
             proformaHeaderClick(proformaHeadersList.firstChild.id)
@@ -603,9 +599,9 @@ dialogAddActivity.materialComponent.listen('MDCDialog:closed', event => {
 })
 
 const totalPanel = proformaTabPage.querySelector('#totalPanel')
-const textName = totalPanel.querySelector('h6#name')
-const inputAddress = totalPanel.querySelector('textarea#address')
-const textSubtotal = totalPanel.querySelector('h5#subtotal')
+const textName = totalPanel.querySelector('span#name')
+textName.onclick = () => { if (textName.link) ipcRenderer.send('new-window', 'institution', textName.link, 'insurance') }
+const textSubtotal = totalPanel.querySelector('h6#subtotal')
 let subtotal = 0
 
 function calculateProformaSubtotal() {
@@ -642,13 +638,13 @@ function calculateProformaTotal() {
     textTotal.textContent = roundFloat(total)
 }
 
-function roundFloat(float, dontAddCurrency) {
+function roundFloat(float = 0, dontAddCurrency = false) {
     return dontAddCurrency ? Math.round(float * 100) / 100 : (Math.round(float * 100) / 100) + ' ' + selectCurrency.value
 }
 
 let readFile, compile, templateProforma, puppeteer, browserPage
 
-async function proformaToPdf(attach) {
+async function proformaToPdf(attach = false) {
     if (!templateProforma) {
         if (!readFile) readFile = require('fs').readFile
         await readFile('proforma.html', 'utf8', (err, html) => {

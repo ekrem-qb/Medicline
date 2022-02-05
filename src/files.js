@@ -249,32 +249,27 @@ function listFiles(snap) {
                 td.id = column.id
                 tr.appendChild(td)
 
-                if (td.id == '__name__') {
-                    td.textContent = fileSnap.id
-                }
-                else {
-                    const value = fileSnap.get(td.id)
-                    if (value != undefined) {
-                        if (td.id.includes('Date')) {
-                            td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
-                            td.realValue = value.seconds
-                        }
-                        else if (typeof value === 'object' && value !== null) {
-                            currentFilesRefQueries.push(
-                                value.onSnapshot(
-                                    snapshot => {
-                                        td.textContent = snapshot.get('name')
-                                        orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
-                                    },
-                                    error => {
-                                        console.error(error)
-                                    }
-                                )
+                const value = fileSnap.get(td.id)
+                if (value != undefined) {
+                    if (td.id.includes('Date')) {
+                        td.textContent = new Date(value.seconds * 1000).toLocaleString('tr').replace(',', '')
+                        td.realValue = value.seconds
+                    }
+                    else if (typeof value === 'object' && value !== null) {
+                        currentFilesRefQueries.push(
+                            value.onSnapshot(
+                                snapshot => {
+                                    td.textContent = snapshot.get('name')
+                                    orderFiles(filesCurrentOrder, filesCurrentOrderDirection)
+                                },
+                                error => {
+                                    console.error(error)
+                                }
                             )
-                        }
-                        else {
-                            td.textContent = value
-                        }
+                        )
+                    }
+                    else {
+                        td.textContent = value
                     }
                 }
                 if (td.id == 'name') {
@@ -335,10 +330,12 @@ function orderFiles(orderBy, orderDirection) {
 
         filesCurrentOrder = orderBy
         filesCurrentOrderDirection = orderDirection
+
+        inlineEdit.moveToAnchor()
     }
     else {
-        if (filesHeadersList.children['__name__']) {
-            filesHeaderClick('__name__')
+        if (filesHeadersList.children['name']) {
+            filesHeaderClick('name')
         }
         else {
             filesHeaderClick(filesHeadersList.firstChild.id)

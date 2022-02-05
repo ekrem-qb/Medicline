@@ -512,22 +512,18 @@
             </div>
             <ul class="list-group-flush w-25 border-start overflow-auto ps-0 mb-0" id="totalPanel">
                 <li class="list-group-item">
-                    <label translate>NAME</label>
-                    <h6 class="me-2 mb-0" id="name"></h6>
-                </li>
-                <li class="list-group-item">
-                    <label class="mb-auto" translate>ADDRESS</label>
-                    <div class="input-group input-group-sm w-75">
-                        <textarea class="form-control" id="address" rows="3" disabled></textarea>
+                    <label class="me-3" translate>ACCOUNT</label>
+                    <div class="input-group input-group-sm w-auto">
+                        <span class="input-group-text mdc-ripple-surface" id="name"></span>
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <label translate>SUBTOTAL</label>
-                    <h5 class="me-2 mb-0" id="subtotal">0 ₺</h5>
+                    <label class="me-3" translate>SUBTOTAL</label>
+                    <h6 class="me-2 mb-0" id="subtotal">0 ₺</h6>
                 </li>
                 <li class="list-group-item">
                     <label translate>DISCOUNT</label>
-                    <div class="input-group input-group-sm w-25">
+                    <div class="input-group input-group-sm w-auto">
                         <input mask="percent" class="form-control" id="discount" value="0">
                         <span class="input-group-text">%</i></span>
                     </div>
@@ -540,7 +536,7 @@
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <h4 translate>TOTAL:</h4>
+                    <h4 class="me-3" translate>TOTAL</h4>
                     <h4 id="total">0 ₺</h4>
                 </li>
             </ul>

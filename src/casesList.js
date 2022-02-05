@@ -317,7 +317,6 @@ function loadCases() {
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             currentCasesSnap = snapshot
-            listCases(snapshot)
             refreshSearch()
         },
         error => {
@@ -876,7 +875,15 @@ buttonDone.onclick = async () => {
             break
         case 'proforma':
             const data = {}
-            data[inlineEdit.valueType] = inlineEdit.input.value
+            if (inlineEdit.input.inputmask) {
+                data[inlineEdit.valueType] = inlineEdit.input.inputmask.unmaskedvalue()
+            }
+            else if (!isNaN(inlineEdit.input.valueAsNumber)) {
+                data[inlineEdit.valueType] = inlineEdit.input.valueAsNumber
+            }
+            else {
+                data[inlineEdit.valueType] = inlineEdit.input.value
+            }
             await db.doc(inlineEditPath).update(data).then(() => {
             }).catch(error => {
                 console.error('Error updating proforma: ', error)

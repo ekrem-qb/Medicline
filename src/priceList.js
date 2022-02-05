@@ -3,6 +3,7 @@ const pricesOverlayIcon = pricesOverlay.getElementsByClassName('iconify')
 const pricesOverlayText = pricesOverlay.querySelector('h3')
 
 const pricesTable = document.querySelector('table#prices')
+pricesTable.parentElement.onscroll = () => inlineEdit.moveToAnchor()
 const priceList = pricesTable.querySelector('tbody#priceList')
 let currentOrder, currentOrderDirection
 
@@ -129,7 +130,6 @@ let searchQuery
 let foundPrices
 let currentPricesSnap
 let stopPricesQuery = () => { }
-let currentRefQueries = []
 let selectedPrice, selectedPriceRow
 
 firebase.auth().onAuthStateChanged(user => {
@@ -141,8 +141,6 @@ firebase.auth().onAuthStateChanged(user => {
         stopInsuranceQuery()
         stopPermissionsQuery()
         stopPricesQuery()
-        currentRefQueries.forEach(stopRefQuery => stopRefQuery())
-        currentRefQueries = []
     }
 })
 
@@ -239,7 +237,15 @@ buttonDoneNewActivity.onclick = async () => {
 buttonDone.onclick = async () => {
     buttonDone.icon[0].setAttribute('data-icon', 'eos-icons:loading')
     const data = {}
-    data[inlineEdit.valueType] = inlineEdit.input.value
+    if (inlineEdit.input.inputmask) {
+        data[inlineEdit.valueType] = inlineEdit.input.inputmask.unmaskedvalue()
+    }
+    else if (!isNaN(inlineEdit.input.valueAsNumber)) {
+        data[inlineEdit.valueType] = inlineEdit.input.valueAsNumber
+    }
+    else {
+        data[inlineEdit.valueType] = inlineEdit.input.value
+    }
     await allPrices.doc(inlineEditPath).update(data).then(() => {
     }).catch(error => {
         console.error('Error updating price: ', error)
@@ -368,7 +374,6 @@ function loadPrices() {
     stopPricesQuery = allPrices.onSnapshot(
         snapshot => {
             currentPricesSnap = snapshot
-            listPrices(snapshot)
             refreshSearch()
         },
         error => {
@@ -383,8 +388,6 @@ function listPrices(snap) {
         let noOneFound = true
 
         priceList.innerHTML = ''
-        currentRefQueries.forEach(stopRefQuery => stopRefQuery())
-        currentRefQueries = []
         snap.forEach(priceSnap => {
             if (foundPrices == undefined || foundPrices.includes(priceSnap.id)) {
                 setOverlayState('hide')
@@ -415,7 +418,7 @@ function listPrices(snap) {
                 for (const column of tableHeadersList.children) {
                     const td = document.createElement('td')
                     td.id = column.id
-                    td.ondblclick = () => {
+                    td.onclick = () => {
                         if (getSelectedText() == '') {
                             inlineEdit.show(td, selectedPrice.id, priceSnap.get(td.id), td.id)
                         }
@@ -491,6 +494,8 @@ function orderPrices(orderBy, orderDirection) {
 
         currentOrder = orderBy
         currentOrderDirection = orderDirection
+
+        inlineEdit.moveToAnchor()
     }
     else {
         if (tableHeadersList.children['__name__']) {

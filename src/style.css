@@ -68,11 +68,6 @@ body {
   z-index: 100;
 }
 
-input[mask="time"],
-input[mask="date"] {
-  font-family: Lucida Sans Typewriter, consolas, monospace;
-}
-
 .form-group {
   margin-bottom: 1rem;
 }
@@ -87,6 +82,13 @@ input[mask="date"] {
 .was-validated .input-group .form-control:invalid,
 .was-validated .input-group .form-select:invalid {
   z-index: auto;
+}
+
+.input-group-text {
+  text-align: start;
+  white-space: normal;
+  min-height: 1rem;
+  min-width: 1.75rem;
 }
 
 .input-group-text .iconify,
@@ -1249,6 +1251,20 @@ form .mdc-text-field {
 
 /*#endregion*/
 
+/*#region InputMask */
+
+input[mask="time"],
+input[mask="date"] {
+  font-family: Lucida Sans Typewriter, consolas, monospace;
+}
+
+.input-group>input[mask="percent"],
+input[mask="percent"] {
+  width: 2.75rem;
+}
+
+/*#endregion*/
+
 .iconify {
   height: auto;
   transition: transform var(--transition);
@@ -1274,6 +1290,7 @@ form .mdc-text-field {
 }
 
 #totalPanel>* {
+  align-items: baseline;
   justify-content: space-between;
   min-height: 2.5rem;
 }

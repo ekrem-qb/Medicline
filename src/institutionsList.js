@@ -282,7 +282,6 @@ function loadInstitutions() {
     stopCurrentQuery = currentQuery.onSnapshot(
         snapshot => {
             currentInstitutionsSnap = snapshot
-            listInstitutions(snapshot)
             refreshSearch()
         },
         error => {
