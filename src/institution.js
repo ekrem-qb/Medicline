@@ -5,14 +5,10 @@ selectInstitutionType.listen('MDCSelect:change', () => {
     if (!location.hash) {
         document.title = translate('NEW#' + selectInstitutionType.value.toUpperCase())
     }
-    panelCurrency.classList.toggle('hide', selectInstitutionType.value != 'insurance')
-    currencyInputs.forEach(input => input.disabled = selectInstitutionType.value != 'insurance')
 })
 
 const formInstitution = document.getElementById('institution')
 const inputName = formInstitution.querySelector('input#name')
-const panelCurrency = formInstitution.querySelector('#currency')
-const currencyInputs = panelCurrency.querySelectorAll('input')
 
 formInstitution.querySelectorAll('input, textarea').forEach(input => {
     input.onchange = () => {

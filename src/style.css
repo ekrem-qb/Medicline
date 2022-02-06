@@ -97,6 +97,22 @@ body {
   height: 1rem;
 }
 
+.form-control:focus,
+.focus .ts-control {
+  border-color: var(--mdc-theme-primary);
+  box-shadow: 0 0 0 .15rem var(--mdc-theme-primary);
+}
+
+.form-control.is-invalid:focus,
+.was-validated .form-control:invalid:focus {
+  box-shadow: 0 0 0 .15rem var(--bs-red);
+}
+
+.input-group>:not(:first-child):not(.dropdown-menu):not(.valid-tooltip):not(.valid-feedback):not(.invalid-tooltip):not(.invalid-feedback):focus,
+.input-group>.ts-wrapper:not(:nth-child(2)).focus>.ts-control {
+  border-radius: 0.2rem;
+}
+
 .form-control[readonly]:enabled {
   background-color: initial;
 }
