@@ -276,65 +276,14 @@
                 </div>
             </div>
 
-            <div class="row g-2 mt-0 pe-0">
-                <div class="col-md-12 pe-0">
-                    <div class="mdc-form-field">
-                        <div class="mdc-checkbox">
-                            <input type="checkbox" class="mdc-checkbox__native-control" id="outpatient" />
-                            <div class="mdc-checkbox__background">
-                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                </svg>
-                                <div class="mdc-checkbox__mixedmark"></div>
-                            </div>
-                            <div class="mdc-checkbox__ripple"></div>
-                        </div>
+            <div class="row g-2 pe-0">
+                <div class="d-flex justify-content-evenly">
+                    <div class="form-check">
+                        <input class="form-check-input mt-0" type="radio" name="patient" id="outpatient">
                         <label for="outpatient">Outpatient</label>
                     </div>
-                </div>
-                <div class="col-lg-7" hidden>
-                    <label class="form-label" translate>ADDMISSION_DATE</label>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
-                        <input mask="date" type="text" class="form-control" id="outpatientAddmissionDate" disabled>
-                    </div>
-                </div>
-                <div class="col-lg-5" hidden>
-                    <label class="form-label" translate>ADDMISSION_TIME</label>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
-                        <input mask="time" type="text" class="form-control" id="outpatientAddmissionTime" disabled>
-                    </div>
-                </div>
-                <div class="col-lg-7" hidden>
-                    <label class="form-label" translate>DISCHARGE_DATE</label>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
-                        <input mask="date" type="text" class="form-control" id="outpatientDischargeDate" disabled>
-                    </div>
-                </div>
-                <div class="col-lg-5" hidden>
-                    <label class="form-label" translate>DISCHARGE_TIME</label>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
-                        <input mask="time" type="text" class="form-control" id="outpatientDischargeTime" disabled>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row g-2 mt-0 pe-0">
-                <div class="col-md-12 pe-0">
-                    <div class="mdc-form-field">
-                        <div class="mdc-checkbox">
-                            <input type="checkbox" class="mdc-checkbox__native-control" id="inpatient" />
-                            <div class="mdc-checkbox__background">
-                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                                    <path class="mdc-checkbox__checkmark-path" fill="none" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
-                                </svg>
-                                <div class="mdc-checkbox__mixedmark"></div>
-                            </div>
-                            <div class="mdc-checkbox__ripple"></div>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input mt-0" type="radio" name="patient" id="inpatient">
                         <label for="inpatient">Inpatient</label>
                     </div>
                 </div>
@@ -342,28 +291,28 @@
                     <label class="form-label" translate>ADDMISSION_DATE</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
-                        <input mask="date" type="text" class="form-control" id="inpatientAddmissionDate" disabled>
+                        <input mask="date" type="text" class="form-control" id="addmissionDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>ADDMISSION_TIME</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
-                        <input mask="time" type="text" class="form-control" id="inpatientAddmissionTime" disabled>
+                        <input mask="time" type="text" class="form-control" id="addmissionTime" disabled>
                     </div>
                 </div>
                 <div class="col-lg-7" hidden>
                     <label class="form-label" translate>DISCHARGE_DATE</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="iconify" data-icon="ic:round-event"></i></span>
-                        <input mask="date" type="text" class="form-control" id="inpatientDischargeDate" disabled>
+                        <input mask="date" type="text" class="form-control" id="dischargeDate" disabled>
                     </div>
                 </div>
                 <div class="col-lg-5" hidden>
                     <label class="form-label" translate>DISCHARGE_TIME</label>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text"><i class="iconify" data-icon="ic:round-access-time-filled"></i></span>
-                        <input mask="time" type="text" class="form-control" id="inpatientDischargeTime" disabled>
+                        <input mask="time" type="text" class="form-control" id="dischargeTime" disabled>
                     </div>
                 </div>
             </div>

@@ -107,16 +107,9 @@ function validateInput(input) {
     return !input.classList.contains('is-invalid')
 }
 
-function toggleCheckboxRelatedInputs(checkbox) {
-    checkbox.relatedInputs.forEach(input => {
-        input.disabled = !checkbox.checked
-        input.parentElement.parentElement.hidden = !checkbox.checked
-    })
-}
-
 formEditCase.querySelectorAll('input, textarea').forEach(
     inputEdit => {
-        if (inputEdit.type != 'checkbox') {
+        if (inputEdit.type != 'radio') {
             inputEdit.onchange = () => inputEdit.value = inputEdit.value.trim()
             if (inputEdit.id.includes('_')) {
                 inputEdit.disabled = true
@@ -126,12 +119,21 @@ formEditCase.querySelectorAll('input, textarea').forEach(
             }
         }
         else {
-            inputEdit.relatedInputs = inputEdit.parentElement.parentElement.parentElement.parentElement.querySelectorAll('input[type="text"')
-
-            inputEdit.onchange = () => toggleCheckboxRelatedInputs(inputEdit)
+            inputEdit.relatedInputs = inputEdit.parentElement.parentElement.parentElement.querySelectorAll('input[type="text"')
+            inputEdit.onchange = toggleRadioRelatedInputs
         }
     }
 )
+
+function toggleRadioRelatedInputs(radio) {
+    if (radio.target) {
+        radio = radio.target
+    }
+    radio.relatedInputs.forEach(input => {
+        input.disabled = !radio.checked
+        input.parentElement.parentElement.hidden = !radio.checked
+    })
+}
 
 checkCaseID()
 
@@ -216,7 +218,7 @@ if (location.hash != '') {
                         inputEdit.parentElement.parentElement.hidden = false
                     }
 
-                    if (inputEdit.type != 'checkbox') {
+                    if (inputEdit.type != 'radio') {
                         if (!inputEdit.parentElement.parentElement.hidden) {
                             if (inputEdit.getAttribute('mask') == 'date') {
                                 inputEdit.value = new Date(itemValue).toLocaleDateString('tr')
@@ -228,7 +230,7 @@ if (location.hash != '') {
                     }
                     else {
                         inputEdit.checked = itemValue
-                        toggleCheckboxRelatedInputs(inputEdit)
+                        toggleRadioRelatedInputs(inputEdit)
                     }
                 }
             })
@@ -345,11 +347,13 @@ function saveCase() {
                         caseData[input.id] = input.inputmask.unmaskedvalue()
                     }
                     else {
-                        if (input.type != 'checkbox') {
+                        if (input.type != 'radio') {
                             caseData[input.id] = input.value
                         }
                         else {
-                            caseData[input.id] = input.checked
+                            if (input.checked) {
+                                caseData[input.id] = input.checked
+                            }
                         }
                     }
                 }
